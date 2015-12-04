@@ -1,0 +1,36 @@
+/* transition duration */
+.transition{
+    -webkit-transition: all 0.3s cubic-bezier(0.55, 0, 0.55, 0.2);
+    -o-transition: all 0.3s cubic-bezier(0.55, 0, 0.55, 0.2);
+    transition: all 0.3s cubic-bezier(0.55, 0, 0.55, 0.2);
+}
+
+.fade-transition, #content, #toolbar, #left-sidenav , #right-sidenav{
+    @include animation();
+}
+
+/* animations for ng-repeat and ng-if */
+.fade-transition{
+    @extend .transition;
+    &.ng-enter{
+        @include effect(fadeIn);
+    }
+    &.ng-leave{
+        @include effect(fadeOut);
+    }
+}
+
+/* animations for state transitions */
+.main-view{
+    @extend .transition;
+    &.ng-enter{
+        #content, #toolbar, #left-sidenav , #right-sidenav{
+            @include effect(fadeIn); 
+        }
+    }
+    &.ng-leave{
+        #content, #toolbar, #left-sidenav , #right-sidenav{
+            @include effect(fadeOut); 
+        }
+    }
+}

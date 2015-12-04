@@ -1,0 +1,169 @@
+/* Text Colors Classes */
+.primary-text {
+	/* Blue */
+	color: $primary500;
+}
+
+.accent-text {
+	/* Light Blue */
+	color: $accentA200;
+}
+
+.white-text {
+	/* White */
+	color: #fff;
+}
+
+.main-text {
+	/* Dark Text */
+	color: $main-text;
+}
+
+.secondary-text {
+	/* Grey Text */
+	color: $secondary-text;
+}
+
+/* Text Alignments */
+.left-text {
+	text-align: left;
+}
+
+.center-text {
+	text-align: center;
+}
+
+.right-text {
+	text-align: right;
+}
+
+/* Font Weights*/
+.weight-300{
+	font-weight: 300;
+}
+
+.weight-200{
+	font-weight: 200;
+}
+
+.weight-100{
+	font-weight: 100;
+}
+
+.main-view {
+	/* main ui-router view */
+	min-height: 100vh;
+	position: relative;
+	overflow: auto;
+}
+
+/* Stretch to full height */
+.full-height-min {
+	min-height: 100vh;
+}
+/* Max height 100% of viewport*/
+.full-height-max {
+	max-height: 100vh;
+}
+
+.full-width-min{
+	min-width: 100%;
+}
+
+/* Toolbar Background */
+md-toolbar.white-toolbar {
+	background-color: white;
+}
+
+.site-logo {
+	img{
+		max-width: 60%;
+		max-height: 100%;
+	}
+}
+
+.personiv-logo {
+	height:110px;
+}
+
+.hidden-custom{
+	opacity: 0;
+}
+
+#main{
+	background: url('/assets/img/OO7XQL3Q9C.jpg');
+	background-size: cover;
+	transition: all 1s;
+}
+
+.main-content{
+	background: rgba(#212121, 0.5);
+}
+
+/* Background colors */
+md-content.dirty-white{
+	background: #eeeeee;
+}
+
+md-content.purple-bg{
+	background: $primary500;
+}
+
+.purple-bg{
+	background: $primary500;
+}
+
+.blur-white{
+	background: rgba(white,0.1);
+}
+
+
+.copyrights{
+	min-height: 110px;
+	width:100%;
+	text-align: center;
+	color: $secondary-text;
+	padding: 15px 0px;
+	border-top: 1px solid #eee;
+}
+
+.left-border{
+	border-left: 1px solid rgba(0,0,0,0.12);
+}
+
+.form{
+	width: 300px;
+}
+
+[ng\:cloak], [ng-cloak], .ng-cloak {
+  display: none !important;
+}
+
+.md-button.md-fab.z-index-75{
+	z-index: 75;
+}
+
+.purple-border-left{
+	border-left: 2px solid $primary500;
+}
+
+.progress-dialog{
+	background: transparent;
+	box-shadow: none;
+}
+
+.md-datepicker-calendar{
+	background: white;
+}
+
+.md-calendar-day-header{
+	background: $primary500;
+	color: white;
+}
+
+.pattern{
+	position: absolute;
+	font-size: 12px;
+	color: $red500;
+	line-height: 24px;
+}
