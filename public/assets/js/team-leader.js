@@ -1,14 +1,14 @@
-var adminModule = angular.module('adminModule', [
+var teamLeaderModule = angular.module('teamLeaderModule', [
 	/* Shared Module */
 	'sharedModule'
 ]); 
-adminModule
+teamLeaderModule
 	.config(['$stateProvider', function($stateProvider){
 		$stateProvider
 			// .state('main', {
 			// 	url:'/',
 			// 	views: {
-					
+
 			// 	}
 			// })
 	}]);

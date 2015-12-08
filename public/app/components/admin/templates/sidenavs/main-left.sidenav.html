@@ -1,0 +1,48 @@
+<ul class="no-padding">
+	<li flex class="blur-white" layout="row" layout-align="start center">
+		<span flex="5"></span>
+		<h2 class="md-subhead white-text">Productivity and Quality Report</h2>
+	</li>
+	<li ng-repeat="section in menu.section" class="section" flex>
+		<div layout="row" class="section-button-container">
+			<md-button flex ng-click="setActive($index)" aria-label="section-{{ $index }}">
+				<div layout="row" flex>
+					<span class="white-text">{{ section.name }}</span>
+					<span flex></span>
+					<md-icon class="mdi mdi-chevron-down rotate-icon"></md-icon>
+				</div>
+			</md-button>
+		</div>
+		<!-- Child -->
+		<ul class="pages no-padding">
+			<!-- Dashboard -->
+			<li layout="row" ng-repeat="page in menu.pages[$index]" ui-sref-active="active" ng-if="section.name == 'Dashboard'">
+				<md-button flex ng-if="page.name != 'Floor Plan'">
+					<div layout="row" flex>
+						<span flex="5"></span>
+						<span class="white-text">{{ page.name }}</span>
+						<span flex></span>
+					</div>
+				</md-button>
+				<md-button flex ng-if="page.name == 'Floor Plan'">
+					<div layout="row" flex>
+						<span flex="5"></span>
+						<span class="white-text">{{ page.name }}</span>
+						<span flex></span>
+					</div>
+				</md-button>
+				
+			</li>
+			<!-- Departments -->
+			<li layout="row" ui-sref-active="active" ng-if="section.name == 'Departments'" ng-repeat="page in menu.pages[$index]">
+				<md-button flex>
+					<div layout="row" flex>
+						<span flex="5"></span>
+						<span class="white-text">{{ page.name }}</span>
+						<span flex></span>
+					</div>
+				</md-button>
+			</li>
+		</ul>
+	</li>
+</ul>

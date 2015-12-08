@@ -3,7 +3,7 @@
 @section('content')
 	<md-card flex>
 		<md-card-content>
-			<form method="POST" action="/auth/register">
+			<form method="POST" action="/auth/register" class="wide-form">
 				{!! csrf_field() !!}
 				<div layout="row">
 					<!-- First Name -->
@@ -17,33 +17,15 @@
 						<input type="text" name="last_name" value="{{ old('last_name') }}">
 					</md-input-container>
 				</div>
-				<!--  -->
-				<div class="form-group clearfix">
-                    <label class="col-lg-2 control-label">Role</label>
-                    <div class="col-lg-10">
-                        <div class="radio">
-                            <label>
-                                <input type="radio" name="role" value="admin" checked>
-                                Admin
-                            </label>
-                        </div>
-                        <div class="radio">
-                            <label>
-                                <input type="radio" name="role" value="team-leader">
-                                Team Leader
-                            </label>
-                        </div>
-                    </div>
-                </div>
 				<!-- Department -->
+				<md-subheader class="md-no-sticky">Department</md-subheader>
 				<div layout="row" flex>
 					<md-input-container flex>
-						<label>Department</label>
-						<md-select name="department" ng-model="department">
-							<md-option ng-repeat="department in departments" value="<% department.name %>">
+						<select name="department" ng-model="department">
+							<option ng-repeat="department in departments" value="<% department.name %>">
 								<% department.name %>
-							</md-option>
-						</md-select>
+							</option>
+						</select>
 					</md-input-container>
 				</div>
 				<!-- Email -->

@@ -77,6 +77,13 @@ md-toolbar.white-toolbar {
 
 .site-logo {
 	img{
+		max-width: 35%;
+		max-height: 100%;
+	}
+}
+
+.site-logo-large {
+	img{
 		max-width: 60%;
 		max-height: 100%;
 	}
@@ -124,7 +131,7 @@ md-content.purple-bg{
 	text-align: center;
 	color: $secondary-text;
 	padding: 15px 0px;
-	border-top: 1px solid #eee;
+	// border-top: 1px solid #eee;
 }
 
 .left-border{
@@ -166,4 +173,73 @@ md-content.purple-bg{
 	font-size: 12px;
 	color: $red500;
 	line-height: 24px;
+}
+
+.wide-form{
+	width: 450px;
+	min-width: 300px;
+}
+
+.no-padding{
+	padding: 0px;
+}
+
+.avatar-container{
+	min-height: 150px;
+	background: $accentA200;
+	.avatar-section{
+		background: url('/assets/img/bg.png');
+		background-size: cover;
+		background-position: center center;	
+	}
+	img{
+		width: 75px;
+		height: 75px;
+		border-radius: 50%;
+	}
+	.shade{
+		background: rgba(black,0.3);
+	}
+}
+
+.pages{
+	overflow: hidden;
+	max-height:0;
+	-webkit-transition: max-height 0.75s cubic-bezier(0.35, 0, 0.25, 1);
+    -o-transition: max-height 0.75s cubic-bezier(0.35, 0, 0.25, 1);
+    transition: max-height 0.75s cubic-bezier(0.35, 0, 0.25, 1);
+
+    .active{
+    	background: rgba(white,0.1);
+    }
+}
+
+.rotate-icon{
+	-webkit-transition: -webkit-transform 0.3s ease-in-out;
+	-o-transition: -o-transform 0.3s ease-in-out;
+	transition: transform 0.3s ease-in-out;
+}
+
+.active {
+	.section-button-container{
+		background: rgba(white,0.1);
+	}
+	.pages{
+		height: auto;
+		max-height: 1000px;
+		overflow: hidden;
+
+		-webkit-transition: max-height 0.75s cubic-bezier(0.35, 0, 0.25, 1);
+	    -o-transition: max-height 0.75s cubic-bezier(0.35, 0, 0.25, 1);
+	    transition: max-height 0.75s cubic-bezier(0.35, 0, 0.25, 1);
+	}
+	.rotate-icon{
+		-webkit-transform: rotate(180deg);
+		-o-transform: rotate(180deg);
+		transform: rotate(180deg);
+
+		-webkit-transition: -webkit-transform 0.3s ease-in-out;
+		-o-transition: -o-transform 0.3s ease-in-out;
+		transition: transform 0.3s ease-in-out;
+	}
 }

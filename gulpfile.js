@@ -35,5 +35,5 @@ elixir(function(mix) {
     	.scriptsIn('public/app/components/admin', 'public/assets/js/admin.js')
 
 		/* Team Leader Scripts */
-    	.scriptsIn('public/app/components/admin', 'public/assets/js/team-leader.js')
+    	.scriptsIn('public/app/components/team-leader', 'public/assets/js/team-leader.js')
 });

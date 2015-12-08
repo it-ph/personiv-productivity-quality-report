@@ -4,7 +4,4 @@ var sharedModule = angular.module('sharedModule', [
 	'ngMaterial',
 	'ngMessages',
 	'infinite-scroll',
-], function($interpolateProvider){
-	$interpolateProvider.startSymbol('<%');
-    $interpolateProvider.endSymbol('%>');
-});
+]);

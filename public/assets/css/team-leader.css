@@ -5,9 +5,6 @@ body {
   font-family: 'Roboto', sans-serif;
   overflow: hidden; }
 
-ul {
-  padding: 0px; }
-
 ::-webkit-scrollbar {
   width: 6px; }
 
@@ -32,7 +29,8 @@ ul {
 
 .mdi {
   font-size: 24px;
-  vertical-align: middle; }
+  vertical-align: middle;
+  color: white; }
 
 .md-mini .mdi {
   font-size: 21px; }
@@ -103,6 +101,10 @@ md-toolbar.white-toolbar {
   background-color: white; }
 
 .site-logo img {
+  max-width: 35%;
+  max-height: 100%; }
+
+.site-logo-large img {
   max-width: 60%;
   max-height: 100%; }
 
@@ -138,8 +140,7 @@ md-content.purple-bg {
   width: 100%;
   text-align: center;
   color: #727272;
-  padding: 15px 0px;
-  border-top: 1px solid #eee; }
+  padding: 15px 0px; }
 
 .left-border {
   border-left: 1px solid rgba(0, 0, 0, 0.12); }
@@ -172,6 +173,53 @@ md-content.purple-bg {
   font-size: 12px;
   color: #F44336;
   line-height: 24px; }
+
+.wide-form {
+  width: 450px;
+  min-width: 300px; }
+
+.no-padding {
+  padding: 0px; }
+
+.avatar-container {
+  min-height: 150px;
+  background: #FF4081; }
+  .avatar-container .avatar-section {
+    background: url("/assets/img/bg.png");
+    background-size: cover;
+    background-position: center center; }
+  .avatar-container img {
+    width: 75px;
+    height: 75px;
+    border-radius: 50%; }
+  .avatar-container .shade {
+    background: rgba(0, 0, 0, 0.3); }
+
+.pages {
+  overflow: hidden;
+  max-height: 0;
+  transition: max-height 0.75s cubic-bezier(0.35, 0, 0.25, 1); }
+  .pages .active {
+    background: rgba(255, 255, 255, 0.1); }
+
+.rotate-icon {
+  transition: -webkit-transform 0.3s ease-in-out;
+  transition: transform 0.3s ease-in-out; }
+
+.active .section-button-container {
+  background: rgba(255, 255, 255, 0.1); }
+
+.active .pages {
+  height: auto;
+  max-height: 1000px;
+  overflow: hidden;
+  transition: max-height 0.75s cubic-bezier(0.35, 0, 0.25, 1); }
+
+.active .rotate-icon {
+  -webkit-transform: rotate(180deg);
+  transform: rotate(180deg);
+  transition: -webkit-transform 0.3s ease-in-out;
+  transition: transform 0.3s ease-in-out; }
 
 /* transition duration */
 .transition, .fade-transition, .main-view {

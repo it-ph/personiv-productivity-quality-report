@@ -21,7 +21,7 @@
 				<img show-gt-md hide-md hide-sm src="/assets/img/Personiv-Final_white_transparent.png" alt="Personiv Logo" class="personiv-logo">
 				<img show-sm show-md hide-gt-md src="/assets/img/Personiv-icon_large-white.png" alt="" class="personiv-logo">
 			</a>
-			<h1 class="white-text md-display-1 weight-300">Productivity and Quality System</h1>
+			<h1 class="white-text md-headline weight-300">Productivity and Quality Report System</h1>
 			<br>
 			@if (count($errors) > 0)
 			    <div class="alert alert-danger">

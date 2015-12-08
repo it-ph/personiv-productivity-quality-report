@@ -1,0 +1,22 @@
+<md-toolbar class="white-toolbar md-whiteframe-2dp">
+	<!-- Toolbar -->
+	<div ui-view="toolbar" layout="row" flex class="md-toolbar-tools"></div>
+</md-toolbar>
+<md-content layout="row" flex>
+	<md-content layout="column" flex>
+		<!-- Toogle on scroll Toolbar -->
+		<md-toolbar class="white-toolbar" md-scroll-shrink>
+			<!-- Subheader for Assets -->
+			<div class="md-toolbar-tools" ng-include="'/app/components/admin/templates/subheader.template.html'"></div>
+		</md-toolbar>
+		<!-- Content -->
+		<md-content flex layout="column" ui-view="content"></md-content>
+	</md-content>
+	<!-- Right Sidenav -->
+	<md-sidenav ng-if="rightSidenav.show" class="md-sidenav-right" md-component-id="right" md-is-locked-open="$mdMedia('gt-md')" ui-view="right-sidenav"></md-sidenav>
+	<!-- Add FAB -->
+	<md-button class="md-fab md-primary md-fab-bottom-right z-index-75 " ng-if="fab.show" ng-click="fab.action()" aria-label="FAB">
+		<md-icon class="mdi {{ fab.icon }}" aria-label="{{ fab.label }}"></md-icon>
+		<md-tooltip>{{ fab.tooltip }}</md-tooltip>
+	</md-button>
+</md-content>

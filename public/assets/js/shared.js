@@ -4,10 +4,7 @@ var sharedModule = angular.module('sharedModule', [
 	'ngMaterial',
 	'ngMessages',
 	'infinite-scroll',
-], function($interpolateProvider){
-	$interpolateProvider.startSymbol('<%');
-    $interpolateProvider.endSymbol('%>');
-});
+]);
 sharedModule
 	.config(['$urlRouterProvider', '$stateProvider', '$mdThemingProvider', function($urlRouterProvider, $stateProvider, $mdThemingProvider){
 		/* Defaul Theme Blue - Light Blue */
@@ -62,5 +59,15 @@ sharedModule
 				return $http.delete(urlBase + '/' + id);
 			},
 		}
+	}])
+sharedModule
+	.factory('User', ['$http', function($http){
+		var urlBase = '/user';
+
+		return {
+			index: function(){
+				return $http.get(urlBase);
+			},
+		};
 	}])
 //# sourceMappingURL=shared.js.map
