@@ -17,8 +17,9 @@ class CreatePerformancesTable extends Migration
             $table->integer('member_id');
             $table->date('date_start');
             $table->date('date_end');
+            $table->integer('daily_work_hours');
             $table->integer('output');
-            $table->integer('work_hours');
+            $table->integer('hours_worked');
             $table->integer('output_error');
             $table->integer('average_output');
             $table->timestamps();

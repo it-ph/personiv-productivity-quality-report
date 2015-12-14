@@ -1,0 +1,45 @@
+<!-- Search Results -->
+<div class="fade-transition" layout="column" flex flex-gt-sm="70" ng-if="setting.results && !setting.all.show">
+	<div layout-margin layout-padding>
+		<md-card>
+			<md-list>
+				<md-list-item class="md-2-line" ng-click="show(setting.id)" layout="row" ng-repeat="setting in setting.results | filter:toolbar.userInput">
+					<h2 class="md-avatar md-headline purple-bg" layout="row" layout-align="center center">
+						<span class="weight-200 white-text">{{ setting.first_letter }}</span>
+					</h2>
+					<div class="md-list-item-text" layout="column" flex>
+						<h3>{{ setting.name }} {{ setting.first_name }} {{ setting.last_name }}</h3>
+						<h4>{{ setting.department_name }}</h4>
+					</div>
+				</md-list-item>
+			</md-list>
+			<md-card-content ng-if="!setting.results.length">
+				<p class="secondary-text">No results found.</p>
+			</md-card-content>
+		</md-card>
+	</div>
+</div>
+
+<!-- All Data -->
+<div class="fade-transition" ng-if="setting.all.show" flex>
+	<div layout="column" flex flex-gt-sm="70">
+		<div layout-margin layout-padding>
+			<md-card>
+				<md-list>
+					<md-list-item class="md-2-line" ng-click="show(setting.id)" layout="row" ng-repeat="setting in setting.all | filter:toolbar.userInput">
+						<h2 class="md-avatar md-headline purple-bg" layout="row" layout-align="center center">
+							<span class="weight-200 white-text">{{ setting.first_letter }}</span>
+						</h2>
+						<div class="md-list-item-text" layout="column" flex>
+							<h3>{{ setting.name }} {{ setting.first_name }} {{ setting.last_name }}</h3>
+							<h4>{{ setting.department_name }}</h4>
+						</div>
+					</md-list-item>
+				</md-list>
+				<md-card-content ng-if="!setting.all.length">
+					<p class="secondary-text">No records yet.</p>
+				</md-card-content>
+			</md-card>
+		</div>
+	</div>
+</div>

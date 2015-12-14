@@ -4,31 +4,28 @@ adminModule
 
 		$scope.menu.section = [
 			{
-				'name':'Dashboard',
+				'name':'Departments',
 			},
 			{
-				'name':'Departments',
+				'name':'Settings',
 			},
 		];
 
-		$scope.menu.pages = [
-			/* 0 */
-			[
-				// {
-				// 	'name':'Analysis',
-				// 	'state':'main.analysis',
-				// },
-				{
-					'name':'Floor Plan',
-					'state':'main.floor-plan',
-				},
-			],
-		];
+		$scope.menu.settings = [
+			{
+				'name':'Departments',
+				'state':'main.department-settings',
+			},
+			{
+				'name':'Team Leaders',
+				'state':'main.team-leaders',
+			},
+		],
 
 		/* AJAX Request Department */
 		Department.index()
 			.success(function(data){
-				$scope.menu.pages.push(data);
+				$scope.menu.departments =  data;
 			});
 
 		// set section as active

@@ -1,0 +1,27 @@
+<md-dialog layout="column" flex="50"  aria-label="Add {{ department.name }} Position" ng-cloak>
+	<form name="addPositionForm" novalidate>
+		<md-toolbar>
+			<div class="md-toolbar-tools">
+				<h2>Add {{ department.name }} Position</h2>
+				<span flex></span>
+				<md-button class="md-icon-button" ng-click="cancel()">
+					<md-icon class="mdi mdi-close" aria-label="cancel"></md-icon>
+				</md-button>
+			</div>
+		</md-toolbar>
+		<md-dialog-content layout="row" flex layout-padding layout-wrap>
+			<md-input-container flex>
+				<label>Position</label>
+				<input type="text" name="Position" required ng-model="position.name">
+				<div ng-messages="addPositionForm.Position.$error" ng-if="addPositionForm.Position.$touched">
+					<div ng-messages-include="/app/shared/templates/validation-message.html"></div>
+				</div>
+			</md-input-container>
+		</md-dialog-content>
+	</form>
+	<div layout="row" layout-align="end center">		
+		<md-button class="md-fab md-primary" aria-label="Submit" ng-click="submit()">
+			<md-icon class="mdi mdi-check"></md-icon>
+		</md-button>
+	</div>
+</md-dialog>

@@ -4,12 +4,22 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Department;
-use App;
+use DB;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
 class DepartmentController extends Controller
 {
+    public function search(Request $request)
+    {
+        return DB::table('departments')
+            ->select('*', DB::raw('UPPER(LEFT(name, 1)) as first_letter'), DB::raw('DATE_FORMAT(created_at, "%h:%i %p, %b. %d, %Y") as created_at'))
+            ->where('name', 'like', '%'. $request->userInput .'%')
+            ->whereNull('deleted_at')
+            ->groupBy('id')
+            ->orderBy('name')
+            ->get();
+    }
     /**
      * Display a listing of the resource.
      *
@@ -17,7 +27,7 @@ class DepartmentController extends Controller
      */
     public function index()
     {
-        return Department::all();
+        return DB::table('departments')->select('*', DB::raw('UPPER(LEFT(name, 1)) as first_letter'), DB::raw('DATE_FORMAT(created_at, "%h:%i %p, %b. %d, %Y") as created_at'))->whereNull('deleted_at')->orderBy('name')->get();
     }
 
     /**
@@ -38,7 +48,15 @@ class DepartmentController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $this->validate($request, [
+            'name' => 'required|string',
+        ]);
+
+        $department = new Department;
+
+        $department->name = $request->name;
+
+        $department->save();
     }
 
     /**
@@ -49,7 +67,7 @@ class DepartmentController extends Controller
      */
     public function show($id)
     {
-        //
+        return Department::where('id', $id)->first();
     }
 
     /**

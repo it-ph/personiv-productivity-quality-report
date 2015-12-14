@@ -3,12 +3,25 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-
+use App\User;
+use DB;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
 class UserController extends Controller
 {
+    public function team_leader()
+    {
+        return DB::table('users')
+            ->join('departments', 'departments.id', '=', 'users.department_id')
+            ->select(
+                'users.*',
+                DB::raw('UPPER(LEFT(users.first_name, 1)) as first_letter'),
+                DB::raw('DATE_FORMAT(users.created_at, "%h:%i %p, %b. %d, %Y") as created_at'),
+                'departments.name as department_name'
+            )
+            ->get();
+    }
     /**
      * Display a listing of the resource.
      *
@@ -37,7 +50,24 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $this->validate($request, [
+            'first_name' => 'required|string',
+            'last_name' => 'required|string',
+            'department_id' => 'required|numeric',
+            'email' => 'required|email|unique:users',
+            'password' => 'required|confirmed|min:6',
+        ]);
+
+        $user = new User;
+
+        $user->first_name = $request->first_name;
+        $user->last_name = $request->last_name;
+        $user->department_id = $request->department_id;
+        $user->role = 'team-leader';
+        $user->email = $request->email;
+        $user->password = bcrypt($request->password);
+
+        $user->save();
     }
 
     /**

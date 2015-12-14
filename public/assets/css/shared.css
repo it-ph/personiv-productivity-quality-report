@@ -226,8 +226,8 @@ md-content.purple-bg {
   transition: all 0.3s cubic-bezier(0.55, 0, 0.55, 0.2); }
 
 .fade-transition, #content, #toolbar, #left-sidenav, #right-sidenav {
-  -webkit-animation-duration: 0.2s;
-  animation-duration: 0.2s;
+  -webkit-animation-duration: 0.3s;
+  animation-duration: 0.3s;
   -webkit-animation-fill-mode: both;
   animation-fill-mode: both; }
 

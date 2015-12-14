@@ -1,10 +1,8 @@
 sharedModule
-	.factory('Department', ['$http', function($http){
-		var urlBase = '/department';
+	.factory('Performance', ['$http', function($http){
+		var urlBase = 'performance';
+
 		return {
-			search: function(data){
-				return $http.post(urlBase + '-search', data);
-			},
 			index: function(){
 				return $http.get(urlBase);
 			},

@@ -3,9 +3,18 @@
 		<span flex="5"></span>
 		<h2 class="md-subhead white-text">Productivity and Quality Report</h2>
 	</li>
+	<li class="section" flex>
+		<div layout="row" class="section-button-container">
+			<md-button flex ng-click="setActive(0)" aria-label="section-0" ui-sref-active="active" ui-sref="main">
+				<div layout="row" flex>
+					<span class="white-text">Dashboard</span>
+				</div>
+			</md-button>
+		</div>
+	</li>
 	<li ng-repeat="section in menu.section" class="section" flex>
 		<div layout="row" class="section-button-container">
-			<md-button flex ng-click="setActive($index)" aria-label="section-{{ $index }}">
+			<md-button flex ng-click="setActive($index + 1)" aria-label="section-{{ $index + 1}}">
 				<div layout="row" flex>
 					<span class="white-text">{{ section.name }}</span>
 					<span flex></span>
@@ -15,30 +24,20 @@
 		</div>
 		<!-- Child -->
 		<ul class="pages no-padding">
-			<!-- Dashboard -->
-			<li layout="row" ng-repeat="page in menu.pages[$index]" ui-sref-active="active" ng-if="section.name == 'Dashboard'">
-				<md-button flex ng-if="page.name != 'Floor Plan'">
+			<li layout="row" ui-sref-active="active" ng-repeat="department in menu.departments" ng-if="section.name=='Departments'">
+				<md-button flex ui-sref="main.departments({'departmentID':{{ department.id }} })">
 					<div layout="row" flex>
 						<span flex="5"></span>
-						<span class="white-text">{{ page.name }}</span>
+						<span class="white-text">{{ department.name }}</span>
 						<span flex></span>
 					</div>
 				</md-button>
-				<md-button flex ng-if="page.name == 'Floor Plan'">
-					<div layout="row" flex>
-						<span flex="5"></span>
-						<span class="white-text">{{ page.name }}</span>
-						<span flex></span>
-					</div>
-				</md-button>
-				
 			</li>
-			<!-- Departments -->
-			<li layout="row" ui-sref-active="active" ng-if="section.name == 'Departments'" ng-repeat="page in menu.pages[$index]">
-				<md-button flex>
+			<li layout="row" ui-sref-active="active" ng-repeat="setting in menu.settings" ng-if="section.name=='Settings'">
+				<md-button flex ui-sref="{{ setting.state }}">
 					<div layout="row" flex>
 						<span flex="5"></span>
-						<span class="white-text">{{ page.name }}</span>
+						<span class="white-text">{{ setting.name }}</span>
 						<span flex></span>
 					</div>
 				</md-button>

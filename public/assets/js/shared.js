@@ -29,19 +29,33 @@ sharedModule
 			})
 	}]);
 sharedModule
-	.controller('homePageController', ['$scope', 'Department', function($scope, Department){
-		$scope.show = function(){
-			angular.element($('.main-view').removeClass('hidden-custom'));
-		};
-
-		Department.index()
-			.success(function(data){
-				$scope.departments = data;
-			});
-	}]);
-sharedModule
 	.factory('Department', ['$http', function($http){
 		var urlBase = '/department';
+		return {
+			search: function(data){
+				return $http.post(urlBase + '-search', data);
+			},
+			index: function(){
+				return $http.get(urlBase);
+			},
+			show: function(id){
+				return $http.get(urlBase + '/' + id);
+			},
+			store: function(data){
+				return $http.post(urlBase, data);
+			},
+			update: function(id, data){
+				return $http.put(urlBase + '/' + id, data);
+			},
+			delete: function(id){
+				return $http.delete(urlBase + '/' + id);
+			},
+		}
+	}])
+sharedModule
+	.factory('Member', ['$http', function($http){
+		var urlBase = 'member';
+
 		return {
 			index: function(){
 				return $http.get(urlBase);
@@ -50,7 +64,120 @@ sharedModule
 				return $http.get(urlBase + '/' + id);
 			},
 			store: function(data){
-				return http.post(urlBase, data);
+				return $http.post(urlBase, data);
+			},
+			update: function(id, data){
+				return $http.put(urlBase + '/' + id, data);
+			},
+			delete: function(id){
+				return $http.delete(urlBase + '/' + id);
+			},
+		}
+	}])
+sharedModule
+	.factory('Notification', ['$http', function($http){
+		var urlBase = 'notification';
+
+		return {
+			index: function(){
+				return $http.get(urlBase);
+			},
+			show: function(id){
+				return $http.get(urlBase + '/' + id);
+			},
+			store: function(data){
+				return $http.post(urlBase, data);
+			},
+			update: function(id, data){
+				return $http.put(urlBase + '/' + id, data);
+			},
+			delete: function(id){
+				return $http.delete(urlBase + '/' + id);
+			},
+		}
+	}])
+sharedModule
+	.factory('Performance', ['$http', function($http){
+		var urlBase = 'performance';
+
+		return {
+			index: function(){
+				return $http.get(urlBase);
+			},
+			show: function(id){
+				return $http.get(urlBase + '/' + id);
+			},
+			store: function(data){
+				return $http.post(urlBase, data);
+			},
+			update: function(id, data){
+				return $http.put(urlBase + '/' + id, data);
+			},
+			delete: function(id){
+				return $http.delete(urlBase + '/' + id);
+			},
+		}
+	}])
+sharedModule
+	.factory('Position', ['$http', function($http){
+		var urlBase = 'position';
+
+		return {
+			index: function(){
+				return $http.get(urlBase);
+			},
+			show: function(id){
+				return $http.get(urlBase + '/' + id);
+			},
+			store: function(data){
+				return $http.post(urlBase, data);
+			},
+			update: function(id, data){
+				return $http.put(urlBase + '/' + id, data);
+			},
+			delete: function(id){
+				return $http.delete(urlBase + '/' + id);
+			},
+			department: function(id){
+				return $http.get(urlBase + '-department/' + id);
+			},
+		}
+	}])
+sharedModule
+	.factory('Results', ['$http', function($http){
+		var urlBase = 'result';
+
+		return {
+			index: function(){
+				return $http.get(urlBase);
+			},
+			show: function(id){
+				return $http.get(urlBase + '/' + id);
+			},
+			store: function(data){
+				return $http.post(urlBase, data);
+			},
+			update: function(id, data){
+				return $http.put(urlBase + '/' + id, data);
+			},
+			delete: function(id){
+				return $http.delete(urlBase + '/' + id);
+			},
+		}
+	}])
+sharedModule
+	.factory('Target', ['$http', function($http){
+		var urlBase = 'target';
+
+		return {
+			index: function(){
+				return $http.get(urlBase);
+			},
+			show: function(id){
+				return $http.get(urlBase + '/' + id);
+			},
+			store: function(data){
+				return $http.post(urlBase, data);
 			},
 			update: function(id, data){
 				return $http.put(urlBase + '/' + id, data);
@@ -68,6 +195,69 @@ sharedModule
 			index: function(){
 				return $http.get(urlBase);
 			},
+			show: function(id){
+				return $http.get(urlBase + '/' + id);
+			},
+			store: function(data){
+				return $http.post(urlBase, data);
+			},
+			update: function(id, data){
+				return $http.put(urlBase + '/' + id, data);
+			},
+			delete: function(id){
+				return $http.delete(urlBase + '/' + id);
+			},
+			teamLeader: function(){
+				return $http.get(urlBase + '-team-leader');
+			},
 		};
 	}])
+sharedModule
+	.controller('homePageController', ['$scope', 'Department', function($scope, Department){
+		$scope.show = function(){
+			angular.element($('.main-view').removeClass('hidden-custom'));
+		};
+
+		Department.index()
+			.success(function(data){
+				$scope.departments = data;
+			});
+	}]);
+sharedModule
+	.service('Preloader', ['$mdDialog', function($mdDialog){
+		var dataHolder = null;
+		return {
+			/* Starts the preloader */
+			preload: function(){
+				return $mdDialog.show({
+					templateUrl: '/app/shared/templates/preloader.html',
+				    parent: angular.element(document.body),
+				});
+			},
+			/* Stops the preloader */
+			stop: function(data){
+				$mdDialog.hide(data);
+			},
+			/* Shows error message if AJAX failed */
+			error: function(){
+				return $mdDialog.show(
+			    	$mdDialog.alert()
+				        .parent(angular.element($('body')))
+				        .clickOutsideToClose(true)
+				        .title('Oops! Something went wrong!')
+				        .content('An error occured. Please contact administrator for assistance.')
+				        .ariaLabel('Error Message')
+				        .ok('Got it!')
+				);
+			},
+			/* Send temporary data for retrival */
+			set: function(data){
+				dataHolder = data;
+			},
+			/* Retrieves data */
+			get: function(){
+				return dataHolder;
+			}
+		};
+	}]);
 //# sourceMappingURL=shared.js.map

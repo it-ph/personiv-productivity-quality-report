@@ -1,10 +1,8 @@
 sharedModule
-	.factory('Department', ['$http', function($http){
-		var urlBase = '/department';
+	.factory('Position', ['$http', function($http){
+		var urlBase = 'position';
+
 		return {
-			search: function(data){
-				return $http.post(urlBase + '-search', data);
-			},
 			index: function(){
 				return $http.get(urlBase);
 			},
@@ -19,6 +17,9 @@ sharedModule
 			},
 			delete: function(id){
 				return $http.delete(urlBase + '/' + id);
+			},
+			department: function(id){
+				return $http.get(urlBase + '-department/' + id);
 			},
 		}
 	}])

@@ -36,4 +36,27 @@ Route::get('home', 'HomeController@role');
 
 // Route resource
 Route::resource('department', 'DepartmentController');
+Route::resource('member', 'MemberController');
+Route::resource('notification', 'NotificationController');
+Route::resource('position', 'PositionController');
+Route::resource('result', 'ResultController');
+Route::resource('target', 'TargetController');
 Route::resource('user', 'UserController');
+
+// Route resource paginate
+Route::get('member-paginate', 'MemberController@paginate');
+Route::get('notification-paginate', 'NotificationController@paginate');
+Route::get('result-paginate', 'ResultController@paginate');
+
+// Route resource search
+Route::post('department-search', 'DepartmentController@search');
+Route::post('member-search', 'MemberController@search');
+Route::post('notification-search', 'NotificationController@search');
+Route::post('result-search', 'ResultController@search');
+Route::post('target-search', 'TargetController@search');
+Route::post('result-search', 'ResultController@search');
+
+
+// Other Routes
+Route::get('position-department/{departmentID}', 'PositionController@department');
+Route::get('user-team-leader', 'UserController@team_leader');
