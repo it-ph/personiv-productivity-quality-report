@@ -1,4 +1,4 @@
-<md-dialog layout="column" flex="50"  aria-label="Add {{ department.name }} Position" ng-cloak>
+<md-dialog layout="column" flex flex-gt-md="50"  aria-label="Add {{ department.name }} Position" ng-cloak>
 	<form name="addPositionForm" novalidate>
 		<md-toolbar>
 			<div class="md-toolbar-tools">
@@ -9,7 +9,7 @@
 				</md-button>
 			</div>
 		</md-toolbar>
-		<md-dialog-content layout="row" flex layout-padding layout-wrap>
+		<md-dialog-content flex layout-padding layout-wrap>
 			<md-input-container flex>
 				<label>Position</label>
 				<input type="text" name="Position" required ng-model="position.name">
@@ -17,6 +17,31 @@
 					<div ng-messages-include="/app/shared/templates/validation-message.html"></div>
 				</div>
 			</md-input-container>
+			
+			<div ng-repeat="experience in experiences">
+				<md-subheader class="md-no-sticky md-accent">
+					<p>{{ experience.name }} <span>({{ experience.duration }})</span></p>
+				</md-subheader>
+				<div layout="row" layout-wrap layout-padding>
+					<!-- Productivity -->
+					<md-input-container flex-sm="100" flex-md="100" flex-gt-lg>
+						<label>{{ productivity[$index].label }}</label>
+						<input type="number" name="Productivity{{$index}}" required ng-model="productivity[$index].value" min="0">
+						<div ng-messages="addPositionForm['Productivity' + $index].$error" ng-if="addPositionForm.Productivity.$touched">
+							<div ng-messages-include="/app/shared/templates/validation-message.html"></div>
+						</div>
+					</md-input-container>
+
+					<!-- Quality -->
+					<md-input-container flex-sm="100" flex-md="100" flex-gt-lg>
+						<label>{{ quality[$index].label }}</label>
+						<input type="number" name="Quality" required ng-model="quality[$index].value" min="0" max="100">
+						<div ng-messages="addPositionForm.Quality.$error" ng-if="addPositionForm.Quality.$touched">
+							<div ng-messages-include="/app/shared/templates/validation-message.html"></div>
+						</div>
+					</md-input-container>
+				</div>
+			</div>
 		</md-dialog-content>
 	</form>
 	<div layout="row" layout-align="end center">		

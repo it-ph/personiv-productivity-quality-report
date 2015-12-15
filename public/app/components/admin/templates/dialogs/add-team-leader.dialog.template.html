@@ -1,4 +1,4 @@
-<md-dialog layout="column" flex="50"  aria-label="Add Team Leader" ng-cloak>
+<md-dialog layout="column" flex flex-gt-md="50"  aria-label="Add Team Leader" ng-cloak>
 	<form name="addTeamLeaderForm" novalidate>
 		<md-toolbar>
 			<div class="md-toolbar-tools">
@@ -10,9 +10,9 @@
 			</div>
 		</md-toolbar>
 		<md-dialog-content flex layout-padding layout-wrap>
-			<div layout="row">
+			<div layout="row" layout-wrap>
 				<!-- First Name -->
-				<md-input-container flex>
+				<md-input-container flex-sm="100" flex-md="100" flex-gt-lg>
 					<label>First Name</label>
 					<input type="text" name="FirstName" required ng-model="user.first_name">
 					<div ng-messages="addTeamLeaderForm.FirstName.$error" ng-if="addTeamLeaderForm.FirstName.$touched">
@@ -20,7 +20,7 @@
 					</div>
 				</md-input-container>
 				<!-- Last Name -->
-				<md-input-container flex>
+				<md-input-container flex-sm="100" flex-md="100" flex-gt-lg>
 					<label>Last Name</label>
 					<input type="text" name="LastName" required ng-model="user.last_name">
 					<div ng-messages="addTeamLeaderForm.LastName.$error" ng-if="addTeamLeaderForm.LastName.$touched">
@@ -48,9 +48,9 @@
 					<div ng-messages-include="/app/shared/templates/validation-message.html"></div>
 				</div>
 			</md-input-container>
-			<div layout="row" flex>
+			<div layout="row" layout-wrap>
 				<!-- Password -->
-				<md-input-container flex>
+				<md-input-container flex-sm="100" flex-md="100" flex-gt-lg>
 					<label>Password</label>
 					<input type="password" name="Password" ng-model="user.password" required ng-minlength="6">
 					<div ng-messages="addTeamLeaderForm.Password.$error" ng-if="addTeamLeaderForm.Password.$touched">
@@ -59,7 +59,7 @@
 					</div>
 				</md-input-container>
 				<!-- Password Confirmation -->
-				<md-input-container flex>
+				<md-input-container flex-sm="100" flex-md="100" flex-gt-lg>
 					<label>Confirm Password</label>
 					<input type="password" name="PasswordConfirmation" ng-model="user.password_confirmation" required ng-minlength="6">
 					<div ng-messages="addTeamLeaderForm.PasswordConfirmation.$error" ng-if="addTeamLeaderForm.PasswordConfirmation.$touched">

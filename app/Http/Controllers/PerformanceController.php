@@ -3,12 +3,47 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-
+use App\Performance;
+use DB;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
 class PerformanceController extends Controller
 {
+    public function paginateDepartment($department_id)
+    {
+        return DB::table('performances')
+            ->join('members', 'members.id', '=', 'performances.member_id')
+            ->join('positions', 'positions.id', '=', 'members.position_id')
+            ->select(
+                'performances.*',
+                'members.*',
+                'performances.id as performance_id',
+                'members.id as member_id',
+                'positions.name as position',
+                DB::raw('UPPER(LEFT(members.full_name, 1)) as first_letter'),
+                DB::raw('DATE_FORMAT(performances.created_at, "%h:%i %p, %b. %d, %Y") as created_at')
+            )
+            ->where('performances.department_id', $department_id)
+            ->orderBy('performances.updated_at', 'desc')
+            ->paginate(10);
+    }
+
+    public function paginate()
+    {
+        return DB::table('performances')
+            ->join('members', 'members.id', '=', 'performances.member_id')
+            ->select(
+                'performances.*',
+                'members.*',
+                'performances.id as performance_id',
+                'members.id as member_id',
+                DB::raw('UPPER(LEFT(members.full_name, 1)) as first_letter'),
+                DB::raw('DATE_FORMAT(performances.created_at, "%h:%i %p, %b. %d, %Y") as created_at')
+            )
+            ->orderBy('performances.updated_at', 'desc')
+            ->paginate(10);
+    }
     /**
      * Display a listing of the resource.
      *

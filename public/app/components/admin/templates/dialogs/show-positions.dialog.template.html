@@ -1,7 +1,7 @@
-<md-dialog layout="column" flex="50"  aria-label="{{ department.name }} Positions" ng-cloak>
+<md-dialog layout="column" flex flex-gt-md="50"  aria-label="{{ department.name }} Positions" ng-cloak>
 	<md-toolbar>
 		<div class="md-toolbar-tools">
-			<h2 ng-if="department" class="fade-transition">Positions on {{ department.name }} Department</h2>
+			<h2 ng-if="department" class="fade-transition">{{ department.name }} Positions</h2>
 			<span flex></span>
 			<md-button class="md-icon-button" ng-click="cancel()">
 				<md-icon class="mdi mdi-close" aria-label="cancel"></md-icon>
@@ -10,7 +10,7 @@
 	</md-toolbar>
 	<md-dialog-content layout="column" flex layout-padding layout-wrap>
 		<md-list layout="row" layout-wrap>
-			<md-list-item flex="30" class="md-2-line" layout="row" ng-repeat="position in positions">
+			<md-list-item flex flex-gt-md="30" class="md-2-line" layout="row" ng-repeat="position in positions" ng-click="showTargets(position.id)">
 				<h2 class="md-avatar md-headline purple-bg" layout="row" layout-align="center center">
 					<span class="weight-200 white-text">{{ position.first_letter }}</span>
 				</h2>

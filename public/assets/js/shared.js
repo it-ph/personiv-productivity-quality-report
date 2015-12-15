@@ -4,6 +4,7 @@ var sharedModule = angular.module('sharedModule', [
 	'ngMaterial',
 	'ngMessages',
 	'infinite-scroll',
+	'chart.js'
 ]);
 sharedModule
 	.config(['$urlRouterProvider', '$stateProvider', '$mdThemingProvider', function($urlRouterProvider, $stateProvider, $mdThemingProvider){
@@ -27,6 +28,36 @@ sharedModule
 				url: '/page-not-found',
 				templateUrl: '/app/shared/views/page-not-found.view.html',
 			})
+	}]);
+sharedModule
+	.controller('homePageController', ['$scope', 'Department', function($scope, Department){
+		$scope.show = function(){
+			angular.element($('.main-view').removeClass('hidden-custom'));
+		};
+
+		Department.index()
+			.success(function(data){
+				$scope.departments = data;
+			});
+	}]);
+sharedModule
+	.controller('mainViewController', ['$scope', '$mdSidenav', 'User', function($scope, $mdSidenav, User){
+		/**
+		 * Fetch authenticated user information
+		 *
+		*/
+		User.index()
+			.success(function(data){
+				$scope.user = data;
+			});
+
+		/**
+		 * Toggles Left Sidenav
+		 *
+		*/
+		$scope.toggleSidenav = function(menuId) {
+		    $mdSidenav(menuId).toggle();
+		};
 	}]);
 sharedModule
 	.factory('Department', ['$http', function($http){
@@ -72,6 +103,9 @@ sharedModule
 			delete: function(id){
 				return $http.delete(urlBase + '/' + id);
 			},
+			teamLeader: function(id){
+				return $http.get(urlBase + '-team-leader/' + id);
+			},
 		}
 	}])
 sharedModule
@@ -115,6 +149,12 @@ sharedModule
 			},
 			delete: function(id){
 				return $http.delete(urlBase + '/' + id);
+			},
+			paginate: function(page){
+				return $http.get(urlBase + '-paginate?page=' + page);
+			},
+			paginateDepartment: function(id, page){
+				return $http.get(urlBase + '-paginate/' + id + '?page=' + page);
 			},
 		}
 	}])
@@ -163,6 +203,9 @@ sharedModule
 			delete: function(id){
 				return $http.delete(urlBase + '/' + id);
 			},
+			paginate: function(page){
+				return $http.get(urlBase + '-paginate?page=' + page);
+			},
 		}
 	}])
 sharedModule
@@ -184,6 +227,9 @@ sharedModule
 			},
 			delete: function(id){
 				return $http.delete(urlBase + '/' + id);
+			},
+			position: function(id){
+				return $http.get(urlBase + '-position/' + id);
 			},
 		}
 	}])
@@ -212,17 +258,6 @@ sharedModule
 			},
 		};
 	}])
-sharedModule
-	.controller('homePageController', ['$scope', 'Department', function($scope, Department){
-		$scope.show = function(){
-			angular.element($('.main-view').removeClass('hidden-custom'));
-		};
-
-		Department.index()
-			.success(function(data){
-				$scope.departments = data;
-			});
-	}]);
 sharedModule
 	.service('Preloader', ['$mdDialog', function($mdDialog){
 		var dataHolder = null;

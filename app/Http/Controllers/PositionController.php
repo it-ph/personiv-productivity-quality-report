@@ -54,6 +54,8 @@ class PositionController extends Controller
         $position->department_id = $request->department_id;
 
         $position->save();
+
+        return $position;
     }
 
     /**

@@ -18,5 +18,8 @@ sharedModule
 			delete: function(id){
 				return $http.delete(urlBase + '/' + id);
 			},
+			position: function(id){
+				return $http.get(urlBase + '-position/' + id);
+			},
 		}
 	}])

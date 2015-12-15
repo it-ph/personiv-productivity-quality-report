@@ -3,12 +3,24 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-
+use App\Target;
+use DB;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
 class TargetController extends Controller
 {
+    public function position($position_id)
+    {
+        return DB::table('targets')
+            ->select(
+                '*',
+                DB::raw('UPPER(LEFT(type, 1)) as first_letter'),
+                DB::raw('CONCAT(UPPER(LEFT(type, 1)), SUBSTRING(type, 2)) as type')
+            )
+            ->where('position_id', $position_id)
+            ->get();
+    }
     /**
      * Display a listing of the resource.
      *
@@ -37,7 +49,26 @@ class TargetController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        for ($i=0; $i < count($request->all()); $i++) { 
+            
+            $this->validate($request, [
+                $i.'.value' => 'required|numeric',
+                $i.'.type' => 'required|string',
+                $i.'.experience' => 'required|string',
+                $i.'.position_id' => 'required|numeric',
+                $i.'.department_id' => 'required|numeric',
+            ]);
+
+            $target = new Target;
+
+            $target->value = $request->input($i.'.value');
+            $target->type = $request->input($i.'.type');
+            $target->experience = $request->input($i.'.experience');
+            $target->position_id = $request->input($i.'.position_id');
+            $target->department_id = $request->input($i.'.department_id');
+
+            $target->save();
+        }
     }
 
     /**

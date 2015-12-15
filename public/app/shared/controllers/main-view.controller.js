@@ -1,4 +1,4 @@
-adminModule
+sharedModule
 	.controller('mainViewController', ['$scope', '$mdSidenav', 'User', function($scope, $mdSidenav, User){
 		/**
 		 * Fetch authenticated user information

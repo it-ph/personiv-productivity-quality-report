@@ -1,13 +1,13 @@
-adminModule
-	.controller('departmentSettingsContentContainerController', ['$scope', '$mdDialog', 'Preloader', 'Department', function($scope, $mdDialog, Preloader, Department){
+teamLeaderModule
+	.controller('membersContentContainerController', ['$scope', '$mdDialog', 'Preloader', 'Department', function($scope, $mdDialog, Preloader, Department){
 		
 		/**
 		 * Object for toolbar
 		 *
 		*/
 		$scope.toolbar = {};
-		$scope.toolbar.parentState = 'Settings';
-		$scope.toolbar.childState = 'Departments';
+		// $scope.toolbar.parentState = 'Settings';
+		$scope.toolbar.childState = 'Members';
 		/**
 		 * Object for subheader
 		 *
@@ -116,7 +116,7 @@ adminModule
 		$scope.fab = {};
 
 		$scope.fab.icon = 'mdi-plus';
-		$scope.fab.label = 'Department';
+		$scope.fab.label = 'Member';
 		
 		$scope.fab.show = true;
 

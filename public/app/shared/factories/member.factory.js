@@ -18,5 +18,8 @@ sharedModule
 			delete: function(id){
 				return $http.delete(urlBase + '/' + id);
 			},
+			teamLeader: function(id){
+				return $http.get(urlBase + '-team-leader/' + id);
+			},
 		}
 	}])

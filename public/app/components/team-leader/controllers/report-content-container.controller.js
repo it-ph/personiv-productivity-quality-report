@@ -1,13 +1,13 @@
-adminModule
-	.controller('departmentSettingsContentContainerController', ['$scope', '$mdDialog', 'Preloader', 'Department', function($scope, $mdDialog, Preloader, Department){
+teamLeaderModule
+	.controller('reportContentContainerController', ['$scope', '$mdDialog', 'Preloader', 'Department', function($scope, $mdDialog, Preloader, Department){
 		
 		/**
 		 * Object for toolbar
 		 *
 		*/
 		$scope.toolbar = {};
-		$scope.toolbar.parentState = 'Settings';
-		$scope.toolbar.childState = 'Departments';
+		// $scope.toolbar.parentState = 'Settings';
+		$scope.toolbar.childState = 'Report';
 		/**
 		 * Object for subheader
 		 *
@@ -115,19 +115,19 @@ adminModule
 		*/
 		$scope.fab = {};
 
-		$scope.fab.icon = 'mdi-plus';
-		$scope.fab.label = 'Department';
+		// $scope.fab.icon = 'mdi-plus';
+		// $scope.fab.label = 'Department';
 		
-		$scope.fab.show = true;
+		$scope.fab.show = false;
 
-		$scope.fab.action = function(){
-			$mdDialog.show({
-	    		controller: 'addDepartmentDialogController',
-		      	templateUrl: '/app/components/admin/templates/dialogs/add-department.dialog.template.html',
-		      	parent: angular.element(document.body),
-		    })
-		    .then(function(){
-		    	$scope.subheader.refresh();
-		    })
-		};
+		// $scope.fab.action = function(){
+		// 	$mdDialog.show({
+	 //    		controller: 'addDepartmentDialogController',
+		//       	templateUrl: '/app/components/admin/templates/dialogs/add-department.dialog.template.html',
+		//       	parent: angular.element(document.body),
+		//     })
+		//     .then(function(){
+		//     	$scope.subheader.refresh();
+		//     })
+		// };
 	}]);

@@ -1,0 +1,17 @@
+<ul class="no-padding">
+	<li flex class="blur-white" layout="row" layout-align="start center">
+		<span flex="5"></span>
+		<h2 class="md-subhead white-text">Productivity and Quality Report</h2>
+	</li>
+	<li ng-repeat="section in menu.section" class="section" flex>
+		<div layout="row" class="section-button-container">
+			<md-button flex ng-click="setActive($index + 1)" ui-sref="{{ section.state }}" aria-label="section-{{ $index + 1}}">
+				<div layout="row" flex layout-align="start center">
+					<md-icon class="mdi {{ section.icon }}" aria-label="{{ section.name }}"></md-icon>
+					<span flex="5"></span>
+					<span class="white-text left-text" flex>{{ section.name }}</span>
+				</div>
+			</md-button>
+		</div>
+	</li>
+</ul>

@@ -5,7 +5,7 @@ adminModule
 				url:'/',
 				views: {
 					'': {
-						templateUrl: '/app/components/admin/views/main.view.html',
+						templateUrl: '/app/shared/views/main.view.html',
 						controller: 'mainViewController',
 					},
 					'toolbar@main': {
@@ -58,12 +58,15 @@ adminModule
 				url: 'departments/{departmentID}',
 				params: {'departmentID':null},
 				views: {
-					'content-container@main.departments': {
+					'content-container': {
 						templateUrl: '/app/components/admin/views/content-container.view.html',
-						// controller: 'departmentSettingsContentContainerController',
+						controller: 'departmentContentContainerController',
+					},
+					'toolbar@main.departments': {
+						templateUrl: '/app/components/admin/templates/toolbar.template.html',
 					},
 					'content@main.departments':{
-						templateUrl: '/app/components/admin/views/content-container.view.html',
+						templateUrl: '/app/components/admin/templates/content/main.content.template.html',
 					},
 				}
 			})

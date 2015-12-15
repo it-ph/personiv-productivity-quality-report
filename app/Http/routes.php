@@ -39,6 +39,7 @@ Route::resource('department', 'DepartmentController');
 Route::resource('member', 'MemberController');
 Route::resource('notification', 'NotificationController');
 Route::resource('position', 'PositionController');
+Route::resource('performance', 'PerformanceController');
 Route::resource('result', 'ResultController');
 Route::resource('target', 'TargetController');
 Route::resource('user', 'UserController');
@@ -46,6 +47,8 @@ Route::resource('user', 'UserController');
 // Route resource paginate
 Route::get('member-paginate', 'MemberController@paginate');
 Route::get('notification-paginate', 'NotificationController@paginate');
+Route::get('performance-paginate', 'PerformanceController@paginate');
+Route::get('performance-paginate/{departmentID}', 'PerformanceController@paginateDepartment');
 Route::get('result-paginate', 'ResultController@paginate');
 
 // Route resource search
@@ -59,4 +62,6 @@ Route::post('result-search', 'ResultController@search');
 
 // Other Routes
 Route::get('position-department/{departmentID}', 'PositionController@department');
-Route::get('user-team-leader', 'UserController@team_leader');
+Route::get('user-team-leader', 'UserController@teamLeader');
+Route::get('member-team-leader/{teamLeaderID}', 'MemberController@teamLeader');
+Route::get('target-position/{positionID}', 'TargetController@position');

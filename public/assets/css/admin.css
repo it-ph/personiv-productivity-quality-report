@@ -38,6 +38,9 @@ body {
 .mdi.grey {
   color: #727272; }
 
+.mdi.baseline {
+  vertical-align: baseline; }
+
 /* Text Colors Classes */
 .primary-text {
   /* Blue */
@@ -131,6 +134,9 @@ md-content.purple-bg {
 
 .purple-bg {
   background: #673AB7; }
+
+.pink-bg {
+  background: #FF4081; }
 
 .blur-white {
   background: rgba(255, 255, 255, 0.1); }

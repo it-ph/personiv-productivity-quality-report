@@ -4,4 +4,5 @@ var sharedModule = angular.module('sharedModule', [
 	'ngMaterial',
 	'ngMessages',
 	'infinite-scroll',
+	'chart.js'
 ]);

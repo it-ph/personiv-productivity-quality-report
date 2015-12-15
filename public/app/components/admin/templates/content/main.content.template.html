@@ -1,0 +1,50 @@
+<!-- Search Results -->
+<div class="fade-transition" layout="column" flex flex-gt-sm="70" ng-if="report.results && !report.paginated.show">
+	<div layout-margin layout-padding>
+		<md-card>
+			<md-list>
+				<md-list-item class="md-2-line" ng-click="show(report.id)" layout="row" ng-repeat="report in report.results | filter:toolbar.userInput">
+					<h2 class="md-avatar md-headline purple-bg" layout="row" layout-align="center center">
+						<span class="weight-200 white-text">{{ report.first_letter }}</span>
+					</h2>
+					<div class="md-list-item-text" layout="column" flex>
+						<h3>{{ report.name }} {{ report.first_name }} {{ report.last_name }}</h3>
+						<h4>{{ report.department_name }}</h4>
+					</div>
+				</md-list-item>
+			</md-list>
+			<md-card-content ng-if="!report.results.length">
+				<p class="secondary-text">No results found.</p>
+			</md-card-content>
+		</md-card>
+	</div>
+</div>
+
+<!-- Paginated Data -->
+<div class="fade-transition" ng-if="report.paginated.show" flex infinite-scroll='report.paginateLoad()' infinite-scroll-distance="2" infinite-scroll-disabled="report.busy" infinite-scroll-parent>
+	<div layout="column" flex flex-gt-sm="70">
+		<div layout-margin layout-padding>
+			<md-card ng-repeat="report in report.paginated | filter:toolbar.userInput">
+				<md-toolbar>
+					<div class="md-toolbar-tools">
+						<md-list>
+							<md-list-item class="md-2-line" layout="row">
+								<h2 class="md-avatar md-headline purple-bg" layout="row" layout-align="center center">
+									<span class="weight-200 white-text">{{ report.first_letter }}</span>
+								</h2>
+								<div class="md-list-item-text" layout="column" flex>
+									<h3>{{ report.full_name }}</h3>
+									<h4>{{ report.position }}</h4>
+								</div>
+								<p flex class="text-right secondary-text md-caption">{{ report.created_at }}</p>
+							</md-list-item>
+						</md-list>
+					</div>
+				</md-toolbar>
+				<md-card-content ng-if="!report.paginated.length">
+					<p class="secondary-text">No records yet.</p>
+				</md-card-content>
+			</md-card>
+		</div>
+	</div>
+</div>

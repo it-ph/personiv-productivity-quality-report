@@ -14,8 +14,9 @@ class CreateTargetsTable extends Migration
     {
         Schema::create('targets', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('value');
+            $table->float('value');
             $table->string('type');
+            $table->string('experience');
             $table->string('position_id');
             $table->integer('department_id');
             $table->timestamps();

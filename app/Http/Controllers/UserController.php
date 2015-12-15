@@ -9,8 +9,9 @@ use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
 class UserController extends Controller
-{
-    public function team_leader()
+{   
+    // fetch all team leaders
+    public function teamLeader()
     {
         return DB::table('users')
             ->join('departments', 'departments.id', '=', 'users.department_id')
@@ -20,6 +21,7 @@ class UserController extends Controller
                 DB::raw('DATE_FORMAT(users.created_at, "%h:%i %p, %b. %d, %Y") as created_at'),
                 'departments.name as department_name'
             )
+            ->where('role', 'team-leader')
             ->get();
     }
     /**
@@ -78,7 +80,7 @@ class UserController extends Controller
      */
     public function show($id)
     {
-        //
+        return User::where('id', $id)->first();
     }
 
     /**
