@@ -1,0 +1,49 @@
+<!-- Search Results -->
+<div class="fade-transition" flex ng-if="member.results && !member.all.show">
+	<div flex flex-gt-sm="70">
+		<div layout-margin layout-padding>
+			<md-card>
+				<md-list>
+					<md-list-item class="md-2-line" ng-click="show(member.id)" layout="row" ng-repeat="member in member.results | filter:toolbar.userInput">
+						<h2 class="md-avatar md-headline purple-bg" layout="row" layout-align="center center">
+							<span class="weight-200 white-text">{{ member.first_letter }}</span>
+						</h2>
+						<div class="md-list-item-text" layout="column" flex>
+							<h3>{{ member.full_name }}</h3>
+							<h4>{{ member.position }}</h4>
+							<p>{{ member.experience }}</p>
+						</div>
+					</md-list-item>
+				</md-list>
+				<md-card-content ng-if="!member.results.length">
+					<p class="secondary-text">No results found.</p>
+				</md-card-content>
+			</md-card>
+		</div>
+	</div>
+</div>
+
+<!-- All Data -->
+<div class="fade-transition" ng-if="member.all.show" flex>
+	<div layout="column" flex flex-gt-sm="70">
+		<div layout-margin layout-padding>
+			<md-card>
+				<md-list>
+					<md-list-item class="md-2-line" ng-click="show(member.id)" layout="row" ng-repeat="member in member.all | filter:toolbar.userInput">
+						<h2 class="md-avatar md-headline purple-bg" layout="row" layout-align="center center">
+							<span class="weight-200 white-text">{{ member.first_letter }}</span>
+						</h2>
+						<div class="md-list-item-text" layout="column" flex>
+							<h3>{{ member.full_name }}</h3>
+							<h4>{{ member.position }}</h4>
+							<p>{{ member.experience }}</p>
+						</div>
+					</md-list-item>
+				</md-list>
+				<md-card-content ng-if="!member.all.length">
+					<p class="secondary-text">No records yet.</p>
+				</md-card-content>
+			</md-card>
+		</div>
+	</div>
+</div>

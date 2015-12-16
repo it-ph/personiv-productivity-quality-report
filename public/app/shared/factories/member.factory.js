@@ -21,5 +21,8 @@ sharedModule
 			teamLeader: function(id){
 				return $http.get(urlBase + '-team-leader/' + id);
 			},
+			search: function(data){
+				return $http.post(urlBase + '-search', data);
+			},
 		}
 	}])

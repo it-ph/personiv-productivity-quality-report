@@ -35,7 +35,7 @@ teamLeaderModule
 						templateUrl: '/app/components/team-leader/templates/toolbar.template.html',
 					},
 					'content@main.members':{
-						// templateUrl: '/app/components/team-leader/templates/content/settings.content.template.html',
+						templateUrl: '/app/components/team-leader/templates/content/members.content.template.html',
 					},
 				}
 			})

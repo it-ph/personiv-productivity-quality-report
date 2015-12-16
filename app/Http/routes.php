@@ -45,7 +45,7 @@ Route::resource('target', 'TargetController');
 Route::resource('user', 'UserController');
 
 // Route resource paginate
-Route::get('member-paginate', 'MemberController@paginate');
+Route::get('member-paginate/{teamLeaderID}', 'MemberController@paginateTeamLeader');
 Route::get('notification-paginate', 'NotificationController@paginate');
 Route::get('performance-paginate', 'PerformanceController@paginate');
 Route::get('performance-paginate/{departmentID}', 'PerformanceController@paginateDepartment');

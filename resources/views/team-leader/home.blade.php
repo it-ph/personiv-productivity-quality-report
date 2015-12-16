@@ -22,7 +22,7 @@
 	<script src="/assets/js/vendor.js"></script>
 	<!-- Shared Script -->
 	<script src="/assets/js/shared.js"></script>
-	<!-- Admin Script -->
+	<!-- Team Leader Script -->
 	<script src="/assets/js/team-leader.js"></script>
 </body>
 </html>

@@ -41,7 +41,7 @@ sharedModule
 			});
 	}]);
 sharedModule
-	.controller('mainViewController', ['$scope', '$mdSidenav', 'User', function($scope, $mdSidenav, User){
+	.controller('mainViewController', ['$scope', '$mdSidenav', 'User', 'Preloader', function($scope, $mdSidenav, User, Preloader){
 		/**
 		 * Fetch authenticated user information
 		 *
@@ -49,6 +49,7 @@ sharedModule
 		User.index()
 			.success(function(data){
 				$scope.user = data;
+				Preloader.setUser(data);
 			});
 
 		/**
@@ -105,6 +106,9 @@ sharedModule
 			},
 			teamLeader: function(id){
 				return $http.get(urlBase + '-team-leader/' + id);
+			},
+			search: function(data){
+				return $http.post(urlBase + '-search', data);
 			},
 		}
 	}])
@@ -261,6 +265,7 @@ sharedModule
 sharedModule
 	.service('Preloader', ['$mdDialog', function($mdDialog){
 		var dataHolder = null;
+		var user = null;
 		return {
 			/* Starts the preloader */
 			preload: function(){
@@ -292,7 +297,13 @@ sharedModule
 			/* Retrieves data */
 			get: function(){
 				return dataHolder;
-			}
+			},
+			setUser: function(data){
+				user = data;
+			},
+			getUser: function(){
+				return user;
+			},
 		};
 	}]);
 //# sourceMappingURL=shared.js.map

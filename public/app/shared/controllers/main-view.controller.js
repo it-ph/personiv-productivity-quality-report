@@ -1,5 +1,5 @@
 sharedModule
-	.controller('mainViewController', ['$scope', '$mdSidenav', 'User', function($scope, $mdSidenav, User){
+	.controller('mainViewController', ['$scope', '$mdSidenav', 'User', 'Preloader', function($scope, $mdSidenav, User, Preloader){
 		/**
 		 * Fetch authenticated user information
 		 *
@@ -7,6 +7,7 @@ sharedModule
 		User.index()
 			.success(function(data){
 				$scope.user = data;
+				Preloader.setUser(data);
 			});
 
 		/**
