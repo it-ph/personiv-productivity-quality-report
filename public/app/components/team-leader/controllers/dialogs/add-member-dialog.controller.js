@@ -1,5 +1,5 @@
 teamLeaderModule
-	.controller('addMemberDialogController', ['$scope', '$mdDialog', 'Preloader', 'Position', 'User', 'Member', function($scope, $mdDialog, Preloader, Position, User, Member){
+	.controller('addMemberDialogController', ['$scope', '$mdDialog', 'Preloader', 'User', 'Member', function($scope, $mdDialog, Preloader, User, Member){
 		var user = Preloader.getUser();
 		if(!user){
 			User.index()
@@ -14,11 +14,6 @@ teamLeaderModule
 
 		$scope.member = {};
 		$scope.member.team_leader_id = user.id;
-
-		Position.department(user.department_id)
-			.success(function(data){
-				$scope.positions = data;
-			});
 
 		$scope.experiences = [
 			{

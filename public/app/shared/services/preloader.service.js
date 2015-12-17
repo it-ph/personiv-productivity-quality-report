@@ -2,6 +2,7 @@ sharedModule
 	.service('Preloader', ['$mdDialog', function($mdDialog){
 		var dataHolder = null;
 		var user = null;
+		var departmentID = null;
 		return {
 			/* Starts the preloader */
 			preload: function(){
@@ -39,6 +40,12 @@ sharedModule
 			},
 			getUser: function(){
 				return user;
+			},
+			setDepartment: function(id){
+				departmentID = id;
+			},
+			getDepartment: function(){
+				return departmentID;
 			},
 		};
 	}]);

@@ -50,7 +50,7 @@ teamLeaderModule
 						templateUrl: '/app/components/team-leader/templates/toolbar.template.html',
 					},
 					'content@main.report':{
-						// templateUrl: '/app/components/team-leader/templates/content/settings.content.template.html',
+						templateUrl: '/app/components/team-leader/templates/content/report.content.template.html',
 					},
 				}
 			})

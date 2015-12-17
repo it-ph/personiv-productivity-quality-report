@@ -1,9 +1,13 @@
 adminModule
-	.controller('addPositionDialogController', ['$scope', '$mdDialog', 'Preloader', 'Department', 'Position', 'Target', function($scope, $mdDialog, Preloader, Department, Position, Target){
-		var departmentID = Preloader.get();
+	.controller('addPositionDialogController', ['$scope', '$mdDialog', 'Preloader', 'Project', 'Position', 'Target', function($scope, $mdDialog, Preloader, Project, Position, Target){
+		var departmentID = Preloader.getDepartment();
+		var projectID = Preloader.get();
+
+		console.log(projectID);
 
 		$scope.position = {};
 		$scope.position.department_id = departmentID;
+		$scope.position.project_id = projectID;
 
 		$scope.experiences = [
 			{
@@ -56,9 +60,9 @@ adminModule
 			},
 		];
 
-		Department.show(departmentID)
+		Project.show(projectID)
 			.success(function(data){
-				$scope.department = data;
+				$scope.project = data;
 			});
 
 		$scope.cancel = function(){
@@ -84,11 +88,13 @@ adminModule
 						angular.forEach($scope.productivity, function(item){
 							item.position_id = data.id;
 							item.department_id = departmentID;
+							item.project_id = projectID;
 						});
 
 						angular.forEach($scope.quality, function(item){
 							item.position_id = data.id;
 							item.department_id = departmentID;
+							item.project_id = projectID;
 						});
 
 						Target.store($scope.productivity)

@@ -15,7 +15,9 @@ class CreatePerformancesTable extends Migration
         Schema::create('performances', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('member_id');
+            $table->integer('position_id');
             $table->integer('department_id');
+            $table->integer('project_id');
             $table->date('date_start');
             $table->date('date_end');
             $table->float('daily_work_hours');

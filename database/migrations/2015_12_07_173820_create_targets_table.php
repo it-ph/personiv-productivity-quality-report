@@ -17,7 +17,8 @@ class CreateTargetsTable extends Migration
             $table->float('value');
             $table->string('type');
             $table->string('experience');
-            $table->string('position_id');
+            $table->integer('position_id');
+            $table->integer('project_id');
             $table->integer('department_id');
             $table->timestamps();
         });

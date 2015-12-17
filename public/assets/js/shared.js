@@ -4,7 +4,8 @@ var sharedModule = angular.module('sharedModule', [
 	'ngMaterial',
 	'ngMessages',
 	'infinite-scroll',
-	'chart.js'
+	'chart.js',
+	'mgcrea.ngStrap'
 ]);
 sharedModule
 	.config(['$urlRouterProvider', '$stateProvider', '$mdThemingProvider', function($urlRouterProvider, $stateProvider, $mdThemingProvider){
@@ -182,6 +183,31 @@ sharedModule
 			delete: function(id){
 				return $http.delete(urlBase + '/' + id);
 			},
+			project: function(id){
+				return $http.get(urlBase + '-project/' + id);
+			},
+		}
+	}])
+sharedModule
+	.factory('Project', ['$http', function($http){
+		var urlBase = 'project';
+
+		return {
+			index: function(){
+				return $http.get(urlBase);
+			},
+			show: function(id){
+				return $http.get(urlBase + '/' + id);
+			},
+			store: function(data){
+				return $http.post(urlBase, data);
+			},
+			update: function(id, data){
+				return $http.put(urlBase + '/' + id, data);
+			},
+			delete: function(id){
+				return $http.delete(urlBase + '/' + id);
+			},
 			department: function(id){
 				return $http.get(urlBase + '-department/' + id);
 			},
@@ -266,6 +292,7 @@ sharedModule
 	.service('Preloader', ['$mdDialog', function($mdDialog){
 		var dataHolder = null;
 		var user = null;
+		var departmentID = null;
 		return {
 			/* Starts the preloader */
 			preload: function(){
@@ -303,6 +330,12 @@ sharedModule
 			},
 			getUser: function(){
 				return user;
+			},
+			setDepartment: function(id){
+				departmentID = id;
+			},
+			getDepartment: function(){
+				return departmentID;
 			},
 		};
 	}]);

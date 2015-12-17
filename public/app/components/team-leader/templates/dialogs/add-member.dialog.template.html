@@ -11,39 +11,25 @@
 		</md-toolbar>
 		<md-dialog-content flex layout-padding layout-wrap>
 			<!-- Full Name -->
-			<md-input-container flex-sm="100" flex-md="100" flex-gt-lg>
+			<md-input-container flex>
 				<label>Full Name</label>
 				<input type="text" name="FullName" required ng-model="member.full_name">
 				<div ng-messages="addMemberForm.FullName.$error" ng-if="addMemberForm.FullName.$touched">
 					<div ng-messages-include="/app/shared/templates/validation-message.html"></div>
 				</div>
 			</md-input-container>
-			<div layout="row">
-				<!-- Position -->
-				<md-input-container flex>
-					<label>Position</label>
-					<md-select required name="Position" ng-model="member.position_id">
-						<md-option ng-repeat="position in positions" value="{{ position.id }}">
-							{{ position.name }}
-						</md-option>
-					</md-select>
-					<div ng-messages="addMemberForm.Position.$error" ng-if="addMemberForm.Position.$touched">
-						<div ng-messages-include="/app/shared/templates/validation-message.html"></div>
-					</div>
-				</md-input-container>
-				<!-- Experience -->
-				<md-input-container flex>
-					<label>Experience</label>
-					<md-select required name="Experience" ng-model="member.experience">
-						<md-option ng-repeat="experience in experiences" value="{{ experience.category }}">
-							{{ experience.category }} ({{ experience.duration }})
-						</md-option>
-					</md-select>
-					<div ng-messages="addMemberForm.Experience.$error" ng-if="addMemberForm.Experience.$touched">
-						<div ng-messages-include="/app/shared/templates/validation-message.html"></div>
-					</div>
-				</md-input-container>
-			</div>
+			<!-- Experience -->
+			<md-input-container flex>
+				<label>Experience</label>
+				<md-select required name="Experience" ng-model="member.experience">
+					<md-option ng-repeat="experience in experiences" value="{{ experience.category }}">
+						{{ experience.category }} ({{ experience.duration }})
+					</md-option>
+				</md-select>
+				<div ng-messages="addMemberForm.Experience.$error" ng-if="addMemberForm.Experience.$touched">
+					<div ng-messages-include="/app/shared/templates/validation-message.html"></div>
+				</div>
+			</md-input-container>
 		</md-dialog-content>
 	</form>
 	<div layout="row" layout-align="end center">		

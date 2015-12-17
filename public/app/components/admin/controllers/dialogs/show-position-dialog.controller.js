@@ -1,6 +1,6 @@
 adminModule
-	.controller('showPositionDialogController', ['$scope', '$mdDialog', 'Preloader', 'Department', 'Position', function($scope, $mdDialog, Preloader, Department, Position){
-		var departmentID = Preloader.get();
+	.controller('showPositionDialogController', ['$scope', '$mdDialog', 'Preloader', 'Project', 'Position', function($scope, $mdDialog, Preloader, Project, Position){
+		var projectID = Preloader.get();
 		
 		$scope.cancel = function(){
 			$mdDialog.cancel();
@@ -14,14 +14,14 @@ adminModule
 			$mdDialog.hide(id);	
 		};
 
-		Position.department(departmentID)
+		Position.project(projectID)
 			.success(function(data){
 				$scope.positions = data;
 			});
 
-		Department.show(departmentID)
+		Project.show(projectID)
 			.success(function(data){
-				$scope.department = data;
+				$scope.project = data;
 			});
 
 	}]);

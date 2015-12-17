@@ -82,16 +82,17 @@ adminModule
 
 		$scope.show = function(id){
 			Preloader.set(id);
+			Preloader.setDepartment(id);
 			$mdDialog.show({
-		    	controller: 'showPositionDialogController',
-		      	templateUrl: '/app/components/admin/templates/dialogs/show-positions.dialog.template.html',
+		    	controller: 'showProjectsDialogController',
+		      	templateUrl: '/app/components/admin/templates/dialogs/show-projects.dialog.template.html',
 		      	parent: angular.element(document.body),
 		    })
 		    .then(function(id){
 		    	if(!id){
-			    	$mdDialog.show({
-				    	controller: 'addPositionDialogController',
-				      	templateUrl: '/app/components/admin/templates/dialogs/add-position.dialog.template.html',
+		    		$mdDialog.show({
+				    	controller: 'addProjectDialogController',
+				      	templateUrl: '/app/components/admin/templates/dialogs/add-project.dialog.template.html',
 				      	parent: angular.element(document.body),
 				    })
 				    .then(function(){
@@ -99,15 +100,35 @@ adminModule
 				    })
 		    	}
 		    	else{
-		    		Preloader.set(id);
-		    		$mdDialog.show({
-				    	controller: 'showTargetsDialogController',
-				      	templateUrl: '/app/components/admin/templates/dialogs/show-targets.dialog.template.html',
+					Preloader.set(id);
+					$mdDialog.show({
+				    	controller: 'showPositionDialogController',
+				      	templateUrl: '/app/components/admin/templates/dialogs/show-positions.dialog.template.html',
 				      	parent: angular.element(document.body),
-				      	clickOutsideToClose: true,
 				    })
+				    .then(function(id){
+				    	if(!id){
+					    	$mdDialog.show({
+						    	controller: 'addPositionDialogController',
+						      	templateUrl: '/app/components/admin/templates/dialogs/add-position.dialog.template.html',
+						      	parent: angular.element(document.body),
+						    })
+						    .then(function(){
+						    	$scope.subheader.refresh();
+						    })
+				    	}
+				    	else{
+				    		Preloader.set(id);
+				    		$mdDialog.show({
+						    	controller: 'showTargetsDialogController',
+						      	templateUrl: '/app/components/admin/templates/dialogs/show-targets.dialog.template.html',
+						      	parent: angular.element(document.body),
+						      	clickOutsideToClose: true,
+						    })
+				    	}
+				    });
 		    	}
-		    });
+		    })
 		};
 		/**
 		 * Object for content view

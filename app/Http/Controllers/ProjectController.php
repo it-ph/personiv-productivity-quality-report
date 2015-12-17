@@ -3,17 +3,22 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Position;
+use App\Project;
 use DB;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
-class PositionController extends Controller
+class ProjectController extends Controller
 {
-    // fetch positions by project
-    public function project($id)
+    public function department($department_id)
     {
-        return DB::table('positions')->select('*', DB::raw('UPPER(LEFT(name, 1)) as first_letter'), DB::raw('DATE_FORMAT(created_at, "%h:%i %p, %b. %d, %Y") as created_at'))->where('project_id', $id)->orderBy('name')->get();
+        return DB::table('projects')
+            ->select(
+                '*',
+                DB::raw('UPPER(LEFT(name,1)) as first_letter')
+            )
+            ->where('department_id', $department_id)
+            ->get();
     }
     /**
      * Display a listing of the resource.
@@ -46,18 +51,14 @@ class PositionController extends Controller
         $this->validate($request, [
             'name' => 'required|string',
             'department_id' => 'required|numeric',
-            'project_id' => 'required|numeric',
         ]);
 
-        $position = new Position;
+        $project = new Project;
 
-        $position->name = $request->name;
-        $position->department_id = $request->department_id;
-        $position->project_id = $request->project_id;
+        $project->name = $request->name;
+        $project->department_id = $request->department_id;
 
-        $position->save();
-
-        return $position;
+        $project->save();
     }
 
     /**
@@ -68,7 +69,7 @@ class PositionController extends Controller
      */
     public function show($id)
     {
-        return Position::where('id', $id)->first();
+        return Project::wherE('id', $id)->first();
     }
 
     /**

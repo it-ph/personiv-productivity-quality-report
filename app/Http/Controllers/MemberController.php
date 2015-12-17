@@ -13,30 +13,30 @@ class MemberController extends Controller
     public function search(Request $request)
     {
         return DB::table('members')
-            ->join('positions', 'positions.id', '=', 'members.position_id')
+            // ->join('positions', 'positions.id', '=', 'members.position_id')
             ->select(
                 'members.*',
-                'positions.name as position',
+                // 'positions.name as position',
                 DB::raw('UPPER(LEFT(members.full_name, 1)) as first_letter')
             )
             ->where('members.team_leader_id', $request->team_leader_id)
             ->where('members.full_name', 'like', '%'. $request->userInput .'%')
-            ->orWhere('positions.name', 'like', '%'. $request->userInput .'%')
+            // ->orWhere('positions.name', 'like', '%'. $request->userInput .'%')
             ->orWhere('members.experience', 'like', '%'. $request->userInput .'%')
-            ->groupBy('members.id')
+            // ->groupBy('members.id')
             ->get();
     }
     public function teamLeader($team_leader_id)
     {
         return DB::table('members')
-            ->join('positions', 'positions.id', '=', 'members.position_id')
+            // ->join('positions', 'positions.id', '=', 'members.position_id')
             ->select(
                 'members.*',
-                'positions.name as position',
+                // 'positions.name as position',
                 DB::raw('UPPER(LEFT(members.full_name, 1)) as first_letter')
             )
             ->where('members.team_leader_id', $team_leader_id)
-            ->orderBy('positions.name')
+            // ->orderBy('positions.name')
             ->orderBy('members.full_name')
             ->get();
     }
@@ -70,7 +70,7 @@ class MemberController extends Controller
     {
         $this->validate($request, [
             'full_name' => 'required|string',
-            'position_id' => 'required|numeric',
+            // 'position_id' => 'required|numeric',
             'experience' => 'required|string',
             'team_leader_id' => 'required|numeric',
         ]);
@@ -78,7 +78,7 @@ class MemberController extends Controller
         $member = new Member;
 
         $member->full_name = $request->full_name;
-        $member->position_id = $request->position_id;
+        // $member->position_id = $request->position_id;
         $member->experience = $request->experience;
         $member->team_leader_id = $request->team_leader_id;
 
@@ -93,7 +93,7 @@ class MemberController extends Controller
      */
     public function show($id)
     {
-        //
+        return Member::where('id', $id)->first();
     }
 
     /**

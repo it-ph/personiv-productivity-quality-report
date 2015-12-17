@@ -39,6 +39,7 @@ Route::resource('department', 'DepartmentController');
 Route::resource('member', 'MemberController');
 Route::resource('notification', 'NotificationController');
 Route::resource('position', 'PositionController');
+Route::resource('project', 'ProjectController');
 Route::resource('performance', 'PerformanceController');
 Route::resource('result', 'ResultController');
 Route::resource('target', 'TargetController');
@@ -59,9 +60,9 @@ Route::post('result-search', 'ResultController@search');
 Route::post('target-search', 'TargetController@search');
 Route::post('result-search', 'ResultController@search');
 
-
 // Other Routes
-Route::get('position-department/{departmentID}', 'PositionController@department');
+Route::get('position-project/{projectID}', 'PositionController@project');
 Route::get('user-team-leader', 'UserController@teamLeader');
 Route::get('member-team-leader/{teamLeaderID}', 'MemberController@teamLeader');
 Route::get('target-position/{positionID}', 'TargetController@position');
+Route::get('project-department/{departmentID}', 'ProjectController@department');

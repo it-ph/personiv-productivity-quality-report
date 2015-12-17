@@ -337,16 +337,17 @@ adminModule
 
 		$scope.show = function(id){
 			Preloader.set(id);
+			Preloader.setDepartment(id);
 			$mdDialog.show({
-		    	controller: 'showPositionDialogController',
-		      	templateUrl: '/app/components/admin/templates/dialogs/show-positions.dialog.template.html',
+		    	controller: 'showProjectsDialogController',
+		      	templateUrl: '/app/components/admin/templates/dialogs/show-projects.dialog.template.html',
 		      	parent: angular.element(document.body),
 		    })
 		    .then(function(id){
 		    	if(!id){
-			    	$mdDialog.show({
-				    	controller: 'addPositionDialogController',
-				      	templateUrl: '/app/components/admin/templates/dialogs/add-position.dialog.template.html',
+		    		$mdDialog.show({
+				    	controller: 'addProjectDialogController',
+				      	templateUrl: '/app/components/admin/templates/dialogs/add-project.dialog.template.html',
 				      	parent: angular.element(document.body),
 				    })
 				    .then(function(){
@@ -354,15 +355,35 @@ adminModule
 				    })
 		    	}
 		    	else{
-		    		Preloader.set(id);
-		    		$mdDialog.show({
-				    	controller: 'showTargetsDialogController',
-				      	templateUrl: '/app/components/admin/templates/dialogs/show-targets.dialog.template.html',
+					Preloader.set(id);
+					$mdDialog.show({
+				    	controller: 'showPositionDialogController',
+				      	templateUrl: '/app/components/admin/templates/dialogs/show-positions.dialog.template.html',
 				      	parent: angular.element(document.body),
-				      	clickOutsideToClose: true,
 				    })
+				    .then(function(id){
+				    	if(!id){
+					    	$mdDialog.show({
+						    	controller: 'addPositionDialogController',
+						      	templateUrl: '/app/components/admin/templates/dialogs/add-position.dialog.template.html',
+						      	parent: angular.element(document.body),
+						    })
+						    .then(function(){
+						    	$scope.subheader.refresh();
+						    })
+				    	}
+				    	else{
+				    		Preloader.set(id);
+				    		$mdDialog.show({
+						    	controller: 'showTargetsDialogController',
+						      	templateUrl: '/app/components/admin/templates/dialogs/show-targets.dialog.template.html',
+						      	parent: angular.element(document.body),
+						      	clickOutsideToClose: true,
+						    })
+				    	}
+				    });
 		    	}
-		    });
+		    })
 		};
 		/**
 		 * Object for content view
@@ -700,11 +721,15 @@ adminModule
 		}
 	}]);
 adminModule
-	.controller('addPositionDialogController', ['$scope', '$mdDialog', 'Preloader', 'Department', 'Position', 'Target', function($scope, $mdDialog, Preloader, Department, Position, Target){
-		var departmentID = Preloader.get();
+	.controller('addPositionDialogController', ['$scope', '$mdDialog', 'Preloader', 'Project', 'Position', 'Target', function($scope, $mdDialog, Preloader, Project, Position, Target){
+		var departmentID = Preloader.getDepartment();
+		var projectID = Preloader.get();
+
+		console.log(projectID);
 
 		$scope.position = {};
 		$scope.position.department_id = departmentID;
+		$scope.position.project_id = projectID;
 
 		$scope.experiences = [
 			{
@@ -757,9 +782,9 @@ adminModule
 			},
 		];
 
-		Department.show(departmentID)
+		Project.show(projectID)
 			.success(function(data){
-				$scope.department = data;
+				$scope.project = data;
 			});
 
 		$scope.cancel = function(){
@@ -785,11 +810,13 @@ adminModule
 						angular.forEach($scope.productivity, function(item){
 							item.position_id = data.id;
 							item.department_id = departmentID;
+							item.project_id = projectID;
 						});
 
 						angular.forEach($scope.quality, function(item){
 							item.position_id = data.id;
 							item.department_id = departmentID;
+							item.project_id = projectID;
 						});
 
 						Target.store($scope.productivity)
@@ -801,6 +828,46 @@ adminModule
 									});
 							});
 
+					})
+					.error(function(){
+						Preloader.error();
+					});
+			}
+		}
+	}]);
+adminModule
+	.controller('addProjectDialogController', ['$scope', '$mdDialog', 'Preloader', 'Department', 'Project', function($scope, $mdDialog, Preloader, Department, Project){
+		var departmentID = Preloader.get();
+
+		$scope.project = {};
+		$scope.project.department_id = departmentID;
+
+		Department.show(departmentID)
+			.success(function(data){
+				$scope.department = data;
+			});
+
+		$scope.cancel = function(){
+			$mdDialog.cancel();
+		}
+
+		$scope.submit = function(){
+			if($scope.addProjectForm.$invalid){
+				angular.forEach($scope.addProjectForm.$error, function(field){
+					angular.forEach(field, function(errorField){
+						errorField.$setTouched();
+					});
+				});
+			}
+			else{
+				/* Starts Preloader */
+				Preloader.preload();
+				/**
+				 * Stores Single Record
+				*/
+				Project.store($scope.project)
+					.success(function(){
+						// Preloader.stop();
 					})
 					.error(function(){
 						Preloader.error();
@@ -895,8 +962,8 @@ adminModule
 			});
 	}]);
 adminModule
-	.controller('showPositionDialogController', ['$scope', '$mdDialog', 'Preloader', 'Department', 'Position', function($scope, $mdDialog, Preloader, Department, Position){
-		var departmentID = Preloader.get();
+	.controller('showPositionDialogController', ['$scope', '$mdDialog', 'Preloader', 'Project', 'Position', function($scope, $mdDialog, Preloader, Project, Position){
+		var projectID = Preloader.get();
 		
 		$scope.cancel = function(){
 			$mdDialog.cancel();
@@ -910,9 +977,36 @@ adminModule
 			$mdDialog.hide(id);	
 		};
 
-		Position.department(departmentID)
+		Position.project(projectID)
 			.success(function(data){
 				$scope.positions = data;
+			});
+
+		Project.show(projectID)
+			.success(function(data){
+				$scope.project = data;
+			});
+
+	}]);
+adminModule
+	.controller('showProjectsDialogController', ['$scope', '$mdDialog', 'Preloader', 'Department', 'Project', function($scope, $mdDialog, Preloader, Department, Project){
+		var departmentID = Preloader.get();
+		
+		$scope.cancel = function(){
+			$mdDialog.cancel();
+		};
+		
+		$scope.add = function(){
+			$mdDialog.hide();
+		};
+
+		$scope.showPositions = function(id){
+			$mdDialog.hide(id);	
+		};
+
+		Project.department(departmentID)
+			.success(function(data){
+				$scope.projects = data;
 			});
 
 		Department.show(departmentID)
