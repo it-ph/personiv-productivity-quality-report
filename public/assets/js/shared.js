@@ -214,7 +214,7 @@ sharedModule
 		}
 	}])
 sharedModule
-	.factory('Results', ['$http', function($http){
+	.factory('Result', ['$http', function($http){
 		var urlBase = 'result';
 
 		return {

@@ -20,7 +20,7 @@ teamLeaderModule
 						controller: 'mainContentContainerController',
 					},
 					'content@main': {
-						// templateUrl: '/app/components/team-leader/templates/content/main.content.template.html',
+						templateUrl: '/app/components/team-leader/templates/content/main.content.template.html',
 					},
 				}
 			})

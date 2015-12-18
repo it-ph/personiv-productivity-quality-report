@@ -1,6 +1,6 @@
 <div class="fade-transition">
 	<div flex flex-gt-sm="70" layout-padding layout-margin>
-		<form name="createReportForm" novalidate>
+		<form name="form.createReportForm" novalidate>
 			<!-- Report Details -->
 			<md-card>
 				<md-toolbar class="md-primary">
@@ -8,7 +8,7 @@
 						<h2>Report Details</h2>
 					</div>
 				</md-toolbar>
-				<md-subheader class="md-accent">
+				<md-subheader class="md-accent md-no-sticky">
 					<span>Date Coverage</span>
 				</md-subheader>
 				<md-card-content>
@@ -17,16 +17,15 @@
 						<md-input-container flex>
 							<label>Date Start</label>
 							<input type="text" name="DateStart" required ng-model="details.date_start" data-date-format="yyyy-MM-dd" data-max-date="today" data-autoclose="1" bs-datepicker data-timezone="UTC">
-							<div ng-messages="createReportForm.DateStart.$error" ng-if="createReportForm.DateStart.$touched">
+							<div ng-messages="form.createReportForm.DateStart.$error" ng-if="form.createReportForm.DateStart.$touched">
 								<div ng-messages-include="/app/shared/templates/validation-message.html"></div>
 							</div>
 						</md-input-container>
-
 						<!-- Date End -->
 						<md-input-container flex>
 							<label>Date End</label>
 							<input type="text" name="DateEnd" required ng-model="details.date_end" data-date-format="yyyy-MM-dd" data-max-date="today" data-min-date="{{details.date_start}}" data-autoclose="1" bs-datepicker data-timezone="UTC">
-							<div ng-messages="createReportForm.DateEnd.$error" ng-if="createReportForm.DateEnd.$touched">
+							<div ng-messages="form.createReportForm.DateEnd.$error" ng-if="form.createReportForm.DateEnd.$touched">
 								<div ng-messages-include="/app/shared/templates/validation-message.html"></div>
 							</div>
 						</md-input-container>
@@ -40,7 +39,7 @@
 									{{ project.name }}
 								</md-option>
 							</md-select>
-							<div ng-messages="createReportForm.Project.$error" ng-if="createReportForm.Project.$touched">
+							<div ng-messages="form.createReportForm.Project.$error" ng-if="form.createReportForm.Project.$touched">
 								<div ng-messages-include="/app/shared/templates/validation-message.html"></div>
 							</div>
 						</md-input-container>
@@ -52,7 +51,7 @@
 									{{ hour.value }}
 								</md-option>
 							</md-select>
-							<div ng-messages="createReportForm.WorkHours.$error" ng-if="createReportForm.WorkHours.$touched">
+							<div ng-messages="form.createReportForm.WorkHours.$error" ng-if="form.createReportForm.WorkHours.$touched">
 								<div ng-messages-include="/app/shared/templates/validation-message.html"></div>
 							</div>
 						</md-input-container>
@@ -89,7 +88,7 @@
 										{{ position.name }}
 									</md-option>
 								</md-select>
-								<div ng-messages="createReportForm['Position' + $index].$error" ng-if="createReportForm['Position' + $index].$touched">
+								<div ng-messages="form.createReportForm['Position' + $index].$error" ng-if="form.createReportForm['Position' + $index].$touched">
 									<div ng-messages-include="/app/shared/templates/validation-message.html"></div>
 								</div>
 							</md-input-container>
@@ -98,7 +97,7 @@
 								<md-input-container flex>
 									<label>Total Hours Worked</label>
 									<input name="HoursWorked{{$index}}" type="number" min="0" required ng-model="member.hours_worked">
-									<div ng-messages="createReportForm['HoursWorked' + $index].$error" ng-if="createReportForm['HoursWorked' + $index].$touched">
+									<div ng-messages="form.createReportForm['HoursWorked' + $index].$error" ng-if="form.createReportForm['HoursWorked' + $index].$touched">
 										<div ng-messages-include="/app/shared/templates/validation-message.html"></div>
 									</div>
 								</md-input-container>
@@ -106,7 +105,7 @@
 								<md-input-container flex>
 									<label>Total Output</label>
 									<input name="Output{{$index}}" type="number" min="0" required ng-model="member.output">
-									<div ng-messages="createReportForm['Output' + $index].$error" ng-if="createReportForm['Output' + $index].$touched">
+									<div ng-messages="form.createReportForm['Output' + $index].$error" ng-if="form.createReportForm['Output' + $index].$touched">
 										<div ng-messages-include="/app/shared/templates/validation-message.html"></div>
 									</div>
 								</md-input-container>
@@ -114,7 +113,7 @@
 								<md-input-container flex>
 									<label>Total Output w/Error</label>
 									<input name="OutputError{{$index}}" type="number" min="0" required ng-model="member.output_error">
-									<div ng-messages="createReportForm['OutputError' + $index].$error" ng-if="createReportForm['OutputError' + $index].$touched">
+									<div ng-messages="form.createReportForm['OutputError' + $index].$error" ng-if="form.createReportForm['OutputError' + $index].$touched">
 										<div ng-messages-include="/app/shared/templates/validation-message.html"></div>
 									</div>
 								</md-input-container>
@@ -123,7 +122,6 @@
 					</md-card-content>
 				</md-card>
 			</div>
-			<md-button class="md-raised md-primary" ng-click="submit()">Submit</md-button>
 		</form>
 	</div>
 </div>

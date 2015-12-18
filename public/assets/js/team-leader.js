@@ -24,7 +24,7 @@ teamLeaderModule
 						controller: 'mainContentContainerController',
 					},
 					'content@main': {
-						// templateUrl: '/app/components/team-leader/templates/content/main.content.template.html',
+						templateUrl: '/app/components/team-leader/templates/content/main.content.template.html',
 					},
 				}
 			})
@@ -89,8 +89,7 @@ teamLeaderModule
 		};
 	}]);
 teamLeaderModule
-	.controller('mainContentContainerController', ['$scope', '$state', 'Preloader', function($scope, $state, Preloader){
-		
+	.controller('mainContentContainerController', ['$scope', '$state', 'Preloader', 'Result', function($scope, $state, Preloader, Result){
 		/**
 		 * Object for toolbar
 		 *
@@ -107,37 +106,55 @@ teamLeaderModule
 		/* Refreshes the list */
 		$scope.subheader.refresh = function(){
 			// start preloader
-			// Preloader.preload();
-			// // clear log
-			// $scope.log.paginated = {};
-			// $scope.log.page = 2;
-			// Log.paginate()
-			// 	.then(function(data){
-			// 		$scope.log.paginated = data.data;
-			// 		$scope.log.paginated.show = true;
-			// 		// stop preload
-			// 		Preloader.stop();
-			// 	}, function(){
-			// 		Preloader.error();
-			// 	});
+			Preloader.preload();
+			// clear result
+			$scope.result.paginated = {};
+			$scope.result.page = 2;
+			Result.paginate()
+				.then(function(data){
+					$scope.result.paginated = data.data;
+					$scope.result.show = true;
+					// stop preload
+					Preloader.stop();
+				}, function(){
+					Preloader.error();
+				});
 		};
+
+		$scope.data = [
+			[90,100],
+			[80,100],
+			[90,90],
+			[85,100],
+			[70,100],
+			[110,95],
+			[120,90],
+			[95,95],
+			[120,90],
+			[100,100],
+		];
+
+		$scope.labels = ['Productivity', 'Quality'];
+
+		$scope.series = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
 		/**
-		 * Object for log
+		 * Object for result
 		 *
 		*/
-		// $scope.log = {};
-		// // 2 is default so the next page to be loaded will be page 2 
-		// $scope.log.page = 2;
-		//
+		$scope.result = {};
+		$scope.result.paginated = [];
+		// 2 is default so the next page to be loaded will be page 2 
+		$scope.result.page = 2;
+		
 
-		// Log.paginate()
-		// 	.then(function(data){
-		// 		$scope.log.paginated = data.data;
-		// 		$scope.log.paginated.show = true;
+		// Result.paginate()
+		// 	.success(function(data){
+		// 		$scope.result.paginated.push(data.data);
+		// 		$scope.result.show = true;
 
-		// 		$scope.log.paginateLoad = function(){
+		// 		$scope.result.paginateLoad = function(){
 		// 			// kills the function if ajax is busy or pagination reaches last page
-		// 			if($scope.log.busy || ($scope.log.page > $scope.log.paginated.last_page)){
+		// 			if($scope.result.busy || ($scope.result.page > $scope.result.paginated.last_page)){
 		// 				return;
 		// 			}
 		// 			/**
@@ -145,24 +162,25 @@ teamLeaderModule
 		// 			 *
 		// 			*/
 		// 			// sets to true to disable pagination call if still busy.
-		// 			$scope.log.busy = true;
+		// 			$scope.result.busy = true;
 
 		// 			// Calls the next page of pagination.
-		// 			Log.paginate($scope.log.page)
-		// 				.then(function(data){
+		// 			Result.paginate($scope.result.page)
+		// 				.success(function(data){
 		// 					// increment the page to set up next page for next AJAX Call
-		// 					$scope.log.page++;
+		// 					$scope.result.page++;
 
 		// 					// iterate over each data then splice it to the data array
-		// 					angular.forEach(data.data.data, function(item, key){
-		// 						$scope.log.paginated.data.push(item);
+		// 					angular.forEach(data.data, function(item, key){
+		// 						$scope.result.paginated.push(item);
 		// 					});
 
 		// 					// Enables again the pagination call for next call.
-		// 					$scope.log.busy = false;
+		// 					$scope.result.busy = false;
 		// 				});
 		// 		}
-		// 	}, function(){
+		// 	})
+		// 	.error(function(){
 		// 		Preloader.error();
 		// 	});
 
@@ -185,17 +203,17 @@ teamLeaderModule
 		 *
 		*/
 		$scope.hideSearchBar = function(){
-			// $scope.log.userInput = '';
+			// $scope.result.userInput = '';
 			$scope.searchBar = false;
 		};
 		
 		
 		$scope.searchUserInput = function(){
-			// $scope.log.paginated.show = false;
+			// $scope.result.show = false;
 			// Preloader.preload()
-			// Log.search($scope.log)
+			// Result.search($scope.result)
 			// 	.success(function(data){
-			// 		$scope.log.results = data;
+			// 		$scope.result.results = data;
 			// 		Preloader.stop();
 			// 	})
 			// 	.error(function(data){
@@ -368,9 +386,10 @@ teamLeaderModule
 		};
 	}]);
 teamLeaderModule
-	.controller('reportContentContainerController', ['$scope', '$mdDialog', 'Preloader', 'Member', 'Project', 'Position', 'User', function($scope, $mdDialog, Preloader, Member, Project, Position, User){		
+	.controller('reportContentContainerController', ['$scope', '$state', '$mdDialog', 'Preloader', 'Member', 'Project', 'Position', 'Performance', 'User', function($scope, $state, $mdDialog, Preloader, Member, Project, Position, Performance, User){		
 		var user = Preloader.getUser();
 		var departmentID = null;
+		$scope.form = {};
 
 		if(!user){
 			User.index()
@@ -400,7 +419,12 @@ teamLeaderModule
 		}
 
 		$scope.details = {};
+		$scope.date_start = new Date();
 
+		// $scope.setDate = function(date){
+		// 	$scope.minDate = $scope.date_start.setDate($scope.date_start.getDate() + 5);
+		// }
+		// $scope.maxDate = $scope.details.maxDate;
 
 		$scope.showPositions = function(id){
 			Position.project(id)
@@ -438,15 +462,26 @@ teamLeaderModule
 		$scope.fab.show = true;
 
 		$scope.fab.action = function(){
-			console.log($scope.createReportForm)
-			if($scope.createReportForm.$invalid){
-				angular.forEach($scope.createReportForm.$error, function(field){
+			if($scope.form.createReportForm.$invalid){
+				angular.forEach($scope.form.createReportForm.$error, function(field){
 					angular.forEach(field, function(errorField){
 						errorField.$setTouched();
 					});
 				});
+
+				$mdDialog.show(
+					$mdDialog.alert()
+						.parent(angular.element(document.body))
+						.clickOutsideToClose(true)
+				        .title('Error')
+				        .content('Please complete the forms or check the errors.')
+				        .ariaLabel('Error')
+				        .ok('Got it!')
+				);
 			}
 			else{
+				Preloader.preload();
+
 				angular.forEach($scope.members, function(item){
 					item.department_id = departmentID;
 					item.date_start = $scope.details.date_start;
@@ -454,28 +489,17 @@ teamLeaderModule
 					item.project_id = $scope.details.project_id;
 					item.daily_work_hours = $scope.details.daily_work_hours;
 				});
+
+				Performance.store($scope.members)
+					.success(function(){
+						$state.go('main');
+						Preloader.stop();
+					})
+					.error(function(){
+						Preloader.error();
+					});
 			}
 		};
-
-		$scope.submit = function(){
-			console.log($scope.createReportForm);
-			// if($scope.createReportForm.$invalid){
-			// 	angular.forEach($scope.createReportForm.$error, function(field){
-			// 		angular.forEach(field, function(errorField){
-			// 			errorField.$setTouched();
-			// 		});
-			// 	});
-			// }
-			// else{
-			// 	angular.forEach($scope.members, function(item){
-			// 		item.department_id = departmentID;
-			// 		item.date_start = $scope.details.date_start;
-			// 		item.date_end = $scope.details.date_end;
-			// 		item.project_id = $scope.details.project_id;
-			// 		item.daily_work_hours = $scope.details.daily_work_hours;
-			// 	});
-			// }
-		}
 	}]);
 teamLeaderModule
 	.controller('addMemberDialogController', ['$scope', '$mdDialog', 'Preloader', 'User', 'Member', function($scope, $mdDialog, Preloader, User, Member){

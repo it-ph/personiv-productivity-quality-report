@@ -1,7 +1,8 @@
 teamLeaderModule
-	.controller('reportContentContainerController', ['$scope', '$mdDialog', 'Preloader', 'Member', 'Project', 'Position', 'User', function($scope, $mdDialog, Preloader, Member, Project, Position, User){		
+	.controller('reportContentContainerController', ['$scope', '$state', '$mdDialog', 'Preloader', 'Member', 'Project', 'Position', 'Performance', 'User', function($scope, $state, $mdDialog, Preloader, Member, Project, Position, Performance, User){		
 		var user = Preloader.getUser();
 		var departmentID = null;
+		$scope.form = {};
 
 		if(!user){
 			User.index()
@@ -31,7 +32,12 @@ teamLeaderModule
 		}
 
 		$scope.details = {};
+		$scope.date_start = new Date();
 
+		// $scope.setDate = function(date){
+		// 	$scope.minDate = $scope.date_start.setDate($scope.date_start.getDate() + 5);
+		// }
+		// $scope.maxDate = $scope.details.maxDate;
 
 		$scope.showPositions = function(id){
 			Position.project(id)
@@ -69,15 +75,26 @@ teamLeaderModule
 		$scope.fab.show = true;
 
 		$scope.fab.action = function(){
-			console.log($scope.createReportForm)
-			if($scope.createReportForm.$invalid){
-				angular.forEach($scope.createReportForm.$error, function(field){
+			if($scope.form.createReportForm.$invalid){
+				angular.forEach($scope.form.createReportForm.$error, function(field){
 					angular.forEach(field, function(errorField){
 						errorField.$setTouched();
 					});
 				});
+
+				$mdDialog.show(
+					$mdDialog.alert()
+						.parent(angular.element(document.body))
+						.clickOutsideToClose(true)
+				        .title('Error')
+				        .content('Please complete the forms or check the errors.')
+				        .ariaLabel('Error')
+				        .ok('Got it!')
+				);
 			}
 			else{
+				Preloader.preload();
+
 				angular.forEach($scope.members, function(item){
 					item.department_id = departmentID;
 					item.date_start = $scope.details.date_start;
@@ -85,26 +102,15 @@ teamLeaderModule
 					item.project_id = $scope.details.project_id;
 					item.daily_work_hours = $scope.details.daily_work_hours;
 				});
+
+				Performance.store($scope.members)
+					.success(function(){
+						$state.go('main');
+						Preloader.stop();
+					})
+					.error(function(){
+						Preloader.error();
+					});
 			}
 		};
-
-		$scope.submit = function(){
-			console.log($scope.createReportForm);
-			// if($scope.createReportForm.$invalid){
-			// 	angular.forEach($scope.createReportForm.$error, function(field){
-			// 		angular.forEach(field, function(errorField){
-			// 			errorField.$setTouched();
-			// 		});
-			// 	});
-			// }
-			// else{
-			// 	angular.forEach($scope.members, function(item){
-			// 		item.department_id = departmentID;
-			// 		item.date_start = $scope.details.date_start;
-			// 		item.date_end = $scope.details.date_end;
-			// 		item.project_id = $scope.details.project_id;
-			// 		item.daily_work_hours = $scope.details.daily_work_hours;
-			// 	});
-			// }
-		}
 	}]);
