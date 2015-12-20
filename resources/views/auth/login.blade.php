@@ -3,15 +3,15 @@
 @section('content')
 	<md-card>
 		<md-card-content>
-			<form method="POST" action="/auth/login" class="form">
+			<form method="POST" action="/auth/login" class="form" layout="column">
 				{!! csrf_field() !!}
 				<!-- Email -->
-				<md-input-container>
+				<md-input-container flex>
 					<label>Email</label>
 					<input type="email" name="email" value="{{ old('email') }}">
 				</md-input-container>
 				<!-- Password -->
-				<md-input-container>
+				<md-input-container flex>
 					<label>Password</label>
 					<input type="password" name="password">
 				</md-input-container>

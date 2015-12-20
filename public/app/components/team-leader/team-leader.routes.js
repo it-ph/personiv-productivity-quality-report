@@ -22,6 +22,9 @@ teamLeaderModule
 					'content@main': {
 						templateUrl: '/app/components/team-leader/templates/content/main.content.template.html',
 					},
+					'right-sidenav@main': {
+						templateUrl: '/app/components/team-leader/templates/sidenavs/main-right.sidenav.html',
+					}
 				}
 			})
 			.state('main.members', {

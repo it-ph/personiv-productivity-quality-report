@@ -44,13 +44,13 @@ Route::resource('performance', 'PerformanceController');
 Route::resource('result', 'ResultController');
 Route::resource('target', 'TargetController');
 Route::resource('user', 'UserController');
+Route::resource('report', 'ReportController');
 
 // Route resource paginate
 Route::get('member-paginate/{teamLeaderID}', 'MemberController@paginateTeamLeader');
 Route::get('notification-paginate', 'NotificationController@paginate');
-Route::get('performance-paginate', 'PerformanceController@paginate');
-Route::get('performance-paginate/{departmentID}', 'PerformanceController@paginateDepartment');
-Route::get('result-paginate', 'ResultController@paginate');
+Route::get('report-paginate', 'ReportController@paginate');
+Route::get('report-paginate/{departmentID}', 'ReportController@paginateDepartment');
 
 // Route resource search
 Route::post('department-search', 'DepartmentController@search');

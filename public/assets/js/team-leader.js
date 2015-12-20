@@ -26,6 +26,9 @@ teamLeaderModule
 					'content@main': {
 						templateUrl: '/app/components/team-leader/templates/content/main.content.template.html',
 					},
+					'right-sidenav@main': {
+						templateUrl: '/app/components/team-leader/templates/sidenavs/main-right.sidenav.html',
+					}
 				}
 			})
 			.state('main.members', {
@@ -89,7 +92,8 @@ teamLeaderModule
 		};
 	}]);
 teamLeaderModule
-	.controller('mainContentContainerController', ['$scope', '$state', 'Preloader', 'Result', function($scope, $state, Preloader, Result){
+	.controller('mainContentContainerController', ['$scope', '$state', 'Preloader', 'Result', 'User', function($scope, $state, Preloader, Result, User){
+		var user = Preloader.getUser();
 		/**
 		 * Object for toolbar
 		 *
@@ -110,7 +114,7 @@ teamLeaderModule
 			// clear result
 			$scope.result.paginated = {};
 			$scope.result.page = 2;
-			Result.paginate()
+			Result.paginateDepartment(user.department_id)
 				.then(function(data){
 					$scope.result.paginated = data.data;
 					$scope.result.show = true;
@@ -122,6 +126,7 @@ teamLeaderModule
 		};
 
 		$scope.data = [
+			// Productivity / Quality
 			[90,100],
 			[80,100],
 			[90,90],
@@ -146,43 +151,49 @@ teamLeaderModule
 		// 2 is default so the next page to be loaded will be page 2 
 		$scope.result.page = 2;
 		
+		// if(!user){
+		// 	User.index()
+		// 		.success(function(data){
+		// 			user = data;
 
-		// Result.paginate()
-		// 	.success(function(data){
-		// 		$scope.result.paginated.push(data.data);
-		// 		$scope.result.show = true;
-
-		// 		$scope.result.paginateLoad = function(){
-		// 			// kills the function if ajax is busy or pagination reaches last page
-		// 			if($scope.result.busy || ($scope.result.page > $scope.result.paginated.last_page)){
-		// 				return;
-		// 			}
-		// 			/**
-		// 			 * Executes pagination call
-		// 			 *
-		// 			*/
-		// 			// sets to true to disable pagination call if still busy.
-		// 			$scope.result.busy = true;
-
-		// 			// Calls the next page of pagination.
-		// 			Result.paginate($scope.result.page)
+		// 			Result.paginateDepartment(data.department_id)
 		// 				.success(function(data){
-		// 					// increment the page to set up next page for next AJAX Call
-		// 					$scope.result.page++;
+		// 					$scope.result.paginated.push(data.data);
+		// 					$scope.result.show = true;
 
-		// 					// iterate over each data then splice it to the data array
-		// 					angular.forEach(data.data, function(item, key){
-		// 						$scope.result.paginated.push(item);
-		// 					});
+		// 					$scope.result.paginateLoad = function(){
+		// 						// kills the function if ajax is busy or pagination reaches last page
+		// 						if($scope.result.busy || ($scope.result.page > $scope.result.paginated.last_page)){
+		// 							return;
+		// 						}
+		// 						/**
+		// 						 * Executes pagination call
+		// 						 *
+		// 						*/
+		// 						// sets to true to disable pagination call if still busy.
+		// 						$scope.result.busy = true;
 
-		// 					// Enables again the pagination call for next call.
-		// 					$scope.result.busy = false;
+		// 						// Calls the next page of pagination.
+		// 						Result.paginateDepartment(user.department_id$scope.result.page)
+		// 							.success(function(data){
+		// 								// increment the page to set up next page for next AJAX Call
+		// 								$scope.result.page++;
+
+		// 								// iterate over each data then splice it to the data array
+		// 								angular.forEach(data.data, function(item, key){
+		// 									$scope.result.paginated.push(item);
+		// 								});
+
+		// 								// Enables again the pagination call for next call.
+		// 								$scope.result.busy = false;
+		// 							});
+		// 					}
+		// 				})
+		// 				.error(function(){
+		// 					Preloader.error();
 		// 				});
-		// 		}
-		// 	})
-		// 	.error(function(){
-		// 		Preloader.error();
-		// 	});
+		// 		});
+		// }
 
 		/**
 		 * Status of search bar.
@@ -238,6 +249,10 @@ teamLeaderModule
 		// $scope.fab.action = function(){
 		// 	return;
 		// };
+
+		$scope.rightSidenav = {};
+
+		$scope.rightSidenav.show = true;
 	}]);
 teamLeaderModule
 	.controller('membersContentContainerController', ['$scope', '$mdDialog', 'Preloader', 'Member', 'User', function($scope, $mdDialog, Preloader, Member, User){

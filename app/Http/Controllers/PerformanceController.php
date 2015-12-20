@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Performance;
 use App\Target;
 use App\Result;
+use App\Report;
 use DB;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
@@ -16,13 +17,11 @@ class PerformanceController extends Controller
     {
         return DB::table('performances')
             ->join('members', 'members.id', '=', 'performances.member_id')
-            ->join('positions', 'positions.id', '=', 'members.position_id')
             ->select(
                 'performances.*',
                 'members.*',
                 'performances.id as performance_id',
                 'members.id as member_id',
-                'positions.name as position',
                 DB::raw('UPPER(LEFT(members.full_name, 1)) as first_letter'),
                 DB::raw('DATE_FORMAT(performances.created_at, "%h:%i %p, %b. %d, %Y") as created_at')
             )
@@ -121,8 +120,14 @@ class PerformanceController extends Controller
                 $result->performance_id = $performance->id;
 
                 $result->save();
+
+                if($i + 1 == count($request->all()))
+                {
+                    $report = 
+                }
             }
         }
+
     }
 
     /**

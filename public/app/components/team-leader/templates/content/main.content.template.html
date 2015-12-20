@@ -1,52 +1,104 @@
-<!-- Search Results
-<div class="fade-transition" layout="column" flex flex-gt-sm="70" ng-if="result.results && !result.paginated.show">
+<!-- Search reports -->
+<div class="fade-transition" layout="column" flex flex-gt-sm="70" ng-if="report.reports && !report.paginated.show">
 	<div layout-margin layout-padding>
 		<md-card>
 			<md-list>
-				<md-list-item class="md-2-line" ng-click="show(result.id)" layout="row" ng-repeat="result in result.results | filter:toolbar.userInput">
+				<md-list-item class="md-2-line" ng-click="show(report.id)" layout="row" ng-repeat="report in report.reports | filter:toolbar.userInput">
 					<h2 class="md-avatar md-headline purple-bg" layout="row" layout-align="center center">
-						<span class="weight-200 white-text">{{ result.first_letter }}</span>
+						<span class="weight-200 white-text">{{ report.first_letter }}</span>
 					</h2>
 					<div class="md-list-item-text" layout="column" flex>
-						<h3>{{ result.name }} {{ result.first_name }} {{ result.last_name }}</h3>
-						<h4>{{ result.department_name }}</h4>
+						<h3>{{ report.name }} {{ report.first_name }} {{ report.last_name }}</h3>
+						<h4>{{ report.department_name }}</h4>
 					</div>
 				</md-list-item>
 			</md-list>
-			<md-card-content ng-if="!result.results.length">
-				<p class="secondary-text">No results found.</p>
+			<md-card-content ng-if="!report.reports.length">
+				<p class="secondary-text">No reports found.</p>
 			</md-card-content>
 		</md-card>
 	</div>
 </div>
 
-Paginated Data
-<div class="fade-transition" ng-if="result.paginated.show" flex infinite-scroll='result.paginateLoad()' infinite-scroll-distance="2" infinite-scroll-disabled="result.busy" infinite-scroll-parent>
-	
-</div> -->
-<div class="row container">
-	<div class="col-lg-8">
-		<div class="panel panel-default">
-			<div class="panel-heading">
-				<p>DexWeb(New) (07 Dec 2015 to 12 Dec 2015)</p>
-			</div>
-			<div class="panel-body">	
-				<canvas id="bar" class="chart chart-bar" chart-data="data" chart-labels="labels" chart-legend="true" chart-series="series">
-				</canvas>
+<!-- Paginated Data -->
+<div class="fade-transition"  flex infinite-scroll='report.paginateLoad()' infinite-scroll-distance="2" infinite-scroll-disabled="report.busy" infinite-scroll-parent>
+	<div class="row container">
+		<div class="col-lg-9">
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<span class="primary-text md-title">Dec 7, 2015 to Dec 12, 2015</span> 
+				</div>
+				<div class="panel-body" layout="column">	
+					<canvas id="bar" class="chart chart-bar" chart-data="data" chart-labels="labels" chart-legend="true" chart-series="series">
+					</canvas>
+					<h2 class="primary-text md-headline">DexWeb(New)</h2>
+					<h3 class="secondary-text md-subhead">Web Designer</h3>
+					<div layout="row" flex>					
+						<table class="table">
+							<tr>
+								<th>Name</th>
+								<th>Experience</th>
+								<th>Hours Worked</th>
+								<th>Output</th>
+								<th>Output w/Error(s)</th>
+								<th>Average Output</th>
+								<th>Productivity</th>
+								<th>Quality</th>
+							</tr>
+							<tr ng-repeat="member in members">
+								
+							</tr>
+						</table>
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>
-</div>
-<div class="row container">
-	<div class="col-lg-8">
-		<div class="panel panel-default">
-			<div class="panel-heading">
-				<p>DexWeb(New) (07 Dec 2015 to 12 Dec 2015)</p>
-			</div>
-			<div class="panel-body">	
-				<canvas id="bar" class="chart chart-bar" chart-data="data" chart-labels="labels" chart-legend="true" chart-series="series">
-				</canvas>
+	<div class="row container" ng-repeat="report in reports.paginated">
+		<div class="col-lg-9">
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<span class="primary-text md-title">DexWeb(New)</span> 
+				</div>
+				<div class="panel-body" layout="column">	
+					<canvas id="bar" class="chart chart-bar" chart-data="data" chart-labels="labels" chart-legend="true" chart-series="series">
+					</canvas>
+					<h2 class="primary-text md-headline">Web Designer</h2>
+					<h3 class="secondary-text md-subhead">Dec 7, 2015 to Dec 12, 2015</h3>
+					<div layout="row" flex>					
+						<table class="table">
+							<tr>
+								<th>Name</th>
+								<th>Experience</th>
+								<th>Hours Worked</th>
+								<th>Output</th>
+								<th>Output w/Error(s)</th>
+								<th>Average Output</th>
+								<th>Productivity</th>
+								<th>Quality</th>
+							</tr>
+						</table>
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>
+	<!-- <div layout="column" flex="70" layout-padding layout-margin>
+		<md-card flex>
+			<md-card-header>
+				<md-card-header-text>
+					<span class="md-title">DexWeb(New)</span>
+				</md-card-header-text>
+			</md-card-header>
+			<canvas id="bar" class="chart chart-bar" chart-data="data" chart-labels="labels" chart-legend="true" chart-series="series"></canvas>
+			<md-card-title>
+				07 Dec 2015 to 12 Dec 2015
+			</md-card-title>
+			<md-card-content flex layout-padding>
+				Table Here
+				
+			</md-card-content>
+			<div></div>
+		</md-card>
+	</div> -->
 </div>

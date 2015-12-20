@@ -15,7 +15,6 @@ body {
 
 ::-webkit-scrollbar-thumb {
   border-radius: 10px;
-  background: rgba(0, 0, 0, 0.3);
   /*&:not(:active){
         background: none;
         border:0px solid rgba(0,0,0,0.5);
@@ -66,7 +65,7 @@ body {
 .left-text {
   text-align: left; }
 
-.center-text {
+.center-text, td, th {
   text-align: center; }
 
 .right-text {
