@@ -47,8 +47,6 @@ angular.module('ngMaterial-mock', [
           $timeout.flush();
           this.flushOutstandingAnimations();
           $timeout.flush();
-          this.flushOutstandingAnimations();
-          $timeout.flush();
         }
       };
     }]);

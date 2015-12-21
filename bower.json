@@ -1,0 +1,29 @@
+{
+  "name": "personiv-productivity-quality-report",
+  "description": "",
+  "main": "",
+  "authors": [
+    "Marco Paco <marcopaco1230@gmail.com>"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/mcoyevans/personiv-productivity-quality-report",
+  "moduleType": [],
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular-messages": "~1.4.8",
+    "angular-material": "~0.11.4",
+    "angular-chart.js": "~0.8.7",
+    "angular-ui-router": "~0.2.15",
+    "angular-strap": "~2.3.6",
+    "ngInfiniteScroll": "~1.2.1",
+    "bootstrap": "~3.3.6",
+    "mdi": "~1.3.41"
+  }
+}

@@ -14,6 +14,7 @@ class CreateResultsTable extends Migration
     {
         Schema::create('results', function (Blueprint $table) {
             $table->increments('id');
+            $table->integer('report_id');
             $table->float('productivity');
             $table->float('quality');
             $table->string('type');

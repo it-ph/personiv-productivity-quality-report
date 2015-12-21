@@ -73,6 +73,7 @@ class PerformanceController extends Controller
      */
     public function store(Request $request)
     {
+        $create_report = false;
         for ($i=0; $i < count($request->all()); $i++) { 
             if($request->input($i.'.include'))
             {
@@ -89,8 +90,24 @@ class PerformanceController extends Controller
                     $i.'.output_error' => 'required|numeric',
                 ]);
 
+                // check if a report is already created
+                if(!$create_report)
+                {
+                    $report = new Report;
+
+                    $report->department_id = $request->input($i.'.department_id');
+                    $report->project_id = $request->input($i.'.project_id');
+                    $report->date_start = $request->input($i.'.date_start');
+                    $report->date_end = $request->input($i.'.date_end');
+
+                    $report->save();
+                    // report 
+                    $create_report = true;
+                }
+
                 $performance = new Performance;
 
+                $performance->report_id = $report->id;
                 $performance->member_id = $request->input($i.'.id');
                 $performance->position_id = $request->input($i.'.position_id');
                 $performance->department_id = $request->input($i.'.department_id');
@@ -112,6 +129,7 @@ class PerformanceController extends Controller
                 $target = Target::where('position_id', $request->input($i.'.position_id'))->where('experience', $request->input($i.'.experience'))->first();
 
                 $result = new Result;
+                $result->report_id = $report->id;
                 // average output / target output * 100 to convert to percentage
                 $result->productivity = round(($performance->average_output / $target->value) * 100);
                 // (1 - output w/error / output) * 100 to convert to percentage
@@ -120,11 +138,6 @@ class PerformanceController extends Controller
                 $result->performance_id = $performance->id;
 
                 $result->save();
-
-                if($i + 1 == count($request->all()))
-                {
-                    $report = 
-                }
             }
         }
 

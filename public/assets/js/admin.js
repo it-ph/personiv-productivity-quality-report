@@ -727,8 +727,6 @@ adminModule
 		var departmentID = Preloader.getDepartment();
 		var projectID = Preloader.get();
 
-		console.log(projectID);
-
 		$scope.position = {};
 		$scope.position.department_id = departmentID;
 		$scope.position.project_id = projectID;
@@ -750,36 +748,30 @@ adminModule
 
 		$scope.productivity = [
 			{
-				'type': 'productivity',
-				'label': 'Productivity',
+				'type': 'Productivity',
 				'experience': 'Beginner',
 			},
 			{
-				'type': 'productivity',
-				'label': 'Productivity',
+				'type': 'Productivity',
 				'experience': 'Moderately Experienced',
 			},
 			{
-				'type': 'productivity',
-				'label': 'Productivity',
+				'type': 'Productivity',
 				'experience': 'Experienced',
 			},
 		];
 
 		$scope.quality = [
 			{
-				'type': 'quality',
-				'label': 'Quality',
+				'type': 'Quality',
 				'experience': 'Beginner',
 			},
 			{
-				'type': 'quality',
-				'label': 'Quality',
+				'type': 'Quality',
 				'experience': 'Moderately Experienced',
 			},
 			{
-				'type': 'quality',
-				'label': 'Quality',
+				'type': 'Quality',
 				'experience': 'Experienced',
 			},
 		];
@@ -827,9 +819,14 @@ adminModule
 									.success(function(){
 										// Stops Preloader
 										Preloader.stop();
+									})
+									.error(function(data){
+										Preloader.error();
 									});
+							})
+							.error(function(){
+								Preloader.error();
 							});
-
 					})
 					.error(function(){
 						Preloader.error();

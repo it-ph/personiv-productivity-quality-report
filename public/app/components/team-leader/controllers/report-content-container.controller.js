@@ -32,7 +32,6 @@ teamLeaderModule
 		}
 
 		$scope.details = {};
-		$scope.date_start = new Date();
 
 		// $scope.setDate = function(date){
 		// 	$scope.minDate = $scope.date_start.setDate($scope.date_start.getDate() + 5);

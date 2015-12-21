@@ -14,7 +14,6 @@ class CreateReportsTable extends Migration
     {
         Schema::create('reports', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('position_id');
             $table->integer('department_id');
             $table->integer('project_id');
             $table->date('date_start');

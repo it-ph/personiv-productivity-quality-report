@@ -21,5 +21,8 @@ sharedModule
 			position: function(id){
 				return $http.get(urlBase + '-position/' + id);
 			},
+			department: function(id){
+				return $http.get(urlBase + '-department/' + id);
+			},
 		}
 	}])

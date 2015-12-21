@@ -6,11 +6,11 @@
 <md-list layout="row" layout-wrap>
 	<md-list-item flex class="md-2-line" ng-repeat="target in targets">
 		<h2 class="md-avatar md-headline purple-bg" layout="row" layout-align="center center">
-			<span class="weight-200 white-text">{{ target.first_letter}}</span>
+			<span class="weight-200 white-text">{{ target.first_letter }}</span>
 		</h2>
 		<div class="md-list-item-text" layout="column" flex>
 			<h3>{{ target.position }}</h3>
-			<h4>{{ target.experience}}</h4>
+			<h4>{{ target.experience}} ({{ target.project }})</h4>
 			<p>{{ target.type }}: {{ target.value }}</p>
 		</div>
 	</md-list-item>

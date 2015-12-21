@@ -51,18 +51,19 @@ Route::get('member-paginate/{teamLeaderID}', 'MemberController@paginateTeamLeade
 Route::get('notification-paginate', 'NotificationController@paginate');
 Route::get('report-paginate', 'ReportController@paginate');
 Route::get('report-paginate/{departmentID}', 'ReportController@paginateDepartment');
+Route::get('report-paginate-details/{departmentID}', 'ReportController@paginateDepartmentDetails');
 
 // Route resource search
 Route::post('department-search', 'DepartmentController@search');
 Route::post('member-search', 'MemberController@search');
 Route::post('notification-search', 'NotificationController@search');
-Route::post('result-search', 'ResultController@search');
-Route::post('target-search', 'TargetController@search');
-Route::post('result-search', 'ResultController@search');
+// Route::post('result-search', 'ResultController@search');
+// Route::post('target-search', 'TargetController@search');
 
 // Other Routes
 Route::get('position-project/{projectID}', 'PositionController@project');
 Route::get('user-team-leader', 'UserController@teamLeader');
 Route::get('member-team-leader/{teamLeaderID}', 'MemberController@teamLeader');
 Route::get('target-position/{positionID}', 'TargetController@position');
+Route::get('target-department/{departmentID}', 'TargetController@department');
 Route::get('project-department/{departmentID}', 'ProjectController@department');
