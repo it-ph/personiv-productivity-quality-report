@@ -3,6 +3,7 @@ sharedModule
 		var dataHolder = null;
 		var user = null;
 		var departmentID = null;
+		var notification = {};
 		return {
 			/* Starts the preloader */
 			preload: function(){
@@ -46,6 +47,12 @@ sharedModule
 			},
 			getDepartment: function(){
 				return departmentID;
+			},
+			setNotification: function(data){
+				notification = data;
+			},
+			getNotification: function(){
+				return notification;
 			},
 		};
 	}]);

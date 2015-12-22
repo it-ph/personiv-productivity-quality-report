@@ -9,14 +9,11 @@ sharedModule
 			show: function(id){
 				return $http.get(urlBase + '/' + id);
 			},
-			store: function(data){
-				return $http.post(urlBase, data);
+			unseen: function(){
+				return $http.get(urlBase + '-unseen');
 			},
-			update: function(id, data){
-				return $http.put(urlBase + '/' + id, data);
-			},
-			delete: function(id){
-				return $http.delete(urlBase + '/' + id);
+			seen: function(id){
+				return $http.put(urlBase + '-seen/' + id);
 			},
 		}
 	}])

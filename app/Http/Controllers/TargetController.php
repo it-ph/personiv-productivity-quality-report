@@ -19,11 +19,13 @@ class TargetController extends Controller
                 'targets.*',
                 'positions.name as position',
                 'projects.name as project',
-                DB::raw('UPPER(LEFT(positions.name, 1)) as first_letter')
+                DB::raw('UPPER(LEFT(targets.experience, 1)) as first_letter')
             )
             ->where('targets.department_id', $department_id)
             ->groupBy('targets.id')
+            ->orderBy('projects.name')
             ->orderBy('positions.name')
+            ->orderBy('targets.experience')
             ->get();
     }
     public function position($position_id)

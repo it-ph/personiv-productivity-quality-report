@@ -50,6 +50,7 @@ Route::resource('report', 'ReportController');
 Route::get('member-paginate/{teamLeaderID}', 'MemberController@paginateTeamLeader');
 Route::get('notification-paginate', 'NotificationController@paginate');
 Route::get('report-paginate', 'ReportController@paginate');
+Route::get('report-paginate-details', 'ReportController@paginateDetails');
 Route::get('report-paginate/{departmentID}', 'ReportController@paginateDepartment');
 Route::get('report-paginate-details/{departmentID}', 'ReportController@paginateDepartmentDetails');
 
@@ -67,3 +68,5 @@ Route::get('member-team-leader/{teamLeaderID}', 'MemberController@teamLeader');
 Route::get('target-position/{positionID}', 'TargetController@position');
 Route::get('target-department/{departmentID}', 'TargetController@department');
 Route::get('project-department/{departmentID}', 'ProjectController@department');
+Route::get('notification-unseen', 'NotificationController@unseen');
+Route::put('notification-seen/{notificationID}', 'NotificationController@seen');

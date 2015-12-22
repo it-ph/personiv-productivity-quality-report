@@ -38,6 +38,9 @@ body {
 .mdi.grey {
   color: #727272; }
 
+.mdi.pink {
+  color: #FF4081; }
+
 .mdi.baseline {
   vertical-align: baseline; }
 
@@ -135,11 +138,23 @@ md-content.purple-bg {
 .purple-bg {
   background: #673AB7; }
 
+.orange-bg {
+  background: #FF9800; }
+
+.blue-bg {
+  background: #2196F3; }
+
+.teal-bg {
+  background: #009688; }
+
 .pink-bg {
   background: #FF4081; }
 
 .blur-white {
   background: rgba(255, 255, 255, 0.1); }
+
+.badge {
+  background: #FF4081; }
 
 .copyrights {
   min-height: 110px;

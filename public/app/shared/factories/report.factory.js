@@ -21,6 +21,9 @@ sharedModule
 			paginate: function(page){
 				return $http.get(urlBase + '-paginate?page=' + page);
 			},
+			paginateDetails: function(page){
+				return $http.get(urlBase + '-paginate-details?page=' + page);
+			},
 			paginateDepartment: function(id, page){
 				return $http.get(urlBase + '-paginate/' + id + '?page=' + page);
 			},

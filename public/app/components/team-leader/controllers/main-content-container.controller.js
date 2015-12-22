@@ -30,6 +30,7 @@ teamLeaderModule
 				Report.paginateDepartmentDetails(user.department_id)
 					.success(function(data){
 						$scope.report.details = data;
+						$scope.report.busy = true;
 						// fetch the custom paginated data
 						Report.paginateDepartment(user.department_id)
 							.success(function(data){
@@ -46,6 +47,7 @@ teamLeaderModule
 										$scope.charts.data[parentKey].push([item.productivity, item.quality]);
 										$scope.charts.series[parentKey].push(item.full_name);
 									});
+								$scope.report.busy = false;
 								});
 								$scope.report.paginateLoad = function(){
 									// kills the function if ajax is busy or pagination reaches last page
@@ -110,6 +112,7 @@ teamLeaderModule
 
 		/* Refreshes the list */
 		$scope.subheader.refresh = function(){
+			$scope.report.show = false;
 			// start preloader
 			Preloader.preload();
 			// clear report
@@ -117,6 +120,7 @@ teamLeaderModule
 			$scope.report.page = 2;
 			$scope.charts.data = [];
 			$scope.charts.series = [];
+			$scope.report.busy = true;
 			Report.paginateDepartmentDetails(user.department_id)
 				.success(function(data){
 					$scope.report.details = data;
@@ -138,7 +142,7 @@ teamLeaderModule
 									$scope.charts.series[parentKey].push(item.full_name);
 								});
 							})
-
+							$scope.report.busy = false;
 							Preloader.stop();
 						})
 						.error(function(){

@@ -1,5 +1,5 @@
 teamLeaderModule
-	.controller('reportContentContainerController', ['$scope', '$state', '$mdDialog', 'Preloader', 'Member', 'Project', 'Position', 'Performance', 'User', function($scope, $state, $mdDialog, Preloader, Member, Project, Position, Performance, User){		
+	.controller('reportContentContainerController', ['$scope', '$state', '$mdDialog', '$mdToast', 'Preloader', 'Member', 'Project', 'Position', 'Performance', 'User', function($scope, $state, $mdDialog, $mdToast, Preloader, Member, Project, Position, Performance, User){		
 		var user = Preloader.getUser();
 		var departmentID = null;
 		$scope.form = {};
@@ -32,11 +32,6 @@ teamLeaderModule
 		}
 
 		$scope.details = {};
-
-		// $scope.setDate = function(date){
-		// 	$scope.minDate = $scope.date_start.setDate($scope.date_start.getDate() + 5);
-		// }
-		// $scope.maxDate = $scope.details.maxDate;
 
 		$scope.showPositions = function(id){
 			Position.project(id)
@@ -104,6 +99,12 @@ teamLeaderModule
 
 				Performance.store($scope.members)
 					.success(function(){
+						$mdToast.show(
+					      	$mdToast.simple()
+						        .content('Report Submitted.')
+						        .position('bottom right')
+						        .hideDelay(3000)
+					    );
 						$state.go('main');
 						Preloader.stop();
 					})

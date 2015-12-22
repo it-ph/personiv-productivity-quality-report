@@ -7,6 +7,8 @@ use App\Performance;
 use App\Target;
 use App\Result;
 use App\Report;
+use App\Notification;
+use App\Events\ReportSubmittedBroadCast;
 use DB;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
@@ -95,12 +97,43 @@ class PerformanceController extends Controller
                 {
                     $report = new Report;
 
+                    $report->user_id = $request->user()->id;
                     $report->department_id = $request->input($i.'.department_id');
                     $report->project_id = $request->input($i.'.project_id');
                     $report->date_start = $request->input($i.'.date_start');
                     $report->date_end = $request->input($i.'.date_end');
 
                     $report->save();
+
+                    // create a notification
+                    $notification = new Notification;
+
+                    $notification->message = 'submitted a ';
+                    $notification->state = 'main.departments';
+                    $notification->event_id = $report->id;
+                    $notification->seen = false;
+
+                    $notification->save();
+
+                    $query = DB::table('reports')
+                        ->join('users', 'users.id', '=', 'reports.user_id')
+                        ->join('projects', 'projects.id', '=', 'reports.project_id')
+                        ->join('notifications', 'notifications.event_id', '=', 'reports.id')
+                        ->select(
+                            'reports.*',
+                            'users.*',
+                            DB::raw('LEFT(users.first_name, 1) as first_letter'),
+                            'projects.*',
+                            'notifications.*'
+                        )
+                        ->where('notifications.event_id', $report->id)
+                        ->get();
+
+                    foreach ($query as $key => $value) {
+                        $notify = $value;
+                    }
+
+                    event(new ReportSubmittedBroadCast($notify)); 
                     // report 
                     $create_report = true;
                 }
@@ -120,7 +153,7 @@ class PerformanceController extends Controller
                 $performance->output_error = $request->input($i.'.output_error');
                 // Round((Output / Hours Worked) * Daily Work Hours)
                 // store the rounded value
-                $performance->average_output = round(($request->input($i.'.output') / $request->input($i.'.hours_worked')) * $request->input($i.'.daily_work_hours'));
+                $performance->average_output = round($request->input($i.'.output') / $request->input($i.'.hours_worked') * $request->input($i.'.daily_work_hours'));
 
                 // save performance to database
                 $performance->save();
@@ -131,8 +164,8 @@ class PerformanceController extends Controller
                 $result = new Result;
                 $result->report_id = $report->id;
                 // average output / target output * 100 to convert to percentage
-                $result->productivity = round(($performance->average_output / $target->value) * 100);
-                // (1 - output w/error / output) * 100 to convert to percentage
+                $result->productivity = round($performance->average_output / $target->value * 100);
+                // 1 - output w/error / output * 100 to convert to percentage
                 $result->quality = round((1 - $performance->output_error / $performance->output) * 100);
                 $result->type = "weekly";
                 $result->performance_id = $performance->id;

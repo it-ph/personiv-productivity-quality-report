@@ -65,9 +65,12 @@ adminModule
 					'toolbar@main.departments': {
 						templateUrl: '/app/components/admin/templates/toolbar.template.html',
 					},
-					'content@main.departments':{
-						templateUrl: '/app/components/admin/templates/content/main.content.template.html',
+					'content@main.departments': {
+						templateUrl: '/app/components/team-leader/templates/content/main.content.template.html',
 					},
+					'right-sidenav@main.departments': {
+						templateUrl: '/app/components/team-leader/templates/sidenavs/main-right.sidenav.html',
+					}
 				}
 			})
 	}]);

@@ -120,6 +120,18 @@ md-content.purple-bg{
 	background: $primary500;
 }
 
+.orange-bg{
+	background: $orange500;
+}
+
+.blue-bg{
+	background: $blue500;
+}
+
+.teal-bg{
+	background: $teal500;
+}
+
 .pink-bg{
 	background: $accentA200;
 }
@@ -128,6 +140,9 @@ md-content.purple-bg{
 	background: rgba(white,0.1);
 }
 
+.badge{
+	background: $accentA200;
+}
 
 .copyrights{
 	min-height: 110px;

@@ -42,7 +42,7 @@ sharedModule
 			});
 	}]);
 sharedModule
-	.controller('mainViewController', ['$scope', '$mdSidenav', 'User', 'Preloader', function($scope, $mdSidenav, User, Preloader){
+	.controller('mainViewController', ['$scope', '$state', '$mdSidenav', '$mdToast', 'User', 'Preloader', 'Notification', function($scope, $state, $mdSidenav, $mdToast, User, Preloader, Notification){
 		/**
 		 * Fetch authenticated user information
 		 *
@@ -51,8 +51,51 @@ sharedModule
 			.success(function(data){
 				$scope.user = data;
 				Preloader.setUser(data);
+				/**
+				 * Pusher
+				 *
+				*/
+				if($scope.user.role == 'admin'){
+					var pusher = new Pusher('23a55307c335e49bc68a', {
+				    	encrypted: true
+				    });
+				    
+				    var channel = pusher.subscribe('notifications');
+				    
+				    channel.bind('App\\Events\\ReportSubmittedBroadCast', function(data) {
+				    	Preloader.setNotification(data.data);
+				    	// pops out the toast
+				    	$mdToast.show({
+					    	controller: 'notificationToastController',
+					      	templateUrl: '/app/components/admin/templates/toasts/notification.toast.html',
+					      	parent : angular.element($('body')),
+					      	hideDelay: 6000,
+					      	position: 'bottom right'
+					    });
+				    	// updates the notification menu
+				    	Notification.unseen()
+				    		.success(function(data){
+				    			$scope.notifications = data;
+				    		});
+				    });
+				}
 			});
 
+		Notification.unseen()
+    		.success(function(data){
+    			$scope.notifications = data;
+    		});
+
+		$scope.viewNotification = function(idx){
+			Notification.seen($scope.notifications[idx].id)
+				.success(function(){
+					$state.go('main.departments', {'departmentID':$scope.notifications[idx].department_id});
+					$scope.notifications.splice(idx, 1);
+				})
+				.error(function(){
+					Preloader.error();
+				});
+		}
 		/**
 		 * Toggles Left Sidenav
 		 *
@@ -60,6 +103,7 @@ sharedModule
 		$scope.toggleSidenav = function(menuId) {
 		    $mdSidenav(menuId).toggle();
 		};
+
 	}]);
 sharedModule
 	.factory('Department', ['$http', function($http){
@@ -124,14 +168,11 @@ sharedModule
 			show: function(id){
 				return $http.get(urlBase + '/' + id);
 			},
-			store: function(data){
-				return $http.post(urlBase, data);
+			unseen: function(){
+				return $http.get(urlBase + '-unseen');
 			},
-			update: function(id, data){
-				return $http.put(urlBase + '/' + id, data);
-			},
-			delete: function(id){
-				return $http.delete(urlBase + '/' + id);
+			seen: function(id){
+				return $http.put(urlBase + '-seen/' + id);
 			},
 		}
 	}])
@@ -230,6 +271,9 @@ sharedModule
 			paginate: function(page){
 				return $http.get(urlBase + '-paginate?page=' + page);
 			},
+			paginateDetails: function(page){
+				return $http.get(urlBase + '-paginate-details?page=' + page);
+			},
 			paginateDepartment: function(id, page){
 				return $http.get(urlBase + '-paginate/' + id + '?page=' + page);
 			},
@@ -318,6 +362,7 @@ sharedModule
 		var dataHolder = null;
 		var user = null;
 		var departmentID = null;
+		var notification = {};
 		return {
 			/* Starts the preloader */
 			preload: function(){
@@ -361,6 +406,12 @@ sharedModule
 			},
 			getDepartment: function(){
 				return departmentID;
+			},
+			setNotification: function(data){
+				notification = data;
+			},
+			getNotification: function(){
+				return notification;
 			},
 		};
 	}]);

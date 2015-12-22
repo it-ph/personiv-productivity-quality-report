@@ -69,101 +69,170 @@ adminModule
 					'toolbar@main.departments': {
 						templateUrl: '/app/components/admin/templates/toolbar.template.html',
 					},
-					'content@main.departments':{
-						templateUrl: '/app/components/admin/templates/content/main.content.template.html',
+					'content@main.departments': {
+						templateUrl: '/app/components/team-leader/templates/content/main.content.template.html',
 					},
+					'right-sidenav@main.departments': {
+						templateUrl: '/app/components/team-leader/templates/sidenavs/main-right.sidenav.html',
+					}
 				}
 			})
 	}]);
 adminModule
-	.controller('departmentContentContainerController', ['$scope', '$stateParams', '$mdDialog', 'Preloader', 'Department', 'Performance', function($scope, $stateParams, $mdDialog, Preloader, Department, Performance){
+	.controller('departmentContentContainerController', ['$scope', '$state', '$stateParams', 'Preloader', 'Department', 'Report', 'Target', 'User', function($scope, $state, $stateParams, Preloader, Department, Report, Target, User){
 		var departmentID = $stateParams.departmentID;
+		/**
+		 * Object for charts
+		 *
+		*/
+		$scope.charts = {};
+		$scope.charts.data = [];
+		$scope.charts.series = [];
+		$scope.charts.labels = ['Productivity', 'Quality'];
+		/**
+		 * Object for report
+		 *
+		*/
+		$scope.report = {};
+		$scope.report.paginated = [];
+		// 2 is default so the next page to be loaded will be page 2 
+		$scope.report.page = 2;
+
+		// fetch the targets
+		Target.department(departmentID)
+			.success(function(data){
+				$scope.targets = data;
+			});
+		// fetch the details of the pagination 
+		Report.paginateDepartmentDetails(departmentID)
+			.success(function(data){
+				$scope.report.details = data;
+				$scope.report.busy = true;
+				// fetch the custom paginated data
+				Report.paginateDepartment(departmentID)
+					.success(function(data){
+						$scope.report.paginated = data;
+						$scope.report.show = true;
+						// set up the charts
+						// reports cycle
+						angular.forEach($scope.report.paginated, function(parentItem, parentKey){
+							// performance cycle 
+							$scope.charts.data.push([]);
+							$scope.charts.series.push([]);
+							angular.forEach(parentItem, function(item, key){
+								// push every productivity and quality of per employee
+								$scope.charts.data[parentKey].push([item.productivity, item.quality]);
+								$scope.charts.series[parentKey].push(item.full_name);
+							});
+						$scope.report.busy = false;
+						});
+						$scope.report.paginateLoad = function(){
+							// kills the function if ajax is busy or pagination reaches last page
+							if($scope.report.busy || ($scope.report.page > $scope.report.details.last_page)){
+								return;
+							}
+							/**
+							 * Executes pagination call
+							 *
+							*/
+							// sets to true to disable pagination call if still busy.
+							$scope.report.busy = true;
+
+							// Calls the next page of pagination.
+							Report.paginateDepartment(departmentID, $scope.report.page)
+								.success(function(data){
+									// increment the page to set up next page for next AJAX Call
+									$scope.report.page++;
+
+									// iterate over each data then splice it to the data array
+									angular.forEach(data, function(item, key){
+										$scope.report.paginated.push(item);
+									});
+									// set up the charts
+									// reports cycle
+									angular.forEach(data, function(parentItem, parentKey){
+										// performance cycle 
+										$scope.charts.data.push([]);
+										$scope.charts.series.push([]);
+										angular.forEach(parentItem, function(item, key){
+											// push every productivity and quality of per employee
+											$scope.charts.data[$scope.charts.data.length -1].push([item.productivity, item.quality]);
+											$scope.charts.series[$scope.charts.series.length -1].push(item.full_name);
+										});
+									});
+									// Enables again the pagination call for next call.
+									$scope.report.busy = false;
+								});
+						}
+					})
+					.error(function(){
+						Preloader.error();
+					});
+			})
+			.error(function(data){
+				Preloader.error();
+			});
+		
 		/**
 		 * Object for toolbar
 		 *
 		*/
 		$scope.toolbar = {};
-		$scope.toolbar.parentState = 'Departments';
-
+		$scope.toolbar.parentState = 'Department';
 		Department.show(departmentID)
 			.success(function(data){
 				$scope.toolbar.childState = data.name;
-			})
-			.error(function(){
-				Preloader.error();
 			});
-
 		/**
 		 * Object for subheader
 		 *
 		*/
 		$scope.subheader = {};
-		$scope.subheader.state = 'departments';
+		$scope.subheader.state = 'department';
 
 		/* Refreshes the list */
 		$scope.subheader.refresh = function(){
 			// start preloader
 			Preloader.preload();
 			// clear report
-			$scope.report.all = {};
+			$scope.report.paginated = [];
 			$scope.report.page = 2;
-			Performance.paginateDepartment(departmentID)
+			$scope.charts.data = [];
+			$scope.charts.series = [];
+			$scope.report.busy = true;
+			$scope.report.show = false;
+			Report.paginateDepartmentDetails(departmentID)
 				.success(function(data){
-					$scope.report.paginated = data.data;
-					$scope.report.paginated.show = true;
-					// stop preload
-					Preloader.stop();
+					$scope.report.details = data;
+					// fetch the custom paginated data
+					Report.paginateDepartment(departmentID)
+						.success(function(data){
+							$scope.report.paginated = data;
+							$scope.report.show = true;
+
+							// set up the charts
+							// reports cycle
+							angular.forEach($scope.report.paginated, function(parentItem, parentKey){
+								// performance cycle 
+								$scope.charts.data.push([]);
+								$scope.charts.series.push([]);
+								angular.forEach(parentItem, function(item, key){
+									// push every productivity and quality of per employee
+									$scope.charts.data[parentKey].push([item.productivity, item.quality]);
+									$scope.charts.series[parentKey].push(item.full_name);
+								});
+							})
+							$scope.report.busy = false;
+							Preloader.stop();
+						})
+						.error(function(){
+							Preloader.error();
+						});
 				})
 				.error(function(){
 					Preloader.error();
 				});
 		};
-		/**
-		 * Object for report
-		 *
-		*/
-		$scope.report = {};
-
-		// 2 is default so the next page to be loaded will be page 2 
-		$scope.report.page = 2;
-		//
-
-		Performance.paginateDepartment(departmentID)
-			.success(function(data){
-				$scope.report.paginated = data.data;
-				$scope.report.paginated.show = true;
-
-				$scope.report.paginateLoad = function(){
-					// kills the function if ajax is busy or pagination reaches last page
-					if($scope.report.busy || ($scope.report.page > $scope.report.paginated.last_page)){
-						return;
-					}
-					/**
-					 * Executes pagination call
-					 *
-					*/
-					// sets to true to disable pagination call if still busy.
-					$scope.report.busy = true;
-
-					// Calls the next page of pagination.
-					Performance.paginateDepartment(departmentID, $scope.report.page)
-						.success(function(data){
-							// increment the page to set up next page for next AJAX Call
-							$scope.report.page++;
-
-							// iterate over each data then splice it to the data array
-							angular.forEach(data.data, function(item, key){
-								$scope.report.paginated.push(item);
-							});
-
-							// Enables again the pagination call for next call.
-							$scope.report.busy = false;
-						});
-				}
-			})
-			.error(function(){
-				Preloader.error();
-			});
 
 		/**
 		 * Status of search bar.
@@ -184,53 +253,27 @@ adminModule
 		 *
 		*/
 		$scope.hideSearchBar = function(){
-			$scope.toolbar.userInput = '';
+			// $scope.report.userInput = '';
 			$scope.searchBar = false;
 		};
 		
 		
 		$scope.searchUserInput = function(){
-			$scope.report.all.show = false;
-			Preloader.preload()
-			Department.search($scope.toolbar)
-				.success(function(data){
-					$scope.report.results = data;
-					Preloader.stop();
-				})
-				.error(function(data){
-					Preloader.error();
-				});
+			// $scope.report.show = false;
+			// Preloader.preload()
+			// report.search($scope.report)
+			// 	.success(function(data){
+			// 		$scope.report.reports = data;
+			// 		Preloader.stop();
+			// 	})
+			// 	.error(function(data){
+			// 		Preloader.error();
+			// 	});
 		};
 
-		$scope.show = function(id){
-			Preloader.set(id);
-			$mdDialog.show({
-		    	controller: 'showPositionDialogController',
-		      	templateUrl: '/app/components/admin/templates/dialogs/show-positions.dialog.template.html',
-		      	parent: angular.element(document.body),
-		    })
-		    .then(function(id){
-		    	if(!id){
-			    	$mdDialog.show({
-				    	controller: 'addPositionDialogController',
-				      	templateUrl: '/app/components/admin/templates/dialogs/add-position.dialog.template.html',
-				      	parent: angular.element(document.body),
-				    })
-				    .then(function(){
-				    	$scope.subheader.refresh();
-				    })
-		    	}
-		    	else{
-		    		Preloader.set(id);
-		    		$mdDialog.show({
-				    	controller: 'showTargetsDialogController',
-				      	templateUrl: '/app/components/admin/templates/dialogs/show-targets.dialog.template.html',
-				      	parent: angular.element(document.body),
-				      	clickOutsideToClose: true,
-				    })
-		    	}
-		    });
-		};
+		// $scope.show = function(id){
+		// 	$state.go('main.units', {'assetID': $stateParams.assetID, 'unitID':id});
+		// };
 		/**
 		 * Object for content view
 		 *
@@ -238,20 +281,17 @@ adminModule
 		$scope.fab = {};
 
 		// $scope.fab.icon = 'mdi-plus';
-		// $scope.fab.label = 'Department';
+		// $scope.fab.label = 'Add';
 		
 		$scope.fab.show = false;
 
 		// $scope.fab.action = function(){
-		// 	$mdDialog.show({
-	 //    		controller: 'addDepartmentDialogController',
-		//       	templateUrl: '/app/components/admin/templates/dialogs/add-department.dialog.template.html',
-		//       	parent: angular.element(document.body),
-		//     })
-		//     .then(function(){
-		//     	$scope.subheader.refresh();
-		//     })
+		// 	return;
 		// };
+
+		$scope.rightSidenav = {};
+
+		$scope.rightSidenav.show = true;
 	}]);
 adminModule
 	.controller('departmentSettingsContentContainerController', ['$scope', '$mdDialog', 'Preloader', 'Department', function($scope, $mdDialog, Preloader, Department){
@@ -444,7 +484,93 @@ adminModule
 		};
 	}]);
 adminModule
-	.controller('mainContentContainerController', ['$scope', '$state', 'Preloader', function($scope, $state, Preloader){
+	.controller('mainContentContainerController', ['$scope', '$state', '$stateParams', 'Preloader', 'Report', 'User', function($scope, $state, $stateParams, Preloader, Report, User){
+		/**
+		 * Object for charts
+		 *
+		*/
+		$scope.charts = {};
+		$scope.charts.data = [];
+		$scope.charts.series = [];
+		$scope.charts.labels = ['Productivity', 'Quality'];
+		/**
+		 * Object for report
+		 *
+		*/
+		$scope.report = {};
+		$scope.report.paginated = [];
+		// 2 is default so the next page to be loaded will be page 2 
+		$scope.report.page = 2;
+
+		// fetch the details of the pagination 
+		Report.paginateDetails()
+			.success(function(data){
+				$scope.report.details = data;
+				$scope.report.busy = true;
+				// fetch the custom paginated data
+				Report.paginate()
+					.success(function(data){
+						$scope.report.paginated = data;
+						$scope.report.show = true;
+						// set up the charts
+						// reports cycle
+						angular.forEach($scope.report.paginated, function(parentItem, parentKey){
+							// performance cycle 
+							$scope.charts.data.push([]);
+							$scope.charts.series.push([]);
+							angular.forEach(parentItem, function(item, key){
+								// push every productivity and quality of per employee
+								$scope.charts.data[parentKey].push([item.productivity, item.quality]);
+								$scope.charts.series[parentKey].push(item.full_name);
+							});
+						$scope.report.busy = false;
+						});
+						$scope.report.paginateLoad = function(){
+							// kills the function if ajax is busy or pagination reaches last page
+							if($scope.report.busy || ($scope.report.page > $scope.report.details.last_page)){
+								return;
+							}
+							/**
+							 * Executes pagination call
+							 *
+							*/
+							// sets to true to disable pagination call if still busy.
+							$scope.report.busy = true;
+
+							// Calls the next page of pagination.
+							Report.paginate($scope.report.page)
+								.success(function(data){
+									// increment the page to set up next page for next AJAX Call
+									$scope.report.page++;
+
+									// iterate over each data then splice it to the data array
+									angular.forEach(data, function(item, key){
+										$scope.report.paginated.push(item);
+									});
+									// set up the charts
+									// reports cycle
+									angular.forEach(data, function(parentItem, parentKey){
+										// performance cycle 
+										$scope.charts.data.push([]);
+										$scope.charts.series.push([]);
+										angular.forEach(parentItem, function(item, key){
+											// push every productivity and quality of per employee
+											$scope.charts.data[$scope.charts.data.length -1].push([item.productivity, item.quality]);
+											$scope.charts.series[$scope.charts.series.length -1].push(item.full_name);
+										});
+									});
+									// Enables again the pagination call for next call.
+									$scope.report.busy = false;
+								});
+						}
+					})
+					.error(function(){
+						Preloader.error();
+					});
+			})
+			.error(function(data){
+				Preloader.error();
+			});
 		
 		/**
 		 * Object for toolbar
@@ -462,64 +588,46 @@ adminModule
 		/* Refreshes the list */
 		$scope.subheader.refresh = function(){
 			// start preloader
-			// Preloader.preload();
-			// // clear log
-			// $scope.log.paginated = {};
-			// $scope.log.page = 2;
-			// Log.paginate()
-			// 	.then(function(data){
-			// 		$scope.log.paginated = data.data;
-			// 		$scope.log.paginated.show = true;
-			// 		// stop preload
-			// 		Preloader.stop();
-			// 	}, function(){
-			// 		Preloader.error();
-			// 	});
+			Preloader.preload();
+			// clear report
+			$scope.report.paginated = [];
+			$scope.report.page = 2;
+			$scope.charts.data = [];
+			$scope.charts.series = [];
+			$scope.report.busy = true;
+			$scope.report.show = false;
+			Report.paginateDetails()
+				.success(function(data){
+					$scope.report.details = data;
+					// fetch the custom paginated data
+					Report.paginate()
+						.success(function(data){
+							$scope.report.paginated = data;
+							$scope.report.show = true;
+
+							// set up the charts
+							// reports cycle
+							angular.forEach($scope.report.paginated, function(parentItem, parentKey){
+								// performance cycle 
+								$scope.charts.data.push([]);
+								$scope.charts.series.push([]);
+								angular.forEach(parentItem, function(item, key){
+									// push every productivity and quality of per employee
+									$scope.charts.data[parentKey].push([item.productivity, item.quality]);
+									$scope.charts.series[parentKey].push(item.full_name);
+								});
+							})
+							$scope.report.busy = false;
+							Preloader.stop();
+						})
+						.error(function(){
+							Preloader.error();
+						});
+				})
+				.error(function(){
+					Preloader.error();
+				});
 		};
-		/**
-		 * Object for log
-		 *
-		*/
-		// $scope.log = {};
-		// // 2 is default so the next page to be loaded will be page 2 
-		// $scope.log.page = 2;
-		//
-
-		// Log.paginate()
-		// 	.then(function(data){
-		// 		$scope.log.paginated = data.data;
-		// 		$scope.log.paginated.show = true;
-
-		// 		$scope.log.paginateLoad = function(){
-		// 			// kills the function if ajax is busy or pagination reaches last page
-		// 			if($scope.log.busy || ($scope.log.page > $scope.log.paginated.last_page)){
-		// 				return;
-		// 			}
-		// 			/**
-		// 			 * Executes pagination call
-		// 			 *
-		// 			*/
-		// 			// sets to true to disable pagination call if still busy.
-		// 			$scope.log.busy = true;
-
-		// 			// Calls the next page of pagination.
-		// 			Log.paginate($scope.log.page)
-		// 				.then(function(data){
-		// 					// increment the page to set up next page for next AJAX Call
-		// 					$scope.log.page++;
-
-		// 					// iterate over each data then splice it to the data array
-		// 					angular.forEach(data.data.data, function(item, key){
-		// 						$scope.log.paginated.data.push(item);
-		// 					});
-
-		// 					// Enables again the pagination call for next call.
-		// 					$scope.log.busy = false;
-		// 				});
-		// 		}
-		// 	}, function(){
-		// 		Preloader.error();
-		// 	});
 
 		/**
 		 * Status of search bar.
@@ -540,17 +648,17 @@ adminModule
 		 *
 		*/
 		$scope.hideSearchBar = function(){
-			// $scope.log.userInput = '';
+			// $scope.report.userInput = '';
 			$scope.searchBar = false;
 		};
 		
 		
 		$scope.searchUserInput = function(){
-			// $scope.log.paginated.show = false;
+			// $scope.report.show = false;
 			// Preloader.preload()
-			// Log.search($scope.log)
+			// report.search($scope.report)
 			// 	.success(function(data){
-			// 		$scope.log.results = data;
+			// 		$scope.report.reports = data;
 			// 		Preloader.stop();
 			// 	})
 			// 	.error(function(data){
@@ -576,7 +684,9 @@ adminModule
 		// 	return;
 		// };
 
-		
+		$scope.rightSidenav = {};
+
+		$scope.rightSidenav.show = true;
 	}]);
 adminModule
 	.controller('teamLeaderContentContainerController', ['$scope', '$mdDialog', 'Preloader', 'User', function($scope, $mdDialog, Preloader, User){
@@ -1031,5 +1141,13 @@ adminModule
 			.success(function(data){
 				$scope.targets = data;
 			});
+	}]);
+adminModule
+	.controller('notificationToastController', ['$scope', '$state', 'Preloader', function($scope, $state, Preloader){
+		$scope.notification = Preloader.getNotification();
+
+		$scope.viewNotification = function(){
+			$state.go($scope.notification.state, {'departmentID': $scope.notification.department_id});
+		};
 	}]);
 //# sourceMappingURL=admin.js.map
