@@ -10,11 +10,129 @@ use App\Http\Controllers\Controller;
 
 class ReportController extends Controller
 {
+    public function searchDepartment(Request $request, $id)
+    {
+        $report_array = array();
+
+        $reports = DB::table('reports')
+            ->join('performances', 'performances.report_id', '=', 'reports.id')
+            ->join('results', 'results.performance_id', '=', 'performances.id')
+            ->join('positions', 'positions.id', '=', 'performances.position_id')
+            ->join('projects', 'projects.id', '=', 'reports.project_id')
+            ->join('members', 'members.id', '=', 'performances.member_id')
+            ->select(
+                'members.*',
+                'reports.id as report_id',
+                'performances.*',
+                DB::raw('DATE_FORMAT(performances.date_start, "%b. %d, %Y") as date_start'),
+                DB::raw('DATE_FORMAT(performances.date_end, "%b. %d, %Y") as date_end'),
+                'results.*',
+                'projects.*',
+                'projects.name as project',
+                'positions.name as position'
+            )
+            ->where('reports.department_id', $id)
+            ->where('reports.date_start', 'like', '%'. $request->userInput .'%')
+            ->orWhere('reports.date_end', 'like', '%'. $request->userInput .'%')
+            ->orWhere('projects.name', 'like', '%'. $request->userInput .'%')
+            ->groupBy('reports.id')
+            ->orderBy('reports.date_start', 'desc')
+            ->get();
+
+        foreach ($reports as $key => $value) {
+            $query = DB::table('reports')
+                ->join('performances', 'performances.report_id', '=', 'reports.id')
+                ->join('results', 'results.performance_id', '=', 'performances.id')
+                ->join('positions', 'positions.id', '=', 'performances.position_id')
+                ->join('projects', 'projects.id', '=', 'reports.project_id')
+                ->join('members', 'members.id', '=', 'performances.member_id')
+                ->select(
+                    'reports.id as report_id',
+                    'members.*',
+                    'performances.*',
+                    DB::raw('DATE_FORMAT(performances.date_start, "%b. %d, %Y") as date_start'),
+                    DB::raw('DATE_FORMAT(performances.date_end, "%b. %d, %Y") as date_end'),
+                    'results.*',
+                    'projects.*',
+                    'projects.name as project',
+                    'positions.name as position'
+                )
+                ->where('performances.report_id', $value->report_id)
+                ->where('results.report_id', $value->report_id)
+                ->groupBy('performances.id')
+                ->orderBy('positions.name')
+                ->orderBy('members.full_name')
+                ->get();
+
+            array_push($report_array, $query);
+        }
+        return response()->json($report_array);
+    }
+
+    public function search(Request $request)
+    {
+        $report_array = array();
+
+        $reports = DB::table('reports')
+            ->join('performances', 'performances.report_id', '=', 'reports.id')
+            ->join('results', 'results.performance_id', '=', 'performances.id')
+            ->join('positions', 'positions.id', '=', 'performances.position_id')
+            ->join('projects', 'projects.id', '=', 'reports.project_id')
+            ->join('members', 'members.id', '=', 'performances.member_id')
+            ->select(
+                'members.*',
+                'reports.id as report_id',
+                'performances.*',
+                DB::raw('DATE_FORMAT(performances.date_start, "%b. %d, %Y") as date_start'),
+                DB::raw('DATE_FORMAT(performances.date_end, "%b. %d, %Y") as date_end'),
+                'results.*',
+                'projects.*',
+                'projects.name as project',
+                'positions.name as position'
+            )
+            ->where('reports.date_start', 'like', '%'. $request->userInput .'%')
+            ->orWhere('reports.date_end', 'like', '%'. $request->userInput .'%')
+            ->orWhere('projects.name', 'like', '%'. $request->userInput .'%')
+            ->groupBy('reports.id')
+            ->orderBy('reports.date_start', 'desc')
+            ->get();
+
+
+
+        foreach ($reports as $key => $value) {
+            $query = DB::table('reports')
+                ->join('performances', 'performances.report_id', '=', 'reports.id')
+                ->join('results', 'results.performance_id', '=', 'performances.id')
+                ->join('positions', 'positions.id', '=', 'performances.position_id')
+                ->join('projects', 'projects.id', '=', 'reports.project_id')
+                ->join('members', 'members.id', '=', 'performances.member_id')
+                ->select(
+                    'reports.id as report_id',
+                    'members.*',
+                    'performances.*',
+                    DB::raw('DATE_FORMAT(performances.date_start, "%b. %d, %Y") as date_start'),
+                    DB::raw('DATE_FORMAT(performances.date_end, "%b. %d, %Y") as date_end'),
+                    'results.*',
+                    'projects.*',
+                    'projects.name as project',
+                    'positions.name as position'
+                )
+                ->where('performances.report_id', $value->report_id)
+                ->where('results.report_id', $value->report_id)
+                ->groupBy('performances.id')
+                ->orderBy('positions.name')
+                ->orderBy('members.full_name')
+                ->get();
+
+            array_push($report_array, $query);
+        }
+
+        return response()->json($report_array);
+    }
     public function paginateDetails()
     {
         return Report::orderBy('created_at', 'desc')->paginate(4);
     }
-
     public function paginate()
     {
         $report = Report::orderBy('created_at', 'desc')->paginate(4);
@@ -46,7 +164,6 @@ class ReportController extends Controller
                 ->get();
 
                 // push each results to custom array
-
                 array_push($report_array, $query);
         }
         return response()->json($report_array);

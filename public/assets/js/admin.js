@@ -24,7 +24,7 @@ adminModule
 						controller: 'mainContentContainerController',
 					},
 					'content@main': {
-						templateUrl: '/app/components/admin/templates/content/main.content.template.html',
+						templateUrl: '/app/shared/templates/main.content.template.html',
 					},
 				}
 			})
@@ -70,7 +70,7 @@ adminModule
 						templateUrl: '/app/components/admin/templates/toolbar.template.html',
 					},
 					'content@main.departments': {
-						templateUrl: '/app/components/team-leader/templates/content/main.content.template.html',
+						templateUrl: '/app/shared/templates/main.content.template.html',
 					},
 					'right-sidenav@main.departments': {
 						templateUrl: '/app/components/team-leader/templates/sidenavs/main-right.sidenav.html',
@@ -86,8 +86,11 @@ adminModule
 		 *
 		*/
 		$scope.charts = {};
+		$scope.charts.result = {};
 		$scope.charts.data = [];
+		$scope.charts.result.data = [];
 		$scope.charts.series = [];
+		$scope.charts.result.series = [];
 		$scope.charts.labels = ['Productivity', 'Quality'];
 		/**
 		 * Object for report
@@ -192,6 +195,7 @@ adminModule
 
 		/* Refreshes the list */
 		$scope.subheader.refresh = function(){
+			$scope.report.show = false;
 			// start preloader
 			Preloader.preload();
 			// clear report
@@ -200,7 +204,6 @@ adminModule
 			$scope.charts.data = [];
 			$scope.charts.series = [];
 			$scope.report.busy = true;
-			$scope.report.show = false;
 			Report.paginateDepartmentDetails(departmentID)
 				.success(function(data){
 					$scope.report.details = data;
@@ -253,22 +256,35 @@ adminModule
 		 *
 		*/
 		$scope.hideSearchBar = function(){
-			// $scope.report.userInput = '';
+			$scope.toolbar.userInput = '';
 			$scope.searchBar = false;
 		};
 		
 		
 		$scope.searchUserInput = function(){
-			// $scope.report.show = false;
-			// Preloader.preload()
-			// report.search($scope.report)
-			// 	.success(function(data){
-			// 		$scope.report.reports = data;
-			// 		Preloader.stop();
-			// 	})
-			// 	.error(function(data){
-			// 		Preloader.error();
-			// 	});
+			$scope.report.show = false;
+			$scope.charts.result.data = [];
+			$scope.charts.result.series = [];
+			Preloader.preload();
+			Report.searchDepartment(departmentID, $scope.toolbar)
+				.success(function(data){
+					$scope.report.results = data;
+					angular.forEach($scope.report.results, function(parentItem, parentKey){
+						// performance cycle 
+						$scope.charts.result.data.push([]);
+						$scope.charts.result.series.push([]);
+						angular.forEach(parentItem, function(item, key){
+							// push every productivity and quality of per employee
+							$scope.charts.result.data[parentKey].push([item.productivity, item.quality]);
+							$scope.charts.result.series[parentKey].push(item.full_name);
+						});
+					});
+					Preloader.stop();
+					console.log($scope.report.results)
+				})
+				.error(function(data){
+					Preloader.error();
+				});
 		};
 
 		// $scope.show = function(id){
@@ -490,8 +506,11 @@ adminModule
 		 *
 		*/
 		$scope.charts = {};
+		$scope.charts.result = {};
 		$scope.charts.data = [];
+		$scope.charts.result.data = [];
 		$scope.charts.series = [];
+		$scope.charts.result.series = [];
 		$scope.charts.labels = ['Productivity', 'Quality'];
 		/**
 		 * Object for report
@@ -587,6 +606,7 @@ adminModule
 
 		/* Refreshes the list */
 		$scope.subheader.refresh = function(){
+			$scope.report.show = false;
 			// start preloader
 			Preloader.preload();
 			// clear report
@@ -595,7 +615,6 @@ adminModule
 			$scope.charts.data = [];
 			$scope.charts.series = [];
 			$scope.report.busy = true;
-			$scope.report.show = false;
 			Report.paginateDetails()
 				.success(function(data){
 					$scope.report.details = data;
@@ -648,22 +667,34 @@ adminModule
 		 *
 		*/
 		$scope.hideSearchBar = function(){
-			// $scope.report.userInput = '';
+			$scope.toolbar.userInput = '';
 			$scope.searchBar = false;
 		};
 		
 		
 		$scope.searchUserInput = function(){
-			// $scope.report.show = false;
-			// Preloader.preload()
-			// report.search($scope.report)
-			// 	.success(function(data){
-			// 		$scope.report.reports = data;
-			// 		Preloader.stop();
-			// 	})
-			// 	.error(function(data){
-			// 		Preloader.error();
-			// 	});
+			$scope.report.show = false;
+			$scope.charts.result.data = [];
+			$scope.charts.result.series = [];
+			Preloader.preload();
+			Report.search($scope.toolbar)
+				.success(function(data){
+					$scope.report.results = data;
+					angular.forEach($scope.report.results, function(parentItem, parentKey){
+						// performance cycle 
+						$scope.charts.result.data.push([]);
+						$scope.charts.result.series.push([]);
+						angular.forEach(parentItem, function(item, key){
+							// push every productivity and quality of per employee
+							$scope.charts.result.data[parentKey].push([item.productivity, item.quality]);
+							$scope.charts.result.series[parentKey].push(item.full_name);
+						});
+					})
+					Preloader.stop();
+				})
+				.error(function(data){
+					Preloader.error();
+				});
 		};
 
 		// $scope.show = function(id){

@@ -20,7 +20,7 @@ teamLeaderModule
 						controller: 'mainContentContainerController',
 					},
 					'content@main': {
-						templateUrl: '/app/components/team-leader/templates/content/main.content.template.html',
+						templateUrl: '/app/shared/templates/main.content.template.html',
 					},
 					'right-sidenav@main': {
 						templateUrl: '/app/components/team-leader/templates/sidenavs/main-right.sidenav.html',

@@ -57,7 +57,8 @@ Route::get('report-paginate-details/{departmentID}', 'ReportController@paginateD
 // Route resource search
 Route::post('department-search', 'DepartmentController@search');
 Route::post('member-search', 'MemberController@search');
-Route::post('notification-search', 'NotificationController@search');
+Route::post('report-search', 'ReportController@search');
+Route::post('report-search-department/{departmentID}', 'ReportController@searchDepartment');
 // Route::post('result-search', 'ResultController@search');
 // Route::post('target-search', 'TargetController@search');
 

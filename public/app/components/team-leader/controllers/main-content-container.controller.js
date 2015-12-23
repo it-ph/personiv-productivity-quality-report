@@ -6,8 +6,11 @@ teamLeaderModule
 		 *
 		*/
 		$scope.charts = {};
+		$scope.charts.result = {};
 		$scope.charts.data = [];
+		$scope.charts.result.data = [];
 		$scope.charts.series = [];
+		$scope.charts.result.series = [];
 		$scope.charts.labels = ['Productivity', 'Quality'];
 		/**
 		 * Object for report
@@ -173,22 +176,34 @@ teamLeaderModule
 		 *
 		*/
 		$scope.hideSearchBar = function(){
-			// $scope.report.userInput = '';
+			$scope.toolbar.userInput = '';
 			$scope.searchBar = false;
 		};
 		
 		
 		$scope.searchUserInput = function(){
-			// $scope.report.show = false;
-			// Preloader.preload()
-			// report.search($scope.report)
-			// 	.success(function(data){
-			// 		$scope.report.reports = data;
-			// 		Preloader.stop();
-			// 	})
-			// 	.error(function(data){
-			// 		Preloader.error();
-			// 	});
+			$scope.report.show = false;
+			$scope.charts.result.data = [];
+			$scope.charts.result.series = [];
+			Preloader.preload();
+			Report.searchDepartment(user.department_id, $scope.toolbar)
+				.success(function(data){
+					$scope.report.results = data;
+					angular.forEach($scope.report.results, function(parentItem, parentKey){
+						// performance cycle 
+						$scope.charts.result.data.push([]);
+						$scope.charts.result.series.push([]);
+						angular.forEach(parentItem, function(item, key){
+							// push every productivity and quality of per employee
+							$scope.charts.result.data[parentKey].push([item.productivity, item.quality]);
+							$scope.charts.result.series[parentKey].push(item.full_name);
+						});
+					})
+					Preloader.stop();
+				})
+				.error(function(data){
+					Preloader.error();
+				});
 		};
 
 		// $scope.show = function(id){

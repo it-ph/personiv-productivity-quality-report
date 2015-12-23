@@ -1,5 +1,5 @@
 <!-- Search reports -->
-<div class="fade-transition" layout="column" flex flex-gt-sm="70" ng-if="report.reports && !report.paginated.show">
+<div class="fade-transition" layout="column" flex flex-gt-sm="70" ng-if="report.results && !report.show">
 	<div layout="row" layout-padding flex ng-repeat="report in report.results | filter: toolbar.userInput">
 		<div flex>
 			<div class="panel panel-default">
@@ -8,10 +8,10 @@
 				</div>
 				<div class="panel-body" layout="column">
 					<!-- Chart	-->
-					<canvas id="bar-{{$index}}" class="chart chart-bar" chart-data="charts.data[$index]" chart-labels="charts.labels" chart-legend="true" chart-series="charts.series[$index]">
+					<canvas id="bar-{{$index}}" class="chart chart-bar" chart-data="charts.result.data[$index]" chart-labels="charts.labels" chart-legend="true" chart-series="charts.result.series[$index]">
 					</canvas>
 					<h2 class="primary-text md-headline">{{ report[0].project }}</h2>
-					<!-- <h3 class="secondary-text md-subhead">{{ report[0].position }}</h3> -->
+					<h3 class="secondary-text md-subhead">Daily Work Hours: {{ report[0].daily_work_hours | number:1 }} hours</h3>
 					<div layout="row" flex>					
 						<table class="table">
 							<tr>
@@ -43,7 +43,7 @@
 								<td>{{ item.hours_worked | number:1 }}</td>
 								<td>{{ item.output | number:1 }}</td>
 								<td>{{ item.output_error | number:1 }}</td>
-								<td>{{ item.average_output }}</td>
+								<td>{{ item.average_output | number:1 }}</td>
 								<td>{{ item.productivity | number:1 }}%</td>
 								<td>{{ item.quality | number:1 }}%</td>
 							</tr>
@@ -53,6 +53,11 @@
 			</div>
 		</div>
 	</div>
+	<md-card ng-if="!report.results.length">
+		<md-card-content>
+			<p>No search results found.</p>
+		</md-card-content>
+	</md-card>
 </div>
 
 <!-- Paginated Data -->
@@ -68,7 +73,7 @@
 					<canvas id="bar-{{$index}}" class="chart chart-bar" chart-data="charts.data[$index]" chart-labels="charts.labels" chart-legend="true" chart-series="charts.series[$index]">
 					</canvas>
 					<h2 class="primary-text md-headline">{{ report[0].project }}</h2>
-					<!-- <h3 class="secondary-text md-subhead">{{ report[0].position }}</h3> -->
+					<h3 class="secondary-text md-subhead">Daily Work Hours: {{ report[0].daily_work_hours | number:1 }} hours</h3>
 					<div layout="row" flex>					
 						<table class="table">
 							<tr>
@@ -100,7 +105,7 @@
 								<td>{{ item.hours_worked | number:1 }}</td>
 								<td>{{ item.output | number:1 }}</td>
 								<td>{{ item.output_error | number:1 }}</td>
-								<td>{{ item.average_output }}</td>
+								<td>{{ item.average_output | number:1 }}</td>
 								<td>{{ item.productivity | number:1 }}%</td>
 								<td>{{ item.quality | number:1 }}%</td>
 							</tr>

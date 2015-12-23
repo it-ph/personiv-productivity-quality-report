@@ -265,9 +265,6 @@ sharedModule
 			update: function(id, data){
 				return $http.put(urlBase + '/' + id, data);
 			},
-			delete: function(id){
-				return $http.delete(urlBase + '/' + id);
-			},
 			paginate: function(page){
 				return $http.get(urlBase + '-paginate?page=' + page);
 			},
@@ -279,6 +276,12 @@ sharedModule
 			},
 			paginateDepartmentDetails: function(id, page){
 				return $http.get(urlBase + '-paginate-details/' + id + '?page=' + page);
+			},
+			search: function(data){
+				return $http.post(urlBase + '-search', data);
+			},
+			searchDepartment: function(id, data){
+				return $http.post(urlBase + '-search-department/' + id, data);
 			},
 		}
 	}])
