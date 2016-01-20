@@ -1,5 +1,5 @@
 adminModule
-	.controller('showTargetsDialogController', ['$scope', '$mdDialog', 'Preloader', 'Target', 'Position', function($scope, $mdDialog, Preloader, Target, Position){
+	.controller('showTargetsDialogController', ['$scope', '$stateParams', '$mdDialog', 'Preloader', 'Target', 'Position', function($scope, $stateParams, $mdDialog, Preloader, Target, Position){
 		var positionID = Preloader.get();
 		
 		$scope.cancel = function(){

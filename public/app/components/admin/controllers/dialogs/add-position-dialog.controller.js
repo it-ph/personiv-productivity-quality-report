@@ -1,7 +1,7 @@
 adminModule
-	.controller('addPositionDialogController', ['$scope', '$mdDialog', 'Preloader', 'Project', 'Position', 'Target', function($scope, $mdDialog, Preloader, Project, Position, Target){
-		var departmentID = Preloader.getDepartment();
-		var projectID = Preloader.get();
+	.controller('addPositionDialogController', ['$scope', '$stateParams', '$mdDialog', 'Preloader', 'Project', 'Position', 'Target', function($scope, $stateParams, $mdDialog, Preloader, Project, Position, Target){
+		var departmentID = $stateParams.departmentID;
+		var projectID = $stateParams.projectID;
 
 		$scope.position = {};
 		$scope.position.department_id = departmentID;
@@ -62,6 +62,7 @@ adminModule
 		}
 
 		$scope.submit = function(){
+			$scope.showErrors = true;
 			if($scope.addPositionForm.$invalid){
 				angular.forEach($scope.addPositionForm.$error, function(field){
 					angular.forEach(field, function(errorField){

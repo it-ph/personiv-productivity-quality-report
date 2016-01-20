@@ -5,11 +5,22 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Member;
 use DB;
+use Carbon\Carbon;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
 class MemberController extends Controller
 {
+    public function updateTenure($team_leader_id)
+    {
+        $members = Member::where('team_leader_id', $team_leader_id)->get();
+
+        foreach ($members as $key => $value) {
+            $tenure = date_diff(Carbon::today(), date_create($value->date_hired))->format("%m");
+            $value->experience = $tenure < 3 ? 'Beginner' : (($tenure > 3 && $tenure < 6) ? 'Moderately Experienced' : 'Experienced');
+            $value->save();
+        }
+    }
     public function search(Request $request)
     {
         return DB::table('members')
@@ -17,7 +28,8 @@ class MemberController extends Controller
             ->select(
                 'members.*',
                 // 'positions.name as position',
-                DB::raw('UPPER(LEFT(members.full_name, 1)) as first_letter')
+                DB::raw('UPPER(LEFT(members.full_name, 1)) as first_letter'),
+                DB::raw('DATE_FORMAT(date_hired, "%b. %d, %Y") as date_hired')
             )
             ->where('members.team_leader_id', $request->team_leader_id)
             ->where('members.full_name', 'like', '%'. $request->userInput .'%')
@@ -33,7 +45,8 @@ class MemberController extends Controller
             ->select(
                 'members.*',
                 // 'positions.name as position',
-                DB::raw('UPPER(LEFT(members.full_name, 1)) as first_letter')
+                DB::raw('UPPER(LEFT(members.full_name, 1)) as first_letter'),
+                DB::raw('DATE_FORMAT(date_hired, "%b. %d, %Y") as date_hired')
             )
             ->where('members.team_leader_id', $team_leader_id)
             // ->orderBy('positions.name')
@@ -46,7 +59,7 @@ class MemberController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index()
-    {
+    {   
         //
     }
 
@@ -70,17 +83,19 @@ class MemberController extends Controller
     {
         $this->validate($request, [
             'full_name' => 'required|string',
-            // 'position_id' => 'required|numeric',
-            'experience' => 'required|string',
+            'date_hired' => 'required|date',
             'team_leader_id' => 'required|numeric',
         ]);
 
         $member = new Member;
 
         $member->full_name = $request->full_name;
-        // $member->position_id = $request->position_id;
-        $member->experience = $request->experience;
+        $member->date_hired = $request->date_hired;
         $member->team_leader_id = $request->team_leader_id;
+
+        // get the difference of months from date hired to present
+        $tenure = date_diff(Carbon::today(), date_create($request->date_hired))->format("%m");
+        $member->experience = $tenure < 3 ? 'Beginner' : (($tenure > 3 && $tenure < 6) ? 'Moderately Experienced' : 'Experienced');
 
         $member->save();
     }

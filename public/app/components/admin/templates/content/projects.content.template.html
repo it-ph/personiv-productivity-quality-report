@@ -1,0 +1,101 @@
+<!-- Search
+<div class="fade-transition" flex ng-if="project.results && !project.show">
+    <div layout="column" flex flex-gt-sm="70" layout-padding layout-margin>
+        <md-card ng-repeat="project in project.results | orderBy:'name' | filter: toolbar.userInput">
+            <md-card-title>
+                <md-card-title-text>
+                    <span class="md-headline">{{ project.name }}</span>
+                    <span class="md-subhead">{{ project.created_at }}</span>
+                </md-card-title-text>
+                <md-card-title-media>
+                    <div class="md-media-sm card-media round pink-bg" layout="row" layout-align="center center">
+                        <span class="md-display-3 white-text">{{ project.first_letter }}</span>
+                    </div>
+                </md-card-title-media>
+            </md-card-title>
+            <md-card-actions layout="row" layout-align="end center">
+                <md-button class="md-primary" ng-click="viewProject(project.id)">Positions</md-button>
+                <md-button class="md-primary" ng-click="viewTarget(project.id)">Targets</md-button>
+            </md-card-actions>
+        </md-card>
+        <md-card ng-if="!project.results.length">
+            <md-card-content>
+                <p class="secondary-text">No records found.</p>
+            </md-card-content>
+        </md-card>
+    </div>
+</div>
+All
+<div class="fade-transition" ng-if="project.show" flex>
+    <div layout="column" flex flex-gt-sm="70" layout-padding layout-margin>
+        <md-card ng-repeat="project in project.all | orderBy:'name' | filter: toolbar.userInput">
+            <md-card-title>
+                <md-card-title-text>
+                    <span class="md-headline">{{ project.name }}</span>
+                    <span class="md-subhead">{{ project.created_at }}</span>
+                </md-card-title-text>
+                <md-card-title-media>
+                    <div class="md-media-sm card-media round pink-bg" layout="row" layout-align="center center">
+                        <span class="md-display-3 white-text">{{ project.first_letter }}</span>
+                    </div>
+                </md-card-title-media>
+            </md-card-title>
+            <md-card-actions layout="row" layout-align="end center">
+                <md-button class="md-primary" ng-click="viewProject(project.id)">Positions</md-button>
+                <md-button class="md-primary" ng-click="viewTarget(project.id)">Targets</md-button>
+            </md-card-actions>
+        </md-card>
+        <md-card ng-if="!project.all.length">
+            <md-card-content>
+                <p class="secondary-text">No records yet.</p>
+            </md-card-content>
+        </md-card>
+    </div>
+</div> -->
+
+
+<!-- Search Results -->
+<div class="fade-transition" layout="column" flex flex-gt-sm="70" ng-if="project.results && !project.show">
+    <div layout-margin layout-padding>
+        <md-card>
+            <md-list>
+                <md-list-item class="md-2-line" ng-click="viewProject(project.id)" layout="row" ng-repeat="project in project.results | filter:toolbar.userInput">
+                    <h2 class="md-avatar md-headline purple-bg" layout="row" layout-align="center center">
+                        <span class="weight-200 white-text">{{ project.first_letter }}</span>
+                    </h2>
+                    <div class="md-list-item-text" layout="column" flex>
+                        <h3>{{ project.name }}</h3>
+                        <h4>{{ project.created_at }}</h4>
+                    </div>
+                </md-list-item>
+            </md-list>
+            <md-card-content ng-if="!project.results.length">
+                <p class="secondary-text">No results found.</p>
+            </md-card-content>
+        </md-card>
+    </div>
+</div>
+
+<!-- All Data -->
+<div class="fade-transition" ng-if="project.show" flex>
+    <div layout="column" flex flex-gt-sm="70">
+        <div layout-margin layout-padding>
+            <md-card>
+                <md-list>
+                    <md-list-item class="md-2-line" ng-click="viewProject(project.id)" layout="row" ng-repeat="project in project.all | filter:toolbar.userInput">
+                        <h2 class="md-avatar md-headline purple-bg" layout="row" layout-align="center center">
+                            <span class="weight-200 white-text">{{ project.first_letter }}</span>
+                        </h2>
+                        <div class="md-list-item-text" layout="column" flex>
+                            <h3>{{ project.name }}</h3>
+                            <h4>{{ project.created_at }}</h4>
+                        </div>
+                    </md-list-item>
+                </md-list>
+                <md-card-content ng-if="!project.all.length">
+                    <p class="secondary-text">No records yet.</p>
+                </md-card-content>
+            </md-card>
+        </div>
+    </div>
+</div>

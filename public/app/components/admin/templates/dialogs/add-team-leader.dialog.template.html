@@ -9,10 +9,10 @@
 				</md-button>
 			</div>
 		</md-toolbar>
-		<md-dialog-content flex layout-padding layout-wrap>
-			<div layout="row" layout-wrap>
+		<md-dialog-content layout="column" flex layout-padding layout-wrap>
+			<div layout="row" layout-wrap flex>
 				<!-- First Name -->
-				<md-input-container flex-sm="100" flex-md="100" flex-gt-lg>
+				<md-input-container flex flex-sm="100" flex-md="100" flex-gt-lg>
 					<label>First Name</label>
 					<input type="text" name="FirstName" required ng-model="user.first_name">
 					<div ng-messages="addTeamLeaderForm.FirstName.$error" ng-if="addTeamLeaderForm.FirstName.$touched">
@@ -20,7 +20,7 @@
 					</div>
 				</md-input-container>
 				<!-- Last Name -->
-				<md-input-container flex-sm="100" flex-md="100" flex-gt-lg>
+				<md-input-container flex flex-sm="100" flex-md="100" flex-gt-lg>
 					<label>Last Name</label>
 					<input type="text" name="LastName" required ng-model="user.last_name">
 					<div ng-messages="addTeamLeaderForm.LastName.$error" ng-if="addTeamLeaderForm.LastName.$touched">
@@ -28,29 +28,31 @@
 					</div>
 				</md-input-container>
 			</div>
-			<!-- Department -->
-			<md-input-container flex>
-				<label>Department</label>
-				<md-select required name="Department" ng-model="user.department_id">
-					<md-option ng-repeat="department in departments" value="{{ department.id }}">
-						{{ department.name }}
-					</md-option>
-				</md-select>
-				<div ng-messages="addTeamLeaderForm.Department.$error" ng-if="addTeamLeaderForm.Department.$touched">
-					<div ng-messages-include="/app/shared/templates/validation-message.html"></div>
-				</div>
-			</md-input-container>
-			<!-- Email -->
-			<md-input-container flex>
-				<label>Email</label>
-				<input type="email" name="Email" ng-model="user.email" required>
-				<div ng-messages="addTeamLeaderForm.Email.$error" ng-if="addTeamLeaderForm.Email.$touched">
-					<div ng-messages-include="/app/shared/templates/validation-message.html"></div>
-				</div>
-			</md-input-container>
-			<div layout="row" layout-wrap>
+			<div layout="column" flex>			
+				<!-- Department -->
+				<md-input-container flex>
+					<label>Department</label>
+					<md-select required name="Department" ng-model="user.department_id">
+						<md-option ng-repeat="department in departments" value="{{ department.id }}">
+							{{ department.name }}
+						</md-option>
+					</md-select>
+					<div ng-messages="addTeamLeaderForm.Department.$error" ng-if="addTeamLeaderForm.Department.$touched">
+						<div ng-messages-include="/app/shared/templates/validation-message.html"></div>
+					</div>
+				</md-input-container>
+				<!-- Email -->
+				<md-input-container flex>
+					<label>Email</label>
+					<input type="email" name="Email" ng-model="user.email" required>
+					<div ng-messages="addTeamLeaderForm.Email.$error" ng-if="addTeamLeaderForm.Email.$touched">
+						<div ng-messages-include="/app/shared/templates/validation-message.html"></div>
+					</div>
+				</md-input-container>
+			</div>
+			<div layout="row" layout-wrap flex>
 				<!-- Password -->
-				<md-input-container flex-sm="100" flex-md="100" flex-gt-lg>
+				<md-input-container flex flex-sm="100" flex-md="100" flex-gt-lg>
 					<label>Password</label>
 					<input type="password" name="Password" ng-model="user.password" required ng-minlength="6">
 					<div ng-messages="addTeamLeaderForm.Password.$error" ng-if="addTeamLeaderForm.Password.$touched">
@@ -59,7 +61,7 @@
 					</div>
 				</md-input-container>
 				<!-- Password Confirmation -->
-				<md-input-container flex-sm="100" flex-md="100" flex-gt-lg>
+				<md-input-container flex flex-sm="100" flex-md="100" flex-gt-lg>
 					<label>Confirm Password</label>
 					<input type="password" name="PasswordConfirmation" ng-model="user.password_confirmation" required ng-minlength="6">
 					<div ng-messages="addTeamLeaderForm.PasswordConfirmation.$error" ng-if="addTeamLeaderForm.PasswordConfirmation.$touched">

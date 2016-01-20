@@ -31,6 +31,7 @@ teamLeaderModule
 		];
 
 		$scope.submit = function(){
+			$scope.showErrors = true;
 			if($scope.addMemberForm.$invalid){
 				angular.forEach($scope.addMemberForm.$error, function(field){
 					angular.forEach(field, function(errorField){

@@ -24,5 +24,11 @@ sharedModule
 			department: function(id){
 				return $http.get(urlBase + '-department/' + id);
 			},
+			productivity : function(id){
+				return $http.get(urlBase + '-productivity/' + id);
+			},
+			quality : function(id){
+				return $http.get(urlBase + '-quality/' + id);
+			},
 		}
 	}])

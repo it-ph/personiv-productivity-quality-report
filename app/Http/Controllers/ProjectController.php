@@ -10,12 +10,23 @@ use App\Http\Controllers\Controller;
 
 class ProjectController extends Controller
 {
+    public function search(Request $request)
+    {
+        return DB::table('projects')
+            ->select('*', DB::raw('UPPER(LEFT(name, 1)) as first_letter'), DB::raw('DATE_FORMAT(created_at, "%h:%i %p, %b. %d, %Y") as created_at'))
+            ->where('name', 'like', '%'. $request->userInput .'%')
+            ->whereNull('deleted_at')
+            ->groupBy('id')
+            ->get();
+    }
+
     public function department($department_id)
     {
         return DB::table('projects')
             ->select(
                 '*',
-                DB::raw('UPPER(LEFT(name,1)) as first_letter')
+                DB::raw('UPPER(LEFT(name,1)) as first_letter'),
+                DB::raw('DATE_FORMAT(created_at, "%h:%i %p, %b. %d, %Y") as created_at')
             )
             ->where('department_id', $department_id)
             ->get();

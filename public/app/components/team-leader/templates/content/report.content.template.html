@@ -16,7 +16,7 @@
 						<!-- Date Start -->
 						<md-input-container flex>
 							<label>Date Start</label>
-							<input type="text" name="DateStart" required ng-model="details.date_start" data-date-format="yyyy-MM-dd" data-max-date="today" data-autoclose="1" bs-datepicker data-timezone="UTC">
+							<input type="text" name="DateStart" ng-change="resetMembers()" required ng-model="details.date_start" data-date-format="yyyy-MM-dd" data-max-date="today" data-autoclose="1" bs-datepicker data-timezone="UTC">
 							<div ng-messages="form.createReportForm.DateStart.$error" ng-if="form.createReportForm.DateStart.$touched">
 								<div ng-messages-include="/app/shared/templates/validation-message.html"></div>
 							</div>
@@ -24,7 +24,7 @@
 						<!-- Date End -->
 						<md-input-container flex>
 							<label>Date End</label>
-							<input type="text" name="DateEnd" required ng-model="details.date_end" data-date-format="yyyy-MM-dd" data-max-date="today" data-min-date="{{details.date_start}}" data-autoclose="1" bs-datepicker data-timezone="UTC">
+							<input type="text" name="DateEnd" required ng-change="resetMembers()" ng-model="details.date_end" data-date-format="yyyy-MM-dd" data-max-date="today" data-min-date="{{details.date_start}}" data-autoclose="1" bs-datepicker data-timezone="UTC">
 							<div ng-messages="form.createReportForm.DateEnd.$error" ng-if="form.createReportForm.DateEnd.$touched">
 								<div ng-messages-include="/app/shared/templates/validation-message.html"></div>
 							</div>
@@ -46,7 +46,7 @@
 						<!-- Daily Work Hours -->
 						<md-input-container flex>
 							<label>Daily Work Hours</label>
-							<md-select name="WorkHours" required ng-model="details.daily_work_hours">
+							<md-select name="WorkHours" ng-change="resetMembers()" required ng-model="details.daily_work_hours">
 								<md-option ng-repeat="hour in hours" value="{{ hour.value }}">
 									{{ hour.value }}
 								</md-option>
@@ -72,10 +72,11 @@
 								</h2>
 								<div class="md-list-item-text" layout="column" flex>
 									<h3>{{ member.full_name }}</h3>
-									<h4>{{ member.experience }}</h4>
+									<h4>Date Hired: {{ member.date_hired }}</h4>
+									<p>{{ member.experience }}</p>
 								</div>
 							</md-list-item>
-							<md-checkbox ng-model="member.include">
+							<md-checkbox ng-change="checkLimit()" ng-model="member.include">
 								<md-tooltip>Mark to Include</md-tooltip>
 							</md-checkbox>
 						</md-list>
@@ -96,7 +97,7 @@
 								<!-- Total Compensated Man-hours -->
 								<md-input-container flex>
 									<label>Total Hours Worked</label>
-									<input name="HoursWorked{{$index}}" type="number" min="0" required ng-model="member.hours_worked">
+									<input name="HoursWorked{{$index}}" type="number" min="0" max="{{limit}}" step="0.5" required ng-model="member.hours_worked">
 									<div ng-messages="form.createReportForm['HoursWorked' + $index].$error" ng-if="form.createReportForm['HoursWorked' + $index].$touched">
 										<div ng-messages-include="/app/shared/templates/validation-message.html"></div>
 									</div>

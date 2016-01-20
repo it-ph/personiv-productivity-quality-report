@@ -1,6 +1,6 @@
 adminModule
-	.controller('addProjectDialogController', ['$scope', '$mdDialog', 'Preloader', 'Department', 'Project', function($scope, $mdDialog, Preloader, Department, Project){
-		var departmentID = Preloader.get();
+	.controller('addProjectDialogController', ['$scope', '$stateParams', '$mdDialog', 'Preloader', 'Department', 'Project', function($scope, $stateParams, $mdDialog, Preloader, Department, Project){
+		var departmentID = $stateParams.departmentID;
 
 		$scope.project = {};
 		$scope.project.department_id = departmentID;
@@ -30,7 +30,7 @@ adminModule
 				*/
 				Project.store($scope.project)
 					.success(function(){
-						// Preloader.stop();
+						Preloader.stop();
 					})
 					.error(function(){
 						Preloader.error();

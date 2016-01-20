@@ -15,6 +15,16 @@ use App\Http\Controllers\Controller;
 
 class PerformanceController extends Controller
 {
+    public function checkLimit(Request $request)
+    {
+        $performance = Performance::where('date_start', $request->date_start)->where('date_end', $request->date_end)->where('daily_work_hours', $request->daily_work_hours)->orderBy('created_at', 'desc')->first();
+        
+        $weekly_work_hours = $request->daily_work_hours * $request->weekly_hours;
+
+        $limit = $weekly_work_hours - $performance->hours_worked;
+
+        return $limit;   
+    }
     public function paginateDepartment($department_id)
     {
         return DB::table('performances')

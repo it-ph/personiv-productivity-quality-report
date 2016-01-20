@@ -24,36 +24,6 @@ adminModule
 					},
 				}
 			})
-			.state('main.department-settings', {
-				url:'department-settings',
-				views: {
-					'content-container': {
-						templateUrl: '/app/components/admin/views/content-container.view.html',
-						controller: 'departmentSettingsContentContainerController',
-					},
-					'toolbar@main.department-settings': {
-						templateUrl: '/app/components/admin/templates/toolbar.template.html',
-					},
-					'content@main.department-settings':{
-						templateUrl: '/app/components/admin/templates/content/settings.content.template.html',
-					},
-				},
-			})
-			.state('main.team-leaders', {
-				url:'team-leaders',
-				views: {
-					'content-container': {
-						templateUrl: '/app/components/admin/views/content-container.view.html',
-						controller: 'teamLeaderContentContainerController',
-					},
-					'toolbar@main.team-leaders': {
-						templateUrl: '/app/components/admin/templates/toolbar.template.html',
-					},
-					'content@main.team-leaders':{
-						templateUrl: '/app/components/admin/templates/content/settings.content.template.html',
-					},
-				},
-			})
 			.state('main.departments', {
 				url: 'departments/{departmentID}',
 				params: {'departmentID':null},
@@ -71,6 +41,68 @@ adminModule
 					'right-sidenav@main.departments': {
 						templateUrl: '/app/components/team-leader/templates/sidenavs/main-right.sidenav.html',
 					}
+				}
+			})
+			.state('main.team-leaders', {
+				url:'team-leaders',
+				views: {
+					'content-container': {
+						templateUrl: '/app/components/admin/views/content-container.view.html',
+						controller: 'teamLeaderContentContainerController',
+					},
+					'toolbar@main.team-leaders': {
+						templateUrl: '/app/components/admin/templates/toolbar.template.html',
+					},
+					'content@main.team-leaders':{
+						templateUrl: '/app/components/admin/templates/content/settings.content.template.html',
+					},
+				},
+			})
+			.state('main.department-settings', {
+				url:'department-settings',
+				views: {
+					'content-container': {
+						templateUrl: '/app/components/admin/views/content-container.view.html',
+						controller: 'departmentSettingsContentContainerController',
+					},
+					'toolbar@main.department-settings': {
+						templateUrl: '/app/components/admin/templates/toolbar.template.html',
+					},
+					'content@main.department-settings':{
+						templateUrl: '/app/components/admin/templates/content/settings.content.template.html',
+					},
+				},
+			})
+			.state('main.projects',{
+				url: 'department-settings/{departmentID}/projects',
+				params: {'departmentID':null},
+				views: {
+					'content-container': {
+						templateUrl: '/app/components/admin/views/content-container.view.html',
+						controller: 'projectsContentContainerController',
+					},
+					'toolbar@main.projects': {
+						templateUrl: '/app/components/admin/templates/toolbar.template.html',
+					},
+					'content@main.projects':{
+						templateUrl: '/app/components/admin/templates/content/projects.content.template.html',
+					},
+				}
+			})
+			.state('main.positions',{
+				url: 'department-settings/{departmentID}/project/{projectID}',
+				params: {'departmentID':null, 'projectID':null},
+				views: {
+					'content-container': {
+						templateUrl: '/app/components/admin/views/content-container.view.html',
+						controller: 'positionsContentContainerController',
+					},
+					'toolbar@main.positions': {
+						templateUrl: '/app/components/admin/templates/toolbar.template.html',
+					},
+					'content@main.positions':{
+						templateUrl: '/app/components/admin/templates/content/positions.content.template.html',
+					},
 				}
 			})
 	}]);

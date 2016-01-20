@@ -9,10 +9,13 @@ teamLeaderModule
 				.success(function(data){
 					$scope.user = data;
 					departmentID = data.department_id;
-					Member.teamLeader(data.id)
-						.success(function(data){
-							$scope.members = data;
-						});
+					Member.updateTenure(data.id)
+						.success(function(){					
+							Member.teamLeader(data.id)
+								.success(function(data){
+									$scope.members = data;
+								});
+						})
 					Project.department(departmentID)
 						.success(function(data){
 							$scope.projects = data;
@@ -113,4 +116,24 @@ teamLeaderModule
 					});
 			}
 		};
+
+		$scope.checkLimit = function(){
+			// gets the number of days worked in a day then multiply it to the daily work hours to get weekly limit
+			$scope.details.weekly_hours = (($scope.details.date_end - $scope.details.date_start) / (1000*60*60*24) + 1) * $scope.details.daily_work_hours;
+			Performance.checkLimit($scope.details)
+				.success(function(data){
+					$scope.limit = data;
+				})
+				.error(function(){
+					$scope.limit = $scope.details.weekly_hours;
+					console.log($scope.details.weekly_hours);
+				});
+		};
+
+		$scope.resetMembers = function(){
+			$scope.checkLimit();
+			angular.forEach($scope.members, function(item){
+				item.hours_worked = null;
+			});
+		}
 	}]);

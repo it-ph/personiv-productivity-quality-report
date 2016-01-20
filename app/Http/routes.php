@@ -56,6 +56,8 @@ Route::get('report-paginate-details/{departmentID}', 'ReportController@paginateD
 
 // Route resource search
 Route::post('department-search', 'DepartmentController@search');
+Route::post('project-search', 'ProjectController@search');
+Route::post('position-search', 'PositionController@search');
 Route::post('member-search', 'MemberController@search');
 Route::post('report-search', 'ReportController@search');
 Route::post('report-search-department/{departmentID}', 'ReportController@searchDepartment');
@@ -71,3 +73,7 @@ Route::get('target-department/{departmentID}', 'TargetController@department');
 Route::get('project-department/{departmentID}', 'ProjectController@department');
 Route::get('notification-unseen', 'NotificationController@unseen');
 Route::put('notification-seen/{notificationID}', 'NotificationController@seen');
+Route::get('target-productivity/{positionID}', 'TargetController@productivity');
+Route::get('target-quality/{positionID}', 'TargetController@quality');
+Route::put('member-update-tenure/{teamLeaderID}', 'MemberController@updateTenure');
+Route::post('performance-check-limit', 'PerformanceController@checkLimit');

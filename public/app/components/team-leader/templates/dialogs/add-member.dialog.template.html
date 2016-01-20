@@ -9,27 +9,29 @@
 				</md-button>
 			</div>
 		</md-toolbar>
-		<md-dialog-content flex layout-padding layout-wrap>
-			<!-- Full Name -->
-			<md-input-container flex>
-				<label>Full Name</label>
-				<input type="text" name="FullName" required ng-model="member.full_name">
-				<div ng-messages="addMemberForm.FullName.$error" ng-if="addMemberForm.FullName.$touched">
-					<div ng-messages-include="/app/shared/templates/validation-message.html"></div>
-				</div>
-			</md-input-container>
-			<!-- Experience -->
-			<md-input-container flex>
-				<label>Experience</label>
-				<md-select required name="Experience" ng-model="member.experience">
-					<md-option ng-repeat="experience in experiences" value="{{ experience.category }}">
-						{{ experience.category }} ({{ experience.duration }})
-					</md-option>
-				</md-select>
-				<div ng-messages="addMemberForm.Experience.$error" ng-if="addMemberForm.Experience.$touched">
-					<div ng-messages-include="/app/shared/templates/validation-message.html"></div>
-				</div>
-			</md-input-container>
+		<md-dialog-content layout="column" flex layout-padding layout-wrap>
+			<div layout="row" flex>			
+				<!-- Full Name -->
+				<md-input-container flex>
+					<label>Full Name</label>
+					<input type="text" name="FullName" required ng-model="member.full_name">
+					<div ng-messages="addMemberForm.FullName.$error" ng-if="addMemberForm.FullName.$touched">
+						<div ng-messages-include="/app/shared/templates/validation-message.html"></div>
+					</div>
+				</md-input-container>
+			</div>
+			<div layout="row" flex>			
+				<md-input-container flex>
+					<label>Date Hired</label>
+					<input type="text" name="DateHired" required ng-model="member.date_hired" data-date-format="yyyy-MM-dd" data-max-date="today" data-autoclose="1" bs-datepicker data-timezone="UTC">
+					<div class="hint" ng-if="!showErrors">
+						<p>yyyy-mm-dd</p>
+					</div>
+					<div ng-messages="form.createReportForm.DateHired.$error" ng-if="form.createReportForm.DateHired.$touched">
+						<div ng-messages-include="/app/shared/templates/validation-message.html"></div>
+					</div>
+				</md-input-container>
+			</div>
 		</md-dialog-content>
 	</form>
 	<div layout="row" layout-align="end center">		

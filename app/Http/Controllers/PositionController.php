@@ -10,6 +10,15 @@ use App\Http\Controllers\Controller;
 
 class PositionController extends Controller
 {
+    public function search(Request $request)
+    {
+        return DB::table('positions')
+            ->select('*', DB::raw('UPPER(LEFT(name, 1)) as first_letter'), DB::raw('DATE_FORMAT(created_at, "%h:%i %p, %b. %d, %Y") as created_at'))
+            ->where('name', 'like', '%'. $request->userInput .'%')
+            ->whereNull('deleted_at')
+            ->groupBy('id')
+            ->get();
+    }
     // fetch positions by project
     public function project($id)
     {
@@ -91,7 +100,21 @@ class PositionController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $this->validate($request, [
+            'name' => 'required|string',
+            // 'department_id' => 'required|numeric',
+            // 'project_id' => 'required|numeric',
+        ]);
+
+        $position = Position::where('id', $id)->first();
+
+        $position->name = $request->name;
+        // $position->department_id = $request->department_id;
+        // $position->project_id = $request->project_id;
+
+        $position->save();
+
+        return $position;
     }
 
     /**

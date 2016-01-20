@@ -24,5 +24,8 @@ sharedModule
 			search: function(data){
 				return $http.post(urlBase + '-search', data);
 			},
+			updateTenure: function(id){
+				return $http.put(urlBase + '-update-tenure/' + id);
+			},
 		}
 	}])

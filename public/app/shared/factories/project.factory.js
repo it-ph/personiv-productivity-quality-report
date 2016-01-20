@@ -21,5 +21,8 @@ sharedModule
 			department: function(id){
 				return $http.get(urlBase + '-department/' + id);
 			},
+			search: function(data){
+				return $http.post(urlBase + '-search', data);
+			},
 		}
 	}])

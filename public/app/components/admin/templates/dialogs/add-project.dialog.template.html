@@ -10,13 +10,15 @@
 			</div>
 		</md-toolbar>
 		<md-dialog-content flex layout-padding layout-wrap>
-			<md-input-container flex>
-				<label>Project Name</label>
-				<input type="text" name="Project" required ng-model="project.name">
-				<div ng-messages="addProjectForm.Project.$error" ng-if="addProjectForm.Project.$touched">
-					<div ng-messages-include="/app/shared/templates/validation-message.html"></div>
-				</div>
-			</md-input-container>
+			<div layout="row">
+				<md-input-container flex>
+					<label>Project Name</label>
+					<input type="text" name="Project" required ng-model="project.name">
+					<div ng-messages="addProjectForm.Project.$error" ng-if="addProjectForm.Project.$touched">
+						<div ng-messages-include="/app/shared/templates/validation-message.html"></div>
+					</div>
+				</md-input-container>
+			</div>
 		</md-dialog-content>
 	</form>
 	<div layout="row" layout-align="end center">		

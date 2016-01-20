@@ -18,5 +18,8 @@ sharedModule
 			delete: function(id){
 				return $http.delete(urlBase + '/' + id);
 			},
+			checkLimit: function(data){
+				return $http.post(urlBase + '-check-limit', data);
+			},
 		}
 	}])

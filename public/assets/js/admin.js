@@ -28,36 +28,6 @@ adminModule
 					},
 				}
 			})
-			.state('main.department-settings', {
-				url:'department-settings',
-				views: {
-					'content-container': {
-						templateUrl: '/app/components/admin/views/content-container.view.html',
-						controller: 'departmentSettingsContentContainerController',
-					},
-					'toolbar@main.department-settings': {
-						templateUrl: '/app/components/admin/templates/toolbar.template.html',
-					},
-					'content@main.department-settings':{
-						templateUrl: '/app/components/admin/templates/content/settings.content.template.html',
-					},
-				},
-			})
-			.state('main.team-leaders', {
-				url:'team-leaders',
-				views: {
-					'content-container': {
-						templateUrl: '/app/components/admin/views/content-container.view.html',
-						controller: 'teamLeaderContentContainerController',
-					},
-					'toolbar@main.team-leaders': {
-						templateUrl: '/app/components/admin/templates/toolbar.template.html',
-					},
-					'content@main.team-leaders':{
-						templateUrl: '/app/components/admin/templates/content/settings.content.template.html',
-					},
-				},
-			})
 			.state('main.departments', {
 				url: 'departments/{departmentID}',
 				params: {'departmentID':null},
@@ -75,6 +45,68 @@ adminModule
 					'right-sidenav@main.departments': {
 						templateUrl: '/app/components/team-leader/templates/sidenavs/main-right.sidenav.html',
 					}
+				}
+			})
+			.state('main.team-leaders', {
+				url:'team-leaders',
+				views: {
+					'content-container': {
+						templateUrl: '/app/components/admin/views/content-container.view.html',
+						controller: 'teamLeaderContentContainerController',
+					},
+					'toolbar@main.team-leaders': {
+						templateUrl: '/app/components/admin/templates/toolbar.template.html',
+					},
+					'content@main.team-leaders':{
+						templateUrl: '/app/components/admin/templates/content/settings.content.template.html',
+					},
+				},
+			})
+			.state('main.department-settings', {
+				url:'department-settings',
+				views: {
+					'content-container': {
+						templateUrl: '/app/components/admin/views/content-container.view.html',
+						controller: 'departmentSettingsContentContainerController',
+					},
+					'toolbar@main.department-settings': {
+						templateUrl: '/app/components/admin/templates/toolbar.template.html',
+					},
+					'content@main.department-settings':{
+						templateUrl: '/app/components/admin/templates/content/settings.content.template.html',
+					},
+				},
+			})
+			.state('main.projects',{
+				url: 'department-settings/{departmentID}/projects',
+				params: {'departmentID':null},
+				views: {
+					'content-container': {
+						templateUrl: '/app/components/admin/views/content-container.view.html',
+						controller: 'projectsContentContainerController',
+					},
+					'toolbar@main.projects': {
+						templateUrl: '/app/components/admin/templates/toolbar.template.html',
+					},
+					'content@main.projects':{
+						templateUrl: '/app/components/admin/templates/content/projects.content.template.html',
+					},
+				}
+			})
+			.state('main.positions',{
+				url: 'department-settings/{departmentID}/project/{projectID}',
+				params: {'departmentID':null, 'projectID':null},
+				views: {
+					'content-container': {
+						templateUrl: '/app/components/admin/views/content-container.view.html',
+						controller: 'positionsContentContainerController',
+					},
+					'toolbar@main.positions': {
+						templateUrl: '/app/components/admin/templates/toolbar.template.html',
+					},
+					'content@main.positions':{
+						templateUrl: '/app/components/admin/templates/content/positions.content.template.html',
+					},
 				}
 			})
 	}]);
@@ -310,7 +342,7 @@ adminModule
 		$scope.rightSidenav.show = true;
 	}]);
 adminModule
-	.controller('departmentSettingsContentContainerController', ['$scope', '$mdDialog', 'Preloader', 'Department', function($scope, $mdDialog, Preloader, Department){
+	.controller('departmentSettingsContentContainerController', ['$scope', '$state', '$mdDialog', 'Preloader', 'Department', function($scope, $state, $mdDialog, Preloader, Department){
 		
 		/**
 		 * Object for toolbar
@@ -392,54 +424,7 @@ adminModule
 		};
 
 		$scope.show = function(id){
-			Preloader.set(id);
-			Preloader.setDepartment(id);
-			$mdDialog.show({
-		    	controller: 'showProjectsDialogController',
-		      	templateUrl: '/app/components/admin/templates/dialogs/show-projects.dialog.template.html',
-		      	parent: angular.element(document.body),
-		    })
-		    .then(function(id){
-		    	if(!id){
-		    		$mdDialog.show({
-				    	controller: 'addProjectDialogController',
-				      	templateUrl: '/app/components/admin/templates/dialogs/add-project.dialog.template.html',
-				      	parent: angular.element(document.body),
-				    })
-				    .then(function(){
-				    	$scope.subheader.refresh();
-				    })
-		    	}
-		    	else{
-					Preloader.set(id);
-					$mdDialog.show({
-				    	controller: 'showPositionDialogController',
-				      	templateUrl: '/app/components/admin/templates/dialogs/show-positions.dialog.template.html',
-				      	parent: angular.element(document.body),
-				    })
-				    .then(function(id){
-				    	if(!id){
-					    	$mdDialog.show({
-						    	controller: 'addPositionDialogController',
-						      	templateUrl: '/app/components/admin/templates/dialogs/add-position.dialog.template.html',
-						      	parent: angular.element(document.body),
-						    })
-						    .then(function(){
-						    	$scope.subheader.refresh();
-						    })
-				    	}
-				    	else{
-				    		Preloader.set(id);
-				    		$mdDialog.show({
-						    	controller: 'showTargetsDialogController',
-						      	templateUrl: '/app/components/admin/templates/dialogs/show-targets.dialog.template.html',
-						      	parent: angular.element(document.body),
-						      	clickOutsideToClose: true,
-						    })
-				    	}
-				    });
-		    	}
-		    })
+			$state.go('main.projects', {'departmentID':id});
 		};
 		/**
 		 * Object for content view
@@ -720,6 +705,262 @@ adminModule
 		$scope.rightSidenav.show = true;
 	}]);
 adminModule
+	.controller('positionsContentContainerController', ['$scope', '$state', '$stateParams', '$mdDialog', 'Department', 'Preloader', 'Project', 'Position', function($scope, $state, $stateParams, $mdDialog, Department, Preloader, Project, Position){
+		/**
+		 * Object for toolbar
+		 *
+		*/
+		var department_id = $stateParams.departmentID;
+		var project_id = $stateParams.projectID;
+		
+		$scope.position = {};
+
+		$scope.toolbar = {};
+		$scope.toolbar.showBack = true;
+		$scope.toolbar.back = function(){
+			$state.go('main.projects', {'departmentID':department_id});
+		}
+		
+		Department.show(department_id)
+			.success(function(data){
+				$scope.toolbar.parentState = data.name;
+			});
+
+		Project.show(project_id)
+			.success(function(data){
+				$scope.toolbar.childState = data.name;
+			})
+		/**
+		 * Object for subheader
+		 *
+		*/
+		$scope.subheader = {};
+		$scope.subheader.state = 'positions';
+
+		$scope.subheader.refresh = function(){
+			Preloader.preload();
+			$scope.position = {};
+			$scope.position.show = false;		
+			Position.project(project_id)
+				.success(function(data){
+					Preloader.stop();
+					$scope.position.all = data;
+					$scope.position.show = true;
+				})
+				.error(function(){
+					Preloader.error();
+				});
+		}
+
+		Position.project(project_id)
+			.success(function(data){
+				$scope.position.all = data;
+				$scope.position.show = true;
+			})
+			.error(function(){
+				Preloader.error();
+			});
+
+		/**
+		 * Object for content view
+		 *
+		*/
+		$scope.fab = {};
+
+		$scope.fab.icon = 'mdi-plus';
+		$scope.fab.label = 'Position';
+		
+		$scope.fab.show = true;
+
+		$scope.fab.action = function(){
+			$mdDialog.show({
+		    	controller: 'addPositionDialogController',
+		      	templateUrl: '/app/components/admin/templates/dialogs/add-position.dialog.template.html',
+		      	parent: angular.element(document.body),
+		    })
+		    .then(function(){
+		    	$scope.subheader.refresh();
+		    })
+		};
+
+		/**
+		 * Status of search bar.
+		 *
+		*/
+		$scope.searchBar = false;
+
+		/**
+		 * Reveals the search bar.
+		 *
+		*/
+		$scope.showSearchBar = function(){
+			$scope.searchBar = true;
+		};
+
+		/**
+		 * Hides the search bar.
+		 *
+		*/
+		$scope.hideSearchBar = function(){
+			$scope.toolbar.userInput = '';
+			$scope.searchBar = false;
+		};
+		
+		
+		$scope.searchUserInput = function(){
+			$scope.project.show = false;
+			Preloader.preload()
+			Position.search($scope.toolbar)
+				.success(function(data){
+					$scope.project.results = data;
+					Preloader.stop();
+				})
+				.error(function(data){
+					Preloader.error();
+				});
+		};
+
+		$scope.viewProject = function(id){
+			$state.go('main.positions', {'departmentID':department_id, 'projectID':id});
+		}
+
+		$scope.edit = function(id){
+			Preloader.set(id);
+			$mdDialog.show({
+		    	controller: 'editPositionDialogController',
+		      	templateUrl: '/app/components/admin/templates/dialogs/edit-position.dialog.template.html',
+		      	parent: angular.element(document.body),
+		    })
+		    .then(function(){
+		    	$scope.subheader.refresh();
+		    });
+		}
+	}])
+adminModule
+	.controller('projectsContentContainerController', ['$scope', '$state', '$stateParams', '$mdDialog', 'Department', 'Preloader', 'Project', function($scope, $state, $stateParams, $mdDialog, Department, Preloader, Project){
+		/**
+		 * Object for toolbar
+		 *
+		*/
+		var department_id = $stateParams.departmentID;
+		$scope.project = {};
+
+		$scope.toolbar = {};
+		$scope.toolbar.showBack = true;
+		$scope.toolbar.back = function(){
+			$state.go('main.department-settings');
+		}
+		
+		Department.show(department_id)
+			.success(function(data){
+				$scope.toolbar.parentState = data.name;
+			});
+
+		$scope.toolbar.childState = 'Projects';
+		/**
+		 * Object for subheader
+		 *
+		*/
+		$scope.subheader = {};
+		$scope.subheader.state = 'projects';
+
+		$scope.subheader.refresh = function(){
+			Preloader.preload();
+			$scope.project = {};
+			$scope.project.show = false;		
+			Project.department(department_id)
+				.success(function(data){
+					$scope.project.all = data;
+					$scope.project.show = true;
+					Preloader.stop();
+				})
+				.error(function(){
+					Preloader.error();
+				});
+		}
+
+		Project.department(department_id)
+			.success(function(data){
+				$scope.project.all = data;
+				$scope.project.show = true;
+			})
+			.error(function(){
+				Preloader.error();
+			});
+		/**
+		 * Object for content view
+		 *
+		*/
+		$scope.fab = {};
+
+		$scope.fab.icon = 'mdi-plus';
+		$scope.fab.label = 'Project';
+		
+		$scope.fab.show = true;
+
+		$scope.fab.action = function(){
+			$mdDialog.show({
+			    	controller: 'addProjectDialogController',
+			      	templateUrl: '/app/components/admin/templates/dialogs/add-project.dialog.template.html',
+			      	parent: angular.element(document.body),
+			    })
+			    .then(function(){
+			    	$scope.subheader.refresh();
+			    })
+		};
+
+		/**
+		 * Status of search bar.
+		 *
+		*/
+		$scope.searchBar = false;
+
+		/**
+		 * Reveals the search bar.
+		 *
+		*/
+		$scope.showSearchBar = function(){
+			$scope.searchBar = true;
+		};
+
+		/**
+		 * Hides the search bar.
+		 *
+		*/
+		$scope.hideSearchBar = function(){
+			$scope.toolbar.userInput = '';
+			$scope.searchBar = false;
+		};
+		
+		
+		$scope.searchUserInput = function(){
+			$scope.project.show = false;
+			Preloader.preload()
+			Project.search($scope.toolbar)
+				.success(function(data){
+					$scope.project.results = data;
+					Preloader.stop();
+				})
+				.error(function(data){
+					Preloader.error();
+				});
+		};
+
+		$scope.viewProject = function(id){
+			$state.go('main.positions', {'departmentID':department_id, 'projectID':id});
+		}
+
+		$scope.viewTarget = function(id){
+			Preloader.set(id);
+			$mdDialog.show({
+		    	controller: 'showTargetsDialogController',
+		      	templateUrl: '/app/components/admin/templates/dialogs/show-targets.dialog.template.html',
+		      	parent: angular.element(document.body),
+		      	clickOutsideToClose: true,
+		    });
+		}
+	}])
+adminModule
 	.controller('teamLeaderContentContainerController', ['$scope', '$mdDialog', 'Preloader', 'User', function($scope, $mdDialog, Preloader, User){
 		/**
 		 * Object for toolbar
@@ -864,9 +1105,9 @@ adminModule
 		}
 	}]);
 adminModule
-	.controller('addPositionDialogController', ['$scope', '$mdDialog', 'Preloader', 'Project', 'Position', 'Target', function($scope, $mdDialog, Preloader, Project, Position, Target){
-		var departmentID = Preloader.getDepartment();
-		var projectID = Preloader.get();
+	.controller('addPositionDialogController', ['$scope', '$stateParams', '$mdDialog', 'Preloader', 'Project', 'Position', 'Target', function($scope, $stateParams, $mdDialog, Preloader, Project, Position, Target){
+		var departmentID = $stateParams.departmentID;
+		var projectID = $stateParams.projectID;
 
 		$scope.position = {};
 		$scope.position.department_id = departmentID;
@@ -927,6 +1168,7 @@ adminModule
 		}
 
 		$scope.submit = function(){
+			$scope.showErrors = true;
 			if($scope.addPositionForm.$invalid){
 				angular.forEach($scope.addPositionForm.$error, function(field){
 					angular.forEach(field, function(errorField){
@@ -976,8 +1218,8 @@ adminModule
 		}
 	}]);
 adminModule
-	.controller('addProjectDialogController', ['$scope', '$mdDialog', 'Preloader', 'Department', 'Project', function($scope, $mdDialog, Preloader, Department, Project){
-		var departmentID = Preloader.get();
+	.controller('addProjectDialogController', ['$scope', '$stateParams', '$mdDialog', 'Preloader', 'Department', 'Project', function($scope, $stateParams, $mdDialog, Preloader, Department, Project){
+		var departmentID = $stateParams.departmentID;
 
 		$scope.project = {};
 		$scope.project.department_id = departmentID;
@@ -1007,7 +1249,7 @@ adminModule
 				*/
 				Project.store($scope.project)
 					.success(function(){
-						// Preloader.stop();
+						Preloader.stop();
 					})
 					.error(function(){
 						Preloader.error();
@@ -1085,6 +1327,139 @@ adminModule
 		}
 	}]);
 adminModule
+	.controller('editPositionDialogController', ['$scope', '$stateParams', '$mdDialog', 'Preloader', 'Project', 'Position', 'Target',  function($scope, $stateParams, $mdDialog, Preloader, Project, Position, Target){
+		var departmentID = $stateParams.departmentID;
+		var projectID = $stateParams.projectID;
+		var positionID = Preloader.get();
+
+		// $scope.position = {};
+		// $scope.position.department_id = departmentID;
+		// $scope.position.project_id = projectID;
+
+		Position.show(positionID)
+			.success(function(data){
+				$scope.position = data;
+			})
+			.error(function(){
+				Preloader.error();
+			})
+
+
+		$scope.experiences = [
+			{
+				'name': 'Beginner',
+				'duration': 'less than 3 months',
+			},
+			{
+				'name': 'Moderately Experienced',
+				'duration': '3 to 6 months',
+			},
+			{
+				'name': 'Experienced',
+				'duration': '6 months and beyond',
+			},
+		];
+
+		Target.productivity(positionID)
+			.success(function(data){
+				$scope.productivity = data;
+			});
+
+		// $scope.productivity = [
+		// 	{
+		// 		'type': 'Productivity',
+		// 		'experience': 'Beginner',
+		// 	},
+		// 	{
+		// 		'type': 'Productivity',
+		// 		'experience': 'Moderately Experienced',
+		// 	},
+		// 	{
+		// 		'type': 'Productivity',
+		// 		'experience': 'Experienced',
+		// 	},
+		// ];
+
+		Target.quality(positionID)
+			.success(function(data){
+				$scope.quality = data;
+			});
+
+		// $scope.quality = [
+		// 	{
+		// 		'type': 'Quality',
+		// 		'experience': 'Beginner',
+		// 	},
+		// 	{
+		// 		'type': 'Quality',
+		// 		'experience': 'Moderately Experienced',
+		// 	},
+		// 	{
+		// 		'type': 'Quality',
+		// 		'experience': 'Experienced',
+		// 	},
+		// ];
+
+		Project.show(projectID)
+			.success(function(data){
+				$scope.project = data;
+			});
+
+		$scope.cancel = function(){
+			$mdDialog.cancel();
+		}
+
+		$scope.submit = function(){
+			$scope.showErrors = true;
+			if($scope.editPositionForm.$invalid){
+				angular.forEach($scope.editPositionForm.$error, function(field){
+					angular.forEach(field, function(errorField){
+						errorField.$setTouched();
+					});
+				});
+			}
+			else{
+				/* Starts Preloader */
+				Preloader.preload();
+				/**
+				 * Stores Single Record
+				*/
+				Position.update(positionID, $scope.position)
+					.success(function(data){
+						// angular.forEach($scope.productivity, function(item){
+						// 	item.position_id = data.id;
+						// 	item.department_id = departmentID;
+						// 	item.project_id = projectID;
+						// });
+
+						// angular.forEach($scope.quality, function(item){
+						// 	item.position_id = data.id;
+						// 	item.department_id = departmentID;
+						// 	item.project_id = projectID;
+						// });
+
+						Target.update(positionID, $scope.productivity)
+							.success(function(){
+								Target.update(positionID, $scope.quality)
+									.success(function(){
+										// Stops Preloader
+										Preloader.stop();
+									})
+									.error(function(data){
+										Preloader.error();
+									});
+							})
+							.error(function(){
+								Preloader.error();
+							});
+					})
+					.error(function(){
+						Preloader.error();
+					});
+			}
+		}
+	}]);
+adminModule
 	.controller('showMembersDialogController', ['$scope', '$mdDialog', 'Preloader', 'User', 'Member', function($scope, $mdDialog, Preloader, User, Member){
 		var teamLeaderID = Preloader.get();
 		$scope.cancel = function(){
@@ -1156,7 +1531,7 @@ adminModule
 
 	}]);
 adminModule
-	.controller('showTargetsDialogController', ['$scope', '$mdDialog', 'Preloader', 'Target', 'Position', function($scope, $mdDialog, Preloader, Target, Position){
+	.controller('showTargetsDialogController', ['$scope', '$stateParams', '$mdDialog', 'Preloader', 'Target', 'Position', function($scope, $stateParams, $mdDialog, Preloader, Target, Position){
 		var positionID = Preloader.get();
 		
 		$scope.cancel = function(){

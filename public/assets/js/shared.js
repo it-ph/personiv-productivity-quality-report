@@ -155,6 +155,9 @@ sharedModule
 			search: function(data){
 				return $http.post(urlBase + '-search', data);
 			},
+			updateTenure: function(id){
+				return $http.put(urlBase + '-update-tenure/' + id);
+			},
 		}
 	}])
 sharedModule
@@ -195,6 +198,9 @@ sharedModule
 			},
 			delete: function(id){
 				return $http.delete(urlBase + '/' + id);
+			},
+			checkLimit: function(data){
+				return $http.post(urlBase + '-check-limit', data);
 			},
 		}
 	}])
@@ -245,6 +251,9 @@ sharedModule
 			},
 			department: function(id){
 				return $http.get(urlBase + '-department/' + id);
+			},
+			search: function(data){
+				return $http.post(urlBase + '-search', data);
 			},
 		}
 	}])
@@ -332,6 +341,12 @@ sharedModule
 			},
 			department: function(id){
 				return $http.get(urlBase + '-department/' + id);
+			},
+			productivity : function(id){
+				return $http.get(urlBase + '-productivity/' + id);
+			},
+			quality : function(id){
+				return $http.get(urlBase + '-quality/' + id);
 			},
 		}
 	}])

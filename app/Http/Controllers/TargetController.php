@@ -10,6 +10,14 @@ use App\Http\Controllers\Controller;
 
 class TargetController extends Controller
 {
+    public function productivity($position_id)
+    {
+        return Target::where('position_id', $position_id)->where('type', 'Productivity')->get();
+    }
+    public function quality($position_id)
+    {
+        return Target::where('position_id', $position_id)->where('type', 'Quality')->get();
+    }
     public function department($department_id)
     {
         return DB::table('targets')
@@ -122,7 +130,28 @@ class TargetController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        for ($i=0; $i < count($request->all()); $i++) { 
+            
+            $this->validate($request, [
+                $i.'.value' => 'required|numeric',
+                // $i.'.type' => 'required|string',
+                // $i.'.experience' => 'required|string',
+                // $i.'.position_id' => 'required|numeric',
+                // $i.'.project_id' => 'required|numeric',
+                // $i.'.department_id' => 'required|numeric',
+            ]);
+
+            $target = Target::where('id', $request->input($i.'.id'))->first();
+
+            $target->value = $request->input($i.'.value');
+            // $target->type = $request->input($i.'.type');
+            // $target->experience = $request->input($i.'.experience');
+            // $target->position_id = $request->input($i.'.position_id');
+            // $target->project_id = $request->input($i.'.project_id');
+            // $target->department_id = $request->input($i.'.department_id');
+
+            $target->save();
+        }
     }
 
     /**

@@ -1,5 +1,5 @@
 adminModule
-	.controller('departmentSettingsContentContainerController', ['$scope', '$mdDialog', 'Preloader', 'Department', function($scope, $mdDialog, Preloader, Department){
+	.controller('departmentSettingsContentContainerController', ['$scope', '$state', '$mdDialog', 'Preloader', 'Department', function($scope, $state, $mdDialog, Preloader, Department){
 		
 		/**
 		 * Object for toolbar
@@ -81,54 +81,7 @@ adminModule
 		};
 
 		$scope.show = function(id){
-			Preloader.set(id);
-			Preloader.setDepartment(id);
-			$mdDialog.show({
-		    	controller: 'showProjectsDialogController',
-		      	templateUrl: '/app/components/admin/templates/dialogs/show-projects.dialog.template.html',
-		      	parent: angular.element(document.body),
-		    })
-		    .then(function(id){
-		    	if(!id){
-		    		$mdDialog.show({
-				    	controller: 'addProjectDialogController',
-				      	templateUrl: '/app/components/admin/templates/dialogs/add-project.dialog.template.html',
-				      	parent: angular.element(document.body),
-				    })
-				    .then(function(){
-				    	$scope.subheader.refresh();
-				    })
-		    	}
-		    	else{
-					Preloader.set(id);
-					$mdDialog.show({
-				    	controller: 'showPositionDialogController',
-				      	templateUrl: '/app/components/admin/templates/dialogs/show-positions.dialog.template.html',
-				      	parent: angular.element(document.body),
-				    })
-				    .then(function(id){
-				    	if(!id){
-					    	$mdDialog.show({
-						    	controller: 'addPositionDialogController',
-						      	templateUrl: '/app/components/admin/templates/dialogs/add-position.dialog.template.html',
-						      	parent: angular.element(document.body),
-						    })
-						    .then(function(){
-						    	$scope.subheader.refresh();
-						    })
-				    	}
-				    	else{
-				    		Preloader.set(id);
-				    		$mdDialog.show({
-						    	controller: 'showTargetsDialogController',
-						      	templateUrl: '/app/components/admin/templates/dialogs/show-targets.dialog.template.html',
-						      	parent: angular.element(document.body),
-						      	clickOutsideToClose: true,
-						    })
-				    	}
-				    });
-		    	}
-		    })
+			$state.go('main.projects', {'departmentID':id});
 		};
 		/**
 		 * Object for content view
