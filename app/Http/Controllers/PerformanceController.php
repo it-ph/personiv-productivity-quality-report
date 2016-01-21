@@ -17,13 +17,16 @@ class PerformanceController extends Controller
 {
     public function checkLimit(Request $request)
     {
-        $performance = Performance::where('date_start', $request->date_start)->where('date_end', $request->date_end)->where('daily_work_hours', $request->daily_work_hours)->orderBy('created_at', 'desc')->first();
+        $date_start = date_create($request->date_start)->format("Y-m-d");
+        $date_end = date_create($request->date_end)->format("Y-m-d");
+
+        $performance = Performance::where('date_start', 'like', '%'.$date_start.'%')->where('date_end', 'like', '%'.$date_end.'%')->where('daily_work_hours', 'like', $request->daily_work_hours.'%')->orderBy('created_at', 'desc')->firstOrFail();
         
-        $weekly_work_hours = $request->daily_work_hours * $request->weekly_hours;
+        // $weekly_work_hours = $request->daily_work_hours * $request->weekly_hours;
 
-        $limit = $weekly_work_hours - $performance->hours_worked;
+        $limit = $request->weekly_hours - $performance->hours_worked;
 
-        return $limit;   
+        return round($limit,1);
     }
     public function paginateDepartment($department_id)
     {

@@ -320,6 +320,13 @@ teamLeaderModule
 		$scope.rightSidenav = {};
 
 		$scope.rightSidenav.show = true;
+
+		$scope.editReport = function(id){
+			console.log(id);
+		};
+		$scope.downloadReport = function(id){
+			console.log(id);
+		};
 	}]);
 teamLeaderModule
 	.controller('membersContentContainerController', ['$scope', '$mdDialog', 'Preloader', 'Member', 'User', function($scope, $mdDialog, Preloader, Member, User){

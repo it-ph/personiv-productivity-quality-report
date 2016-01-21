@@ -1,17 +1,31 @@
 <!-- Search reports -->
 <div class="fade-transition" layout="column" flex flex-gt-sm="70" ng-if="report.results && !report.show">
-	<div layout="row" layout-padding flex ng-repeat="report in report.results | filter: toolbar.userInput">
+	<div layout="row" layout-padding flex ng-repeat="details in report.results | filter: toolbar.userInput">
 		<div flex>
 			<div class="panel panel-default">
 				<div class="panel-heading">
-					<span class="primary-text md-title">{{ report[0].date_start }} to {{ report[0].date_end }}</span>
+					<span class="primary-text md-title">{{ details[0].date_start }} to {{ details[0].date_end }}</span>
 				</div>
 				<div class="panel-body" layout="column">
 					<!-- Chart	-->
 					<canvas id="bar-{{$index}}" class="chart chart-bar" chart-data="charts.result.data[$index]" chart-labels="charts.labels" chart-legend="true" chart-series="charts.result.series[$index]">
 					</canvas>
-					<h2 class="primary-text md-headline">{{ report[0].project }}</h2>
-					<h3 class="secondary-text md-subhead">Daily Work Hours: {{ report[0].daily_work_hours | number:1 }} hours</h3>
+					<h2 class="primary-text md-headline">{{ details[0].project }}</h2>
+					<div layout="row" layout-align="space-between center">
+						<h3 class="secondary-text md-subhead">Daily Work Hours: {{ details[0].daily_work_hours | number:1 }} hours</h3>
+						<div layout="row">
+							<!-- Edit -->
+							<md-button class="md-fab md-mini md-primary" ng-click="editReport(report.details.data[$index].id)">
+								<md-icon class="mdi mdi-pencil"></md-icon>
+								<md-tooltip>Edit</md-tooltip>
+							</md-button>
+							<!-- Download -->
+							<md-button class="md-fab md-mini" ng-click="downloadReport(report.details.data[$index].id)">
+								<md-icon class="mdi mdi-download"></md-icon>
+								<md-tooltip>Download</md-tooltip>
+							</md-button>
+						</div>
+					</div>
 					<div layout="row" flex>					
 						<table class="table">
 							<tr>
@@ -34,7 +48,7 @@
 									<md-tooltip>1 - Output w/Error(s) / Output</md-tooltip>
 								</th>
 							</tr>
-							<tr ng-repeat="item in report | filter: toolbar.userInput">
+							<tr ng-repeat="item in details | filter: toolbar.userInput">
 								<td>{{ item.full_name }}</td>
 								<td>{{ item.position }}</td>
 								<td>{{ item.experience }}</td>
@@ -60,25 +74,38 @@
 
 <!-- Paginated Data -->
 <div class="fade-transition" ng-if="report.show" flex infinite-scroll='report.paginateLoad()' infinite-scroll-distance="2" infinite-scroll-disabled="report.busy" infinite-scroll-parent>
-	<div layout="row" layout-padding flex ng-repeat="report in report.paginated | filter: toolbar.userInput">
+	<div layout="row" layout-padding flex ng-repeat="details in report.paginated | filter: toolbar.userInput">
 		<div flex>
 			<div class="panel panel-default">
 				<div class="panel-heading">
-					<span class="primary-text md-title">{{ report[0].date_start }} to {{ report[0].date_end }}</span>
+					<span class="primary-text md-title">{{ details[0].date_start }} to {{ details[0].date_end }}</span>
 				</div>
 				<div class="panel-body" layout="column">
 					<!-- Chart	-->
 					<canvas id="bar-{{$index}}" class="chart chart-bar" chart-data="charts.data[$index]" chart-labels="charts.labels" chart-legend="true" chart-series="charts.series[$index]">
 					</canvas>
-					<h2 class="primary-text md-headline">{{ report[0].project }}</h2>
-					<h3 class="secondary-text md-subhead">Daily Work Hours: {{ report[0].daily_work_hours | number:1 }} hours</h3>
+					<h2 class="primary-text md-headline">{{ details[0].project }}</h2>
+					<div layout="row" layout-align="space-between center">
+						<h3 class="secondary-text md-subhead">Daily Work Hours: {{ details[0].daily_work_hours | number:1 }} hours</h3>
+						<div layout="row">
+							<!-- Edit -->
+							<md-button class="md-fab md-mini md-primary" ng-click="editReport(report.details.data[$index].id)">
+								<md-icon class="mdi mdi-pencil"></md-icon>
+								<md-tooltip>Edit</md-tooltip>
+							</md-button>
+							<!-- Download -->
+							<md-button class="md-fab md-mini" href="/report-download/{{ report.details.data[$index].id }}" target="_blank">
+								<md-icon class="mdi mdi-download"></md-icon>
+								<md-tooltip>Download</md-tooltip>
+							</md-button>
+						</div>
+					</div>
 					<div layout="row" flex>					
 						<table class="table">
 							<tr>
 								<th>Name</th>
 								<th>Position</th>
 								<th>Experience</th>
-								<th>Shift Hours</th>
 								<th>Hours Worked</th>
 								<th>Output</th>
 								<th>Output w/Error(s)</th>
@@ -95,11 +122,10 @@
 									<md-tooltip>1 - Output w/Error(s) / Output</md-tooltip>
 								</th>
 							</tr>
-							<tr ng-repeat="item in report | filter: toolbar.userInput">
+							<tr ng-repeat="item in details | filter: toolbar.userInput">
 								<td>{{ item.full_name }}</td>
 								<td>{{ item.position }}</td>
 								<td>{{ item.experience }}</td>
-								<td>{{ item.daily_work_hours | number:1 }}</td>
 								<td>{{ item.hours_worked | number:1 }}</td>
 								<td>{{ item.output | number:1 }}</td>
 								<td>{{ item.output_error | number:1 }}</td>

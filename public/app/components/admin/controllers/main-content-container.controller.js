@@ -1,5 +1,5 @@
 adminModule
-	.controller('mainContentContainerController', ['$scope', '$state', '$stateParams', 'Preloader', 'Report', 'User', function($scope, $state, $stateParams, Preloader, Report, User){
+	.controller('mainContentContainerController', ['$scope', '$state', '$stateParams', '$mdDialog', 'Preloader', 'Report', 'User', function($scope, $state, $stateParams, $mdDialog, Preloader, Report, User){
 		/**
 		 * Object for charts
 		 *
@@ -146,6 +146,14 @@ adminModule
 					Preloader.error();
 				});
 		};
+
+		$scope.subheader.download = function(){
+			$mdDialog.show({
+		    	controller: 'downloadReportDialogController',
+		      	templateUrl: '/app/components/admin/templates/dialogs/download-report-dialog.template.html',
+		      	parent: angular.element(document.body),
+		    });
+		}
 
 		/**
 		 * Status of search bar.

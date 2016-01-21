@@ -1,0 +1,36 @@
+<md-dialog layout="column" flex flex-gt-md="50"  aria-label="Download Report" ng-cloak>
+	<form name="downloadReportForm" novalidate>
+		<md-toolbar>
+			<div class="md-toolbar-tools">
+				<h2>Download Reports</h2>
+				<span flex></span>
+				<md-button class="md-icon-button" ng-click="cancel()">
+					<md-icon class="mdi mdi-close" aria-label="cancel"></md-icon>
+				</md-button>
+			</div>
+		</md-toolbar>
+		<md-dialog-content layout="column" flex layout-padding layout-wrap>
+			<!-- Date Start -->
+			<md-input-container flex>
+				<label>Date Start</label>
+				<input type="text" name="DateStart" required ng-model="details.date_start" data-date-format="yyyy-MM-dd" data-max-date="today" data-autoclose="1" bs-datepicker data-timezone="UTC">
+				<div ng-messages="form.downloadReportForm.DateStart.$error" ng-if="form.downloadReportForm.DateStart.$touched">
+					<div ng-messages-include="/app/shared/templates/validation-message.html"></div>
+				</div>
+			</md-input-container>
+			<!-- Date End -->
+			<md-input-container flex>
+				<label>Date End</label>
+				<input type="text" name="DateEnd" required ng-model="details.date_end" data-date-format="yyyy-MM-dd" data-max-date="today" data-min-date="{{details.date_start}}" data-autoclose="1" bs-datepicker data-timezone="UTC">
+				<div ng-messages="form.downloadReportForm.DateEnd.$error" ng-if="form.downloadReportForm.DateEnd.$touched">
+					<div ng-messages-include="/app/shared/templates/validation-message.html"></div>
+				</div>
+			</md-input-container>
+		</md-dialog-content>
+	</form>
+	<div layout="row" layout-align="end center">		
+		<md-button class="md-fab md-primary" aria-label="Submit" ng-click="submit()">
+			<md-icon class="mdi mdi-check"></md-icon>
+		</md-button>
+	</div>
+</md-dialog>

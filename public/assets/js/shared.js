@@ -292,6 +292,9 @@ sharedModule
 			searchDepartment: function(id, data){
 				return $http.post(urlBase + '-search-department/' + id, data);
 			},
+			downloadSummary: function(data){
+				return $http.post(urlBase + '-download-summary', data);
+			},
 		}
 	}])
 sharedModule

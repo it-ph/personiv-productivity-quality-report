@@ -77,3 +77,5 @@ Route::get('target-productivity/{positionID}', 'TargetController@productivity');
 Route::get('target-quality/{positionID}', 'TargetController@quality');
 Route::put('member-update-tenure/{teamLeaderID}', 'MemberController@updateTenure');
 Route::post('performance-check-limit', 'PerformanceController@checkLimit');
+Route::get('report-download/{reportID}', 'ReportController@download');
+Route::get('report-download-summary/{date_start}/to/{date_end}', 'ReportController@downloadSummary');

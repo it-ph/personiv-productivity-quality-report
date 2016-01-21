@@ -485,7 +485,7 @@ adminModule
 		};
 	}]);
 adminModule
-	.controller('mainContentContainerController', ['$scope', '$state', '$stateParams', 'Preloader', 'Report', 'User', function($scope, $state, $stateParams, Preloader, Report, User){
+	.controller('mainContentContainerController', ['$scope', '$state', '$stateParams', '$mdDialog', 'Preloader', 'Report', 'User', function($scope, $state, $stateParams, $mdDialog, Preloader, Report, User){
 		/**
 		 * Object for charts
 		 *
@@ -632,6 +632,14 @@ adminModule
 					Preloader.error();
 				});
 		};
+
+		$scope.subheader.download = function(){
+			$mdDialog.show({
+		    	controller: 'downloadReportDialogController',
+		      	templateUrl: '/app/components/admin/templates/dialogs/download-report-dialog.template.html',
+		      	parent: angular.element(document.body),
+		    });
+		}
 
 		/**
 		 * Status of search bar.
@@ -1323,6 +1331,31 @@ adminModule
 					}, function(){
 						Preloader.error();
 					});
+			}
+		}
+	}]);
+adminModule
+	.controller('downloadReportDialogController', ['$scope', '$mdDialog', '$filter', 'Preloader', 'Report', function($scope, $mdDialog, $filter, Preloader, Report){
+		$scope.details = {};
+
+		$scope.cancel = function(){
+			$mdDialog.cancel();
+		};
+
+		$scope.submit = function(){
+			if($scope.downloadReportForm.$invalid){
+				angular.forEach($scope.downloadReportForm.$error, function(field){
+					angular.forEach(field, function(errorField){
+						errorField.$setTouched();
+					});
+				});
+			}
+			else{
+				// Preloader.preload();
+				var win = window.open('/report-download-summary/' + $filter('date')($scope.details.date_start, 'yyyy-MM-dd') + '/to/' + $filter('date')($scope.details.date_end, 'yyyy-MM-dd') , '_blank');
+				win.focus();
+
+				$mdDialog.hide();
 			}
 		}
 	}]);

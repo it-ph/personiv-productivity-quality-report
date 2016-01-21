@@ -5,11 +5,124 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Report;
 use DB;
+use Excel;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
 class ReportController extends Controller
 {
+    public function downloadSummary($date_start, $date_end)
+    {
+        global $report, $report_array;
+
+        // $this->validate($request, [
+        //     'date_start' => 'required|date',
+        //     'date_end' => 'required|date',
+        // ]);
+
+        $date_start = date_create($date_start)->format("Y-m-d");
+        $date_end = date_create($date_end)->format("Y-m-d");
+
+        $report = DB::table('reports')
+            ->join('projects', 'projects.id', '=', 'reports.project_id')
+            ->join('departments', 'departments.id', '=', 'reports.department_id')
+            ->select('*', 'reports.id as report_id', 'projects.name as project_name', 'departments.name as department_name')
+            ->where('reports.date_start', 'like', $date_start .'%')
+            ->whereBetween('reports.date_end', [$date_start, $date_end])
+            ->groupBy('reports.id')
+            ->get();
+
+        $report_array = array();
+
+        // will fetch every performance and results for the specific report
+        foreach ($report as $key => $value) {
+            $query = DB::table('reports')
+                ->join('performances', 'performances.report_id', '=', 'reports.id')
+                ->join('results', 'results.performance_id', '=', 'performances.id')
+                ->join('positions', 'positions.id', '=', 'performances.position_id')
+                ->join('projects', 'projects.id', '=', 'reports.project_id')
+                ->join('members', 'members.id', '=', 'performances.member_id')
+                ->select(
+                    'members.*',
+                    'performances.*',
+                    DB::raw('DATE_FORMAT(performances.date_start, "%b. %d, %Y") as date_start'),
+                    DB::raw('DATE_FORMAT(performances.date_end, "%b. %d, %Y") as date_end'),
+                    'results.*',
+                    'projects.*',
+                    'projects.name as project',
+                    'positions.name as position'
+                )
+                ->where('performances.report_id', $value->report_id)
+                ->where('results.report_id', $value->report_id)
+                ->groupBy('performances.id')
+                ->orderBy('positions.name')
+                ->orderBy('members.full_name')
+                ->get();
+
+                // push each results to custom array
+                array_push($report_array, $query);
+        }
+
+        // return $report;
+
+        Excel::create('PQR '. $date_start . ' to ' . $date_end, function($excel) {
+            global $report;
+
+            foreach ($report as $key => $value) {
+                global $index;
+                $index = $key;
+                $excel->sheet($value->project_name, function($sheet) {
+                    global $report_array, $index;
+                    $sheet->loadView('excel.weekly')->with('data',$report_array[$index]);
+                });
+            }
+
+        })->download('xlsx');
+
+    }
+    public function download($reportID)
+    {
+        global $report, $details;
+
+        $details = DB::table('reports')
+            ->join('projects', 'projects.id', '=', 'reports.project_id')
+            ->join('departments', 'departments.id', '=', 'reports.department_id')
+            ->select('*', 'projects.name as project_name', 'departments.name as department_name')
+            ->where('reports.id', $reportID)
+            ->first();
+
+        $report = DB::table('reports')
+            ->join('performances', 'performances.report_id', '=', 'reports.id')
+            ->join('results', 'results.performance_id', '=', 'performances.id')
+            ->join('positions', 'positions.id', '=', 'performances.position_id')
+            ->join('projects', 'projects.id', '=', 'reports.project_id')
+            ->join('members', 'members.id', '=', 'performances.member_id')
+            ->select(
+                'members.*',
+                'performances.*',
+                DB::raw('DATE_FORMAT(performances.date_start, "%b. %d, %Y") as date_start'),
+                DB::raw('DATE_FORMAT(performances.date_end, "%b. %d, %Y") as date_end'),
+                'results.*',
+                'projects.*',
+                'projects.name as project',
+                'positions.name as position'
+            )
+            ->where('performances.report_id', $reportID)
+            ->where('results.report_id', $reportID)
+            ->groupBy('performances.id')
+            ->orderBy('positions.name')
+            ->orderBy('members.full_name')
+            ->get();
+
+        Excel::create('PQR - '. $details->department_name .' ('. $details->project_name.')', function($excel) {
+            global $details;
+            $excel->sheet($details->date_start .' to '. $details->date_end, function($sheet) {
+                global $report;
+                $sheet->loadView('excel.weekly')->with('data',$report);
+            });
+
+        })->download('xlsx');
+    }
     public function searchDepartment(Request $request, $id)
     {
         $report_array = array();
