@@ -1344,6 +1344,7 @@ adminModule
 
 		$scope.submit = function(){
 			if($scope.downloadReportForm.$invalid){
+				$scope.showErrors = true;
 				angular.forEach($scope.downloadReportForm.$error, function(field){
 					angular.forEach(field, function(errorField){
 						errorField.$setTouched();

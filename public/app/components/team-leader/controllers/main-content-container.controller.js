@@ -231,7 +231,4 @@ teamLeaderModule
 		$scope.editReport = function(id){
 			console.log(id);
 		};
-		$scope.downloadReport = function(id){
-			console.log(id);
-		};
 	}]);

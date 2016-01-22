@@ -61,7 +61,27 @@ teamLeaderModule
 					},
 				}
 			})
+			.state('main.edit-report',{
+				url:'edit-report/{reportID}',
+				params: {'reportID':null},
+				views: {
+					'content-container': {
+						templateUrl: '/app/components/admin/views/content-container.view.html',
+						controller: 'editReportContentContainerController',
+					},
+					'toolbar@main.report': {
+						templateUrl: '/app/components/team-leader/templates/toolbar.template.html',
+					},
+					'content@main.report':{
+						templateUrl: '/app/components/team-leader/templates/content/edit-report.content.template.html',
+					},
+				}
+			})
 
+	}]);
+adminModule
+	.controller('editReportContentContainerController', ['$scope', function($scope){
+		
 	}]);
 teamLeaderModule
 	.controller('leftSidenavController', ['$scope', '$mdSidenav', function($scope, $mdSidenav){
@@ -322,9 +342,6 @@ teamLeaderModule
 		$scope.rightSidenav.show = true;
 
 		$scope.editReport = function(id){
-			console.log(id);
-		};
-		$scope.downloadReport = function(id){
 			console.log(id);
 		};
 	}]);

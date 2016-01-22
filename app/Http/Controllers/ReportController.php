@@ -11,9 +11,22 @@ use App\Http\Controllers\Controller;
 
 class ReportController extends Controller
 {
-    public function downloadSummary($date_start, $date_end)
+    public function downloadSummary(Request $request, $date_start, $date_end)
     {
-        global $report, $report_array;
+        global $report, $report_array, $position_array, $quality_array, $beginner_array, $moderately_experienced_array, $experienced_array;
+
+        $report_array = array();
+        $position_array = array();
+        $quality_array = array();
+
+        $beginner_array = array();
+        $moderately_experienced_array = array();
+        $experienced_array = array();
+
+        $beginner_temp = array();
+        $moderately_experienced_temp = array();
+        $experienced_temp = array();
+        $quality_temp = array();
 
         // $this->validate($request, [
         //     'date_start' => 'required|date',
@@ -23,20 +36,26 @@ class ReportController extends Controller
         $date_start = date_create($date_start)->format("Y-m-d");
         $date_end = date_create($date_end)->format("Y-m-d");
 
+
         $report = DB::table('reports')
             ->join('projects', 'projects.id', '=', 'reports.project_id')
             ->join('departments', 'departments.id', '=', 'reports.department_id')
-            ->select('*', 'reports.id as report_id', 'projects.name as project_name', 'departments.name as department_name')
+            ->select(
+                '*',
+                'reports.id as report_id',
+                'projects.id as project_id', 
+                'projects.name as project_name', 
+                'departments.name as department_name'
+            )
             ->where('reports.date_start', 'like', $date_start .'%')
             ->whereBetween('reports.date_end', [$date_start, $date_end])
             ->groupBy('reports.id')
             ->get();
 
-        $report_array = array();
 
         // will fetch every performance and results for the specific report
         foreach ($report as $key => $value) {
-            $query = DB::table('reports')
+            $reports = DB::table('reports')
                 ->join('performances', 'performances.report_id', '=', 'reports.id')
                 ->join('results', 'results.performance_id', '=', 'performances.id')
                 ->join('positions', 'positions.id', '=', 'performances.position_id')
@@ -59,12 +78,59 @@ class ReportController extends Controller
                 ->orderBy('members.full_name')
                 ->get();
 
-                // push each results to custom array
-                array_push($report_array, $query);
+            // push each results to custom array
+            array_push($report_array, $reports);
+
+            $positions = DB::table('positions')
+                ->where('project_id', $value->project_id)
+                ->get();
+
+            // push each results to custom array
+            array_push($position_array, $positions);
+
+            foreach ($positions as $key => $value) {
+                $beginner = DB::table('targets')
+                    ->where('type', 'Productivity')
+                    ->where('position_id', $value->id)
+                    ->where('experience', 'Beginner')
+                    ->first();
+
+                $moderately_experienced = DB::table('targets')
+                    ->where('type', 'Productivity')
+                    ->where('position_id', $value->id)
+                    ->where('experience', 'Moderately Experienced')
+                    ->first();
+
+                $experienced = DB::table('targets')
+                    ->where('type', 'Productivity')
+                    ->where('position_id', $value->id)
+                    ->where('experience', 'Experienced')
+                    ->first();
+
+                $quality = DB::table('targets')
+                    ->where('type', 'Quality')
+                    ->where('position_id', $value->id)
+                    ->first();            
+
+                array_push($beginner_temp, $beginner);
+                array_push($moderately_experienced_temp, $moderately_experienced);
+                array_push($experienced_temp, $experienced);
+                array_push($quality_temp, $quality);
+            }
+
+            // push in for per report
+            array_push($beginner_array, $beginner_temp);
+            array_push($moderately_experienced_array, $moderately_experienced_temp);
+            array_push($experienced_array, $experienced_temp);
+            array_push($quality_array, $quality_temp);
+
+            // reset the temp
+            $beginner_temp = array();
+            $moderately_experienced_temp = array();
+            $experienced_temp = array();
+            $quality_temp = array();
         }
-
-        // return $report;
-
+        
         Excel::create('PQR '. $date_start . ' to ' . $date_end, function($excel) {
             global $report;
 
@@ -72,8 +138,14 @@ class ReportController extends Controller
                 global $index;
                 $index = $key;
                 $excel->sheet($value->project_name, function($sheet) {
-                    global $report_array, $index;
-                    $sheet->loadView('excel.weekly')->with('data',$report_array[$index]);
+                    global $report_array, $index, $quality_array, $position_array, $beginner_array, $moderately_experienced_array, $experienced_array;
+                    $sheet->loadView('excel.weekly')
+                        ->with('data', $report_array[$index])
+                        ->with('positions', $position_array[$index])
+                        ->with('beginner', $beginner_array[$index])
+                        ->with('moderately_experienced', $moderately_experienced_array[$index])
+                        ->with('experienced', $experienced_array[$index])
+                        ->with('quality', $quality_array[$index]);
                 });
             }
 
@@ -82,7 +154,7 @@ class ReportController extends Controller
     }
     public function download($reportID)
     {
-        global $report, $details;
+        global $report, $details, $positions, $quality, $beginner, $moderately_experienced, $experienced;
 
         $details = DB::table('reports')
             ->join('projects', 'projects.id', '=', 'reports.project_id')
@@ -105,7 +177,9 @@ class ReportController extends Controller
                 'results.*',
                 'projects.*',
                 'projects.name as project',
-                'positions.name as position'
+                'positions.name as position',
+                'positions.id as position_id',
+                'projects.id as project_id'
             )
             ->where('performances.report_id', $reportID)
             ->where('results.report_id', $reportID)
@@ -114,11 +188,47 @@ class ReportController extends Controller
             ->orderBy('members.full_name')
             ->get();
 
+        foreach ($report as $key => $value) {
+            $positions = DB::table('positions')
+                ->where('project_id', $value->project_id)
+                ->get();
+
+            $beginner = DB::table('targets')
+                ->where('type', 'Productivity')
+                ->where('project_id', $value->project_id)
+                ->where('experience', 'Beginner')
+                ->get();
+
+            $moderately_experienced = DB::table('targets')
+                ->where('type', 'Productivity')
+                ->where('project_id', $value->project_id)
+                ->where('experience', 'Moderately Experienced')
+                ->get();
+
+            $experienced = DB::table('targets')
+                ->where('type', 'Productivity')
+                ->where('project_id', $value->project_id)
+                ->where('experience', 'Experienced')
+                ->get();
+
+            $quality = DB::table('targets')
+                ->where('type', 'Quality')
+                ->where('project_id', $value->project_id)
+                ->groupBy('position_id')
+                ->get();
+        }
+
         Excel::create('PQR - '. $details->department_name .' ('. $details->project_name.')', function($excel) {
             global $details;
             $excel->sheet($details->date_start .' to '. $details->date_end, function($sheet) {
-                global $report;
-                $sheet->loadView('excel.weekly')->with('data',$report);
+                global $report, $quality, $positions, $beginner, $moderately_experienced, $experienced;
+                $sheet->loadView('excel.weekly')
+                    ->with('data',$report)
+                    ->with('positions', $positions)
+                    ->with('beginner', $beginner)
+                    ->with('moderately_experienced', $moderately_experienced)
+                    ->with('experienced', $experienced)
+                    ->with('quality', $quality);
             });
 
         })->download('xlsx');
