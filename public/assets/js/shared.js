@@ -199,8 +199,14 @@ sharedModule
 			delete: function(id){
 				return $http.delete(urlBase + '/' + id);
 			},
-			checkLimit: function(data){
-				return $http.post(urlBase + '-check-limit', data);
+			checkLimit: function(id, data){
+				return $http.post(urlBase + '-check-limit/' + id, data);
+			},
+			report: function(id){
+				return $http.get(urlBase + '-report/' + id);
+			},
+			checkLimitEdit: function(id, data){
+				return $http.post(urlBase + '-check-limit-edit/' + id, data);
 			},
 		}
 	}])

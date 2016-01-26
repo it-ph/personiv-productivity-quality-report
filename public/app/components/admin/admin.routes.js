@@ -105,4 +105,20 @@ adminModule
 					},
 				}
 			})
+			.state('main.edit-report',{
+				url:'edit-report/{reportID}',
+				params: {'reportID':null},
+				views: {
+					'content-container': {
+						templateUrl: '/app/components/admin/views/content-container.view.html',
+						controller: 'editReportContentContainerController',
+					},
+					'toolbar@main.edit-report': {
+						templateUrl: '/app/components/admin/templates/toolbar.template.html',
+					},
+					'content@main.edit-report':{
+						templateUrl: '/app/shared/templates/content/edit-report.content.template.html',
+					},
+				}
+			})
 	}]);

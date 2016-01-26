@@ -110,7 +110,7 @@ adminModule
 
 		$scope.viewProject = function(id){
 			$state.go('main.positions', {'departmentID':department_id, 'projectID':id});
-		}
+		};
 
 		$scope.viewTarget = function(id){
 			Preloader.set(id);
@@ -120,5 +120,5 @@ adminModule
 		      	parent: angular.element(document.body),
 		      	clickOutsideToClose: true,
 		    });
-		}
+		};
 	}])

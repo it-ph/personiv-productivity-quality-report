@@ -15,16 +15,65 @@ use App\Http\Controllers\Controller;
 
 class PerformanceController extends Controller
 {
-    public function checkLimit(Request $request)
+    public function report($reportID)
+    {
+        return DB::table('performances')
+            ->join('members', 'members.id', '=', 'performances.member_id')
+            ->select(
+                '*',
+                DB::raw('TRUNCATE(performances.daily_work_hours, 1) as daily_work_hours'),
+                DB::raw('UPPER(LEFT(members.full_name, 1)) as first_letter'),
+                'performances.id as performance_id',
+                'members.id as member_id'
+            )
+            ->where('performances.report_id', $reportID)
+            ->get();
+    }
+    public function checkLimitEdit(Request $request, $memberID)
     {
         $date_start = date_create($request->date_start)->format("Y-m-d");
         $date_end = date_create($request->date_end)->format("Y-m-d");
 
-        $performance = Performance::where('date_start', 'like', '%'.$date_start.'%')->where('date_end', 'like', '%'.$date_end.'%')->where('daily_work_hours', 'like', $request->daily_work_hours.'%')->orderBy('created_at', 'desc')->firstOrFail();
+        // fetch all records with the same report details
+        $performance = Performance::where('date_start', $date_start)->whereBetween('date_end', [$date_start, $date_end])->where('daily_work_hours', 'like', $request->daily_work_hours.'%')->where('member_id', $memberID)->get();
         
-        // $weekly_work_hours = $request->daily_work_hours * $request->weekly_hours;
+        if($performance->count() == 1)
+        {
+            return $request->weekly_hours;
+        }
 
-        $limit = $request->weekly_hours - $performance->hours_worked;
+        $hours_worked = 0;
+
+        // iterate every record to check the total of hours worked by the employee
+        foreach ($performance as $key => $value) {
+            $hours_worked += $value->hours_worked;
+            
+            if($request->weekly_hours == round($hours_worked,1))
+            {
+                return Performance::where('id', $value->id)->first()->hours_worked;
+            }
+        }
+
+        $limit = $request->weekly_hours - $hours_worked;
+
+        return round($limit,1);
+    }
+    public function checkLimit(Request $request, $memberID)
+    {
+        $date_start = date_create($request->date_start)->format("Y-m-d");
+        $date_end = date_create($request->date_end)->format("Y-m-d");
+
+        // fetch all records with the same report details
+        $performance = Performance::where('date_start', $date_start)->whereBetween('date_end', [$date_start, $date_end])->where('daily_work_hours', 'like', $request->daily_work_hours.'%')->where('member_id', $memberID)->orderBy('created_at', 'desc')->get();
+        
+        $hours_worked = 0;
+
+        // iterate every record to check the total of hours worked by the employee
+        foreach ($performance as $key => $value) {
+            $hours_worked += $value->hours_worked;
+        }
+
+        $limit = $request->weekly_hours - $hours_worked;
 
         return round($limit,1);
     }
@@ -167,7 +216,6 @@ class PerformanceController extends Controller
                 // Round((Output / Hours Worked) * Daily Work Hours)
                 // store the rounded value
                 $performance->average_output = $request->input($i.'.output') / $request->input($i.'.hours_worked') * $request->input($i.'.daily_work_hours');
-
                 // save performance to database
                 $performance->save();
 
@@ -184,6 +232,10 @@ class PerformanceController extends Controller
                 $result->performance_id = $performance->id;
 
                 $result->save();
+
+                $performance->result_id = $result->id;
+                $performance->save();
+
             }
         }
 
@@ -220,7 +272,55 @@ class PerformanceController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        for ($i=0; $i < count($request->all()); $i++) { 
+            if($request->input($i.'.include'))
+            {
+                $this->validate($request, [
+                    $i.'.id' => 'required|numeric',
+                    $i.'.position_id' => 'required|numeric',
+                    $i.'.department_id' => 'required|numeric',
+                    $i.'.project_id' => 'required|numeric',
+                    $i.'.output' => 'required|numeric',
+                    $i.'.date_start' => 'required|date',
+                    $i.'.date_end' => 'required|date',
+                    $i.'.hours_worked' => 'required|numeric',
+                    $i.'.daily_work_hours' => 'required|numeric',
+                    $i.'.output_error' => 'required|numeric',
+                ]);
+
+                $performance = Performance::where('id', $request->input($i.'.performance_id'))->first();
+
+                $performance->position_id = $request->input($i.'.position_id');
+                $performance->project_id = $request->input($i.'.project_id');
+                $performance->output = $request->input($i.'.output');
+                $performance->date_start = $request->input($i.'.date_start');
+                $performance->date_end = $request->input($i.'.date_end');
+                $performance->hours_worked = $request->input($i.'.hours_worked');
+                $performance->daily_work_hours = $request->input($i.'.daily_work_hours');
+                $performance->output_error = $request->input($i.'.output_error');
+                // Round((Output / Hours Worked) * Daily Work Hours)
+                // store the rounded value
+                $performance->average_output = $request->input($i.'.output') / $request->input($i.'.hours_worked') * $request->input($i.'.daily_work_hours');
+
+                // save performance to database
+                $performance->save();
+
+                // fetch target
+                $target = Target::where('position_id', $request->input($i.'.position_id'))->where('experience', $request->input($i.'.experience'))->first();
+
+                $result = Result::where('id', $request->input($i.'.result_id'))->first();
+                
+                $result->report_id = $id;
+                // average output / target output * 100 to convert to percentage
+                $result->productivity = round($performance->average_output / $target->value * 100);
+                // 1 - output w/error / output * 100 to convert to percentage
+                $result->quality = round((1 - $performance->output_error / $performance->output) * 100);
+                $result->type = "weekly";
+                $result->performance_id = $request->input($i.'.performance_id');
+
+                $result->save();
+            }
+        }
     }
 
     /**

@@ -18,7 +18,7 @@
 							<label>Date Start</label>
 							<input type="text" name="DateStart" ng-change="resetMembers()" required ng-model="details.date_start" data-date-format="yyyy-MM-dd" data-max-date="today" data-autoclose="1" bs-datepicker data-timezone="UTC">
 							<div ng-messages="form.createReportForm.DateStart.$error" ng-if="form.createReportForm.DateStart.$touched">
-								<div ng-messages-include="/app/shared/templates/validation-message.html"></div>
+								<div ng-messages-include="/app/shared/templates/validation-message-date.html"></div>
 							</div>
 						</md-input-container>
 						<!-- Date End -->
@@ -26,7 +26,7 @@
 							<label>Date End</label>
 							<input type="text" name="DateEnd" required ng-change="resetMembers()" ng-model="details.date_end" data-date-format="yyyy-MM-dd" data-max-date="today" data-min-date="{{details.date_start}}" data-autoclose="1" bs-datepicker data-timezone="UTC">
 							<div ng-messages="form.createReportForm.DateEnd.$error" ng-if="form.createReportForm.DateEnd.$touched">
-								<div ng-messages-include="/app/shared/templates/validation-message.html"></div>
+								<div ng-messages-include="/app/shared/templates/validation-message-date.html"></div>
 							</div>
 						</md-input-container>
 					</div>
@@ -40,7 +40,7 @@
 								</md-option>
 							</md-select>
 							<div ng-messages="form.createReportForm.Project.$error" ng-if="form.createReportForm.Project.$touched">
-								<div ng-messages-include="/app/shared/templates/validation-message.html"></div>
+								<div ng-messages-include="/app/shared/templates/validation-message-report.html"></div>
 							</div>
 						</md-input-container>
 						<!-- Daily Work Hours -->
@@ -52,7 +52,7 @@
 								</md-option>
 							</md-select>
 							<div ng-messages="form.createReportForm.WorkHours.$error" ng-if="form.createReportForm.WorkHours.$touched">
-								<div ng-messages-include="/app/shared/templates/validation-message.html"></div>
+								<div ng-messages-include="/app/shared/templates/validation-message-report.html"></div>
 							</div>
 						</md-input-container>
 					</div>
@@ -73,51 +73,55 @@
 								<div class="md-list-item-text" layout="column" flex>
 									<h3>{{ member.full_name }}</h3>
 									<h4>Date Hired: {{ member.date_hired }}</h4>
-									<p>{{ member.experience }}</p>
+									<p>{{ member.experience }} 
+										<span class="accent-text" ng-if="member.limit == 0">(Work hours per week reached.)</span>
+									</p>
 								</div>
 							</md-list-item>
-							<md-checkbox ng-change="checkLimit()" ng-model="member.include">
+							<md-checkbox ng-change="checkLimit($index)" ng-if="member.limit > 0" ng-model="member.include">
 								<md-tooltip>Mark to Include</md-tooltip>
 							</md-checkbox>
 						</md-list>
 						<div ng-if="member.include" class="fade-transition">
-							<!-- Position -->
-							<md-input-container flex>
-								<label>Position</label>
-								<md-select name="Position{{$index}}" required ng-model="member.position_id">
-									<md-option ng-repeat="position in positions" value="{{ position.id }}">
-										{{ position.name }}
-									</md-option>
-								</md-select>
-								<div ng-messages="form.createReportForm['Position' + $index].$error" ng-if="form.createReportForm['Position' + $index].$touched">
-									<div ng-messages-include="/app/shared/templates/validation-message.html"></div>
+							<div ng-if="member.limit > 0">
+								<!-- Position -->
+								<md-input-container flex>
+									<label>Position</label>
+									<md-select name="Position{{$index}}" required ng-model="member.position_id">
+										<md-option ng-repeat="position in positions" value="{{ position.id }}">
+											{{ position.name }}
+										</md-option>
+									</md-select>
+									<div ng-messages="form.createReportForm['Position' + $index].$error" ng-if="form.createReportForm['Position' + $index].$touched">
+										<div ng-messages-include="/app/shared/templates/validation-message-report.html"></div>
+									</div>
+								</md-input-container>
+								<div layout="row">
+									<!-- Total Total Hours Worked -->
+									<md-input-container flex>
+										<label>Total Hours Worked</label>
+										<input name="HoursWorked{{$index}}" type="number" min="0" max="{{ member.limit }}" step="0.5" required ng-model="member.hours_worked">
+										<div ng-messages="form.createReportForm['HoursWorked' + $index].$error" ng-if="form.createReportForm['HoursWorked' + $index].$touched">
+											<div ng-messages-include="/app/shared/templates/validation-message-report.html"></div>
+										</div>
+									</md-input-container>
+									<!-- Total Output -->
+									<md-input-container flex>
+										<label>Total Output</label>
+										<input name="Output{{$index}}" type="number" min="0" required ng-model="member.output">
+										<div ng-messages="form.createReportForm['Output' + $index].$error" ng-if="form.createReportForm['Output' + $index].$touched">
+											<div ng-messages-include="/app/shared/templates/validation-message-report.html"></div>
+										</div>
+									</md-input-container>
+									<!-- Total Output w/error -->
+									<md-input-container flex>
+										<label>Total Output w/Error</label>
+										<input name="OutputError{{$index}}" type="number" min="0" required ng-model="member.output_error">
+										<div ng-messages="form.createReportForm['OutputError' + $index].$error" ng-if="form.createReportForm['OutputError' + $index].$touched">
+											<div ng-messages-include="/app/shared/templates/validation-message-report.html"></div>
+										</div>
+									</md-input-container>
 								</div>
-							</md-input-container>
-							<div layout="row">
-								<!-- Total Total Hours Worked -->
-								<md-input-container flex>
-									<label>Total Hours Worked</label>
-									<input name="HoursWorked{{$index}}" type="number" min="0" max="{{limit}}" step="0.5" required ng-model="member.hours_worked">
-									<div ng-messages="form.createReportForm['HoursWorked' + $index].$error" ng-if="form.createReportForm['HoursWorked' + $index].$touched">
-										<div ng-messages-include="/app/shared/templates/validation-message.html"></div>
-									</div>
-								</md-input-container>
-								<!-- Total Output -->
-								<md-input-container flex>
-									<label>Total Output</label>
-									<input name="Output{{$index}}" type="number" min="0" required ng-model="member.output">
-									<div ng-messages="form.createReportForm['Output' + $index].$error" ng-if="form.createReportForm['Output' + $index].$touched">
-										<div ng-messages-include="/app/shared/templates/validation-message.html"></div>
-									</div>
-								</md-input-container>
-								<!-- Total Output w/error -->
-								<md-input-container flex>
-									<label>Total Output w/Error</label>
-									<input name="OutputError{{$index}}" type="number" min="0" required ng-model="member.output_error">
-									<div ng-messages="form.createReportForm['OutputError' + $index].$error" ng-if="form.createReportForm['OutputError' + $index].$touched">
-										<div ng-messages-include="/app/shared/templates/validation-message.html"></div>
-									</div>
-								</md-input-container>
 							</div>
 						</div>
 					</md-card-content>

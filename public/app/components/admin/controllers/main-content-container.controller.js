@@ -204,9 +204,6 @@ adminModule
 				});
 		};
 
-		// $scope.show = function(id){
-		// 	$state.go('main.units', {'assetID': $stateParams.assetID, 'unitID':id});
-		// };
 		/**
 		 * Object for content view
 		 *
@@ -225,4 +222,8 @@ adminModule
 		$scope.rightSidenav = {};
 
 		$scope.rightSidenav.show = true;
+
+		$scope.editReport = function(id){
+			$state.go('main.edit-report', {'reportID':id});
+		};
 	}]);

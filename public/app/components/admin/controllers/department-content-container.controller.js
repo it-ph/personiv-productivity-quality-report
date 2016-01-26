@@ -228,4 +228,8 @@ adminModule
 		$scope.rightSidenav = {};
 
 		$scope.rightSidenav.show = true;
+
+		$scope.editReport = function(id){
+			$state.go('main.edit-report', {'reportID':id});
+		};
 	}]);

@@ -229,6 +229,6 @@ teamLeaderModule
 		$scope.rightSidenav.show = true;
 
 		$scope.editReport = function(id){
-			console.log(id);
+			$state.go('main.edit-report', {'reportID':id});
 		};
 	}]);

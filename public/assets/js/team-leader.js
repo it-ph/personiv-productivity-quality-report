@@ -79,10 +79,6 @@ teamLeaderModule
 			})
 
 	}]);
-adminModule
-	.controller('editReportContentContainerController', ['$scope', function($scope){
-		
-	}]);
 teamLeaderModule
 	.controller('leftSidenavController', ['$scope', '$mdSidenav', function($scope, $mdSidenav){
 		$scope.menu = {};
@@ -342,7 +338,7 @@ teamLeaderModule
 		$scope.rightSidenav.show = true;
 
 		$scope.editReport = function(id){
-			console.log(id);
+			$state.go('main.edit-report', {'reportID':id});
 		};
 	}]);
 teamLeaderModule
@@ -610,23 +606,23 @@ teamLeaderModule
 			}
 		};
 
-		$scope.checkLimit = function(){
+		$scope.checkLimit = function(idx){
 			// gets the number of days worked in a day then multiply it to the daily work hours to get weekly limit
 			$scope.details.weekly_hours = (($scope.details.date_end - $scope.details.date_start) / (1000*60*60*24) + 1) * $scope.details.daily_work_hours;
-			Performance.checkLimit($scope.details)
+			Performance.checkLimit($scope.members[idx].id, $scope.details)
 				.success(function(data){
-					$scope.limit = data;
+					$scope.members[idx].limit = data;
 				})
 				.error(function(){
-					$scope.limit = $scope.details.weekly_hours;
-					console.log($scope.details.weekly_hours);
+					$scope.members[idx].limit = $scope.details.weekly_hours;
 				});
 		};
 
 		$scope.resetMembers = function(){
-			$scope.checkLimit();
-			angular.forEach($scope.members, function(item){
+			// $scope.checkLimit();
+			angular.forEach($scope.members, function(item, key){
 				item.hours_worked = null;
+				$scope.checkLimit(key);
 			});
 		}
 	}]);

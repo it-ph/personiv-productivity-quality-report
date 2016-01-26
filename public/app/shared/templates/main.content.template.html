@@ -89,7 +89,7 @@
 						<h3 class="secondary-text md-subhead">Daily Work Hours: {{ details[0].daily_work_hours | number:1 }} hours</h3>
 						<div layout="row">
 							<!-- Edit -->
-							<md-button class="md-fab md-mini md-primary" ng-click="editReport(report.details.data[$index].id)">
+							<md-button class="md-fab md-mini md-primary" ng-click="editReport(report.details.data[$index].id)" ng-if="user.role=='admin'">
 								<md-icon class="mdi mdi-pencil"></md-icon>
 								<md-tooltip>Edit</md-tooltip>
 							</md-button>

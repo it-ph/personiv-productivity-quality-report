@@ -1,0 +1,122 @@
+<div class="fade-transition" flex>
+	<div layout="column" layout-padding flex flex-gt-sm="70">
+		<form novalidate name="form.editReportForm" flex>
+			<!-- Report Details -->
+			<md-card>
+				<md-toolbar class="md-primary">
+					<div class="md-toolbar-tools">
+						<h2>Report Details</h2>
+					</div>
+				</md-toolbar>
+				<md-subheader class="md-accent md-no-sticky">
+					<span>Date Coverage</span>
+				</md-subheader>
+				<md-card-content>
+					<div layout="row">
+						<!-- Date Start -->
+						<md-input-container flex>
+							<label>Date Start</label>
+							<input type="text" name="DateStart" ng-change="resetMembers()" required ng-model="details.date_start" data-date-format="yyyy-MM-dd" data-max-date="today" data-autoclose="1" bs-datepicker data-timezone="UTC">
+							<div ng-messages="form.editReportForm.DateStart.$error" ng-if="form.editReportForm.DateStart.$touched">
+								<div ng-messages-include="/app/shared/templates/validation-message-date.html"></div>
+							</div>
+						</md-input-container>
+						<!-- Date End -->
+						<md-input-container flex>
+							<label>Date End</label>
+							<input type="text" name="DateEnd" required ng-change="resetMembers()" ng-model="details.date_end" data-date-format="yyyy-MM-dd" data-max-date="today" data-min-date="{{details.date_start}}" data-autoclose="1" bs-datepicker data-timezone="UTC">
+							<div ng-messages="form.editReportForm.DateEnd.$error" ng-if="form.editReportForm.DateEnd.$touched">
+								<div ng-messages-include="/app/shared/templates/validation-message-date.html"></div>
+							</div>
+						</md-input-container>
+					</div>
+					<div layout="row">
+						<!-- Project -->
+						<md-input-container flex>
+							<label>Project</label>
+							<md-select name="Project" required ng-model="details.project_id" ng-change="showPositions(details.project_id)">
+								<md-option ng-repeat="project in projects" value="{{ project.id }}">
+									{{ project.name }}
+								</md-option>
+							</md-select>
+							<div ng-messages="form.editReportForm.Project.$error" ng-if="form.editReportForm.Project.$touched">
+								<div ng-messages-include="/app/shared/templates/validation-message-report.html"></div>
+							</div>
+						</md-input-container>
+						<!-- Daily Work Hours -->
+						<md-input-container flex>
+							<label>Daily Work Hours</label>
+							<md-select name="WorkHours" ng-change="resetMembers()" required ng-model="details.daily_work_hours">
+								<md-option ng-repeat="hour in hours" value="{{ hour.value }}">
+									{{ hour.value }}
+								</md-option>
+							</md-select>
+							<div ng-messages="form.editReportForm.WorkHours.$error" ng-if="form.editReportForm.WorkHours.$touched">
+								<div ng-messages-include="/app/shared/templates/validation-message-report.html"></div>
+							</div>
+						</md-input-container>
+					</div>
+				</md-card-content>		
+			</md-card>
+			<md-card ng-repeat="performance in performances">
+				<md-card-content>
+					<md-list layout="row" layout-align="space-between center">
+						<md-list-item class="md-2-line" layout="row">
+							<h2 class="md-avatar md-headline purple-bg" layout="row" layout-align="center center">
+								<span class="weight-200 white-text">{{ performance.first_letter }}</span>
+							</h2>
+							<div class="md-list-item-text" layout="column" flex>
+								<h3>{{ performance.full_name }}</h3>
+								<h4>Date Hired: {{ performance.date_hired | date:'MMM. d, yyyy'}}</h4>
+								<p>{{ performance.experience }}</p>
+							</div>
+						</md-list-item>
+						<md-checkbox ng-change="checkLimit($index)" ng-model="performance.include">
+							<md-tooltip>Mark to Include</md-tooltip>
+						</md-checkbox>
+					</md-list>
+					<div ng-if="performance.include" class="fade-transition">
+						<!-- Position -->
+						<md-input-container flex>
+							<label>Position</label>
+							<md-select name="Position{{$index}}" required ng-model="performance.position_id">
+								<md-option ng-repeat="position in positions" value="{{ position.id }}">
+									{{ position.name }}
+								</md-option>
+							</md-select>
+							<div ng-messages="form.editReportForm['Position' + $index].$error" ng-if="form.editReportForm['Position' + $index].$touched">
+								<div ng-messages-include="/app/shared/templates/validation-message-report.html"></div>
+							</div>
+						</md-input-container>
+						<div layout="row">
+							<!-- Total Total Hours Worked -->
+							<md-input-container flex>
+								<label>Total Hours Worked</label>
+								<input name="HoursWorked{{$index}}" type="number" min="0" max="{{ performance.limit }}" step="0.5" required ng-model="performance.hours_worked">
+								<div ng-messages="form.editReportForm['HoursWorked' + $index].$error" ng-if="form.editReportForm['HoursWorked' + $index].$touched">
+									<div ng-messages-include="/app/shared/templates/validation-message.html"></div>
+								</div>
+							</md-input-container>
+							<!-- Total Output -->
+							<md-input-container flex>
+								<label>Total Output</label>
+								<input name="Output{{$index}}" type="number" min="0" required ng-model="performance.output">
+								<div ng-messages="form.editReportForm['Output' + $index].$error" ng-if="form.editReportForm['Output' + $index].$touched">
+									<div ng-messages-include="/app/shared/templates/validation-message-report.html"></div>
+								</div>
+							</md-input-container>
+							<!-- Total Output w/error -->
+							<md-input-container flex>
+								<label>Total Output w/Error</label>
+								<input name="OutputError{{$index}}" type="number" min="0" required ng-model="performance.output_error">
+								<div ng-messages="form.editReportForm['OutputError' + $index].$error" ng-if="form.editReportForm['OutputError' + $index].$touched">
+									<div ng-messages-include="/app/shared/templates/validation-message-report.html"></div>
+								</div>
+							</md-input-container>
+						</div>
+					</div>
+				</md-card-content>
+			</md-card>
+		</form>
+	</div>
+</div>

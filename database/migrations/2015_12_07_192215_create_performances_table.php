@@ -15,6 +15,7 @@ class CreatePerformancesTable extends Migration
         Schema::create('performances', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('report_id');
+            $table->integer('result_id')->nullable();
             $table->integer('member_id');
             $table->integer('position_id');
             $table->integer('department_id');
