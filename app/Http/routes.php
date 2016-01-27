@@ -81,3 +81,4 @@ Route::post('performance-check-limit-edit/{memberID}', 'PerformanceController@ch
 Route::get('report-download/{reportID}', 'ReportController@download');
 Route::get('report-download-summary/{date_start}/to/{date_end}', 'ReportController@downloadSummary');
 Route::get('performance-report/{reportID}', 'PerformanceController@report');
+Route::get('report-download-monthly-summary/{month}/year/{year}', 'ReportController@downloadMonthlySummary');

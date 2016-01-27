@@ -5,13 +5,78 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Report;
 use DB;
+use Carbon\Carbon;
 use Excel;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
 class ReportController extends Controller
 {
-    public function downloadSummary(Request $request, $date_start, $date_end)
+    public function downloadMonthlySummary($month, $year)
+    {
+        $this->projects = DB::table('projects')->get();
+        $this->month = $month;
+        $this->year = $year;
+        $this->date_start = $this->year.'-'.$this->month.'-'.'01';
+        $this->date_end = $this->year.'-'.$this->month.'-'.'31';
+        $this->date_start_format = date_create($this->date_start)->format("F Y");
+        $this->date_end_format = date_create($this->date_end)->format("F Y");
+        
+        $this->results_array = array();
+        $this->productivity_average_array = array();
+        $this->quality_average_array = array();
+
+        foreach ($this->projects as $key => $value) {
+            $this->productivity_average = 0;
+            $this->quality_average = 0;
+
+            $results = DB::table('performances')
+                ->join('results', 'results.performance_id', '=', 'performances.id')
+                ->join('members', 'members.id', '=', 'performances.member_id')
+                ->join('positions', 'positions.id', '=', 'performances.position_id')
+                ->join('projects', 'projects.id', '=', 'performances.project_id')
+                ->select(
+                    '*',
+                    'performances.id as performance_id',
+                    'positions.name as position',
+                    DB::raw('DATE_FORMAT(performances.date_start, "%b. %d") as date_start'),
+                    DB::raw('DATE_FORMAT(performances.date_end, "%b. %d") as date_end')
+                )
+                ->where('performances.project_id', $value->id)
+                ->whereBetween('performances.date_start', [$this->date_start, $this->date_end])
+                ->groupBy('performances.id')
+                ->orderBy('positions.name')
+                ->orderBy('members.full_name')
+                ->get();
+
+            foreach ($results as $key => $value) {
+                $this->productivity_average += $value->productivity;
+                $this->quality_average += $value->quality;
+            }
+
+            $this->productivity_average = round($this->productivity_average / 4, 1); 
+            $this->quality_average = round($this->quality_average / 4, 1);
+
+            array_push($this->results_array, $results);
+            array_push($this->productivity_average_array, $this->productivity_average);
+            array_push($this->quality_average_array, $this->quality_average);
+        }
+
+        Excel::create('PQR Summary Report '. $this->date_start_format, function($excel){
+            foreach ($this->projects as $key => $value) {
+                $this->index = $key; 
+                $excel->sheet($value->name, function($sheet) {
+                    $sheet->loadView('excel.monthly')
+                        ->with('data', $this->results_array[$this->index])
+                        ->with('productivity_average', $this->productivity_average_array[$this->index])
+                        ->with('quality_average', $this->quality_average_array[$this->index]);
+                });
+            }
+        })->download('xlsx');
+
+
+    }
+    public function downloadSummary($date_start, $date_end)
     {
         global $report, $report_array, $position_array, $quality_array, $beginner_array, $moderately_experienced_array, $experienced_array;
 
@@ -27,11 +92,6 @@ class ReportController extends Controller
         $moderately_experienced_temp = array();
         $experienced_temp = array();
         $quality_temp = array();
-
-        // $this->validate($request, [
-        //     'date_start' => 'required|date',
-        //     'date_end' => 'required|date',
-        // ]);
 
         $date_start = date_create($date_start)->format("Y-m-d");
         $date_end = date_create($date_end)->format("Y-m-d");
