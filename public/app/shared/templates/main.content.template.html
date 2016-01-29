@@ -98,6 +98,11 @@
 								<md-icon class="mdi mdi-download"></md-icon>
 								<md-tooltip>Download</md-tooltip>
 							</md-button>
+							<!-- Delete -->
+							<md-button class="md-fab md-mini md-warn" ng-click="deleteReport(report.details.data[$index].id)" ng-if="user.role=='admin'">
+								<md-icon class="mdi mdi-delete"></md-icon>
+								<md-tooltip>Delete</md-tooltip>
+							</md-button>
 						</div>
 					</div>
 					<div layout="row" flex>					

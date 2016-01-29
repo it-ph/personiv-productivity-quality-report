@@ -93,35 +93,35 @@ teamLeaderModule
 				});
 		};
 
-		$scope.show = function(id){
+		$scope.editMember = function(id){
 			Preloader.set(id);
-			// $mdDialog.show({
-		 //    	controller: 'showPositionDialogController',
-		 //      	templateUrl: '/app/components/admin/templates/dialogs/show-positions.dialog.template.html',
-		 //      	parent: angular.element(document.body),
-		 //    })
-		 //    .then(function(id){
-		 //    	if(!id){
-			//     	$mdDialog.show({
-			// 	    	controller: 'addPositionDialogController',
-			// 	      	templateUrl: '/app/components/admin/templates/dialogs/add-position.dialog.template.html',
-			// 	      	parent: angular.element(document.body),
-			// 	    })
-			// 	    .then(function(){
-			// 	    	$scope.subheader.refresh();
-			// 	    })
-		 //    	}
-		 //    	else{
-		 //    		Preloader.set(id);
-		 //    		$mdDialog.show({
-			// 	    	controller: 'showTargetsDialogController',
-			// 	      	templateUrl: '/app/components/admin/templates/dialogs/show-targets.dialog.template.html',
-			// 	      	parent: angular.element(document.body),
-			// 	      	clickOutsideToClose: true,
-			// 	    })
-		 //    	}
-		 //    });
+			$mdDialog.show({
+	    		controller: 'editMemberDialogController',
+		      	templateUrl: '/app/components/team-leader/templates/dialogs/edit-member.dialog.template.html',
+		      	parent: angular.element(document.body),
+		    })
+		    .then(function(){
+		    	$scope.subheader.refresh();
+		    })
+		}
+
+		$scope.deleteMember = function(id){
+			var confirm = $mdDialog.confirm()
+		        .title('Delete Member')
+		        .content('This member will not be included to your report anymore.')
+		        .ariaLabel('Delete Member')
+		        .ok('Delete')
+		        .cancel('Cancel');
+		    $mdDialog.show(confirm).then(function() {
+		      Member.delete(id)
+				.success(function(){
+					$scope.subheader.refresh();
+				});
+		    }, function() {
+		      return;
+		    });			
 		};
+
 		/**
 		 * Object for content view
 		 *

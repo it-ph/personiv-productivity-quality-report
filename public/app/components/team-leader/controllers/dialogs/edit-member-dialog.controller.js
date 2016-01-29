@@ -1,24 +1,20 @@
 teamLeaderModule
-	.controller('addMemberDialogController', ['$scope', '$mdDialog', 'Preloader', 'User', 'Member', function($scope, $mdDialog, Preloader, User, Member){
-		var user = Preloader.getUser();
-		if(!user){
-			User.index()
-				.success(function(data){
-					user = data;
-				});
-		};
+	.controller('editMemberDialogController', ['$scope', '$mdDialog', 'Preloader', 'Member', function($scope, $mdDialog, Preloader, Member){
+		var member_id = Preloader.get();
 
 		$scope.cancel = function(){
 			$mdDialog.cancel();
 		};
 
-		$scope.member = {};
-		$scope.member.team_leader_id = user.id;
+		Member.show(member_id)
+			.success(function(data){
+				$scope.member = data;
+			});
 
 		$scope.submit = function(){
 			$scope.showErrors = true;
-			if($scope.addMemberForm.$invalid){
-				angular.forEach($scope.addMemberForm.$error, function(field){
+			if($scope.editMemberForm.$invalid){
+				angular.forEach($scope.editMemberForm.$error, function(field){
 					angular.forEach(field, function(errorField){
 						errorField.$setTouched();
 					});
@@ -30,7 +26,7 @@ teamLeaderModule
 				/**
 				 * Stores Single Record
 				*/
-				Member.store($scope.member)
+				Member.update(member_id, $scope.member)
 					.then(function(){
 						// Stops Preloader 
 						Preloader.stop();

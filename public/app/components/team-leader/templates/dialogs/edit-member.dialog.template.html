@@ -1,0 +1,42 @@
+<md-dialog layout="column" flex flex-gt-md="50"  aria-label="Edit Member" ng-cloak>
+	<form name="editMemberForm" novalidate>
+		<md-toolbar>
+			<div class="md-toolbar-tools">
+				<h2>Edit Member</h2>
+				<span flex></span>
+				<md-button class="md-icon-button" ng-click="cancel()">
+					<md-icon class="mdi mdi-close" aria-label="cancel"></md-icon>
+				</md-button>
+			</div>
+		</md-toolbar>
+		<md-dialog-content layout="column" flex layout-padding layout-wrap>
+			<div layout="row" flex>			
+				<!-- Full Name -->
+				<md-input-container flex>
+					<label>Full Name</label>
+					<input type="text" name="FullName" required ng-model="member.full_name">
+					<div ng-messages="editMemberForm.FullName.$error" ng-if="editMemberForm.FullName.$touched">
+						<div ng-messages-include="/app/shared/templates/validation-message.html"></div>
+					</div>
+				</md-input-container>
+			</div>
+			<div layout="row" flex>			
+				<md-input-container flex>
+					<label>Date Hired</label>
+					<input type="text" name="DateHired" required ng-model="member.date_hired" data-date-format="yyyy-MM-dd" data-max-date="today" data-autoclose="1" bs-datepicker data-timezone="UTC">
+					<div class="hint" ng-if="!showErrors">
+						<p>yyyy-mm-dd</p>
+					</div>
+					<div ng-messages="form.createReportForm.DateHired.$error" ng-if="form.createReportForm.DateHired.$touched">
+						<div ng-messages-include="/app/shared/templates/validation-message.html"></div>
+					</div>
+				</md-input-container>
+			</div>
+		</md-dialog-content>
+	</form>
+	<div layout="row" layout-align="end center">		
+		<md-button class="md-fab md-primary" aria-label="Submit" ng-click="submit()">
+			<md-icon class="mdi mdi-check"></md-icon>
+		</md-button>
+	</div>
+</md-dialog>

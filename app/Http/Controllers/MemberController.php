@@ -41,15 +41,13 @@ class MemberController extends Controller
     public function teamLeader($team_leader_id)
     {
         return DB::table('members')
-            // ->join('positions', 'positions.id', '=', 'members.position_id')
             ->select(
                 'members.*',
-                // 'positions.name as position',
                 DB::raw('UPPER(LEFT(members.full_name, 1)) as first_letter'),
                 DB::raw('DATE_FORMAT(date_hired, "%b. %d, %Y") as date_hired')
             )
             ->where('members.team_leader_id', $team_leader_id)
-            // ->orderBy('positions.name')
+            ->whereNull('deleted_at')
             ->orderBy('members.full_name')
             ->get();
     }
@@ -131,7 +129,23 @@ class MemberController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $this->validate($request, [
+            'full_name' => 'required|string',
+            'date_hired' => 'required|date',
+            'team_leader_id' => 'required|numeric',
+        ]);
+
+        $member = Member::where('id', $id)->first();
+
+        $member->full_name = $request->full_name;
+        $member->date_hired = $request->date_hired;
+        $member->team_leader_id = $request->team_leader_id;
+
+        // get the difference of months from date hired to present
+        $tenure = date_diff(Carbon::today(), date_create($request->date_hired))->format("%m");
+        $member->experience = $tenure < 3 ? 'Beginner' : (($tenure > 3 && $tenure < 6) ? 'Moderately Experienced' : 'Experienced');
+
+        $member->save();
     }
 
     /**
@@ -142,6 +156,6 @@ class MemberController extends Controller
      */
     public function destroy($id)
     {
-        //
+        Member::where('id', $id)->delete();
     }
 }

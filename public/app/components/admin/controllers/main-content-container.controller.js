@@ -226,4 +226,22 @@ adminModule
 		$scope.editReport = function(id){
 			$state.go('main.edit-report', {'reportID':id});
 		};
+
+		$scope.deleteReport = function(id){
+			var confirm = $mdDialog.confirm()
+		        .title('Delete Report')
+		        .content('Records under this report will be deleted permanently.')
+		        .ariaLabel('Delete Report')
+		        .ok('Delete')
+		        .cancel('Cancel');
+		    $mdDialog.show(confirm)
+		    .then(function() {
+		    	Report.delete(id)
+		    		.success(function(){
+		    			$scope.subheader.refresh();
+		    		});
+		    }, function() {
+		    	return;
+		    });
+		}
 	}]);

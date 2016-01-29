@@ -22,54 +22,147 @@ class ReportController extends Controller
         $this->date_start_format = date_create($this->date_start)->format("F Y");
         $this->date_end_format = date_create($this->date_end)->format("F Y");
         
-        $this->results_array = array();
-        $this->productivity_average_array = array();
-        $this->quality_average_array = array();
+        $this->reports_array = array();
+        $this->members_array = array();
 
-        foreach ($this->projects as $key => $value) {
+        $beginner_temp = array();
+        $moderately_experienced_temp = array();
+        $experienced_temp = array();
+        $quality_temp = array();
+
+        $this->beginner = array();
+        $this->moderately_experienced = array();
+        $this->experienced = array();
+        $this->quality = array();
+
+        foreach ($this->projects as $parentKey => $value) {
             $this->productivity_average = 0;
             $this->quality_average = 0;
 
-            $results = DB::table('performances')
-                ->join('results', 'results.performance_id', '=', 'performances.id')
-                ->join('members', 'members.id', '=', 'performances.member_id')
-                ->join('positions', 'positions.id', '=', 'performances.position_id')
-                ->join('projects', 'projects.id', '=', 'performances.project_id')
+            $this->positions = DB::table('positions')
+                ->where('project_id', $value->id)
+                ->get();
+
+            foreach ($this->positions as $key => $value) {
+                $beginner = DB::table('targets')
+                    ->where('type', 'Productivity')
+                    ->where('position_id', $value->id)
+                    ->where('experience', 'Beginner')
+                    ->first();
+
+                $moderately_experienced = DB::table('targets')
+                    ->where('type', 'Productivity')
+                    ->where('position_id', $value->id)
+                    ->where('experience', 'Moderately Experienced')
+                    ->first();
+
+                $experienced = DB::table('targets')
+                    ->where('type', 'Productivity')
+                    ->where('position_id', $value->id)
+                    ->where('experience', 'Experienced')
+                    ->first();
+
+                $quality = DB::table('targets')
+                    ->where('type', 'Quality')
+                    ->where('position_id', $value->id)
+                    ->first();
+
+                array_push($beginner_temp, $beginner);
+                array_push($moderately_experienced_temp, $moderately_experienced);
+                array_push($experienced_temp, $experienced);
+                array_push($quality_temp, $quality);
+            }
+
+            array_push($this->beginner, $beginner_temp);
+            array_push($this->moderately_experienced, $moderately_experienced_temp);
+            array_push($this->experienced, $experienced_temp);
+            array_push($this->quality, $quality_temp);
+
+            $beginner_temp = array();
+            $moderately_experienced_temp = array();
+            $experienced_temp = array();
+            $quality_temp = array();
+
+            $reports = DB::table('performances')
                 ->select(
                     '*',
-                    'performances.id as performance_id',
+                    DB::raw('DATE_FORMAT(date_start, "%b. %d") as date_start'),
+                    DB::raw('DATE_FORMAT(date_end, "%b. %d") as date_end')
+                )
+                ->where('project_id', $value->id)
+                ->whereBetween('performances.date_start', [$this->date_start, $this->date_end])
+                ->groupBy('date_start')
+                ->get();
+
+            // fetch all members of per project
+            $members = DB::table('performances')
+                ->join('members', 'members.id', '=', 'performances.member_id')
+                ->join('positions', 'positions.id', '=', 'performances.position_id')
+                ->leftJoin('projects', 'projects.id', '=', 'performances.project_id')
+                ->select(
+                    '*',
+                    'members.id as member_id',
                     'positions.name as position',
                     DB::raw('DATE_FORMAT(performances.date_start, "%b. %d") as date_start'),
                     DB::raw('DATE_FORMAT(performances.date_end, "%b. %d") as date_end')
                 )
-                ->where('performances.project_id', $value->id)
-                ->whereBetween('performances.date_start', [$this->date_start, $this->date_end])
-                ->groupBy('performances.id')
-                ->orderBy('positions.name')
-                ->orderBy('members.full_name')
+                ->where('projects.id', $value->id)
+                ->groupBy('members.id')
                 ->get();
 
-            foreach ($results as $key => $value) {
-                $this->productivity_average += $value->productivity;
-                $this->quality_average += $value->quality;
+            // foreach members fetch its performance
+            foreach ($members as $key1 => $value) {
+                $results = DB::table('performances')
+                    ->leftJoin('results', 'results.performance_id', '=', 'performances.id')
+                    ->leftJoin('members', 'members.id', '=', 'performances.member_id')
+                    ->leftJoin('positions', 'positions.id', '=', 'performances.position_id')
+                    ->select(
+                        '*',
+                        'performances.id as performance_id',
+                        'positions.name as position',
+                        DB::raw('DATE_FORMAT(performances.date_start, "%b. %d") as date_start'),
+                        DB::raw('DATE_FORMAT(performances.date_end, "%b. %d") as date_end')
+                    )
+                    ->where('members.id', $value->member_id)
+                    ->whereBetween('performances.date_start', [$this->date_start, $this->date_end])
+                    // ->whereBetween('performances.date_end', [$this->date_start, $this->date_end])
+                    ->orderBy('positions.name')
+                    ->orderBy('members.full_name')
+                    ->get();
+
+                // foreach members performance add its results 
+                foreach ($results as $key2 => $value) {
+                    $this->productivity_average += $value->productivity;
+                    $this->quality_average += $value->quality;
+                }
+                
+                // average its results
+                $this->productivity_average = round($this->productivity_average / 4, 1); 
+                $this->quality_average = round($this->quality_average / 4, 1);
+
+                $members[$key1]->results = $results;
+                $members[$key1]->productivity_average = $this->productivity_average;
+                $members[$key1]->quality_average = $this->quality_average;
             }
 
-            $this->productivity_average = round($this->productivity_average / 4, 1); 
-            $this->quality_average = round($this->quality_average / 4, 1);
+            // return $members;
 
-            array_push($this->results_array, $results);
-            array_push($this->productivity_average_array, $this->productivity_average);
-            array_push($this->quality_average_array, $this->quality_average);
+            array_push($this->members_array, $members);
+            array_push($this->reports_array, $reports);
         }
 
         Excel::create('PQR Summary Report '. $this->date_start_format, function($excel){
             foreach ($this->projects as $key => $value) {
-                $this->index = $key; 
+                $this->index = $key;
                 $excel->sheet($value->name, function($sheet) {
                     $sheet->loadView('excel.monthly')
-                        ->with('data', $this->results_array[$this->index])
-                        ->with('productivity_average', $this->productivity_average_array[$this->index])
-                        ->with('quality_average', $this->quality_average_array[$this->index]);
+                        ->with('positions', $this->positions)
+                        ->with('members', $this->members_array[$this->index])
+                        ->with('reports', $this->reports_array[$this->index]);
+                        // ->with('beginner', $this->beginner[$this->index])
+                        // ->with('moderately_experienced', $this->moderately_experienced[$this->index])
+                        // ->with('experienced', $this->experienced[$this->index])
+                        // ->with('quality', $this->quality[$this->index]);
                 });
             }
         })->download('xlsx');
@@ -565,6 +658,9 @@ class ReportController extends Controller
      */
     public function destroy($id)
     {
-        //
+        Report::where('id', $id)->delete();
+
+        DB::table('performances')->where('report_id', $id)->delete();
+        DB::table('results')->where('report_id', $id)->delete();
     }
 }

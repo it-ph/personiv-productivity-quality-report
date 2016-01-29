@@ -298,6 +298,9 @@ sharedModule
 			searchDepartment: function(id, data){
 				return $http.post(urlBase + '-search-department/' + id, data);
 			},
+			delete: function(id){
+				return $http.delete(urlBase + '/' + id);
+			},
 		}
 	}])
 sharedModule
