@@ -43,28 +43,28 @@ class ReportController extends Controller
                 ->where('project_id', $value->id)
                 ->get();
 
-            foreach ($this->positions as $key => $value) {
+            foreach ($this->positions as $key => $value2) {
                 $beginner = DB::table('targets')
                     ->where('type', 'Productivity')
-                    ->where('position_id', $value->id)
+                    ->where('position_id', $value2->id)
                     ->where('experience', 'Beginner')
                     ->first();
 
                 $moderately_experienced = DB::table('targets')
                     ->where('type', 'Productivity')
-                    ->where('position_id', $value->id)
+                    ->where('position_id', $value2->id)
                     ->where('experience', 'Moderately Experienced')
                     ->first();
 
                 $experienced = DB::table('targets')
                     ->where('type', 'Productivity')
-                    ->where('position_id', $value->id)
+                    ->where('position_id', $value2->id)
                     ->where('experience', 'Experienced')
                     ->first();
 
                 $quality = DB::table('targets')
                     ->where('type', 'Quality')
-                    ->where('position_id', $value->id)
+                    ->where('position_id', $value2->id)
                     ->first();
 
                 array_push($beginner_temp, $beginner);
@@ -72,7 +72,7 @@ class ReportController extends Controller
                 array_push($experienced_temp, $experienced);
                 array_push($quality_temp, $quality);
             }
-
+            // return $beginner_temp;
             array_push($this->beginner, $beginner_temp);
             array_push($this->moderately_experienced, $moderately_experienced_temp);
             array_push($this->experienced, $experienced_temp);
@@ -93,7 +93,7 @@ class ReportController extends Controller
                 ->whereBetween('performances.date_start', [$this->date_start, $this->date_end])
                 ->groupBy('date_start')
                 ->get();
-
+            // return $reports;
             // fetch all members of per project
             $members = DB::table('performances')
                 ->join('members', 'members.id', '=', 'performances.member_id')
@@ -111,7 +111,7 @@ class ReportController extends Controller
                 ->get();
 
             // foreach members fetch its performance
-            foreach ($members as $key1 => $value) {
+            foreach ($members as $key1 => $value3) {
                 $results = DB::table('performances')
                     ->leftJoin('results', 'results.performance_id', '=', 'performances.id')
                     ->leftJoin('members', 'members.id', '=', 'performances.member_id')
@@ -123,7 +123,7 @@ class ReportController extends Controller
                         DB::raw('DATE_FORMAT(performances.date_start, "%b. %d") as date_start'),
                         DB::raw('DATE_FORMAT(performances.date_end, "%b. %d") as date_end')
                     )
-                    ->where('members.id', $value->member_id)
+                    ->where('members.id', $value3->member_id)
                     ->whereBetween('performances.date_start', [$this->date_start, $this->date_end])
                     // ->whereBetween('performances.date_end', [$this->date_start, $this->date_end])
                     ->orderBy('positions.name')
@@ -131,9 +131,9 @@ class ReportController extends Controller
                     ->get();
 
                 // foreach members performance add its results 
-                foreach ($results as $key2 => $value) {
-                    $this->productivity_average += $value->productivity;
-                    $this->quality_average += $value->quality;
+                foreach ($results as $key2 => $value4) {
+                    $this->productivity_average += $value4->productivity;
+                    $this->quality_average += $value4->quality;
                 }
                 
                 // average its results
@@ -151,6 +151,8 @@ class ReportController extends Controller
             array_push($this->reports_array, $reports);
         }
 
+        // return $this->members_array;
+
         Excel::create('PQR Summary Report '. $this->date_start_format, function($excel){
             foreach ($this->projects as $key => $value) {
                 $this->index = $key;
@@ -158,11 +160,11 @@ class ReportController extends Controller
                     $sheet->loadView('excel.monthly')
                         ->with('positions', $this->positions)
                         ->with('members', $this->members_array[$this->index])
-                        ->with('reports', $this->reports_array[$this->index]);
-                        // ->with('beginner', $this->beginner[$this->index])
-                        // ->with('moderately_experienced', $this->moderately_experienced[$this->index])
-                        // ->with('experienced', $this->experienced[$this->index])
-                        // ->with('quality', $this->quality[$this->index]);
+                        ->with('reports', $this->reports_array[$this->index])
+                        ->with('beginner', $this->beginner[$this->index])
+                        ->with('moderately_experienced', $this->moderately_experienced[$this->index])
+                        ->with('experienced', $this->experienced[$this->index])
+                        ->with('quality', $this->quality[$this->index]);
                 });
             }
         })->download('xlsx');

@@ -1,4 +1,46 @@
-
+<table>
+	<tr>
+		<th colspan="4">Targets</th>
+	</tr>
+	<!-- Headers -->
+	<tr>
+		<th>Productivity</th>
+		@foreach($positions as $item)
+			<th>{{ $item->name }}</th>
+		@endforeach
+	</tr>
+	<!-- Beginner -->
+	<tr>
+		<td>Beginner (less than 3 months)</td>
+		@foreach($beginner as $item)
+			<td>{{ $item->value }}</td>
+		@endforeach
+	</tr>
+	<!-- Moderately Experienced -->
+	<tr>
+		<td>Moderately Experienced (3 to 6 months)</td>
+		@foreach($moderately_experienced as $item)
+			<td>{{ $item->value }}</td>
+		@endforeach
+	</tr>
+	<!-- Experienced -->
+	<tr>
+		<td>Experienced (6 months and beyond)</td>
+		@foreach($experienced as $item)
+			<td>{{ $item->value }}</td>
+		@endforeach
+	</tr>
+	<tr>
+		<td colspan="4"></td>
+	</tr>
+	<tr>
+		<th>Quality</th>
+		@foreach($quality as $item)
+			<td>{{ $item->value }}%</td>
+		@endforeach
+	</tr>
+</table>
+<br>
 <table>
 	<tr>
 		<th colspan="3" center></th>
