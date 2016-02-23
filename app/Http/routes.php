@@ -82,3 +82,5 @@ Route::get('report-download/{reportID}', 'ReportController@download');
 Route::get('report-download-summary/{date_start}/to/{date_end}', 'ReportController@downloadSummary');
 Route::get('performance-report/{reportID}', 'PerformanceController@report');
 Route::get('report-download-monthly-summary/{month}/year/{year}', 'ReportController@downloadMonthlySummary');
+
+Route::get('report-monthly', 'ReportController@monthly');

@@ -309,3 +309,8 @@ md-content.purple-bg{
     bottom: 7px;
     opacity: 1;
 }
+
+.table > tbody > tr > td.no-spacing {
+	padding: 0px;
+	border: none;
+}

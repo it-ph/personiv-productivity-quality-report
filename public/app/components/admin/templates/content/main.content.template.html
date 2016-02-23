@@ -1,51 +1,58 @@
-<!-- Search reports -->
-<div class="fade-transition" layout="column" flex flex-gt-sm="70" ng-if="report.reports && !report.paginated.show">
-	<div layout="row" layout-padding flex ng-repeat="report in report.results | filter: toolbar.userInput">
+<div class="fade-transition" flex layout-padding ng-if="reports">
+	<div layout="row" layout-padding flex ng-repeat="detail in reports" ng-if="detail.length">
 		<div flex>
 			<div class="panel panel-default">
-				<div class="panel-heading">
-					<span class="primary-text md-title">{{ report[0].date_start }} to {{ report[0].date_end }}</span>
-				</div>
-				<div class="panel-body" layout="column">
-					<!-- Chart	-->
-					<canvas id="bar-{{$index}}" class="chart chart-bar" chart-data="charts.data[$index]" chart-labels="charts.labels" chart-legend="true" chart-series="charts.series[$index]">
-					</canvas>
-					<h2 class="primary-text md-headline">{{ report[0].project }}</h2>
-					<!-- <h3 class="secondary-text md-subhead">{{ report[0].position }}</h3> -->
-					<div layout="row" flex>					
+				<div class="panel-body" layout="column" flex>
+					<div layout="row" layout-align="center center" flex>
+						<div flex>					
+							<canvas id="bar" class="chart chart-bar" chart-data="charts[$index].data" chart-labels="charts[$index].labels" chart-legend="true" chart-series="chart.series"></canvas>
+						</div>
+						<div flex="35">			
+							<canvas id="pie" class="chart chart-pie" chart-data="charts[$index].position_head_count" chart-labels="charts[$index].positions" chart-legend="true"></canvas> 
+						</div>					
+					</div>
+					<h2 class="md-headline primary-text">{{detail[0].name}}</h2>
+					<p class="md-subhead">Program Head Count: <strong class="accent-text">{{detail[0].program_head_count}}</strong></p>
+					<div layout="row" flex>	
 						<table class="table">
+							<tr>
+								<td colspan="3"></td>
+								<td ng-repeat="item in detail[0].results">{{ item.date_start }} to {{ item.date_end }}</td>
+								<td colspan="{{detail[0].results.length + 3}}"></td>
+							</tr>
 							<tr>
 								<th>Name</th>
 								<th>Position</th>
 								<th>Experience</th>
-								<th>Shift Hours</th>
-								<th>Hours Worked</th>
-								<th>Output</th>
-								<th>Output w/Error(s)</th>
-								<th>
-									Average Output
-									<md-tooltip>Output / Hours Worked * Shift Hours</md-tooltip>
+	
+								<th ng-repeat="item in detail[0].results">
+									<table class="table">
+										<tr>
+											<td class="no-spacing">Productivity</td>
+											<td class="no-spacing">Quality</td>
+										</tr>
+									</table>
 								</th>
-								<th>
-									Productivity
-									<md-tooltip>Average Output / Target Output * Shift Hours</md-tooltip>
-								</th>
-								<th>
-									Quality
-									<md-tooltip>1 - Output w/Error(s) / Output</md-tooltip>
-								</th>
+								
+								<th>Average Productivity</th>
+								<th>Average Quality</th>
+								<th>Remarks</th>
 							</tr>
-							<tr ng-repeat="item in report | filter: toolbar.userInput">
-								<td>{{ item.full_name }}</td>
-								<td>{{ item.position }}</td>
-								<td>{{ item.experience }}</td>
-								<td>{{ item.daily_work_hours | number:1 }}</td>
-								<td>{{ item.hours_worked | number:1 }}</td>
-								<td>{{ item.output | number:1 }}</td>
-								<td>{{ item.output_error | number:1 }}</td>
-								<td>{{ item.average_output }}</td>
-								<td>{{ item.productivity | number:1 }}%</td>
-								<td>{{ item.quality | number:1 }}%</td>
+							<tr ng-repeat="item in detail">
+								<td>{{item.full_name}}</td>
+								<td>{{item.position}}</td>
+								<td>{{item.experience}}</td>
+								<td ng-repeat="item in item.results">
+									<table class="table">
+										<tr>
+											<td class="no-spacing">{{item.productivity}}%</td>
+											<td class="no-spacing">{{item.quality}}%</td>
+										</tr>
+									</table>
+								</td>
+								<td>{{item.productivity_average}}%</td>
+								<td>{{item.quality_average}}%</td>
+								<td>{{item.quota}}</td>
 							</tr>
 						</table>
 					</div>
@@ -53,66 +60,9 @@
 			</div>
 		</div>
 	</div>
-</div>
-
-<!-- Paginated Data -->
-<div class="fade-transition" ng-if="report.show" flex infinite-scroll='report.paginateLoad()' infinite-scroll-distance="2" infinite-scroll-disabled="report.busy" infinite-scroll-parent>
-	<div layout="row" layout-padding flex ng-repeat="report in report.paginated | filter: toolbar.userInput">
-		<div flex>
-			<div class="panel panel-default">
-				<div class="panel-heading">
-					<span class="primary-text md-title">{{ report[0].date_start }} to {{ report[0].date_end }}</span>
-				</div>
-				<div class="panel-body" layout="column">
-					<!-- Chart	-->
-					<canvas id="bar-{{$index}}" class="chart chart-bar" chart-data="charts.data[$index]" chart-labels="charts.labels" chart-legend="true" chart-series="charts.series[$index]">
-					</canvas>
-					<h2 class="primary-text md-headline">{{ report[0].project }}</h2>
-					<!-- <h3 class="secondary-text md-subhead">{{ report[0].position }}</h3> -->
-					<div layout="row" flex>					
-						<table class="table">
-							<tr>
-								<th>Name</th>
-								<th>Position</th>
-								<th>Experience</th>
-								<th>Shift Hours</th>
-								<th>Hours Worked</th>
-								<th>Output</th>
-								<th>Output w/Error(s)</th>
-								<th>
-									Average Output
-									<md-tooltip>Output / Hours Worked * Shift Hours</md-tooltip>
-								</th>
-								<th>
-									Productivity
-									<md-tooltip>Average Output / Target Output * Shift Hours</md-tooltip>
-								</th>
-								<th>
-									Quality
-									<md-tooltip>1 - Output w/Error(s) / Output</md-tooltip>
-								</th>
-							</tr>
-							<tr ng-repeat="item in report | filter: toolbar.userInput">
-								<td>{{ item.full_name }}</td>
-								<td>{{ item.position }}</td>
-								<td>{{ item.experience }}</td>
-								<td>{{ item.daily_work_hours | number:1 }}</td>
-								<td>{{ item.hours_worked | number:1 }}</td>
-								<td>{{ item.output | number:1 }}</td>
-								<td>{{ item.output_error | number:1 }}</td>
-								<td>{{ item.average_output }}</td>
-								<td>{{ item.productivity | number:1 }}%</td>
-								<td>{{ item.quality | number:1 }}%</td>
-							</tr>
-						</table>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-	<md-card ng-if="!report.paginated.length">
+	<md-card layout="row" flex ng-if="!reports.length">
 		<md-card-content>
-			<p>No records to show</p>
+			<p>No Records to show</p>
 		</md-card-content>
 	</md-card>
 </div>

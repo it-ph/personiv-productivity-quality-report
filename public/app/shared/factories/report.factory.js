@@ -36,5 +36,8 @@ sharedModule
 			delete: function(id){
 				return $http.delete(urlBase + '/' + id);
 			},
+			monthly: function(){
+				return $http.get(urlBase + '-monthly');
+			},
 		}
 	}])

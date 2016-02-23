@@ -20,7 +20,11 @@ adminModule
 						controller: 'mainContentContainerController',
 					},
 					'content@main': {
-						templateUrl: '/app/shared/templates/main.content.template.html',
+						// templateUrl: '/app/shared/templates/main.content.template.html',
+						templateUrl: '/app/components/admin/templates/content/main.content.template.html'
+					},
+					'right-sidenav@main': {
+						templateUrl: '/app/components/admin/templates/sidenavs/main-right.sidenav.html',
 					},
 				}
 			})
