@@ -33,8 +33,9 @@ adminModule
 				
 				$scope.details.date_start = new Date(data[0].date_start);
 				$scope.details.date_end = new Date(data[0].date_end);
-				$scope.details.project_id = data[0].project_id;
+				$scope.details.project_name = data[0].project_name;
 				$scope.details.daily_work_hours = data[0].daily_work_hours;
+				$scope.details.first_letter = data[0].first_letter;
 
 				Position.project(data[0].project_id)
 					.success(function(data){

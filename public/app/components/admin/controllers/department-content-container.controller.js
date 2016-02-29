@@ -1,5 +1,5 @@
 adminModule
-	.controller('departmentContentContainerController', ['$scope', '$state', '$stateParams', 'Preloader', 'Department', 'Report', 'Target', 'User', function($scope, $state, $stateParams, Preloader, Department, Report, Target, User){
+	.controller('departmentContentContainerController', ['$scope', '$state', '$stateParams', 'Preloader', 'Department', 'Report', 'Performance', 'Target', 'User', function($scope, $state, $stateParams, Preloader, Department, Report, Performance, Target, User){
 		var departmentID = $stateParams.departmentID;
 		/**
 		 * Object for charts
@@ -18,19 +18,27 @@ adminModule
 		*/
 		$scope.report = {};
 		$scope.report.paginated = [];
+		$scope.report.targets = [];
+		$scope.report.topPerformers = [];
 		// 2 is default so the next page to be loaded will be page 2 
 		$scope.report.page = 2;
 
-		// fetch the targets
-		Target.department(departmentID)
-			.success(function(data){
-				$scope.targets = data;
-			});
 		// fetch the details of the pagination 
 		Report.paginateDepartmentDetails(departmentID)
 			.success(function(data){
 				$scope.report.details = data;
 				$scope.report.busy = true;
+				angular.forEach(data.data, function(item, key){
+					// fetch the targets
+					Target.project(item.project_id)
+						.success(function(data){
+							$scope.report.targets.splice(key, 0, data)
+						});
+					Performance.topPerformers(item.id)
+						.success(function(data){
+							$scope.report.topPerformers.splice(key, 0, data)
+						});
+				});
 				// fetch the custom paginated data
 				Report.paginateDepartment(departmentID)
 					.success(function(data){
@@ -120,6 +128,7 @@ adminModule
 			Preloader.preload();
 			// clear report
 			$scope.report.paginated = [];
+			$scope.report.targets = [];
 			$scope.report.page = 2;
 			$scope.charts.data = [];
 			$scope.charts.series = [];
@@ -127,12 +136,22 @@ adminModule
 			Report.paginateDepartmentDetails(departmentID)
 				.success(function(data){
 					$scope.report.details = data;
+					angular.forEach(data.data, function(item, key){
+						// fetch the targets
+						Target.project(item.project_id)
+							.success(function(data){
+								$scope.report.targets.splice(key, 0, data)
+							});
+						Performance.topPerformers(item.id)
+							.success(function(data){
+								$scope.report.topPerformers.splice(key, 0, data)
+							});
+					});
 					// fetch the custom paginated data
 					Report.paginateDepartment(departmentID)
 						.success(function(data){
 							$scope.report.paginated = data;
 							$scope.report.show = true;
-
 							// set up the charts
 							// reports cycle
 							angular.forEach($scope.report.paginated, function(parentItem, parentKey){
@@ -225,9 +244,9 @@ adminModule
 		// 	return;
 		// };
 
-		$scope.rightSidenav = {};
+		// $scope.rightSidenav = {};
 
-		$scope.rightSidenav.show = true;
+		// $scope.rightSidenav.show = true;
 
 		$scope.editReport = function(id){
 			$state.go('main.edit-report', {'reportID':id});

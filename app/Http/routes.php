@@ -84,3 +84,5 @@ Route::get('performance-report/{reportID}', 'PerformanceController@report');
 Route::get('report-download-monthly-summary/{month}/year/{year}', 'ReportController@downloadMonthlySummary');
 
 Route::get('report-monthly', 'ReportController@monthly');
+Route::get('target-project/{projectID}', 'TargetController@project');
+Route::get('performance-top-performers/{reportID}', 'PerformanceController@topPerformers');

@@ -15,14 +15,57 @@ use App\Http\Controllers\Controller;
 
 class PerformanceController extends Controller
 {
+    public function topPerformers($report_id)
+    {
+        $performance_array = array();
+
+        $positions = DB::table('reports')
+            ->join('performances', 'performances.report_id', '=', 'reports.id')
+            ->join('positions', 'positions.id', '=', 'performances.position_id')
+            ->select('positions.*')
+            ->where('reports.id', $report_id)
+            ->groupBy('positions.id')
+            ->get();
+
+        foreach ($positions as $key => $value) {
+            $performance = DB::table('reports')
+                ->join('performances', 'performances.report_id', '=', 'reports.id')
+                ->join('results', 'results.performance_id', '=', 'performances.id')
+                ->join('positions', 'positions.id', '=', 'performances.position_id')
+                ->join('projects', 'projects.id', '=', 'reports.project_id')
+                ->join('members', 'members.id', '=', 'performances.member_id')
+                ->select(
+                    'members.*',
+                    'performances.*',
+                    DB::raw('DATE_FORMAT(performances.date_start, "%b. %d, %Y") as date_start'),
+                    DB::raw('DATE_FORMAT(performances.date_end, "%b. %d, %Y") as date_end'),
+                    'results.*',
+                    'projects.*',
+                    'projects.name as project',
+                    'positions.name as position'
+                )
+                ->where('reports.id', $report_id)
+                ->where('positions.id', $value->id)
+                ->orderBy('results.productivity', 'desc')
+                ->orderBy('results.quality', 'desc')
+                ->first();
+
+            array_push($performance_array, $performance);
+        }
+
+        return $performance_array;
+    }
     public function report($reportID)
     {
         return DB::table('performances')
             ->join('members', 'members.id', '=', 'performances.member_id')
+            ->join('projects', 'projects.id', '=', 'performances.project_id')
             ->select(
                 '*',
+                'projects.name as project_name',
                 DB::raw('TRUNCATE(performances.daily_work_hours, 1) as daily_work_hours'),
                 DB::raw('UPPER(LEFT(members.full_name, 1)) as first_letter'),
+                DB::raw('UPPER(LEFT(projects.name, 1)) as first_letter'),
                 'performances.id as performance_id',
                 'members.id as member_id'
             )

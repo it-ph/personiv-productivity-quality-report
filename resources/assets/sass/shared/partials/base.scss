@@ -33,3 +33,15 @@ body{
 td, th{
     @extend .center-text;
 }
+
+a{
+
+    &:hover{
+        text-decoration: none;
+        color: $main-text;
+    }
+    &:focus{
+        text-decoration: none;
+        color: $main-text;
+    }
+}

@@ -27,5 +27,8 @@ sharedModule
 			checkLimitEdit: function(id, data){
 				return $http.post(urlBase + '-check-limit-edit/' + id, data);
 			},
+			topPerformers: function(id){
+				return $http.get(urlBase + '-top-performers/' + id);
+			},
 		}
 	}])

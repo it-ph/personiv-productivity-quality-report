@@ -21,9 +21,39 @@
 								<td colspan="{{detail[0].results.length + 3}}"></td>
 							</tr>
 							<tr>
-								<th>Name</th>
-								<th>Position</th>
-								<th>Experience</th>
+								<th>
+									<a href="#" class="main-text" ng-click="sortType = 'full_name' ; sortReverse = !sortReverse">	
+										<span>Name</span>
+										<md-icon ng-show="sortType == 'full_name' && !sortReverse" class="mdi mdi-chevron-down grey"></md-icon>
+										<md-icon ng-show="sortType == 'full_name' && sortReverse" class="mdi mdi-chevron-up grey"></md-icon>
+										<md-tooltip>
+											<span ng-show="sortReverse">Ascending</span>
+											<span ng-show="!sortReverse">Descending</span>
+										</md-tooltip>
+									</a>
+								</th>
+								<th>
+									<a href="#" class="main-text" ng-click="sortType = 'position' ; sortReverse = !sortReverse">
+										<span>Position</span>
+										<md-icon ng-show="sortType == 'position' && !sortReverse" class="mdi mdi-chevron-down grey"></md-icon>
+										<md-icon ng-show="sortType == 'position' && sortReverse" class="mdi mdi-chevron-up grey"></md-icon>
+										<md-tooltip>
+											<span ng-show="sortReverse">Ascending</span>
+											<span ng-show="!sortReverse">Descending</span>
+										</md-tooltip>
+									</a>
+								</th>
+								<th>
+									<a href="#" class="main-text" ng-click="sortType = 'experience' ; sortReverse = !sortReverse">
+										<span>Category</span>
+										<md-icon ng-show="sortType == 'experience' && !sortReverse" class="mdi mdi-chevron-down grey"></md-icon>
+										<md-icon ng-show="sortType == 'experience' && sortReverse" class="mdi mdi-chevron-up grey"></md-icon>
+										<md-tooltip>
+											<span ng-show="sortReverse">Ascending</span>
+											<span ng-show="!sortReverse">Descending</span>
+										</md-tooltip>
+									</a>
+								</th>
 	
 								<th ng-repeat="item in detail[0].results">
 									<table class="table">
@@ -34,11 +64,41 @@
 									</table>
 								</th>
 								
-								<th>Average Productivity</th>
-								<th>Average Quality</th>
-								<th>Remarks</th>
+								<th>
+									<a href="#" class="main-text" ng-click="sortType = 'productivity_average' ; sortReverse = !sortReverse">
+										<span>Average Productivity</span>
+										<md-icon ng-show="sortType == 'productivity_average' && !sortReverse" class="mdi mdi-chevron-down grey"></md-icon>
+										<md-icon ng-show="sortType == 'productivity_average' && sortReverse" class="mdi mdi-chevron-up grey"></md-icon>
+										<md-tooltip>
+											<span ng-show="sortReverse">Ascending</span>
+											<span ng-show="!sortReverse">Descending</span>
+										</md-tooltip>
+									</a>
+								</th>
+								<th>
+									<a href="#" class="main-text" ng-click="sortType = 'quality_average' ; sortReverse = !sortReverse">
+										<span>Average Quality</span>
+										<md-icon ng-show="sortType == 'quality_average' && !sortReverse" class="mdi mdi-chevron-down grey"></md-icon>
+										<md-icon ng-show="sortType == 'quality_average' && sortReverse" class="mdi mdi-chevron-up grey"></md-icon>
+										<md-tooltip>
+											<span ng-show="sortReverse">Ascending</span>
+											<span ng-show="!sortReverse">Descending</span>
+										</md-tooltip>
+									</a>
+								</th>
+								<th>
+									<a href="#" class="main-text" ng-click="sortType = 'quota' ; sortReverse = !sortReverse">
+										<span>Remarks</span>
+										<md-icon ng-show="sortType == 'quota' && !sortReverse" class="mdi mdi-chevron-down grey"></md-icon>
+										<md-icon ng-show="sortType == 'quota' && sortReverse" class="mdi mdi-chevron-up grey"></md-icon>
+										<md-tooltip>
+											<span ng-show="sortReverse">Ascending</span>
+											<span ng-show="!sortReverse">Descending</span>
+										</md-tooltip>
+									</a>
+								</th>
 							</tr>
-							<tr ng-repeat="item in detail">
+							<tr ng-repeat="item in detail | orderBy:sortType:sortReverse">
 								<td>{{item.full_name}}</td>
 								<td>{{item.position}}</td>
 								<td>{{item.experience}}</td>
@@ -52,7 +112,7 @@
 								</td>
 								<td>{{item.productivity_average}}%</td>
 								<td>{{item.quality_average}}%</td>
-								<td>{{item.quota}}</td>
+								<td ng-class="{'accent-text':item.quota=='Not met'}">{{item.quota}}</td>
 							</tr>
 						</table>
 					</div>

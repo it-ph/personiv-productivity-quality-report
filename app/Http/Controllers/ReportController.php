@@ -109,7 +109,7 @@ class ReportController extends Controller
                     ->where('targets.type', 'Quality')
                     ->first();
 
-                $details[$key1]->quota = (($this->productivity_average >= 100) && ($this->quality_average >= $quality_target->value)) ? 'Reached' : 'Not yet reached';
+                $details[$key1]->quota = (($this->productivity_average >= 100) && ($this->quality_average >= $quality_target->value)) ? 'Met' : 'Not met';
             
             }
         }
@@ -139,14 +139,14 @@ class ReportController extends Controller
         $this->moderately_experienced = array();
         $this->experienced = array();
         $this->quality = array();
+        $this->positions_array = array();
 
         foreach ($this->projects as $parentKey => $value) {
-            $this->productivity_average = 0;
-            $this->quality_average = 0;
-
             $this->positions = DB::table('positions')
                 ->where('project_id', $value->id)
                 ->get();
+
+            array_push($this->positions_array, $this->positions);
 
             foreach ($this->positions as $key => $value2) {
                 $beginner = DB::table('targets')
@@ -217,6 +217,9 @@ class ReportController extends Controller
 
             // foreach members fetch its performance
             foreach ($members as $key1 => $value3) {
+                $this->productivity_average = 0;
+                $this->quality_average = 0;
+
                 $results = DB::table('performances')
                     ->leftJoin('results', 'results.performance_id', '=', 'performances.id')
                     ->leftJoin('members', 'members.id', '=', 'performances.member_id')
@@ -230,7 +233,6 @@ class ReportController extends Controller
                     )
                     ->where('members.id', $value3->member_id)
                     ->whereBetween('performances.date_start', [$this->date_start, $this->date_end])
-                    // ->whereBetween('performances.date_end', [$this->date_start, $this->date_end])
                     ->orderBy('positions.name')
                     ->orderBy('members.full_name')
                     ->get();
@@ -242,28 +244,36 @@ class ReportController extends Controller
                 }
                 
                 // average its results
-                $this->productivity_average = round($this->productivity_average / 4, 1); 
-                $this->quality_average = round($this->quality_average / 4, 1);
+                $this->productivity_average = round($this->productivity_average / count($results), 1); 
+                $this->quality_average = round($this->quality_average / count($results), 1);
 
                 $members[$key1]->results = $results;
                 $members[$key1]->productivity_average = $this->productivity_average;
                 $members[$key1]->quality_average = $this->quality_average;
-            }
 
-            // return $members;
+                $quality_target = DB::table('targets')
+                    ->join('positions', 'positions.id', '=', 'targets.position_id')
+                    ->join('members', 'members.experience', '=', 'targets.experience')
+                    ->select('*')
+                    ->where('targets.position_id', $value3->position_id)
+                    ->where('targets.experience', $value3->experience)
+                    ->where('targets.type', 'Quality')
+                    ->first();
+
+                $members[$key1]->quota = (($this->productivity_average >= 100) && ($this->quality_average >= $quality_target->value)) ? 'Met' : 'Not met';
+
+            }
 
             array_push($this->members_array, $members);
             array_push($this->reports_array, $reports);
         }
-
-        // return $this->members_array;
 
         Excel::create('PQR Summary Report '. $this->date_start_format, function($excel){
             foreach ($this->projects as $key => $value) {
                 $this->index = $key;
                 $excel->sheet($value->name, function($sheet) {
                     $sheet->loadView('excel.monthly')
-                        ->with('positions', $this->positions)
+                        ->with('positions', $this->positions_array[$this->index])
                         ->with('members', $this->members_array[$this->index])
                         ->with('reports', $this->reports_array[$this->index])
                         ->with('beginner', $this->beginner[$this->index])
@@ -646,6 +656,19 @@ class ReportController extends Controller
                 ->orderBy('members.full_name')
                 ->get();
 
+            foreach ($query as $queryKey => $queryValue) {
+                $quality_target = DB::table('targets')
+                    ->join('positions', 'positions.id', '=', 'targets.position_id')
+                    ->join('members', 'members.experience', '=', 'targets.experience')
+                    ->select('*')
+                    ->where('targets.position_id', $queryValue->position_id)
+                    ->where('targets.experience', $queryValue->experience)
+                    ->where('targets.type', 'Quality')
+                    ->first();
+
+                    $queryValue->quota = (($queryValue->productivity >= 100) && ($queryValue->quality >= $quality_target->value)) ? 'Met' : 'Not met';
+            }
+
                 // push each results to custom array
                 array_push($report_array, $query);
         }
@@ -685,6 +708,19 @@ class ReportController extends Controller
                 ->orderBy('positions.name')
                 ->orderBy('members.full_name')
                 ->get();
+
+                foreach ($query as $queryKey => $queryValue) {
+                    $quality_target = DB::table('targets')
+                        ->join('positions', 'positions.id', '=', 'targets.position_id')
+                        ->join('members', 'members.experience', '=', 'targets.experience')
+                        ->select('*')
+                        ->where('targets.position_id', $queryValue->position_id)
+                        ->where('targets.experience', $queryValue->experience)
+                        ->where('targets.type', 'Quality')
+                        ->first();
+
+                        $queryValue->quota = (($queryValue->productivity >= 100) && ($queryValue->quality >= $quality_target->value)) ? 'Met' : 'Not met';
+                }
 
                 // push each results to custom array
 

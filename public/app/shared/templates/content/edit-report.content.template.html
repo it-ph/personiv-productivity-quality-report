@@ -12,53 +12,21 @@
 					<span>Date Coverage</span>
 				</md-subheader>
 				<md-card-content>
-					<div layout="row">
-						<!-- Date Start -->
-						<md-input-container flex>
-							<label>Date Start</label>
-							<input type="text" name="DateStart" ng-change="resetMembers()" required ng-model="details.date_start" data-date-format="yyyy-MM-dd" data-max-date="today" data-autoclose="1" bs-datepicker data-timezone="UTC">
-							<div ng-messages="form.editReportForm.DateStart.$error" ng-if="form.editReportForm.DateStart.$touched">
-								<div ng-messages-include="/app/shared/templates/validation-message-date.html"></div>
+					<md-list layout="row" layout-align="space-between center" class="fade-transition" ng-if="performances">
+						<md-list-item class="md-2-line" layout="row">
+							<h2 class="md-avatar md-headline purple-bg" layout="row" layout-align="center center">
+								<span class="weight-200 white-text">{{ details.first_letter }}</span>
+							</h2>
+							<div class="md-list-item-text" layout="column" flex>
+								<h3>{{ details.project_name }}</h3>
+								<h4>{{ details.date_start | date:'MMM. d, yyyy' }} to {{ details.date_end | date:'MMM. d, yyyy'}}</h4>
+								<p>Daily Work Hours: {{ details.daily_work_hours }}</p>
 							</div>
-						</md-input-container>
-						<!-- Date End -->
-						<md-input-container flex>
-							<label>Date End</label>
-							<input type="text" name="DateEnd" required ng-change="resetMembers()" ng-model="details.date_end" data-date-format="yyyy-MM-dd" data-max-date="today" data-min-date="{{details.date_start}}" data-autoclose="1" bs-datepicker data-timezone="UTC">
-							<div ng-messages="form.editReportForm.DateEnd.$error" ng-if="form.editReportForm.DateEnd.$touched">
-								<div ng-messages-include="/app/shared/templates/validation-message-date.html"></div>
-							</div>
-						</md-input-container>
-					</div>
-					<div layout="row">
-						<!-- Project -->
-						<md-input-container flex>
-							<label>Project</label>
-							<md-select name="Project" required ng-model="details.project_id" ng-change="showPositions(details.project_id)">
-								<md-option ng-repeat="project in projects" value="{{ project.id }}">
-									{{ project.name }}
-								</md-option>
-							</md-select>
-							<div ng-messages="form.editReportForm.Project.$error" ng-if="form.editReportForm.Project.$touched">
-								<div ng-messages-include="/app/shared/templates/validation-message-report.html"></div>
-							</div>
-						</md-input-container>
-						<!-- Daily Work Hours -->
-						<md-input-container flex>
-							<label>Daily Work Hours</label>
-							<md-select name="WorkHours" ng-change="resetMembers()" required ng-model="details.daily_work_hours">
-								<md-option ng-repeat="hour in hours" value="{{ hour.value }}">
-									{{ hour.value }}
-								</md-option>
-							</md-select>
-							<div ng-messages="form.editReportForm.WorkHours.$error" ng-if="form.editReportForm.WorkHours.$touched">
-								<div ng-messages-include="/app/shared/templates/validation-message-report.html"></div>
-							</div>
-						</md-input-container>
-					</div>
+						</md-list-item>
+					</md-list>
 				</md-card-content>		
 			</md-card>
-			<md-card ng-repeat="performance in performances">
+			<md-card class="fade-transition" ng-repeat="performance in performances">
 				<md-card-content>
 					<md-list layout="row" layout-align="space-between center">
 						<md-list-item class="md-2-line" layout="row">
@@ -72,7 +40,7 @@
 							</div>
 						</md-list-item>
 						<md-checkbox ng-change="checkLimit($index)" ng-model="performance.include">
-							<md-tooltip>Mark to Include</md-tooltip>
+							<span>Edit</span>
 						</md-checkbox>
 					</md-list>
 					<div ng-if="performance.include" class="fade-transition">

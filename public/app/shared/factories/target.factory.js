@@ -30,5 +30,8 @@ sharedModule
 			quality : function(id){
 				return $http.get(urlBase + '-quality/' + id);
 			},
+			project: function(id){
+				return $http.get(urlBase + '-project/' + id);
+			},
 		}
 	}])

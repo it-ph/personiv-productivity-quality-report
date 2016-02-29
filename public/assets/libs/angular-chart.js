@@ -19,8 +19,10 @@
   Chart.defaults.global.multiTooltipTemplate = '<%if (datasetLabel){%><%=datasetLabel%>: <%}%><%= value %>';
 
   Chart.defaults.global.colours = [
-    '#673AB7', // deep purple
-    '#E91E63',  // pink
+    // '#673AB7', // deep purple
+    // '#E91E63',  // pink
+    '#2196F3', // blue
+    '#FF4081', // amber
     '#FF9800', // orange
     // '#009688', // teal
     // '#F44336', // red

@@ -10,6 +10,42 @@ use App\Http\Controllers\Controller;
 
 class TargetController extends Controller
 {
+    public function project($project_id)
+    {
+        $project = DB::table('projects')->where('id', $project_id)->first();
+
+        $project->positions = DB::table('positions')->where('project_id', $project_id)->get();
+
+        $project->beginner_productivity =  array();
+        $project->moderately_experienced_productivity =  array();
+        $project->experienced_productivity =  array();
+        
+        $project->beginner_quality =  array();
+        $project->moderately_experienced_quality =  array();
+        $project->experienced_quality =  array();
+
+        foreach ($project->positions as $key => $value) {
+            /* Productivity */
+            $beginner_productivity = Target::where('position_id', $value->id)->where('type', 'Productivity')->where('experience', 'Beginner')->first()->value;
+            $moderately_experienced_productivity = Target::where('position_id', $value->id)->where('type', 'Productivity')->where('experience', 'Moderately Experienced')->first()->value;
+            $experienced_productivity = Target::where('position_id', $value->id)->where('type', 'Productivity')->where('experience', 'Experienced')->first()->value;
+
+            /* Quality */
+            $beginner_quality = Target::where('position_id', $value->id)->where('type', 'Quality')->where('experience', 'Beginner')->first()->value;
+            $moderately_experienced_quality = Target::where('position_id', $value->id)->where('type', 'Quality')->where('experience', 'Moderately Experienced')->first()->value;
+            $experienced_quality = Target::where('position_id', $value->id)->where('type', 'Quality')->where('experience', 'Experienced')->first()->value;
+
+            array_push($project->beginner_productivity, $beginner_productivity);
+            array_push($project->moderately_experienced_productivity, $moderately_experienced_productivity);
+            array_push($project->experienced_productivity, $experienced_productivity);
+            
+            array_push($project->beginner_quality, $beginner_quality);
+            array_push($project->moderately_experienced_quality, $moderately_experienced_quality);
+            array_push($project->experienced_quality, $experienced_quality);
+        }
+
+        return response()->json($project);
+    }
     public function productivity($position_id)
     {
         return Target::where('position_id', $position_id)->where('type', 'Productivity')->get();
@@ -18,24 +54,24 @@ class TargetController extends Controller
     {
         return Target::where('position_id', $position_id)->where('type', 'Quality')->get();
     }
-    public function department($department_id)
-    {
-        return DB::table('targets')
-            ->join('positions', 'positions.id', '=', 'targets.position_id')
-            ->join('projects', 'projects.id', '=', 'targets.project_id')
-            ->select(
-                'targets.*',
-                'positions.name as position',
-                'projects.name as project',
-                DB::raw('UPPER(LEFT(targets.experience, 1)) as first_letter')
-            )
-            ->where('targets.department_id', $department_id)
-            ->groupBy('targets.id')
-            ->orderBy('projects.name')
-            ->orderBy('positions.name')
-            ->orderBy('targets.experience')
-            ->get();
-    }
+    // public function department($department_id)
+    // {
+    //     return DB::table('targets')
+    //         ->join('positions', 'positions.id', '=', 'targets.position_id')
+    //         ->join('projects', 'projects.id', '=', 'targets.project_id')
+    //         ->select(
+    //             'targets.*',
+    //             'positions.name as position',
+    //             'projects.name as project',
+    //             DB::raw('UPPER(LEFT(targets.experience, 1)) as first_letter')
+    //         )
+    //         ->where('targets.department_id', $department_id)
+    //         ->groupBy('targets.id')
+    //         ->orderBy('projects.name')
+    //         ->orderBy('positions.name')
+    //         ->orderBy('targets.experience')
+    //         ->get();
+    // }
     public function position($position_id)
     {
         return DB::table('targets')

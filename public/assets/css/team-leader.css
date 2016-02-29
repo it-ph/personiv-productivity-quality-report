@@ -27,6 +27,14 @@ body {
     background: rgba(0, 0, 0, 0.5);
     border: 1px solid rgba(0, 0, 0, 0.5); }
 
+a:hover {
+  text-decoration: none;
+  color: #212121; }
+
+a:focus {
+  text-decoration: none;
+  color: #212121; }
+
 .mdi {
   font-size: 24px;
   vertical-align: middle;
@@ -47,7 +55,7 @@ body {
 /* Text Colors Classes */
 .primary-text {
   /* Blue */
-  color: #673AB7; }
+  color: #2196F3; }
 
 .accent-text {
   /* Light Blue */
@@ -133,10 +141,10 @@ md-content.dirty-white {
   background: #eeeeee; }
 
 md-content.purple-bg {
-  background: #673AB7; }
+  background: #2196F3; }
 
 .purple-bg {
-  background: #673AB7; }
+  background: #2196F3; }
 
 .orange-bg {
   background: #FF9800; }
@@ -176,7 +184,7 @@ md-content.purple-bg {
   z-index: 75; }
 
 .purple-border-left {
-  border-left: 2px solid #673AB7; }
+  border-left: 2px solid #2196F3; }
 
 .progress-dialog {
   background: transparent;
@@ -186,7 +194,7 @@ md-content.purple-bg {
   background: white; }
 
 .md-calendar-day-header {
-  background: #673AB7;
+  background: #2196F3;
   color: white; }
 
 .datepicker.dropdown-menu {
@@ -217,7 +225,7 @@ md-content.purple-bg {
 
 .avatar-container {
   min-height: 150px;
-  background: #FF4081; }
+  background: #1976D2; }
   .avatar-container .avatar-section {
     background: url("/assets/img/bg.png");
     background-size: cover;

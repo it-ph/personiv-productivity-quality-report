@@ -51,13 +51,14 @@
 	<tr>
 		<th>Name</th>
 		<th>Position</th>
-		<th>Experience</th>
+		<th>Category</th>
 		@foreach($reports as $item)
 			<th>Productivity</th>
 			<th>Quality</th>
 		@endforeach
-		<th>Last 4 weeks Productivity Average</th>
-		<th>Last 4 weeks Quality Average</th>
+		<th>Productivity Average</th>
+		<th>Quality Average</th>
+		<th>Remarks</th>
 	</tr>
 	@foreach($members as $key => $item)
 		<tr>
@@ -72,6 +73,7 @@
 
 			<td>{{ $item->productivity_average }}%</td>
 			<td>{{ $item->quality_average }}%</td>
+			<td>{{ $item->quota }}</td>
 		</tr>
 	@endforeach
 </table>

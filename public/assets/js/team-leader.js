@@ -108,7 +108,7 @@ teamLeaderModule
 		};
 	}]);
 teamLeaderModule
-	.controller('mainContentContainerController', ['$scope', '$state', 'Preloader', 'Report', 'Target', 'User', function($scope, $state, Preloader, Report, Target, User){
+	.controller('mainContentContainerController', ['$scope', '$state', 'Preloader', 'Report', 'Performance', 'Target', 'User', function($scope, $state, Preloader, Report, Performance, Target, User){
 		var user = null;
 		/**
 		 * Object for charts
@@ -127,22 +127,30 @@ teamLeaderModule
 		*/
 		$scope.report = {};
 		$scope.report.paginated = [];
+		$scope.report.targets = [];
+		$scope.report.topPerformers = [];
 		// 2 is default so the next page to be loaded will be page 2 
 		$scope.report.page = 2;
 
 		User.index()
 			.success(function(data){
 				user = data;
-				// fetch the targets
-				Target.department(user.department_id)
-					.success(function(data){
-						$scope.targets = data;
-					});
 				// fetch the details of the pagination 
 				Report.paginateDepartmentDetails(user.department_id)
 					.success(function(data){
 						$scope.report.details = data;
 						$scope.report.busy = true;
+						angular.forEach(data.data, function(item, key){
+							// fetch the targets
+							Target.project(item.project_id)
+								.success(function(data){
+									$scope.report.targets.splice(key, 0, data)
+								});
+							Performance.topPerformers(item.id)
+								.success(function(data){
+									$scope.report.topPerformers.splice(key, 0, data)
+								});
+						});
 						// fetch the custom paginated data
 						Report.paginateDepartment(user.department_id)
 							.success(function(data){
@@ -229,6 +237,8 @@ teamLeaderModule
 			Preloader.preload();
 			// clear report
 			$scope.report.paginated = [];
+			$scope.report.targets = [];
+			$scope.report.topPerformers = [];
 			$scope.report.page = 2;
 			$scope.charts.data = [];
 			$scope.charts.series = [];
@@ -236,6 +246,17 @@ teamLeaderModule
 			Report.paginateDepartmentDetails(user.department_id)
 				.success(function(data){
 					$scope.report.details = data;
+					angular.forEach(data.data, function(item, key){
+						// fetch the targets
+						Target.project(item.project_id)
+							.success(function(data){
+								$scope.report.targets.splice(key, 0, data)
+							});
+						Performance.topPerformers(item.id)
+							.success(function(data){
+								$scope.report.topPerformers.splice(key, 0, data)
+							});
+					});
 					// fetch the custom paginated data
 					Report.paginateDepartment(user.department_id)
 						.success(function(data){
@@ -333,9 +354,9 @@ teamLeaderModule
 		// 	return;
 		// };
 
-		$scope.rightSidenav = {};
+		// $scope.rightSidenav = {};
 
-		$scope.rightSidenav.show = true;
+		// $scope.rightSidenav.show = true;
 
 		$scope.editReport = function(id){
 			$state.go('main.edit-report', {'reportID':id});
