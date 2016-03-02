@@ -17,6 +17,7 @@ class CreateReportsTable extends Migration
             $table->integer('user_id');
             $table->integer('department_id');
             $table->integer('project_id');
+            $table->float('daily_work_hours');
             $table->date('date_start');
             $table->date('date_end');
             $table->timestamps();

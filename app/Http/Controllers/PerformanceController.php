@@ -205,6 +205,7 @@ class PerformanceController extends Controller
                     $report->user_id = $request->user()->id;
                     $report->department_id = $request->input($i.'.department_id');
                     $report->project_id = $request->input($i.'.project_id');
+                    $report->daily_work_hours = $request->input($i.'.daily_work_hours');
                     $report->date_start = $request->input($i.'.date_start');
                     $report->date_end = $request->input($i.'.date_end');
 

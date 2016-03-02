@@ -1,6 +1,28 @@
 adminModule
 	.controller('mainContentContainerController', ['$scope', '$state', '$stateParams', '$mdDialog', 'Preloader', 'Report', 'User', 'Target', function($scope, $state, $stateParams, $mdDialog, Preloader, Report, User, Target){
-		
+		$scope.report = {};
+		$scope.months = [
+			'January',
+			'February',
+			'March',
+			'April',
+			'May',
+			'June',
+			'July',
+			'August',
+			'September',
+			'October',
+			'November',
+			'December',
+		];
+		var dateCreated = 2015;
+
+		$scope.years = [];
+
+		for (var i = new Date().getFullYear(); i >= dateCreated; i--) {
+			$scope.years.push(i);
+		};
+
 		/**
 		 * Object for toolbar
 		 *
@@ -17,7 +39,7 @@ adminModule
 		/* Refreshes the list */
 		$scope.subheader.refresh = function(){
 			Preloader.preload();
-
+			$scope.report = {};
 			$scope.reports = [];
 			$scope.charts = [];
 			$scope.chart = {};
@@ -118,7 +140,6 @@ adminModule
 		Report.monthly()
 			.success(function(data){
 				$scope.reports = data;
-				
 				angular.forEach(data, function(report, reportIdx){
 					$scope.charts.push([{}]);
 					$scope.charts[reportIdx].data = [];
@@ -144,4 +165,53 @@ adminModule
 			.error(function(){
 				Preloader.error();
 			})
+
+		$scope.form = {};
+
+		$scope.searchMonthlyReport = function(){
+			if($scope.form.searchMonthlyForm.$invalid){
+				angular.forEach($scope.form.searchMonthlyForm.$error, function(field){
+					angular.forEach(field, function(errorField){
+						errorField.$setTouched();
+					});
+				});
+			}
+			else{
+				console.log($scope.report);
+				/* Starts Preloader */
+				Preloader.preload();
+				/**
+				 * Stores Single Record
+				*/
+				Report.searchMonthly($scope.report)
+					.success(function(data){
+						$scope.reports = data;
+						angular.forEach(data, function(report, reportIdx){
+							$scope.charts.push([{}]);
+							$scope.charts[reportIdx].data = [];
+							$scope.charts[reportIdx].data.push([]); // index 0 is productivity
+							$scope.charts[reportIdx].data.push([]); // index 1 is quality
+							$scope.charts[reportIdx].labels = [];
+							$scope.charts[reportIdx].positions = [];
+							if(report.length){
+								angular.forEach(report[0].positions, function(position, keyPostion){
+									$scope.charts[reportIdx].positions.push(position.name);
+								});
+								$scope.charts[reportIdx].position_head_count = report[0].position_head_count;
+							}
+
+							angular.forEach(report, function(member, memberIdx){
+								$scope.charts[reportIdx].labels.push(member.full_name);
+
+								$scope.charts[reportIdx].data[0].push(member.productivity_average);
+								$scope.charts[reportIdx].data[1].push(member.quality_average);
+							});
+						});
+						Preloader.stop();
+					})
+					.error(function(){
+						Preloader.error();
+					})
+			}
+		}
 	}]);

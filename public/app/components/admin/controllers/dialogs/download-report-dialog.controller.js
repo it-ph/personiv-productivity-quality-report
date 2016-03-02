@@ -3,6 +3,8 @@ adminModule
 		$scope.details = {};
 		$scope.details.type = 'Weekly';
 
+		$scope.hours = [8.3, 9.1];
+
 		$scope.months = [
 			{'value': '01', 'month': 'January'},
 			{'value': '02', 'month': 'February'},
@@ -43,11 +45,11 @@ adminModule
 			else{
 				if($scope.details.type=='Weekly')
 				{
-					var win = window.open('/report-download-summary/' + $filter('date')($scope.details.date_start, 'yyyy-MM-dd') + '/to/' + $filter('date')($scope.details.date_end, 'yyyy-MM-dd') , '_blank');
+					var win = window.open('/report-download-summary/' + $filter('date')($scope.details.date_start, 'yyyy-MM-dd') + '/to/' + $filter('date')($scope.details.date_end, 'yyyy-MM-dd') + '/daily-work-hours/' + $scope.details.daily_work_hours , '_blank');
 					win.focus();
 				}
 				else{
-					var win = window.open('/report-download-monthly-summary/' + $scope.details.month + '/year/' + $scope.details.year , '_blank');
+					var win = window.open('/report-download-monthly-summary/' + $scope.details.month + '/year/' + $scope.details.year + '/daily-work-hours/' + $scope.details.daily_work_hours, '_blank');
 					win.focus();	
 				}
 

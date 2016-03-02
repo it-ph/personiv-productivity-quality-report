@@ -307,6 +307,9 @@ sharedModule
 			monthly: function(){
 				return $http.get(urlBase + '-monthly');
 			},
+			searchMonthly: function(data){
+				return $http.post(urlBase + '-search-monthly', data);
+			},
 		}
 	}])
 sharedModule

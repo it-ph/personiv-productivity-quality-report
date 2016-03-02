@@ -1,4 +1,35 @@
 <div class="fade-transition" flex layout-padding ng-if="reports">
+	<div layout="column" flex="50">
+		<md-subheader class="md-no-sticky">Filters</md-subheader>
+		<form name="form.searchMonthlyForm" layout="row" layout-margin layout-align="center center" novalidate>		
+			<md-input-container flex>
+				<label>Month</label>
+				<md-select ng-model="report.month" name="Month" required>
+					<md-option ng-repeat="month in months" value="{{ month }}">
+						{{ month }}
+					</md-option>
+				</md-select>
+				<div ng-messages="form.searchMonthlyForm.Month.$error" ng-if="form.searchMonthlyForm.Month.$touched">
+					<div ng-messages-include="/app/shared/templates/validation-message.html"></div>
+				</div>
+			</md-input-container>
+			<md-input-container flex>
+				<label>Year</label>
+				<md-select ng-model="report.year" required name="Year">
+					<md-option ng-repeat="year in years" value="{{ year }}">
+						{{ year }}
+					</md-option>
+				</md-select>
+				<div ng-messages="form.searchMonthlyForm.Year.$error" ng-if="form.searchMonthlyForm.Year.$touched">
+					<div ng-messages-include="/app/shared/templates/validation-message.html"></div>
+				</div>
+			</md-input-container>
+			<md-button class="md-fab md-mini md-primary" ng-click="searchMonthlyReport()">
+				<md-icon class="mdi mdi-magnify grey"></md-icon>
+				<md-tooltip>Search</md-tooltip>
+			</md-button>
+		</form>
+	</div>
 	<div layout="row" layout-padding flex ng-repeat="detail in reports" ng-if="detail.length">
 		<div flex>
 			<div class="panel panel-default">
@@ -110,6 +141,14 @@
 										</tr>
 									</table>
 								</td>
+								<td ng-if="detail[0].results.length > item.results.length">
+									<table class="table">
+										<tr>
+											<td class="no-spacing">&mdash;</td>
+											<td class="no-spacing">&mdash;</td>
+										</tr>
+									</table>
+								</td>
 								<td>{{item.productivity_average}}%</td>
 								<td>{{item.quality_average}}%</td>
 								<td ng-class="{'accent-text':item.quota=='Not met'}">{{item.quota}}</td>
@@ -120,9 +159,9 @@
 			</div>
 		</div>
 	</div>
-	<md-card layout="row" flex ng-if="!reports.length">
+	<md-card layout="row" flex ng-if="!reports[0].length">
 		<md-card-content>
-			<p>No Records to show</p>
+			<p>No records for the month</p>
 		</md-card-content>
 	</md-card>
 </div>

@@ -11,59 +11,82 @@
 		</md-toolbar>
 		<md-dialog-content layout="column" flex layout-padding layout-wrap>
 			<md-radio-group ng-model="details.type" layout="row">
-			    <md-radio-button value="Weekly">Weekly</md-radio-button>
-		      	<md-radio-button value="Monthly">Monthly</md-radio-button>
+			    <md-radio-button class="md-primary" value="Weekly">Weekly</md-radio-button>
+		      	<md-radio-button class="md-primary" value="Monthly">Monthly</md-radio-button>
 		    </md-radio-group>
-			<div ng-if="details.type=='Weekly'" layout="row">
-				<!-- Date Start -->
+			<div ng-if="details.type=='Weekly'" layout="column">
+				<div layout="row">
+					<!-- Date Start -->
+					<md-input-container flex>
+						<label>Date Start</label>
+						<input type="text" name="DateStart" required ng-model="details.date_start" data-date-format="yyyy-MM-dd" data-max-date="today" data-autoclose="1" bs-datepicker data-timezone="UTC">
+						<div ng-messages="downloadReportForm.DateStart.$error" ng-if="downloadReportForm.DateStart.$touched">
+							<div ng-messages-include="/app/shared/templates/validation-message.html"></div>
+						</div>
+					</md-input-container>
+					<!-- Date End -->
+					<md-input-container flex>
+						<label>Date End</label>
+						<input type="text" name="DateEnd" required ng-model="details.date_end" data-date-format="yyyy-MM-dd" data-max-date="today" data-min-date="{{details.date_start}}" data-autoclose="1" bs-datepicker data-timezone="UTC">
+						<div ng-messages="downloadReportForm.DateEnd.$error" ng-if="downloadReportForm.DateEnd.$touched">
+							<div ng-messages-include="/app/shared/templates/validation-message.html"></div>
+						</div>
+					</md-input-container>
+				</div>
+				<br>
+				<br>
+				<br>
+				<br>
+				<br>
+				<!-- Daily Work Hours -->
 				<md-input-container flex>
-					<label>Date Start</label>
-					<input type="text" name="DateStart" required ng-model="details.date_start" data-date-format="yyyy-MM-dd" data-max-date="today" data-autoclose="1" bs-datepicker data-timezone="UTC">
-					<div ng-messages="downloadReportForm.DateStart.$error" ng-if="downloadReportForm.DateStart.$touched">
-						<div ng-messages-include="/app/shared/templates/validation-message.html"></div>
+					<label>Daily Work Hours</label>
+					<md-select name="WorkHours" required ng-model="details.daily_work_hours">
+						<md-option ng-repeat="hour in hours" value="{{ hour }}">
+							{{ hour }}
+						</md-option>
+					</md-select>
+					<div ng-messages="downloadReportForm.WorkHours.$error" ng-if="downloadReportForm.WorkHours.$touched">
+						<div ng-messages-include="/app/shared/templates/validation-message-report.html"></div>
 					</div>
 				</md-input-container>
-				<!-- Date End -->
-				<md-input-container flex>
-					<label>Date End</label>
-					<input type="text" name="DateEnd" required ng-model="details.date_end" data-date-format="yyyy-MM-dd" data-max-date="today" data-min-date="{{details.date_start}}" data-autoclose="1" bs-datepicker data-timezone="UTC">
-					<div ng-messages="downloadReportForm.DateEnd.$error" ng-if="downloadReportForm.DateEnd.$touched">
-						<div ng-messages-include="/app/shared/templates/validation-message.html"></div>
-					</div>
-				</md-input-container>
-				<br>
-				<br>
-				<br>
-				<br>
-				<br>
-				<br>
-				<br>
-				<br>
-				<br>
-				<br>
 			</div>
-			<div layout-padding ng-if="details.type=='Monthly'" layout="row">
-				<md-input-container flex>
-					<label>Month</label>
-					<md-select name="Month" required ng-model="details.month">
-						<md-option ng-repeat="month in months" value="{{month.value}}">
-							{{ month.month }}
-						</md-option>
-					</md-select>
-					<div ng-messages="downloadReportForm.Month.$error" ng-if="downloadReportForm.Month.$touched">
-						<div ng-messages-include="/app/shared/templates/validation-message.html"></div>
-					</div>
-				</md-input-container>
+			<div layout-padding ng-if="details.type=='Monthly'" layout="column">
+				<div layout="row">
+					<md-input-container flex>
+						<label>Month</label>
+						<md-select name="Month" required ng-model="details.month">
+							<md-option ng-repeat="month in months" value="{{month.value}}">
+								{{ month.month }}
+							</md-option>
+						</md-select>
+						<div ng-messages="downloadReportForm.Month.$error" ng-if="downloadReportForm.Month.$touched">
+							<div ng-messages-include="/app/shared/templates/validation-message.html"></div>
+						</div>
+					</md-input-container>
 
+					<md-input-container flex>
+						<label>Year</label>
+						<md-select name="Year" required ng-model="details.year">
+							<md-option ng-repeat="year in years" value="{{ year }}">
+								{{ year }}
+							</md-option>
+						</md-select>
+						<div ng-messages="downloadReportForm.Year.$error" ng-if="downloadReportForm.Year.$touched">
+							<div ng-messages-include="/app/shared/templates/validation-message.html"></div>
+						</div>
+					</md-input-container>
+				</div>
+				<!-- Daily Work Hours -->
 				<md-input-container flex>
-					<label>Year</label>
-					<md-select name="Year" required ng-model="details.year">
-						<md-option ng-repeat="year in years" value="{{ year }}">
-							{{ year }}
+					<label>Daily Work Hours</label>
+					<md-select name="WorkHours" required ng-model="details.daily_work_hours">
+						<md-option ng-repeat="hour in hours" value="{{ hour }}">
+							{{ hour }}
 						</md-option>
 					</md-select>
-					<div ng-messages="downloadReportForm.Year.$error" ng-if="downloadReportForm.Year.$touched">
-						<div ng-messages-include="/app/shared/templates/validation-message.html"></div>
+					<div ng-messages="downloadReportForm.WorkHours.$error" ng-if="downloadReportForm.WorkHours.$touched">
+						<div ng-messages-include="/app/shared/templates/validation-message-report.html"></div>
 					</div>
 				</md-input-container>
 			</div>

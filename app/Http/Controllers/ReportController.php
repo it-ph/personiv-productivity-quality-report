@@ -12,6 +12,110 @@ use App\Http\Controllers\Controller;
 
 class ReportController extends Controller
 {
+    public function searchMonthly(Request $request)
+    {
+        $all = array();
+
+        $this->date_start = new Carbon('last day of last month '. $request->month .' '. $request->year);
+        $this->date_end = new Carbon('first day of next month'. $request->month .' '. $request->year);
+        $this->projects = DB::table('projects')->get();
+
+        foreach ($this->projects as $key => $value) {
+            $details = DB::table('performances')
+                ->join('members', 'members.id', '=', 'performances.member_id')
+                ->join('positions', 'positions.id', '=', 'performances.position_id')
+                ->leftJoin('projects', 'projects.id', '=', 'performances.project_id')
+                ->select(
+                    '*',
+                    'members.id as member_id',
+                    'positions.name as position',
+                    'projects.id as project_id',
+                    DB::raw('DATE_FORMAT(performances.date_start, "%b. %d") as date_start'),
+                    DB::raw('DATE_FORMAT(performances.date_end, "%b. %d") as date_end')
+                )
+                ->whereBetween('performances.date_start', [$this->date_start, $this->date_end])
+                ->where('projects.id', $value->id)
+                ->orderBy('positions.name')
+                ->orderBy('members.full_name')
+                ->orderBy('performances.date_start')
+                ->groupBy('members.id')
+                ->get();
+
+            array_push($all, $details);
+
+            if(count($details)){            
+                $details[$key]->positions = DB::table('positions')->where('project_id', $value->id)->orderBy('name')->get();
+                $details[$key]->program_head_count = 0;
+                $details[$key]->position_head_count = array();
+
+                foreach ($details[$key]->positions as $positionKey => $positionValue) {
+                    $query = DB::table('performances')
+                        ->where('position_id', $positionValue->id)
+                        ->whereBetween('date_start', [$this->date_start, $this->date_end])
+                        ->get();
+
+                    array_push($details[$key]->position_head_count, count($query));
+                }
+
+                foreach ($details[$key]->position_head_count as $headCountKey => $headCountValue) {
+                    $details[$key]->program_head_count += $headCountValue;
+                }
+            }
+
+
+            foreach ($details as $key1 => $value1) {
+                $this->productivity_average = 0;
+                $this->quality_average = 0;
+
+                $results = DB::table('performances')
+                    ->leftJoin('results', 'results.performance_id', '=', 'performances.id')
+                    ->leftJoin('members', 'members.id', '=', 'performances.member_id')
+                    ->leftJoin('positions', 'positions.id', '=', 'performances.position_id')
+                    ->select(
+                        '*',
+                        'performances.id as performance_id',
+                        'positions.name as position',
+                        DB::raw('DATE_FORMAT(performances.date_start, "%b. %d") as date_start'),
+                        DB::raw('DATE_FORMAT(performances.date_end, "%b. %d") as date_end')
+                    )
+                    ->where('members.id', $value1->member_id)
+                    ->whereBetween('performances.date_start', [$this->date_start, $this->date_end])
+                    // ->whereBetween('performances.date_end', [$this->date_start, $this->date_end])
+                    ->orderBy('positions.name')
+                    ->orderBy('members.full_name')
+                    ->orderBy('performances.date_start')
+                    ->get();
+
+                // foreach members performance add its results 
+                foreach ($results as $key2 => $value4) {
+                    $this->productivity_average += $value4->productivity;
+                    $this->quality_average += $value4->quality;
+                }
+                
+                // average its results
+                $this->productivity_average = round($this->productivity_average / count($results), 1); 
+                $this->quality_average = round($this->quality_average / count($results), 1);
+
+                $details[$key1]->results = $results;
+                $details[$key1]->productivity_average = $this->productivity_average;
+                $details[$key1]->quality_average = $this->quality_average;
+
+                $quality_target = DB::table('targets')
+                    ->join('positions', 'positions.id', '=', 'targets.position_id')
+                    ->join('members', 'members.experience', '=', 'targets.experience')
+                    ->select('*')
+                    ->where('targets.position_id', $value1->position_id)
+                    ->where('targets.experience', $value1->experience)
+                    ->where('targets.type', 'Quality')
+                    ->first();
+
+                $details[$key1]->quota = (($this->productivity_average >= 100) && ($this->quality_average >= $quality_target->value)) ? 'Met' : 'Not met';
+            
+            }
+        }
+
+        return $all;
+    }
     public function monthly()
     {
         $all = array();
@@ -117,7 +221,7 @@ class ReportController extends Controller
         return $all;
     }
 
-    public function downloadMonthlySummary($month, $year)
+    public function downloadMonthlySummary($month, $year, $daily_work_hours)
     {
         $this->projects = DB::table('projects')->get();
         $this->month = $month;
@@ -196,6 +300,7 @@ class ReportController extends Controller
                 )
                 ->where('project_id', $value->id)
                 ->whereBetween('performances.date_start', [$this->date_start, $this->date_end])
+                ->where('performances.daily_work_hours', 'like', $daily_work_hours)
                 ->groupBy('date_start')
                 ->get();
 
@@ -286,7 +391,7 @@ class ReportController extends Controller
 
 
     }
-    public function downloadSummary($date_start, $date_end)
+    public function downloadSummary($date_start, $date_end, $daily_work_hours)
     {
         global $report, $report_array, $position_array, $quality_array, $beginner_array, $moderately_experienced_array, $experienced_array;
 
@@ -317,11 +422,16 @@ class ReportController extends Controller
                 'projects.name as project_name', 
                 'departments.name as department_name'
             )
+            ->where('reports.daily_work_hours', 'like', $daily_work_hours)
             ->where('reports.date_start', 'like', $date_start .'%')
             ->whereBetween('reports.date_end', [$date_start, $date_end])
             ->groupBy('reports.id')
             ->get();
 
+        if(!count($report))
+        {
+            return 'No records found.';
+        }
 
         // will fetch every performance and results for the specific report
         foreach ($report as $key => $value) {
