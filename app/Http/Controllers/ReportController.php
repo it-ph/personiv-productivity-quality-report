@@ -38,28 +38,28 @@ class ReportController extends Controller
                 ->orderBy('positions.name')
                 ->orderBy('members.full_name')
                 ->orderBy('performances.date_start')
+                // ->groupBy('positions.id')
                 ->groupBy('members.id')
                 ->get();
 
-            array_push($all, $details);
-
             if(count($details)){            
-                $details[$key]->positions = DB::table('positions')->where('project_id', $value->id)->orderBy('name')->get();
-                $details[$key]->program_head_count = 0;
-                $details[$key]->position_head_count = array();
+                $details[0]->positions = DB::table('positions')->where('project_id', $value->id)->orderBy('name')->get();
+                $details[0]->program_head_count = count($details);
+                $details[0]->position_head_count = array();
 
-                foreach ($details[$key]->positions as $positionKey => $positionValue) {
+                foreach ($details[0]->positions as $positionKey => $positionValue) {
                     $query = DB::table('performances')
                         ->where('position_id', $positionValue->id)
                         ->whereBetween('date_start', [$this->date_start, $this->date_end])
+                        ->groupBy('member_id')
                         ->get();
 
-                    array_push($details[$key]->position_head_count, count($query));
+                    array_push($details[0]->position_head_count, count($query));
                 }
 
-                foreach ($details[$key]->position_head_count as $headCountKey => $headCountValue) {
-                    $details[$key]->program_head_count += $headCountValue;
-                }
+                // foreach ($details[0]->position_head_count as $headCountKey => $headCountValue) {
+                //     $details[0]->program_head_count += $headCountValue;
+                // }
             }
 
 
@@ -110,8 +110,10 @@ class ReportController extends Controller
                     ->first();
 
                 $details[$key1]->quota = (($this->productivity_average >= 100) && ($this->quality_average >= $quality_target->value)) ? 'Met' : 'Not met';
-            
+                
             }
+
+            array_push($all, $details);
         }
 
         return $all;
@@ -145,25 +147,24 @@ class ReportController extends Controller
                 ->groupBy('members.id')
                 ->get();
 
-            array_push($all, $details);
-
             if(count($details)){            
-                $details[$key]->positions = DB::table('positions')->where('project_id', $value->id)->orderBy('name')->get();
-                $details[$key]->program_head_count = 0;
-                $details[$key]->position_head_count = array();
+                $details[0]->positions = DB::table('positions')->where('project_id', $value->id)->orderBy('name')->get();
+                $details[0]->program_head_count = count($details);
+                $details[0]->position_head_count = array();
 
-                foreach ($details[$key]->positions as $positionKey => $positionValue) {
+                foreach ($details[0]->positions as $positionKey => $positionValue) {
                     $query = DB::table('performances')
                         ->where('position_id', $positionValue->id)
                         ->whereBetween('date_start', [$this->date_start, $this->date_end])
+                        ->groupBy('member_id')
                         ->get();
 
-                    array_push($details[$key]->position_head_count, count($query));
+                    array_push($details[0]->position_head_count, count($query));
                 }
 
-                foreach ($details[$key]->position_head_count as $headCountKey => $headCountValue) {
-                    $details[$key]->program_head_count += $headCountValue;
-                }
+                // foreach ($details[0]->position_head_count as $headCountKey => $headCountValue) {
+                //     $details[0]->program_head_count += $headCountValue;
+                // }
             }
 
 
@@ -216,6 +217,8 @@ class ReportController extends Controller
                 $details[$key1]->quota = (($this->productivity_average >= 100) && ($this->quality_average >= $quality_target->value)) ? 'Met' : 'Not met';
             
             }
+
+            array_push($all, $details);
         }
 
         return $all;
@@ -299,9 +302,9 @@ class ReportController extends Controller
                     DB::raw('DATE_FORMAT(date_end, "%b. %d") as date_end')
                 )
                 ->where('project_id', $value->id)
-                ->whereBetween('performances.date_start', [$this->date_start, $this->date_end])
-                ->where('performances.daily_work_hours', 'like', $daily_work_hours)
-                ->groupBy('date_start')
+                ->whereBetween('date_start', [$this->date_start, $this->date_end])
+                ->where('daily_work_hours', 'like', $daily_work_hours)
+                // ->groupBy('date_start')
                 ->get();
 
             // fetch all members of per project

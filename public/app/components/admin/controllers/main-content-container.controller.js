@@ -214,4 +214,8 @@ adminModule
 					})
 			}
 		}
+
+		$scope.test = function(){
+			console.log('ok');
+		}
 	}]);

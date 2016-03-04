@@ -35,22 +35,68 @@
 			<div class="panel panel-default">
 				<div class="panel-body" layout="column" flex>
 					<div layout="row" layout-align="center center" flex>
-						<div flex>					
+						<div flex="45">					
 							<canvas id="bar" class="chart chart-bar" chart-data="charts[$index].data" chart-labels="charts[$index].labels" chart-legend="true" chart-series="chart.series"></canvas>
 						</div>
-						<div flex="35">			
+						<div flex="25">			
 							<canvas id="pie" class="chart chart-pie" chart-data="charts[$index].position_head_count" chart-labels="charts[$index].positions" chart-legend="true"></canvas> 
+						</div>
+						<div flex>
+							<table class="table">
+								<tr>
+									<th>Row Labels</th>
+									<th>Sum of Total Output</th>
+									<th>Sum of Total Man Hours</th>
+									<th>Sum of Total Average Output</th>
+								</tr>
+								<tr>
+									<th>Beginner</th>
+									<td>644</td>
+									<td>208</td>
+									<td>25.8</td>
+								</tr>
+								<tr>
+									<td>Artist</td>
+									<td>644</td>
+									<td>208</td>
+									<td>25.8</td>
+								</tr>
+								<tr>
+									<th>Experienced</th>
+									<td>8695</td>
+									<td>1245</td>
+									<td>58.0</td>
+								</tr>
+								<tr>
+									<td>Artist</td>
+									<td>3203</td>
+									<td>830</td>
+									<td>32</td>
+								</tr>
+								<tr>
+									<td>Proofer</td>
+									<td>5492</td>
+									<td>415</td>
+									<td>109.8</td>
+								</tr>
+								<tr>
+									<th>Grand Total</th>
+									<th>9339</th>
+									<th>1453</th>
+									<th>53.4</th>
+								</tr>
+							</table>
 						</div>					
 					</div>
 					<h2 class="md-headline primary-text">{{detail[0].name}}</h2>
 					<p class="md-subhead">Program Head Count: <strong class="accent-text">{{detail[0].program_head_count}}</strong></p>
 					<div layout="row" flex>	
 						<table class="table">
-							<tr>
+							<!-- <tr>
 								<td colspan="3"></td>
 								<td ng-repeat="item in detail[0].results">{{ item.date_start }} to {{ item.date_end }}</td>
 								<td colspan="{{detail[0].results.length + 3}}"></td>
-							</tr>
+							</tr> -->
 							<tr>
 								<th>
 									<a href="#" class="main-text" ng-click="sortType = 'full_name' ; sortReverse = !sortReverse">	
@@ -85,16 +131,14 @@
 										</md-tooltip>
 									</a>
 								</th>
-	
-								<th ng-repeat="item in detail[0].results">
+								<!-- <th ng-repeat="item in detail[0].results">
 									<table class="table">
 										<tr>
 											<td class="no-spacing">Productivity</td>
 											<td class="no-spacing">Quality</td>
 										</tr>
 									</table>
-								</th>
-								
+								</th> -->
 								<th>
 									<a href="#" class="main-text" ng-click="sortType = 'productivity_average' ; sortReverse = !sortReverse">
 										<span>Average Productivity</span>
@@ -129,11 +173,11 @@
 									</a>
 								</th>
 							</tr>
-							<tr ng-repeat="item in detail | orderBy:sortType:sortReverse">
+							<tr ng-repeat="item in detail | orderBy:sortType:sortReverse" ng-click="test()">
 								<td>{{item.full_name}}</td>
 								<td>{{item.position}}</td>
 								<td>{{item.experience}}</td>
-								<td ng-repeat="item in item.results">
+								<!-- <td ng-repeat="item in item.results">
 									<table class="table">
 										<tr>
 											<td class="no-spacing">{{item.productivity}}%</td>
@@ -148,7 +192,7 @@
 											<td class="no-spacing">&mdash;</td>
 										</tr>
 									</table>
-								</td>
+								</td> -->
 								<td>{{item.productivity_average}}%</td>
 								<td>{{item.quality_average}}%</td>
 								<td ng-class="{'accent-text':item.quota=='Not met'}">{{item.quota}}</td>

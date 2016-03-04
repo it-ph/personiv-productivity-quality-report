@@ -876,6 +876,10 @@ adminModule
 					})
 			}
 		}
+
+		$scope.test = function(){
+			console.log('ok');
+		}
 	}]);
 adminModule
 	.controller('positionsContentContainerController', ['$scope', '$state', '$stateParams', '$mdDialog', 'Department', 'Preloader', 'Project', 'Position', function($scope, $state, $stateParams, $mdDialog, Department, Preloader, Project, Position){
