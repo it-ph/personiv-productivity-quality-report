@@ -24,6 +24,17 @@
 					<div ng-messages-include="/app/shared/templates/validation-message.html"></div>
 				</div>
 			</md-input-container>
+			<md-input-container flex>
+				<label>Daily Work Hours</label>
+				<md-select ng-model="report.daily_work_hours" required name="DailyWorkHours">
+					<md-option ng-repeat="hour in hours" value="{{ hour }}">
+						{{ hour }}
+					</md-option>
+				</md-select>
+				<div ng-messages="form.searchMonthlyForm.DailyWorkHours.$error" ng-if="form.searchMonthlyForm.DailyWorkHours.$touched">
+					<div ng-messages-include="/app/shared/templates/validation-message.html"></div>
+				</div>
+			</md-input-container>
 			<md-button class="md-fab md-mini md-primary" ng-click="searchMonthlyReport()">
 				<md-icon class="mdi mdi-magnify grey"></md-icon>
 				<md-tooltip>Search</md-tooltip>
@@ -41,7 +52,7 @@
 						<div flex="25">			
 							<canvas id="pie" class="chart chart-pie" chart-data="charts[$index].position_head_count" chart-labels="charts[$index].positions" chart-legend="true"></canvas> 
 						</div>
-						<div flex>
+						<div flex layout="column" layout-align="end end">
 							<table class="table">
 								<tr>
 									<th>Row Labels</th>
@@ -51,45 +62,56 @@
 								</tr>
 								<tr>
 									<th>Beginner</th>
-									<td>644</td>
-									<td>208</td>
-									<td>25.8</td>
+									<td>{{detail[0].beginner_total_output}}</td>
+									<td>{{detail[0].beginner_total_man_hours}}</td>
+									<td>{{detail[0].beginner_total_average_output}}</td>
+								</tr>
+								<tr ng-repeat="item in detail[0].begginer">
+									<td>{{item.position}}</td>
+									<td>{{item.total_output}}</td>
+									<td>{{item.total_man_hours}}</td>
+									<td>{{item.total_average_output}}</td>
 								</tr>
 								<tr>
-									<td>Artist</td>
-									<td>644</td>
-									<td>208</td>
-									<td>25.8</td>
+									<th>Moderately Experienced</th>
+									<td>{{detail[0].moderately_experienced_total_output}}</td>
+									<td>{{detail[0].moderately_experienced_total_man_hours}}</td>
+									<td>{{detail[0].moderately_experienced_total_average_output}}</td>
+								</tr>
+								<tr ng-repeat="item in detail[0].moderately_experienced">
+									<td>{{item.position}}</td>
+									<td>{{item.total_output}}</td>
+									<td>{{item.total_man_hours}}</td>
+									<td>{{item.total_average_output}}</td>
 								</tr>
 								<tr>
 									<th>Experienced</th>
-									<td>8695</td>
-									<td>1245</td>
-									<td>58.0</td>
+									<td>{{detail[0].experienced_total_output}}</td>
+									<td>{{detail[0].experienced_total_man_hours}}</td>
+									<td>{{detail[0].experienced_total_average_output}}</td>
 								</tr>
-								<tr>
-									<td>Artist</td>
-									<td>3203</td>
-									<td>830</td>
-									<td>32</td>
-								</tr>
-								<tr>
-									<td>Proofer</td>
-									<td>5492</td>
-									<td>415</td>
-									<td>109.8</td>
+								<tr ng-repeat="item in detail[0].experienced">
+									<td>{{item.position}}</td>
+									<td>{{item.total_output}}</td>
+									<td>{{item.total_man_hours}}</td>
+									<td>{{item.total_average_output}}</td>
 								</tr>
 								<tr>
 									<th>Grand Total</th>
-									<th>9339</th>
-									<th>1453</th>
-									<th>53.4</th>
+									<th>{{detail[0].overall_total_output}}</th>
+									<th>{{detail[0].overall_total_man_hours}}</th>
+									<th>{{detail[0].overall_total_average_output}}</th>
 								</tr>
 							</table>
+							<md-button class="md-fab md-mini md-primary" aria-label="Download">
+								<md-icon class="mdi mdi-download"></md-icon>
+								<md-tooltip>Download</md-tooltip>
+							</md-button>
 						</div>					
 					</div>
 					<h2 class="md-headline primary-text">{{detail[0].name}}</h2>
-					<p class="md-subhead">Program Head Count: <strong class="accent-text">{{detail[0].program_head_count}}</strong></p>
+						<p class="md-subhead">Program Head Count: <strong>{{detail[0].program_head_count}}</strong></p>
+						<p class="md-body-1">Daliy Work Hours: <strong>{{detail[0].daily_work_hours | number:1}}</strong></p>
 					<div layout="row" flex>	
 						<table class="table">
 							<!-- <tr>
@@ -109,7 +131,7 @@
 										</md-tooltip>
 									</a>
 								</th>
-								<th>
+								<!-- <th>
 									<a href="#" class="main-text" ng-click="sortType = 'position' ; sortReverse = !sortReverse">
 										<span>Position</span>
 										<md-icon ng-show="sortType == 'position' && !sortReverse" class="mdi mdi-chevron-down grey"></md-icon>
@@ -119,7 +141,7 @@
 											<span ng-show="!sortReverse">Descending</span>
 										</md-tooltip>
 									</a>
-								</th>
+								</th> -->
 								<th>
 									<a href="#" class="main-text" ng-click="sortType = 'experience' ; sortReverse = !sortReverse">
 										<span>Category</span>
@@ -172,10 +194,11 @@
 										</md-tooltip>
 									</a>
 								</th>
+								<th>Status</th>
 							</tr>
-							<tr ng-repeat="item in detail | orderBy:sortType:sortReverse" ng-click="test()">
+							<tr ng-repeat="item in detail | orderBy:sortType:sortReverse" ng-click="test(item)">
 								<td>{{item.full_name}}</td>
-								<td>{{item.position}}</td>
+								<!-- <td>{{item.position}}</td> -->
 								<td>{{item.experience}}</td>
 								<!-- <td ng-repeat="item in item.results">
 									<table class="table">
@@ -196,6 +219,11 @@
 								<td>{{item.productivity_average}}%</td>
 								<td>{{item.quality_average}}%</td>
 								<td ng-class="{'accent-text':item.quota=='Not met'}">{{item.quota}}</td>
+								<td layout="row" layout-align="center center">
+									<div class="dots" ng-class="item.results.length >= 4 ? 'primary' : 'accent'"></div>
+									<md-tooltip ng-if="item.results.length >= 4">Complete</md-tooltip>
+									<md-tooltip ng-if="item.results.length < 4">Incomplete</md-tooltip>
+								</td>
 							</tr>
 						</table>
 					</div>

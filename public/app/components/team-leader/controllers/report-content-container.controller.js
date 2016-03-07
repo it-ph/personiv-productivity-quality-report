@@ -44,6 +44,7 @@ teamLeaderModule
 		};
 
 		$scope.hours = [
+			{'value': 7.5},
 			{'value': 8.3},
 			{'value': 9.1},
 		];

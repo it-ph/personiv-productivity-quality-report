@@ -10,11 +10,52 @@ use App\Report;
 use App\Notification;
 use App\Events\ReportSubmittedBroadCast;
 use DB;
+use Carbon\Carbon;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
 class PerformanceController extends Controller
 {
+    public function monthly(Request $request)
+    {   
+        $month = date_format(date_create($request->date_start), 'F');
+        $year = date_format(date_create($request->date_start), 'Y');
+
+        $this->date_start = new Carbon('last day of last month '. $month .' '. $year);
+        $this->date_end = new Carbon('first day of next month'. $month .' '. $year);
+
+        $performances = DB::table('performances')
+            ->join('members', 'members.id', '=', 'performances.member_id')
+            ->join('positions', 'positions.id', '=', 'performances.position_id')
+            ->join('projects', 'projects.id', '=', 'performances.project_id')
+            ->join('results', 'results.id', '=', 'performances.result_id')
+            ->select(
+                '*',
+                'positions.name as position',
+                'projects.name as project',
+                DB::raw('DATE_FORMAT(performances.date_start, "%b. %d") as date_start'),
+                DB::raw('DATE_FORMAT(performances.date_end, "%b. %d") as date_end')
+            )
+            ->where('performances.member_id', $request->member_id)
+            ->whereBetween('performances.date_start', [$this->date_start, $this->date_end])
+            ->where('performances.daily_work_hours', 'like', round($request->daily_work_hours,1).'%')
+            ->get();
+
+        foreach ($performances as $key => $value) {
+            $quality_target = DB::table('targets')
+                ->join('positions', 'positions.id', '=', 'targets.position_id')
+                ->join('members', 'members.experience', '=', 'targets.experience')
+                ->select('*')
+                ->where('targets.position_id', $value->position_id)
+                ->where('targets.experience', $value->experience)
+                ->where('targets.type', 'Quality')
+                ->first();
+
+            $value->quota = (($value->productivity >= 100) && ($value->quality >= $quality_target->value)) ? 'Met' : 'Not met';
+        }
+
+        return $performances;
+    }
     public function topPerformers($report_id)
     {
         $performance_array = array();

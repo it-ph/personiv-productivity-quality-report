@@ -30,5 +30,8 @@ sharedModule
 			topPerformers: function(id){
 				return $http.get(urlBase + '-top-performers/' + id);
 			},
+			monthly: function(data){
+				return $http.post(urlBase + '-monthly', data);
+			},
 		}
 	}])

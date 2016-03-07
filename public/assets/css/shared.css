@@ -291,6 +291,15 @@ md-content.purple-bg {
   padding: 0px;
   border: none; }
 
+.dots {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%; }
+  .dots.primary {
+    background: #2196F3; }
+  .dots.accent {
+    background: #FF4081; }
+
 /* transition duration */
 .transition, .fade-transition, .main-view {
   transition: all 0.3s cubic-bezier(0.55, 0, 0.55, 0.2); }

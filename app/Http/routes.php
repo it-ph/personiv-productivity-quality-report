@@ -87,3 +87,4 @@ Route::get('report-monthly', 'ReportController@monthly');
 Route::post('report-search-monthly', 'ReportController@searchMonthly');
 Route::get('target-project/{projectID}', 'TargetController@project');
 Route::get('performance-top-performers/{reportID}', 'PerformanceController@topPerformers');
+Route::post('performance-monthly', 'PerformanceController@monthly');

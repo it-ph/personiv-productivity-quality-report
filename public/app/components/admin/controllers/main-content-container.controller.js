@@ -23,6 +23,8 @@ adminModule
 			$scope.years.push(i);
 		};
 
+		$scope.hours = [7.5, 8.3, 9.1];
+
 		/**
 		 * Object for toolbar
 		 *
@@ -177,7 +179,6 @@ adminModule
 				});
 			}
 			else{
-				console.log($scope.report);
 				/* Starts Preloader */
 				Preloader.preload();
 				/**
@@ -215,7 +216,14 @@ adminModule
 			}
 		}
 
-		$scope.test = function(){
-			console.log('ok');
+		$scope.test = function(data){
+			Preloader.set(data);
+
+			$mdDialog.show({
+		    	controller: 'performanceMonthlyViewDialogController',
+		    	templateUrl: '/app/components/admin/templates/dialogs/performance-monthly-view.dialog.template.html',
+		    	parent: angular.element(document.body),
+		      	clickOutsideToClose:true
+		    });
 		}
 	}]);

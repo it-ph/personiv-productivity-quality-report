@@ -314,3 +314,15 @@ md-content.purple-bg{
 	padding: 0px;
 	border: none;
 }
+
+.dots {
+	width: 10px;
+	height: 10px;
+	border-radius: 50%;
+	&.primary{
+		background: $primary500;
+	}
+	&.accent{
+		background: $accentA200;
+	}
+}
