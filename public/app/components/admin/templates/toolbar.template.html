@@ -29,7 +29,7 @@
 	<!-- Icon Buttons -->
 	<div flex layout="row" layout-align="end center" ng-if="!searchBar">
 		<span flex></span>
-		<md-button class="md-icon-button" ng-click="showSearchBar()">
+		<md-button class="md-icon-button" ng-click="showSearchBar()" ng-if="!subheader.state == 'dashboard'">
 			<md-icon class="mdi mdi-magnify grey" aria-label="Search"></md-icon>
 		</md-button>
 		<md-menu>

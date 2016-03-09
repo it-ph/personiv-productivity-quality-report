@@ -3,7 +3,7 @@ adminModule
 		$scope.details = {};
 		$scope.details.type = 'Weekly';
 
-		$scope.hours = [8.3, 9.1];
+		$scope.hours = [7.5, 8.3, 9.1];
 
 		$scope.months = [
 			{'value': '01', 'month': 'January'},
@@ -48,8 +48,12 @@ adminModule
 					var win = window.open('/report-download-summary/' + $filter('date')($scope.details.date_start, 'yyyy-MM-dd') + '/to/' + $filter('date')($scope.details.date_end, 'yyyy-MM-dd') + '/daily-work-hours/' + $scope.details.daily_work_hours , '_blank');
 					win.focus();
 				}
-				else{
+				else if($scope.details.type=='Monthly'){
 					var win = window.open('/report-download-monthly-summary/' + $scope.details.month + '/year/' + $scope.details.year + '/daily-work-hours/' + $scope.details.daily_work_hours, '_blank');
+					win.focus();	
+				}
+				else if($scope.details.type=='Team Performance'){
+					var win = window.open('/report-team-performance/' + $scope.details.month + '/year/' + $scope.details.year + '/daily-work-hours/' + $scope.details.daily_work_hours, '_blank');
 					win.focus();	
 				}
 

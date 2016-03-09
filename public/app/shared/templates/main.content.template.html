@@ -223,23 +223,53 @@
 					<h2 class="primary-text md-headline">{{ details[0].project }}</h2>
 					<div layout="row" layout-align="space-between center">
 						<h3 class="secondary-text md-subhead">Daily Work Hours: {{ details[0].daily_work_hours | number:1 }} hours</h3>
-						<div layout="row">
-							<!-- Edit -->
+						<!-- <div layout="row">
+							Edit
 							<md-button class="md-fab md-mini md-primary" ng-click="editReport(report.details.data[$index].id)" ng-if="user.role=='admin'">
 								<md-icon class="mdi mdi-pencil"></md-icon>
 								<md-tooltip>Edit</md-tooltip>
 							</md-button>
-							<!-- Download -->
+							Download
 							<md-button class="md-fab md-mini" href="/report-download/{{ report.details.data[$index].id }}" target="_blank">
 								<md-icon class="mdi mdi-download"></md-icon>
 								<md-tooltip>Download</md-tooltip>
 							</md-button>
-							<!-- Delete -->
+							Delete
 							<md-button class="md-fab md-mini md-warn" ng-click="deleteReport(report.details.data[$index].id)" ng-if="user.role=='admin'">
 								<md-icon class="mdi mdi-delete"></md-icon>
 								<md-tooltip>Delete</md-tooltip>
 							</md-button>
-						</div>
+						</div> -->
+						<md-menu>
+					    	<md-button aria-label="Open phone interactions menu" class="md-icon-button" ng-click="$mdOpenMenu($event)">
+						        <md-icon class="mdi mdi-dots-vertical grey"></md-icon>
+						        <md-tooltip>Menu</md-tooltip>
+						    </md-button>
+						    <md-menu-content width="2">
+						        <md-menu-item>
+						          	<!-- Edit -->
+									<md-button ng-click="editReport(report.details.data[$index].id)" ng-if="user.role=='admin'">
+										<md-icon class="mdi mdi-pencil grey"></md-icon>
+										Edit
+									</md-button>
+						        </md-menu-item>
+						        <md-menu-item>
+									<!-- Download -->
+									<md-button href="/report-download/{{ report.details.data[$index].id }}" target="_blank">
+										<md-icon class="mdi mdi-download grey"></md-icon>
+										Download
+									</md-button>
+						        </md-menu-item>
+						        <md-menu-item>
+									<!-- Delete -->
+									<md-button ng-click="deleteReport(report.details.data[$index].id)" ng-if="user.role=='admin'">
+										<md-icon class="mdi mdi-delete grey"></md-icon>
+										Delete
+									</md-button>
+						        </md-menu-item>
+						    </md-menu-content>
+					    </md-menu>
+
 					</div>
 					<div layout="row" flex>					
 						<table class="table">

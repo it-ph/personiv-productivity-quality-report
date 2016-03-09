@@ -25,6 +25,8 @@ adminModule
 
 		$scope.hours = [7.5, 8.3, 9.1];
 
+		$scope.currentMonth = $scope.months[new Date().getMonth()];
+
 		/**
 		 * Object for toolbar
 		 *

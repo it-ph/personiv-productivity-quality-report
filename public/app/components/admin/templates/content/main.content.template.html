@@ -44,6 +44,9 @@
 	<div layout="row" layout-padding flex ng-repeat="detail in reports" ng-if="detail.length">
 		<div flex>
 			<div class="panel panel-default">
+				<div class="panel-heading">
+					<h3 class="panel-title primary-text">{{detail[0].date_cover_start}} to {{detail[0].date_cover_end}}</h3>
+				</div>
 				<div class="panel-body" layout="column" flex>
 					<div layout="row" layout-align="center center" flex>
 						<div flex="45">					
@@ -103,13 +106,13 @@
 									<th>{{detail[0].overall_total_average_output}}</th>
 								</tr>
 							</table>
-							<md-button class="md-fab md-mini md-primary" aria-label="Download">
+							<!-- <md-button class="md-fab md-mini md-primary" aria-label="Download">
 								<md-icon class="mdi mdi-download"></md-icon>
 								<md-tooltip>Download</md-tooltip>
-							</md-button>
+							</md-button> -->
 						</div>					
 					</div>
-					<h2 class="md-headline primary-text">{{detail[0].name}}</h2>
+					<h3 class="md-headline primary-text">{{detail[0].name}}</h2>
 						<p class="md-subhead">Program Head Count: <strong>{{detail[0].program_head_count}}</strong></p>
 						<p class="md-body-1">Daliy Work Hours: <strong>{{detail[0].daily_work_hours | number:1}}</strong></p>
 					<div layout="row" flex>	
@@ -233,7 +236,7 @@
 	</div>
 	<md-card layout="row" flex ng-if="!reports[0].length">
 		<md-card-content>
-			<p>No records for the month</p>
+			<p>No records yet for the month of <strong class="primary-text">{{currentMonth}}</strong>. <br><em class="md-caption secondary-text">(Use the filters to view the previous months)</em></p>
 		</md-card-content>
 	</md-card>
 </div>
