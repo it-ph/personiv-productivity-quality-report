@@ -33,5 +33,11 @@ sharedModule
 			monthly: function(data){
 				return $http.post(urlBase + '-monthly', data);
 			},
+			getMondays: function(data){
+				return $http.post(urlBase + '-get-mondays', data);
+			},
+			getWeekends: function(data){
+				return $http.post(urlBase + '-get-weekends', data);
+			},
 		}
 	}])

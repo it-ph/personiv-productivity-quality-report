@@ -24,6 +24,7 @@
 							</div>
 						</md-list-item>
 					</md-list>
+					<md-input></md-input>
 				</md-card-content>		
 			</md-card>
 			<md-card class="fade-transition" ng-repeat="performance in performances">
@@ -39,7 +40,7 @@
 								<p>{{ performance.experience }}</p>
 							</div>
 						</md-list-item>
-						<md-checkbox ng-change="checkLimit($index)" ng-model="performance.include">
+						<md-checkbox ng-change="checkLimit($index)" ng-model="performance.include" class="md-primary">
 							<span>Edit</span>
 						</md-checkbox>
 					</md-list>
@@ -82,6 +83,14 @@
 								</div>
 							</md-input-container>
 						</div>
+						<md-input-container flex ng-if="user.role=='team-leader'">
+							<label>Message</label>
+							<input type="text" ng-model="performance.message" name="Message{{$index}}" required>
+							<div class="hint" ng-if="!showErrors">Specify reason for editing.</div>
+							<div ng-messages="form.editReportForm['Message' + $index].$error" ng-if="form.editReportForm['Message' + $index].$touched && showErrors">
+								<div ng-messages-include="/app/shared/templates/validation-message-report.html"></div>
+							</div>
+						</md-input-container>
 					</div>
 				</md-card-content>
 			</md-card>

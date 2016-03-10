@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateEmailReportsTable extends Migration
+class CreateApprovalsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -12,9 +12,14 @@ class CreateEmailReportsTable extends Migration
      */
     public function up()
     {
-        Schema::create('email_reports', function (Blueprint $table) {
+        Schema::create('approvals', function (Blueprint $table) {
             $table->increments('id');
+            $table->string('type');
+            $table->text('message');
+            $table->integer('performance_id');
+            $table->boolean('approved');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
@@ -25,6 +30,6 @@ class CreateEmailReportsTable extends Migration
      */
     public function down()
     {
-        Schema::drop('email_reports');
+        Schema::drop('approvals');
     }
 }

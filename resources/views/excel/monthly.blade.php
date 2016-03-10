@@ -45,7 +45,7 @@
 	<tr>
 		<th colspan="3" center></th>
 		@foreach($reports as $item)
-			<th colspan="2">{{ $item->date_start }} to {{ $item->date_end }}</th>
+			<th colspan="2">{{ $item->date_start_formatted }} to {{ $item->date_end_formatted }}</th>
 		@endforeach
 	</tr>
 	<tr>

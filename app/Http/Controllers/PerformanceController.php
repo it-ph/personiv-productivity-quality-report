@@ -16,6 +16,48 @@ use App\Http\Controllers\Controller;
 
 class PerformanceController extends Controller
 {
+    public function getMondays(Request $request)
+    {
+        $this->validate($request, [
+            'date_start_month' => 'required',
+            'date_start_year' => 'required',
+        ]);
+
+        $date_start = Carbon::parse('first Monday of '.$request->date_start_month. ' '.$request->date_start_year);
+        $date_end = Carbon::parse('last Monday of '.$request->date_start_month. ' '.$request->date_start_year);
+
+        $performance = DB::table('users')->where('id', $request->user()->id)->first();
+        $performance->mondays = array();
+        $performance->day = array();
+
+        for ($i=$date_start; $i->lte($date_end); $i->addWeek()) { 
+            array_push($performance->mondays, $i->toDateTimeString());
+            array_push($performance->day, $i->day);
+        }
+
+        return response()->json($performance);
+    }
+
+    public function getWeekends(Request $request)
+    {
+        $this->validate($request, [
+            'date_start' => 'required',
+        ]);
+
+        $date_start = Carbon::parse($request->date_start);
+
+        $performance = DB::table('users')->where('id', $request->user()->id)->first();
+        $performance->weekends = array();
+        $performance->day = array();
+
+        array_push($performance->weekends, $date_start->addDays(4));
+        array_push($performance->day, $date_start->toFormattedDateString());
+        array_push($performance->weekends, Carbon::parse($date_start)->addDay());
+        array_push($performance->day, Carbon::parse($date_start)->addDay()->toFormattedDateString());
+
+        return response()->json($performance);
+    }
+
     public function monthly(Request $request)
     {   
         $month = date_format(date_create($request->date_start), 'F');
@@ -36,6 +78,7 @@ class PerformanceController extends Controller
                 DB::raw('DATE_FORMAT(performances.date_start, "%b. %d") as date_start'),
                 DB::raw('DATE_FORMAT(performances.date_end, "%b. %d") as date_end')
             )
+            ->whereNull('performances.deleted_at')
             ->where('performances.member_id', $request->member_id)
             ->whereBetween('performances.date_start', [$this->date_start, $this->date_end])
             ->where('performances.daily_work_hours', 'like', round($request->daily_work_hours,1).'%')
@@ -103,6 +146,7 @@ class PerformanceController extends Controller
             ->join('projects', 'projects.id', '=', 'performances.project_id')
             ->select(
                 '*',
+                'performances.id as performance_id',
                 'projects.name as project_name',
                 DB::raw('TRUNCATE(performances.daily_work_hours, 1) as daily_work_hours'),
                 DB::raw('UPPER(LEFT(members.full_name, 1)) as first_letter'),
@@ -110,13 +154,14 @@ class PerformanceController extends Controller
                 'performances.id as performance_id',
                 'members.id as member_id'
             )
+            ->whereNull('performances.deleted_at')
             ->where('performances.report_id', $reportID)
             ->get();
     }
     public function checkLimitEdit(Request $request, $memberID)
     {
-        $date_start = date_create($request->date_start)->format("Y-m-d");
-        $date_end = date_create($request->date_end)->format("Y-m-d");
+        $date_start = $request->date_start;
+        $date_end = $request->date_end;
 
         // fetch all records with the same report details
         $performance = Performance::where('date_start', $date_start)->whereBetween('date_end', [$date_start, $date_end])->where('daily_work_hours', 'like', $request->daily_work_hours.'%')->where('member_id', $memberID)->get();
@@ -144,8 +189,8 @@ class PerformanceController extends Controller
     }
     public function checkLimit(Request $request, $memberID)
     {
-        $date_start = date_create($request->date_start)->format("Y-m-d");
-        $date_end = date_create($request->date_end)->format("Y-m-d");
+        $date_start = $request->date_start;
+        $date_end = $request->date_end;
 
         // fetch all records with the same report details
         $performance = Performance::where('date_start', $date_start)->whereBetween('date_end', [$date_start, $date_end])->where('daily_work_hours', 'like', $request->daily_work_hours.'%')->where('member_id', $memberID)->orderBy('created_at', 'desc')->get();
@@ -173,6 +218,7 @@ class PerformanceController extends Controller
                 DB::raw('UPPER(LEFT(members.full_name, 1)) as first_letter'),
                 DB::raw('DATE_FORMAT(performances.created_at, "%h:%i %p, %b. %d, %Y") as created_at')
             )
+            ->whereNull('performances.deleted_at')
             ->where('performances.department_id', $department_id)
             ->orderBy('performances.updated_at', 'desc')
             ->paginate(10);
@@ -190,6 +236,7 @@ class PerformanceController extends Controller
                 DB::raw('UPPER(LEFT(members.full_name, 1)) as first_letter'),
                 DB::raw('DATE_FORMAT(performances.created_at, "%h:%i %p, %b. %d, %Y") as created_at')
             )
+            ->whereNull('performances.deleted_at')
             ->orderBy('performances.updated_at', 'desc')
             ->paginate(10);
     }
@@ -256,13 +303,14 @@ class PerformanceController extends Controller
                     $notification = new Notification;
 
                     $notification->message = 'submitted a ';
-                    $notification->state = 'main.departments';
+                    $notification->state = 'main.weekly-report';
                     $notification->event_id = $report->id;
+                    $notification->event_id_type = 'report_id';
                     $notification->seen = false;
 
                     $notification->save();
 
-                    $query = DB::table('reports')
+                    $notify = DB::table('reports')
                         ->join('users', 'users.id', '=', 'reports.user_id')
                         ->join('projects', 'projects.id', '=', 'reports.project_id')
                         ->join('notifications', 'notifications.event_id', '=', 'reports.id')
@@ -273,12 +321,12 @@ class PerformanceController extends Controller
                             'projects.*',
                             'notifications.*'
                         )
-                        ->where('notifications.event_id', $report->id)
-                        ->get();
+                        ->where('notifications.id', $notification->id)
+                        ->first();
 
-                    foreach ($query as $key => $value) {
-                        $notify = $value;
-                    }
+                    // foreach ($query as $key => $value) {
+                    //     $notify = $value;
+                    // }
 
                     event(new ReportSubmittedBroadCast($notify)); 
                     // report 
@@ -313,7 +361,7 @@ class PerformanceController extends Controller
                 $result->productivity = round($performance->average_output / $target->value * 100);
                 // 1 - output w/error / output * 100 to convert to percentage
                 $result->quality = round((1 - $performance->output_error / $performance->output) * 100);
-                $result->type = "weekly";
+                // $result->type = "weekly";
                 $result->performance_id = $performance->id;
 
                 $result->save();
@@ -400,7 +448,7 @@ class PerformanceController extends Controller
                 $result->productivity = round($performance->average_output / $target->value * 100);
                 // 1 - output w/error / output * 100 to convert to percentage
                 $result->quality = round((1 - $performance->output_error / $performance->output) * 100);
-                $result->type = "weekly";
+                // $result->type = "weekly";
                 $result->performance_id = $request->input($i.'.performance_id');
 
                 $result->save();

@@ -24,7 +24,6 @@ adminModule
 						controller: 'mainContentContainerController',
 					},
 					'content@main': {
-						// templateUrl: '/app/shared/templates/main.content.template.html',
 						templateUrl: '/app/components/admin/templates/content/main.content.template.html'
 					},
 					'right-sidenav@main': {
@@ -32,21 +31,21 @@ adminModule
 					},
 				}
 			})
-			.state('main.departments', {
-				url: 'departments/{departmentID}',
+			.state('main.weekly-report', {
+				url: 'weekly-report/{departmentID}',
 				params: {'departmentID':null},
 				views: {
 					'content-container': {
 						templateUrl: '/app/components/admin/views/content-container.view.html',
 						controller: 'departmentContentContainerController',
 					},
-					'toolbar@main.departments': {
+					'toolbar@main.weekly-report': {
 						templateUrl: '/app/components/admin/templates/toolbar.template.html',
 					},
-					'content@main.departments': {
+					'content@main.weekly-report': {
 						templateUrl: '/app/shared/templates/main.content.template.html',
 					},
-					'right-sidenav@main.departments': {
+					'right-sidenav@main.weekly-report': {
 						templateUrl: '/app/components/team-leader/templates/sidenavs/main-right.sidenav.html',
 					}
 				}
@@ -131,7 +130,7 @@ adminModule
 			})
 	}]);
 adminModule
-	.controller('departmentContentContainerController', ['$scope', '$state', '$stateParams', 'Preloader', 'Department', 'Report', 'Performance', 'Target', 'User', function($scope, $state, $stateParams, Preloader, Department, Report, Performance, Target, User){
+	.controller('departmentContentContainerController', ['$scope', '$state', '$stateParams', '$mdDialog', 'Preloader', 'Department', 'Report', 'Performance', 'Target', 'User', function($scope, $state, $stateParams, $mdDialog, Preloader, Department, Report, Performance, Target, User){
 		var departmentID = $stateParams.departmentID;
 		/**
 		 * Object for charts
@@ -241,7 +240,7 @@ adminModule
 		 *
 		*/
 		$scope.toolbar = {};
-		$scope.toolbar.parentState = 'Department';
+		$scope.toolbar.parentState = 'Weekly Report';
 		Department.show(departmentID)
 			.success(function(data){
 				$scope.toolbar.childState = data.name;
@@ -334,12 +333,24 @@ adminModule
 		
 		$scope.searchUserInput = function(){
 			$scope.report.show = false;
+			$scope.report.targets = [];
+			$scope.report.topPerformers = [];
 			$scope.charts.result.data = [];
 			$scope.charts.result.series = [];
 			Preloader.preload();
 			Report.searchDepartment(departmentID, $scope.toolbar)
 				.success(function(data){
 					$scope.report.results = data;
+					angular.forEach(data, function(item, key){
+						Target.project(item[0].project_id)
+							.success(function(data){
+								$scope.report.targets.splice(key, 0, data)
+							});
+						Performance.topPerformers(item[0].report_id)
+							.success(function(data){
+								$scope.report.topPerformers.splice(key, 0, data)
+							});
+					});
 					angular.forEach($scope.report.results, function(parentItem, parentKey){
 						// performance cycle 
 						$scope.charts.result.data.push([]);
@@ -383,6 +394,22 @@ adminModule
 		$scope.editReport = function(id){
 			$state.go('main.edit-report', {'reportID':id});
 		};
+
+		$scope.deleteReport = function(id){
+			var confirm = $mdDialog.confirm()
+		        .title('Delete Report')
+		        .content('Are you sure you want to delete this report?')
+		        .ok('Delete')
+		        .cancel('Cancel');
+		    $mdDialog.show(confirm).then(function() {
+		    	Report.delete(id)
+		    		.success(function(){
+		    			$scope.subheader.refresh();
+		    		})
+		    }, function() {
+		      return;
+		    });
+		}
 	}]);
 adminModule
 	.controller('departmentSettingsContentContainerController', ['$scope', '$state', '$mdDialog', 'Preloader', 'Department', function($scope, $state, $mdDialog, Preloader, Department){
@@ -630,7 +657,7 @@ adminModule
 
 		$scope.menu.section = [
 			{
-				'name':'Departments',
+				'name':'Weekly Report',
 			},
 			{
 				'name':'Settings',

@@ -17,9 +17,10 @@ class CreateResultsTable extends Migration
             $table->integer('report_id');
             $table->float('productivity');
             $table->float('quality');
-            $table->string('type');
+            // $table->string('type');
             $table->integer('performance_id');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

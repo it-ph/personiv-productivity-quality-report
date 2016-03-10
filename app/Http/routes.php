@@ -45,6 +45,8 @@ Route::resource('result', 'ResultController');
 Route::resource('target', 'TargetController');
 Route::resource('user', 'UserController');
 Route::resource('report', 'ReportController');
+Route::resource('approval', 'ApprovalController');
+Route::resource('performance-approval', 'PerformanceApprovalController');
 
 // Route resource paginate
 Route::get('member-paginate/{teamLeaderID}', 'MemberController@paginateTeamLeader');
@@ -89,3 +91,6 @@ Route::get('target-project/{projectID}', 'TargetController@project');
 Route::get('performance-top-performers/{reportID}', 'PerformanceController@topPerformers');
 Route::post('performance-monthly', 'PerformanceController@monthly');
 Route::get('report-team-performance/{month}/year/{year}/daily-work-hours/{daily_work_hours}', 'ReportController@teamPerformance');
+Route::post('approval-performance-edit/{reportID}', 'ApprovalController@performanceEdit');
+Route::post('performance-get-mondays', 'PerformanceController@getMondays');
+Route::post('performance-get-weekends', 'PerformanceController@getWeekends');

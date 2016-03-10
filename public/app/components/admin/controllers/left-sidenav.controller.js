@@ -4,7 +4,7 @@ adminModule
 
 		$scope.menu.section = [
 			{
-				'name':'Departments',
+				'name':'Weekly Report',
 			},
 			{
 				'name':'Settings',

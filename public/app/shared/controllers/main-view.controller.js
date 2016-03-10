@@ -46,7 +46,7 @@ sharedModule
 		$scope.viewNotification = function(idx){
 			Notification.seen($scope.notifications[idx].id)
 				.success(function(){
-					$state.go('main.departments', {'departmentID':$scope.notifications[idx].department_id});
+					$state.go('main.weekly-report', {'departmentID':$scope.notifications[idx].department_id});
 					$scope.notifications.splice(idx, 1);
 				})
 				.error(function(){

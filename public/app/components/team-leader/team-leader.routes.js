@@ -65,11 +65,11 @@ teamLeaderModule
 						templateUrl: '/app/components/admin/views/content-container.view.html',
 						controller: 'editReportContentContainerController',
 					},
-					'toolbar@main.report': {
+					'toolbar@main.edit-report': {
 						templateUrl: '/app/components/team-leader/templates/toolbar.template.html',
 					},
-					'content@main.report':{
-						templateUrl: '/app/components/team-leader/templates/content/edit-report.content.template.html',
+					'content@main.edit-report':{
+						templateUrl: '/app/shared/templates/content/edit-report.content.template.html',
 					},
 				}
 			})

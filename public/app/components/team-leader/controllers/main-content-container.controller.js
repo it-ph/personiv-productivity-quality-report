@@ -204,12 +204,24 @@ teamLeaderModule
 		
 		$scope.searchUserInput = function(){
 			$scope.report.show = false;
+			$scope.report.targets = [];
+			$scope.report.topPerformers = [];
 			$scope.charts.result.data = [];
 			$scope.charts.result.series = [];
 			Preloader.preload();
 			Report.searchDepartment(user.department_id, $scope.toolbar)
 				.success(function(data){
 					$scope.report.results = data;
+					angular.forEach(data, function(item, key){
+						Target.project(item[0].project_id)
+							.success(function(data){
+								$scope.report.targets.splice(key, 0, data)
+							});
+						Performance.topPerformers(item[0].report_id)
+							.success(function(data){
+								$scope.report.topPerformers.splice(key, 0, data)
+							});
+					});
 					angular.forEach($scope.report.results, function(parentItem, parentKey){
 						// performance cycle 
 						$scope.charts.result.data.push([]);

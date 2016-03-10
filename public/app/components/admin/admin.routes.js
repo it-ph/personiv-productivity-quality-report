@@ -20,7 +20,6 @@ adminModule
 						controller: 'mainContentContainerController',
 					},
 					'content@main': {
-						// templateUrl: '/app/shared/templates/main.content.template.html',
 						templateUrl: '/app/components/admin/templates/content/main.content.template.html'
 					},
 					'right-sidenav@main': {
@@ -28,21 +27,21 @@ adminModule
 					},
 				}
 			})
-			.state('main.departments', {
-				url: 'departments/{departmentID}',
+			.state('main.weekly-report', {
+				url: 'weekly-report/{departmentID}',
 				params: {'departmentID':null},
 				views: {
 					'content-container': {
 						templateUrl: '/app/components/admin/views/content-container.view.html',
 						controller: 'departmentContentContainerController',
 					},
-					'toolbar@main.departments': {
+					'toolbar@main.weekly-report': {
 						templateUrl: '/app/components/admin/templates/toolbar.template.html',
 					},
-					'content@main.departments': {
+					'content@main.weekly-report': {
 						templateUrl: '/app/shared/templates/main.content.template.html',
 					},
-					'right-sidenav@main.departments': {
+					'right-sidenav@main.weekly-report': {
 						templateUrl: '/app/components/team-leader/templates/sidenavs/main-right.sidenav.html',
 					}
 				}

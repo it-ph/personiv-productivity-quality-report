@@ -25,13 +25,6 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')
-        //          ->hourly();
-
-        $schedule->call(function(){
-            $email_report = new EmailReport;
-            $email_report->save();
-
-        })->weekly()
+        $schedule->command('inspire')->hourly();
     }
 }

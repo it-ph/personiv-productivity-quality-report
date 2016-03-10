@@ -89,7 +89,7 @@ sharedModule
 		$scope.viewNotification = function(idx){
 			Notification.seen($scope.notifications[idx].id)
 				.success(function(){
-					$state.go('main.departments', {'departmentID':$scope.notifications[idx].department_id});
+					$state.go('main.weekly-report', {'departmentID':$scope.notifications[idx].department_id});
 					$scope.notifications.splice(idx, 1);
 				})
 				.error(function(){
@@ -105,6 +105,31 @@ sharedModule
 		};
 
 	}]);
+sharedModule
+	.factory('Approval', ['$http', function($http){
+		var urlBase = 'approval';
+
+		return {
+			index: function(){
+				return $http.get(urlBase);
+			},
+			show: function(id){
+				return $http.get(urlBase + '/' + id);
+			},
+			store: function(data){
+				return $http.post(urlBase, data);
+			},
+			update: function(id, data){
+				return $http.put(urlBase + '/' + id, data);
+			},
+			delete: function(id){
+				return $http.delete(urlBase + '/' + id);
+			},
+			performanceEdit: function(id, data){
+				return $http.post(urlBase + '-performance-edit/' + id, data);
+			},
+		}
+	}])
 sharedModule
 	.factory('Department', ['$http', function($http){
 		var urlBase = '/department';
@@ -180,6 +205,28 @@ sharedModule
 		}
 	}])
 sharedModule
+	.factory('PerformanceApproval', ['$http', function($http){
+		var urlBase = 'performance-approval';
+
+		return {
+			index: function(){
+				return $http.get(urlBase);
+			},
+			show: function(id){
+				return $http.get(urlBase + '/' + id);
+			},
+			store: function(data){
+				return $http.post(urlBase, data);
+			},
+			update: function(id, data){
+				return $http.put(urlBase + '/' + id, data);
+			},
+			delete: function(id){
+				return $http.delete(urlBase + '/' + id);
+			},
+		}
+	}])
+sharedModule
 	.factory('Performance', ['$http', function($http){
 		var urlBase = 'performance';
 
@@ -213,6 +260,12 @@ sharedModule
 			},
 			monthly: function(data){
 				return $http.post(urlBase + '-monthly', data);
+			},
+			getMondays: function(data){
+				return $http.post(urlBase + '-get-mondays', data);
+			},
+			getWeekends: function(data){
+				return $http.post(urlBase + '-get-weekends', data);
 			},
 		}
 	}])

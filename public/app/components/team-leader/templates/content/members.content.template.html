@@ -28,7 +28,7 @@
 		<div layout-margin layout-padding>
 			<md-card>
 				<md-list layout-padding>
-					<md-list-item class="md-2-line" layout="row" layout-padding ng-repeat="member in member.all | filter:toolbar.userInput">
+					<md-list-item class="md-2-line" layout="row" layout-padding ng-repeat="member in member.all | filter:toolbar.userInput" ng-mouseenter="hover = true" ng-mouseleave="hover = false" ng-class="{shaded:hover}">
 						<h2 class="md-avatar md-headline purple-bg" layout="row" layout-align="center center">
 							<span class="weight-200 white-text">{{ member.first_letter }}</span>
 						</h2>
@@ -37,16 +37,27 @@
 							<h4>Date Hired: {{ member.date_hired }}</h4>
 							<p>{{ member.experience }}</p>
 						</div>
-						<div layout="row">
-							<md-button class="md-icon-button md-mini" ng-click="editMember(member.id)">
-								<md-icon class="mdi mdi-pencil grey"></md-icon>
-								<md-tooltip>Edit</md-tooltip>
-							</md-button>
-							<md-button class="md-icon-button md-mini" ng-click="deleteMember(member.id)">
-								<md-icon class="mdi mdi-delete grey"></md-icon>
-								<md-tooltip>Delete</md-tooltip>
-							</md-button>
-						</div>
+						<md-menu class="fade-transition hide" ng-class="{show:hover}">
+					    	<md-button aria-label="Open menu" class="md-icon-button" ng-click="$mdOpenMenu($event)">
+						        <md-icon class="mdi mdi-dots-horizontal grey"></md-icon>
+						        <md-tooltip>Menu</md-tooltip>
+						    </md-button>
+						    <md-menu-content width="2">
+						        <md-menu-item>
+						          	<!-- Edit -->
+									<md-button ng-click="editMember(member.id)">
+										<md-icon class="mdi mdi-pencil grey"></md-icon>
+										Edit
+									</md-button>
+						        </md-menu-item>
+						        <md-menu-item>
+									<md-button ng-click="deleteMember(member.id)">
+										<md-icon class="mdi mdi-delete grey"></md-icon>
+										Delete
+									</md-button>
+						        </md-menu-item>
+						    </md-menu-content>
+					    </md-menu>
 					</md-list-item>
 				</md-list>
 				<md-card-content ng-if="!member.all.length">

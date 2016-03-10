@@ -24,8 +24,8 @@
 		</div>
 		<!-- Child -->
 		<ul class="pages no-padding">
-			<li layout="row" ui-sref-active="active" ng-repeat="department in menu.departments" ng-if="section.name=='Departments'">
-				<md-button flex ui-sref="main.departments({'departmentID':{{ department.id }} })">
+			<li layout="row" ui-sref-active="active" ng-repeat="department in menu.departments" ng-if="section.name=='Weekly Report'">
+				<md-button flex ui-sref="main.weekly-report({'departmentID':{{ department.id }} })">
 					<div layout="row" flex>
 						<span flex="5"></span>
 						<span class="white-text">{{ department.name }}</span>

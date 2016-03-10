@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Report;
+use App\Performance;
+use App\Result;
 use DB;
 use Carbon\Carbon;
 use Carbon\CarbonInterval;
@@ -45,6 +47,7 @@ class ReportController extends Controller
                         )
                         ->where('performances.position_id', $position_value->id)
                         ->whereBetween('performances.date_start', [$date_start, $date_end])
+                        ->whereNull('performances.deleted_at')
                         ->groupBy('performances.member_id')
                         ->get();
 
@@ -85,6 +88,7 @@ class ReportController extends Controller
                     ->where('performances.daily_work_hours', 'like', $daily_work_hours.'%')
                     ->whereBetween('performances.date_start', [$this->date_start, $this->date_end])
                     ->where('performances.project_id', $project_value->id)
+                    ->whereNull('performances.deleted_at')
                     ->get();
 
                 if($beginner)
@@ -105,6 +109,7 @@ class ReportController extends Controller
                         )
                         ->where('members.experience', 'Beginner')
                         ->where('performances.daily_work_hours', 'like', $daily_work_hours.'%')
+                        ->whereNull('performances.deleted_at')
                         ->whereBetween('performances.date_start', [$this->date_start, $this->date_end])
                         ->where('performances.project_id', $project_value->id)
                         ->groupBy('positions.id')
@@ -118,6 +123,7 @@ class ReportController extends Controller
                             ->where('performances.daily_work_hours', 'like', $daily_work_hours.'%')
                             ->whereBetween('performances.date_start', [$this->date_start, $this->date_end])
                             ->where('performances.project_id', $value->id)
+                            ->whereNull('performances.deleted_at')
                             ->get();
 
                         $beginnerValue->total_output = 0;
@@ -143,6 +149,7 @@ class ReportController extends Controller
                     ->where('performances.daily_work_hours', 'like', $daily_work_hours.'%')
                     ->whereBetween('performances.date_start', [$this->date_start, $this->date_end])
                     ->where('performances.project_id', $project_value->id)
+                    ->whereNull('performances.deleted_at')
                     ->get();
 
                 if($moderately_experienced)
@@ -165,6 +172,7 @@ class ReportController extends Controller
                         ->where('performances.daily_work_hours', 'like', $daily_work_hours.'%')
                         ->whereBetween('performances.date_start', [$this->date_start, $this->date_end])
                         ->where('performances.project_id', $project_value->id)
+                        ->whereNull('performances.deleted_at')
                         ->groupBy('positions.id')
                         ->get();
 
@@ -176,6 +184,7 @@ class ReportController extends Controller
                             ->where('performances.daily_work_hours', 'like', $daily_work_hours.'%')
                             ->whereBetween('performances.date_start', [$this->date_start, $this->date_end])
                             ->where('performances.project_id', $project_value->id)
+                            ->whereNull('performances.deleted_at')
                             ->get();
 
                         $moderatelyExperiencedValue->total_output = 0;
@@ -201,6 +210,7 @@ class ReportController extends Controller
                     ->where('performances.daily_work_hours', 'like', $daily_work_hours.'%')
                     ->whereBetween('performances.date_start', [$this->date_start, $this->date_end])
                     ->where('performances.project_id', $project_value->id)
+                    ->whereNull('performances.deleted_at')
                     ->get();
 
                 if($experienced)
@@ -224,6 +234,7 @@ class ReportController extends Controller
                         ->whereBetween('performances.date_start', [$this->date_start, $this->date_end])
                         ->where('performances.project_id', $project_value->id)
                         ->groupBy('positions.id')
+                        ->whereNull('performances.deleted_at')
                         ->get();
 
                     foreach ($project_value->experienced as $experiencedKey => $experiencedValue) {
@@ -234,6 +245,7 @@ class ReportController extends Controller
                             ->where('performances.daily_work_hours', 'like', $daily_work_hours.'%')
                             ->whereBetween('performances.date_start', [$this->date_start, $this->date_end])
                             ->where('performances.project_id', $project_value->id)
+                            ->whereNull('performances.deleted_at')
                             ->get();
 
                         $experiencedValue->total_output = 0;
@@ -293,6 +305,7 @@ class ReportController extends Controller
                 ->where('performances.daily_work_hours', 'like', $daily_work_hours.'%')
                 ->whereBetween('performances.date_start', [$this->date_start, $this->date_end])
                 ->where('projects.id', $value->id)
+                ->whereNull('performances.deleted_at')
                 ->orderBy('positions.name')
                 ->orderBy('members.full_name')
                 ->orderBy('performances.date_start')
@@ -325,6 +338,7 @@ class ReportController extends Controller
                             )
                             ->where('performances.position_id', $positionValue->id)
                             ->whereBetween('performances.date_start', [$date_start, $date_end])
+                            ->whereNull('performances.deleted_at')
                             ->groupBy('performances.member_id')
                             ->get();
 
@@ -363,6 +377,7 @@ class ReportController extends Controller
                     ->select('performances.*')
                     ->where('members.experience', 'Beginner')
                     ->where('performances.daily_work_hours', 'like', $daily_work_hours.'%')
+                    ->whereNull('performances.deleted_at')
                     ->whereBetween('performances.date_start', [$this->date_start, $this->date_end])
                     ->where('performances.project_id', $value->id)
                     ->get();
@@ -385,6 +400,7 @@ class ReportController extends Controller
                         )
                         ->where('members.experience', 'Beginner')
                         ->where('performances.daily_work_hours', 'like', $daily_work_hours.'%')
+                        ->whereNull('performances.deleted_at')
                         ->whereBetween('performances.date_start', [$this->date_start, $this->date_end])
                         ->where('performances.project_id', $value->id)
                         ->groupBy('positions.id')
@@ -396,6 +412,7 @@ class ReportController extends Controller
                             ->where('members.experience', 'Beginner')
                             ->where('performances.position_id', $beginnerValue->position_id)
                             ->where('performances.daily_work_hours', 'like', $daily_work_hours.'%')
+                            ->whereNull('performances.deleted_at')
                             ->whereBetween('performances.date_start', [$this->date_start, $this->date_end])
                             ->where('performances.project_id', $value->id)
                             ->get();
@@ -421,6 +438,7 @@ class ReportController extends Controller
                     ->select('performances.*')
                     ->where('members.experience', 'Moderately Experienced')
                     ->where('performances.daily_work_hours', 'like', $daily_work_hours.'%')
+                    ->whereNull('performances.deleted_at')
                     ->whereBetween('performances.date_start', [$this->date_start, $this->date_end])
                     ->where('performances.project_id', $value->id)
                     ->get();
@@ -443,6 +461,7 @@ class ReportController extends Controller
                         )
                         ->where('members.experience', 'Moderately Experienced')
                         ->where('performances.daily_work_hours', 'like', $daily_work_hours.'%')
+                        ->whereNull('performances.deleted_at')
                         ->whereBetween('performances.date_start', [$this->date_start, $this->date_end])
                         ->where('performances.project_id', $value->id)
                         ->groupBy('positions.id')
@@ -451,6 +470,7 @@ class ReportController extends Controller
                     foreach ($details[0]->moderately_experienced as $moderatelyExperiencedKey => $moderatelyExperiencedValue) {
                         $query = DB::table('performances')
                             ->join('members', 'members.id', '=', 'performances.member_id')
+                            ->whereNull('performances.deleted_at')
                             ->where('members.experience', 'Moderately Experienced')
                             ->where('performances.position_id', $moderatelyExperiencedValue->position_id)
                             ->where('performances.daily_work_hours', 'like', $daily_work_hours.'%')
@@ -477,6 +497,7 @@ class ReportController extends Controller
                 $experienced = DB::table('performances')
                     ->join('members', 'members.id', '=', 'performances.member_id')
                     ->select('performances.*')
+                    ->whereNull('performances.deleted_at')
                     ->where('members.experience', 'Experienced')
                     ->where('performances.daily_work_hours', 'like', $daily_work_hours.'%')
                     ->whereBetween('performances.date_start', [$this->date_start, $this->date_end])
@@ -499,6 +520,7 @@ class ReportController extends Controller
                             'performances.*',
                             'positions.name as position'
                         )
+                        ->whereNull('performances.deleted_at')
                         ->where('members.experience', 'Experienced')
                         ->where('performances.daily_work_hours', 'like', $daily_work_hours.'%')
                         ->whereBetween('performances.date_start', [$this->date_start, $this->date_end])
@@ -509,6 +531,7 @@ class ReportController extends Controller
                     foreach ($details[0]->experienced as $experiencedKey => $experiencedValue) {
                         $query = DB::table('performances')
                             ->join('members', 'members.id', '=', 'performances.member_id')
+                            ->whereNull('performances.deleted_at')
                             ->where('members.experience', 'Experienced')
                             ->where('performances.position_id', $experiencedValue->position_id)
                             ->where('performances.daily_work_hours', 'like', $daily_work_hours.'%')
@@ -552,6 +575,7 @@ class ReportController extends Controller
                         DB::raw('DATE_FORMAT(performances.date_start, "%b. %d") as date_start'),
                         DB::raw('DATE_FORMAT(performances.date_end, "%b. %d") as date_end')
                     )
+                    ->whereNull('performances.deleted_at')
                     ->where('members.id', $value1->member_id)
                     ->where('performances.daily_work_hours', 'like', $daily_work_hours.'%')
                     ->whereBetween('performances.date_start', [$this->date_start, $this->date_end])
@@ -614,6 +638,7 @@ class ReportController extends Controller
                     DB::raw('DATE_FORMAT(performances.date_start, "%b. %d") as date_start'),
                     DB::raw('DATE_FORMAT(performances.date_end, "%b. %d") as date_end')
                 )
+                ->whereNull('performances.deleted_at')
                 ->whereBetween('performances.date_start', [$this->date_start, $this->date_end])
                 ->where('projects.id', $value->id)
                 ->orderBy('positions.name')
@@ -643,6 +668,7 @@ class ReportController extends Controller
                                 'performances.*',
                                 'positions.name as position'
                             )
+                            ->whereNull('performances.deleted_at')
                             ->where('performances.position_id', $positionValue->id)
                             ->whereBetween('performances.date_start', [$date_start, $date_end])
                             ->groupBy('performances.member_id')
@@ -681,6 +707,7 @@ class ReportController extends Controller
                 $beginner = DB::table('performances')
                     ->join('members', 'members.id', '=', 'performances.member_id')
                     ->select('performances.*')
+                    ->whereNull('performances.deleted_at')
                     ->where('members.experience', 'Beginner')
                     // ->where('performances.daily_work_hours', 'like', $daily_work_hours.'%')
                     ->whereBetween('performances.date_start', [$this->date_start, $this->date_end])
@@ -703,6 +730,7 @@ class ReportController extends Controller
                             'performances.*',
                             'positions.name as position'
                         )
+                        ->whereNull('performances.deleted_at')
                         ->where('members.experience', 'Beginner')
                         // ->where('performances.daily_work_hours', 'like', $details[0]->daily_work_hours.'%')
                         ->whereBetween('performances.date_start', [$this->date_start, $this->date_end])
@@ -713,6 +741,7 @@ class ReportController extends Controller
                     foreach ($details[0]->beginner as $beginnerKey => $beginnerValue) {
                         $query = DB::table('performances')
                             ->join('members', 'members.id', '=', 'performances.member_id')
+                            ->whereNull('performances.deleted_at')
                             ->where('members.experience', 'Beginner')
                             ->where('performances.position_id', $beginnerValue->position_id)
                             // ->where('performances.daily_work_hours', 'like', $details[0]->daily_work_hours.'%')
@@ -739,6 +768,7 @@ class ReportController extends Controller
                 $moderately_experienced = DB::table('performances')
                     ->join('members', 'members.id', '=', 'performances.member_id')
                     ->select('performances.*')
+                    ->whereNull('performances.deleted_at')
                     ->where('members.experience', 'Moderately Experienced')
                     // ->where('performances.daily_work_hours', 'like', $details[0]->daily_work_hours.'%')
                     ->whereBetween('performances.date_start', [$this->date_start, $this->date_end])
@@ -761,6 +791,7 @@ class ReportController extends Controller
                             'performances.*',
                             'positions.name as position'
                         )
+                        ->whereNull('performances.deleted_at')
                         ->where('members.experience', 'Moderately Experienced')
                         // ->where('performances.daily_work_hours', 'like', $details[0]->daily_work_hours.'%')
                         ->whereBetween('performances.date_start', [$this->date_start, $this->date_end])
@@ -771,6 +802,7 @@ class ReportController extends Controller
                     foreach ($details[0]->moderately_experienced as $moderatelyExperiencedKey => $moderatelyExperiencedValue) {
                         $query = DB::table('performances')
                             ->join('members', 'members.id', '=', 'performances.member_id')
+                            ->whereNull('performances.deleted_at')
                             ->where('members.experience', 'Moderately Experienced')
                             ->where('performances.position_id', $moderatelyExperiencedValue->position_id)
                             // ->where('performances.daily_work_hours', 'like', $details[0]->daily_work_hours.'%')
@@ -797,6 +829,7 @@ class ReportController extends Controller
                 $experienced = DB::table('performances')
                     ->join('members', 'members.id', '=', 'performances.member_id')
                     ->select('performances.*')
+                    ->whereNull('performances.deleted_at')
                     ->where('members.experience', 'Experienced')
                     // ->where('performances.daily_work_hours', 'like', $details[0]->daily_work_hours.'%')
                     ->whereBetween('performances.date_start', [$this->date_start, $this->date_end])
@@ -819,6 +852,7 @@ class ReportController extends Controller
                             'performances.*',
                             'positions.name as position'
                         )
+                        ->whereNull('performances.deleted_at')
                         ->where('members.experience', 'Experienced')
                         // ->where('performances.daily_work_hours', 'like', $details[0]->daily_work_hours.'%')
                         ->whereBetween('performances.date_start', [$this->date_start, $this->date_end])
@@ -829,6 +863,7 @@ class ReportController extends Controller
                     foreach ($details[0]->experienced as $experiencedKey => $experiencedValue) {
                         $query = DB::table('performances')
                             ->join('members', 'members.id', '=', 'performances.member_id')
+                            ->whereNull('performances.deleted_at')
                             ->where('members.experience', 'Experienced')
                             ->where('performances.position_id', $experiencedValue->position_id)
                             // ->where('performances.daily_work_hours', 'like', $details[0]->daily_work_hours.'%')
@@ -872,6 +907,7 @@ class ReportController extends Controller
                         DB::raw('DATE_FORMAT(performances.date_start, "%b. %d") as date_start'),
                         DB::raw('DATE_FORMAT(performances.date_end, "%b. %d") as date_end')
                     )
+                    ->whereNull('performances.deleted_at')
                     ->where('members.id', $value1->member_id)
                     ->whereBetween('performances.date_start', [$this->date_start, $this->date_end])
                     // ->whereBetween('performances.date_end', [$this->date_start, $this->date_end])
@@ -987,13 +1023,14 @@ class ReportController extends Controller
             $reports = DB::table('performances')
                 ->select(
                     '*',
-                    DB::raw('DATE_FORMAT(date_start, "%b. %d") as date_start'),
-                    DB::raw('DATE_FORMAT(date_end, "%b. %d") as date_end')
+                    DB::raw('DATE_FORMAT(date_start, "%b. %d") as date_start_formatted'),
+                    DB::raw('DATE_FORMAT(date_end, "%b. %d") as date_end_formatted')
                 )
+                ->whereNull('deleted_at')
                 ->where('project_id', $value->id)
                 ->whereBetween('date_start', [$this->date_start, $this->date_end])
                 ->where('daily_work_hours', 'like', $daily_work_hours)
-                // ->groupBy('date_start')
+                ->groupBy('date_start')
                 ->get();
 
             // fetch all members of per project
@@ -1008,6 +1045,7 @@ class ReportController extends Controller
                     DB::raw('DATE_FORMAT(performances.date_start, "%b. %d") as date_start'),
                     DB::raw('DATE_FORMAT(performances.date_end, "%b. %d") as date_end')
                 )
+                ->whereNull('performances.deleted_at')
                 ->where('projects.id', $value->id)
                 ->groupBy('members.id')
                 ->get();
@@ -1016,33 +1054,45 @@ class ReportController extends Controller
             foreach ($members as $key1 => $value3) {
                 $this->productivity_average = 0;
                 $this->quality_average = 0;
+                $results = array();
 
-                $results = DB::table('performances')
-                    ->leftJoin('results', 'results.performance_id', '=', 'performances.id')
-                    ->leftJoin('members', 'members.id', '=', 'performances.member_id')
-                    ->leftJoin('positions', 'positions.id', '=', 'performances.position_id')
-                    ->select(
-                        '*',
-                        'performances.id as performance_id',
-                        'positions.name as position',
-                        DB::raw('DATE_FORMAT(performances.date_start, "%b. %d") as date_start'),
-                        DB::raw('DATE_FORMAT(performances.date_end, "%b. %d") as date_end')
-                    )
-                    ->where('members.id', $value3->member_id)
-                    ->whereBetween('performances.date_start', [$this->date_start, $this->date_end])
-                    ->orderBy('positions.name')
-                    ->orderBy('members.full_name')
-                    ->get();
+                foreach ($reports as $report_key => $report_value) {
+                    $query = DB::table('performances')
+                        ->leftJoin('results', 'results.performance_id', '=', 'performances.id')
+                        ->leftJoin('members', 'members.id', '=', 'performances.member_id')
+                        ->leftJoin('positions', 'positions.id', '=', 'performances.position_id')
+                        ->select(
+                            '*',
+                            'performances.id as performance_id',
+                            'positions.name as position',
+                            DB::raw('DATE_FORMAT(performances.date_start, "%b. %d") as date_start'),
+                            DB::raw('DATE_FORMAT(performances.date_end, "%b. %d") as date_end')
+                        )
+                        ->whereNull('performances.deleted_at')
+                        ->where('members.id', $value3->member_id)
+                        ->whereBetween('performances.date_start', [$report_value->date_start, $report_value->date_end])
+                        ->orderBy('positions.name')
+                        ->orderBy('members.full_name')
+                        ->first();
 
-                // foreach members performance add its results 
-                foreach ($results as $key2 => $value4) {
-                    $this->productivity_average += $value4->productivity;
-                    $this->quality_average += $value4->quality;
+                    if($query){
+                        array_push($results, $query);
+                    }
+                    else{
+                        $blank = new Performance;
+                        $blank->productivity = 0;
+                        $blank->quality = 0;
+                        array_push($results, $blank);
+                    }
+
+                    foreach ($results as $key2 => $value4) {
+                        $this->productivity_average += $value4->productivity;
+                        $this->quality_average += $value4->quality;
+                    }
                 }
-                
-                // average its results
-                $this->productivity_average = round($this->productivity_average / count($results), 1); 
-                $this->quality_average = round($this->quality_average / count($results), 1);
+
+                $this->productivity_average = round($this->productivity_average / count($reports), 1); 
+                $this->quality_average = round($this->quality_average / count($reports), 1);
 
                 $members[$key1]->results = $results;
                 $members[$key1]->productivity_average = $this->productivity_average;
@@ -1059,6 +1109,9 @@ class ReportController extends Controller
 
                 $members[$key1]->quota = (($this->productivity_average >= 100) && ($this->quality_average >= $quality_target->value)) ? 'Met' : 'Not met';
 
+                // foreach members performance add its results 
+                
+                // average its results
             }
 
             array_push($this->members_array, $members);
@@ -1102,7 +1155,6 @@ class ReportController extends Controller
 
         $date_start = date_create($date_start)->format("Y-m-d");
         $date_end = date_create($date_end)->format("Y-m-d");
-
 
         $report = DB::table('reports')
             ->join('projects', 'projects.id', '=', 'reports.project_id')
@@ -1605,7 +1657,7 @@ class ReportController extends Controller
     {
         Report::where('id', $id)->delete();
 
-        DB::table('performances')->where('report_id', $id)->delete();
-        DB::table('results')->where('report_id', $id)->delete();
+        Performance::where('report_id', $id)->delete();
+        Result::where('report_id', $id)->delete();
     }
 }

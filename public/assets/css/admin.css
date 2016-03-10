@@ -300,6 +300,9 @@ md-content.purple-bg {
   .dots.accent {
     background: #FF4081; }
 
+.shaded {
+  background-color: rgba(182, 182, 182, 0.3); }
+
 /* transition duration */
 .transition, .fade-transition, .main-view {
   transition: all 0.3s cubic-bezier(0.55, 0, 0.55, 0.2); }
