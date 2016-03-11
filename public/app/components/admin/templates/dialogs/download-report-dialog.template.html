@@ -16,8 +16,8 @@
 		      	<md-radio-button class="md-primary" value="Team Performance">Team Performance</md-radio-button>
 		    </md-radio-group>
 			<div ng-if="details.type=='Weekly'" layout="column">
-				<div layout="row">
-					<!-- Date Start -->
+				<!-- <div layout="row">
+					Date Start
 					<md-input-container flex>
 						<label>Date Start</label>
 						<input type="text" name="DateStart" required ng-model="details.date_start" data-date-format="yyyy-MM-dd" data-max-date="today" data-autoclose="1" bs-datepicker data-timezone="UTC">
@@ -25,7 +25,7 @@
 							<div ng-messages-include="/app/shared/templates/validation-message.html"></div>
 						</div>
 					</md-input-container>
-					<!-- Date End -->
+					Date End
 					<md-input-container flex>
 						<label>Date End</label>
 						<input type="text" name="DateEnd" required ng-model="details.date_end" data-date-format="yyyy-MM-dd" data-max-date="today" data-min-date="{{details.date_start}}" data-autoclose="1" bs-datepicker data-timezone="UTC">
@@ -38,7 +38,52 @@
 				<br>
 				<br>
 				<br>
-				<br>
+				<br> -->
+				<div layout="row" layout-align="center center">
+					<!-- Date Start Month -->
+					<md-input-container flex>
+						<label>Month</label>
+						<md-select name="DateStartMonth" ng-model="details.date_start_month" required ng-change="getMondays()">
+							<md-option ng-repeat="month in months_array" value="{{month}}">{{month}}</md-option>
+						</md-select>
+						<div ng-messages="form.createReportForm.DateStartMonth.$error" ng-if="form.createReportForm.DateStartMonth.$touched">
+							<div ng-messages-include="/app/shared/templates/validation-message-date.html"></div>
+						</div>
+					</md-input-container>
+					<!-- Mondays -->
+					<md-input-container flex>
+						<label>Date Start</label>
+						<md-select name="DateStart" ng-model="details.date_start" required ng-change="getWeekends()">
+							<md-option ng-repeat="monday in mondays.mondays" value="{{monday}}">{{mondays.day[$index]}}</md-option>
+						</md-select>
+						<div class="hint" ng-if="!showErrors">Date Start is always Monday</div>
+						<div ng-messages="form.createReportForm.DateStart.$error" ng-if="form.createReportForm.DateStart.$touched && showErrors">
+							<div ng-messages-include="/app/shared/templates/validation-message-date.html"></div>
+						</div>
+					</md-input-container>
+					<span flex="5" class="center-text">to</span>
+					<!-- Weekend -->
+					<md-input-container flex>
+						<label>Date End</label>
+						<md-select name="DateStart" ng-model="details.date_end" required>
+							<md-option ng-repeat="weekend in weekends.weekends" value="{{weekend}}">{{weekends.day[$index]}}</md-option>
+						</md-select>
+						<div class="hint" ng-if="!showErrors">Date End is either Friday or Saturday</div>
+						<div ng-messages="form.createReportForm.DateStart.$error" ng-if="form.createReportForm.DateStart.$touched && showErrors">
+							<div ng-messages-include="/app/shared/templates/validation-message-date.html"></div>
+						</div>
+					</md-input-container>
+					<!-- Date Start Year -->
+					<md-input-container flex>
+						<label>Year</label>
+						<md-select name="DateStartYear" ng-model="details.date_start_year" required ng-change="getMondays()">
+							<md-option ng-repeat="year in years" value="{{year}}">{{year}}</md-option>
+						</md-select>
+						<div ng-messages="form.createReportForm.DateStartYear.$error" ng-if="form.createReportForm.DateStartYear.$touched">
+							<div ng-messages-include="/app/shared/templates/validation-message-date.html"></div>
+						</div>
+					</md-input-container>
+				</div>
 				<!-- Daily Work Hours -->
 				<md-input-container flex>
 					<label>Daily Work Hours</label>

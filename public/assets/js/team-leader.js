@@ -704,6 +704,7 @@ teamLeaderModule
 		
 		$scope.getMondays = function(){
 			$scope.details.date_end = null;
+			$scope.details.date_start = null;
 			$scope.details.weekend = [];
 			Performance.getMondays($scope.details)
 				.success(function(data){
@@ -715,7 +716,9 @@ teamLeaderModule
 
 		};
 
-		$scope.getWeekends = function(){		
+		$scope.getWeekends = function(){	
+			$scope.details.date_end = null;	
+			$scope.details.weekend = [];
 			Performance.getWeekends($scope.details)
 				.success(function(data){
 					$scope.weekends = data;
@@ -840,8 +843,7 @@ teamLeaderModule
 
 		$scope.checkLimit = function(idx){
 			// gets the number of days worked in a day then multiply it to the daily work hours to get weekly limit
-			$scope.details.weekly_hours = (($scope.details.date_end.date - $scope.details.date_start.date) / (1000*60*60*24) + 1) * $scope.details.daily_work_hours;
-			console.log($scope.details.date_end.date);
+			$scope.details.weekly_hours = ((new Date($scope.details.date_end) - new Date($scope.details.date_start)) / (1000*60*60*24) + 1) * $scope.details.daily_work_hours;
 			Performance.checkLimit($scope.members[idx].id, $scope.details)
 				.success(function(data){
 					$scope.members[idx].limit = data;

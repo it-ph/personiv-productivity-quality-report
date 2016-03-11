@@ -1,5 +1,5 @@
 adminModule
-	.controller('downloadReportDialogController', ['$scope', '$mdDialog', '$filter', 'Preloader', 'Report', function($scope, $mdDialog, $filter, Preloader, Report){
+	.controller('downloadReportDialogController', ['$scope', '$mdDialog', '$filter', 'Preloader', 'Report', 'Performance', function($scope, $mdDialog, $filter, Preloader, Report, Performance){
 		$scope.details = {};
 		$scope.details.type = 'Weekly';
 
@@ -20,6 +20,21 @@ adminModule
 			{'value': '12', 'month': 'December'},
 		];
 
+		$scope.months_array = [
+			'January',
+			'February',
+			'March',
+			'April',
+			'May',
+			'June',
+			'July',
+			'August',
+			'September',
+			'October',
+			'November',
+			'December',
+		];
+
 		$scope.years = [];
 		
 		var dateCreated = 2015;
@@ -27,6 +42,35 @@ adminModule
 		// will generate the dates that will be used in drop down menu
 		for (var i = new Date().getFullYear(); i >= dateCreated; i--) {
 			$scope.years.push(i);
+		};
+
+		$scope.details.date_start_month = $scope.months_array[new Date().getMonth()];
+		$scope.details.date_start_year = $scope.years[0];
+		
+		$scope.getMondays = function(){
+			$scope.details.date_end = null;
+			$scope.details.date_start = null;
+			$scope.details.weekend = [];
+			Performance.getMondays($scope.details)
+				.success(function(data){
+					$scope.mondays = data;
+				})
+				.error(function(){
+					Preloader.error();
+				});
+
+		};
+
+		$scope.getWeekends = function(){	
+			$scope.details.date_end = null;	
+			$scope.details.weekend = [];
+			Performance.getWeekends($scope.details)
+				.success(function(data){
+					$scope.weekends = data;
+				})
+				.error(function(){
+					Preloader.error();
+				});
 		};
 
 		$scope.cancel = function(){

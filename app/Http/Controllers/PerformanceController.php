@@ -24,7 +24,11 @@ class PerformanceController extends Controller
         ]);
 
         $date_start = Carbon::parse('first Monday of '.$request->date_start_month. ' '.$request->date_start_year);
-        $date_end = Carbon::parse('last Monday of '.$request->date_start_month. ' '.$request->date_start_year);
+        $last_monday = Carbon::parse('last Monday of '.$request->date_start_month. ' '.$request->date_start_year);
+        $today = Carbon::today();
+
+        // date end is last monday of the month is today is greater
+        $date_end = $last_monday->lte($today) ? $last_monday : $today;
 
         $performance = DB::table('users')->where('id', $request->user()->id)->first();
         $performance->mondays = array();
@@ -50,9 +54,9 @@ class PerformanceController extends Controller
         $performance->weekends = array();
         $performance->day = array();
 
-        array_push($performance->weekends, $date_start->addDays(4));
+        array_push($performance->weekends, $date_start->addDays(4)->toDateTimeString());
         array_push($performance->day, $date_start->toFormattedDateString());
-        array_push($performance->weekends, Carbon::parse($date_start)->addDay());
+        array_push($performance->weekends, Carbon::parse($date_start)->addDay()->toDateTimeString());
         array_push($performance->day, Carbon::parse($date_start)->addDay()->toFormattedDateString());
 
         return response()->json($performance);
@@ -358,9 +362,9 @@ class PerformanceController extends Controller
                 $result = new Result;
                 $result->report_id = $report->id;
                 // average output / target output * 100 to convert to percentage
-                $result->productivity = round($performance->average_output / $target->value * 100);
+                $result->productivity = round($performance->average_output / $target->value * 100, 1);
                 // 1 - output w/error / output * 100 to convert to percentage
-                $result->quality = round((1 - $performance->output_error / $performance->output) * 100);
+                $result->quality = round((1 - $performance->output_error / $performance->output) * 100, 1);
                 // $result->type = "weekly";
                 $result->performance_id = $performance->id;
 

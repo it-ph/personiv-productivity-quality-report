@@ -53,8 +53,8 @@
 								<tr ng-repeat="performer in report.topPerformers[$index]">
 									<td>{{ performer.full_name }}</td>
 									<td>{{ performer.position }}</td>
-									<td>{{ performer.productivity }}%</td>
-									<td>{{ performer.quality }}%</td>
+									<td>{{ performer.productivity | number:1}}%</td>
+									<td>{{ performer.quality | number:1}}%</td>
 								</tr>
 							</table>
 						</div>					
@@ -277,8 +277,8 @@
 								<tr ng-repeat="performer in report.topPerformers[$index]">
 									<td>{{ performer.full_name }}</td>
 									<td>{{ performer.position }}</td>
-									<td>{{ performer.productivity }}%</td>
-									<td>{{ performer.quality }}%</td>
+									<td>{{ performer.productivity | number:1}}%</td>
+									<td>{{ performer.quality | number:1}}%</td>
 								</tr>
 							</table>
 						</div>					

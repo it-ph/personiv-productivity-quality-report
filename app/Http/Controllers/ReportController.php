@@ -319,8 +319,8 @@ class ReportController extends Controller
                 $details[0]->positions = DB::table('positions')->where('project_id', $value->id)->orderBy('name')->get();
                 $details[0]->program_head_count = count($details);
                 $details[0]->position_head_count = array();
-                $details[0]->date_cover_start = Carbon::parse('last day of last month '. $request->month .' '. $request->year)->addDay()->toFormattedDateString();
-                $details[0]->date_cover_end = Carbon::parse('first day of next month'. $request->month .' '. $request->year)->subDay()->toFormattedDateString();
+                $details[0]->date_cover_start = Carbon::parse('first Monday of '. $request->month .' '. $request->year)->toFormattedDateString();
+                $details[0]->date_cover_end = Carbon::parse('last Monday of '. $request->month .' '. $request->year)->addDays(5)->toFormattedDateString();
 
                 foreach ($details[0]->positions as $positionKey => $positionValue) {
                     $position_head_count_array = array();
@@ -651,15 +651,15 @@ class ReportController extends Controller
                 $details[0]->positions = DB::table('positions')->where('project_id', $value->id)->orderBy('name')->get();
                 $details[0]->program_head_count = count($details);
                 $details[0]->position_head_count = array();
-                $details[0]->date_cover_start = $this->date_start;
-                $details[0]->date_cover_end = $this->date_end;
+                $details[0]->date_cover_start = Carbon::parse('first Monday of this month')->toFormattedDateString();
+                $details[0]->date_cover_end = Carbon::parse('last Monday of this month')->addDays(5)->toFormattedDateString();
 
                 foreach ($details[0]->positions as $positionKey => $positionValue) {
                     $position_head_count_array = array();
                     // instantiate date end
-                    $date_end = Carbon::parse('first Monday of'. $request->month .' '. $request->year)->addWeek();
+                    $date_end = Carbon::parse('first Monday of this month')->addWeek();
                     // start at first monday of the month then increment it weekly 
-                    for ($date_start = Carbon::parse('first Monday of'. $request->month .' '. $request->year); $date_start->lt($this->date_end); $date_start->addWeek()) { 
+                    for ($date_start = Carbon::parse('first Monday of this month'); $date_start->lt($this->date_end); $date_start->addWeek()) { 
                         // fetch the performances by members to check the positions
                         $performances = DB::table('performances')
                             ->join('positions', 'positions.id', '=', 'performances.position_id')
@@ -1166,6 +1166,7 @@ class ReportController extends Controller
                 'projects.name as project_name', 
                 'departments.name as department_name'
             )
+            ->whereNull('reports.deleted_at')
             ->where('reports.daily_work_hours', 'like', $daily_work_hours)
             ->where('reports.date_start', 'like', $date_start .'%')
             ->whereBetween('reports.date_end', [$date_start, $date_end])
@@ -1195,6 +1196,7 @@ class ReportController extends Controller
                     'projects.name as project',
                     'positions.name as position'
                 )
+                ->whereNull('reports.deleted_at')
                 ->where('performances.report_id', $value->report_id)
                 ->where('results.report_id', $value->report_id)
                 ->groupBy('performances.id')
@@ -1305,6 +1307,8 @@ class ReportController extends Controller
                 'positions.id as position_id',
                 'projects.id as project_id'
             )
+            ->whereNull('performances.deleted_at')
+            ->whereNull('reports.deleted_at')
             ->where('performances.report_id', $reportID)
             ->where('results.report_id', $reportID)
             ->groupBy('performances.id')
@@ -1378,6 +1382,8 @@ class ReportController extends Controller
                 'projects.name as project',
                 'positions.name as position'
             )
+            ->whereNull('reports.deleted_at')
+            ->whereNull('performances.deleted_at')
             ->where('reports.department_id', $id)
             ->where('reports.date_start', 'like', '%'. $request->userInput .'%')
             ->orWhere('reports.date_end', 'like', '%'. $request->userInput .'%')
@@ -1404,6 +1410,8 @@ class ReportController extends Controller
                     'projects.name as project',
                     'positions.name as position'
                 )
+                ->whereNull('reports.deleted_at')
+                ->whereNull('performances.deleted_at')
                 ->where('performances.report_id', $value->report_id)
                 ->where('results.report_id', $value->report_id)
                 ->groupBy('performances.id')
@@ -1437,6 +1445,8 @@ class ReportController extends Controller
                 'projects.name as project',
                 'positions.name as position'
             )
+            ->whereNull('reports.deleted_at')
+            ->whereNull('performances.deleted_at')
             ->where('reports.date_start', 'like', '%'. $request->userInput .'%')
             ->orWhere('reports.date_end', 'like', '%'. $request->userInput .'%')
             ->orWhere('projects.name', 'like', '%'. $request->userInput .'%')
@@ -1464,6 +1474,8 @@ class ReportController extends Controller
                     'projects.name as project',
                     'positions.name as position'
                 )
+                ->whereNull('reports.deleted_at')
+                ->whereNull('performances.deleted_at')
                 ->where('performances.report_id', $value->report_id)
                 ->where('results.report_id', $value->report_id)
                 ->groupBy('performances.id')
@@ -1503,6 +1515,8 @@ class ReportController extends Controller
                     'projects.name as project',
                     'positions.name as position'
                 )
+                ->whereNull('reports.deleted_at')
+                ->whereNull('performances.deleted_at')
                 ->where('performances.report_id', $value->id)
                 ->where('results.report_id', $value->id)
                 ->groupBy('performances.id')
@@ -1556,6 +1570,8 @@ class ReportController extends Controller
                     'projects.name as project',
                     'positions.name as position'
                 )
+                ->whereNull('reports.deleted_at')
+                ->whereNull('performances.deleted_at')
                 ->where('performances.report_id', $value->id)
                 ->where('results.report_id', $value->id)
                 ->groupBy('performances.id')
