@@ -44,6 +44,7 @@ adminModule
 					.success(function(data){
 						$scope.report.paginated = data;
 						$scope.report.show = true;
+						$scope.report.busy = false;
 						// set up the charts
 						// reports cycle
 						angular.forEach($scope.report.paginated, function(parentItem, parentKey){
@@ -55,7 +56,6 @@ adminModule
 								$scope.charts.data[parentKey].push([item.productivity, item.quality]);
 								$scope.charts.series[parentKey].push(item.full_name);
 							});
-						$scope.report.busy = false;
 						});
 						$scope.report.paginateLoad = function(){
 							// kills the function if ajax is busy or pagination reaches last page

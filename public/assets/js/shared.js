@@ -55,10 +55,10 @@ sharedModule
 				 * Pusher
 				 *
 				*/
+				var pusher = new Pusher('23a55307c335e49bc68a', {
+			    	encrypted: true
+			    });
 				if($scope.user.role == 'admin'){
-					var pusher = new Pusher('23a55307c335e49bc68a', {
-				    	encrypted: true
-				    });
 				    
 				    var channel = pusher.subscribe('notifications');
 				    
@@ -68,6 +68,26 @@ sharedModule
 				    	$mdToast.show({
 					    	controller: 'notificationToastController',
 					      	templateUrl: '/app/components/admin/templates/toasts/notification.toast.html',
+					      	parent : angular.element($('body')),
+					      	hideDelay: 6000,
+					      	position: 'bottom right'
+					    });
+				    	// updates the notification menu
+				    	Notification.unseen()
+				    		.success(function(data){
+				    			$scope.notifications = data;
+				    		});
+				    });
+				}
+				else{
+					var channel = pusher.subscribe('approvals.' + $scope.user.id);
+				    
+				    channel.bind('App\\Events\\ApprovalNotificationBroadCast', function(data) {
+				    	Preloader.setNotification(data.data);
+				    	// pops out the toast
+				    	$mdToast.show({
+					    	controller: 'notificationToastController',
+					      	templateUrl: '/app/components/team-leader/templates/toasts/notification.toast.html',
 					      	parent : angular.element($('body')),
 					      	hideDelay: 6000,
 					      	position: 'bottom right'
@@ -89,8 +109,13 @@ sharedModule
 		$scope.viewNotification = function(idx){
 			Notification.seen($scope.notifications[idx].id)
 				.success(function(){
-					$state.go('main.weekly-report', {'departmentID':$scope.notifications[idx].department_id});
-					$scope.notifications.splice(idx, 1);
+					if($scope.notifications[idx].state == 'main.weekly-report'){
+						$state.go('main.weekly-report', {'departmentID':$scope.notifications[idx].department_id});
+					}
+					else{
+						$state.go('main.approvals');
+					}
+						$scope.notifications.splice(idx, 1);
 				})
 				.error(function(){
 					Preloader.error();
@@ -127,6 +152,24 @@ sharedModule
 			},
 			performanceEdit: function(id, data){
 				return $http.post(urlBase + '-performance-edit/' + id, data);
+			},
+			pending: function(page){
+				return $http.get(urlBase + '-pending?page=' + page);
+			},
+			approved: function(page){
+				return $http.get(urlBase + '-approved?page=' + page);
+			},
+			declined: function(page){
+				return $http.get(urlBase + '-declined?page=' + page);
+			},
+			details: function(id){
+				return $http.get(urlBase + '-details/' + id);
+			},
+			approve: function(data){
+				return $http.post(urlBase + '-approve', data);
+			},
+			decline: function(data){
+				return $http.post(urlBase + '-decline', data);
 			},
 		}
 	}])

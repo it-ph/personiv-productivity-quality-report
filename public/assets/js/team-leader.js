@@ -669,6 +669,14 @@ teamLeaderModule
 		};
 	}]);
 teamLeaderModule
+	.controller('notificationToastController', ['$scope', '$state', 'Preloader', function($scope, $state, Preloader){
+		$scope.notification = Preloader.getNotification();
+
+		$scope.viewNotification = function(){
+			$state.go($scope.notification.state);
+		};
+	}]);
+teamLeaderModule
 	.controller('reportContentContainerController', ['$scope', '$state', '$mdDialog', '$mdToast', 'Preloader', 'Member', 'Project', 'Position', 'Performance', 'User', function($scope, $state, $mdDialog, $mdToast, Preloader, Member, Project, Position, Performance, User){		
 		var user = Preloader.getUser();
 		var departmentID = null;

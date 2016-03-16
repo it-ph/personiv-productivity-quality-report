@@ -330,3 +330,11 @@ md-content.purple-bg{
 .shaded{
 	background-color: rgba($divider, 0.3);
 }
+
+md-toolbar.md-warn > md-tabs.md-default-theme, md-tabs > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > md-tab-item:not([disabled]).md-active, md-toolbar.md-warn > md-tabs.md-default-theme, md-tabs > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > md-tab-item:not([disabled]).md-focused {
+	color: $primary500;
+}
+
+md-toolbar.md-warn > md-tabs.md-default-theme, md-tabs > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > md-tab-item:not([disabled]){
+	color: $secondary-text;
+}

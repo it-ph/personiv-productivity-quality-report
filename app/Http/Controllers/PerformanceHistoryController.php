@@ -3,12 +3,11 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use DB;
-use App\PerformanceApprovalController;
+
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
-class PerformanceApprovalController extends Controller
+class PerformanceHistoryController extends Controller
 {
     /**
      * Display a listing of the resource.

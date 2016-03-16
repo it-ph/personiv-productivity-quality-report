@@ -1,0 +1,15 @@
+<md-toast>
+	<md-list-item class="md-2-line">
+        <audio src="/assets/audio/iapetus_OE1el3pZ.mp3" autoplay></audio>
+        <h2 class="md-headline purple-bg md-avatar" layout="row" layout-align="center center">
+            <span class="weight-200 white-text">{{ notification.first_letter }}</span>
+        </h2>
+        <div class="md-list-item-text">
+            <h3>{{ notification.first_name }} {{ notification.last_name }}</h3>
+            <h4>{{ notification.message }} <strong>{{ notification.name }}</strong> report.</h4>
+        </div>
+    </md-list-item>
+    <md-button ng-click="viewNotification()">
+    	View
+  	</md-button>
+</md-toast>

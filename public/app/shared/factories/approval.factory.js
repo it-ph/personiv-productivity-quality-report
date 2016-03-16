@@ -21,5 +21,23 @@ sharedModule
 			performanceEdit: function(id, data){
 				return $http.post(urlBase + '-performance-edit/' + id, data);
 			},
+			pending: function(page){
+				return $http.get(urlBase + '-pending?page=' + page);
+			},
+			approved: function(page){
+				return $http.get(urlBase + '-approved?page=' + page);
+			},
+			declined: function(page){
+				return $http.get(urlBase + '-declined?page=' + page);
+			},
+			details: function(id){
+				return $http.get(urlBase + '-details/' + id);
+			},
+			approve: function(data){
+				return $http.post(urlBase + '-approve', data);
+			},
+			decline: function(data){
+				return $http.post(urlBase + '-decline', data);
+			},
 		}
 	}])

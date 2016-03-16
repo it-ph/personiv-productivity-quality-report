@@ -13,6 +13,7 @@ use DB;
 use Carbon\Carbon;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
+use App\User;
 
 class PerformanceController extends Controller
 {
@@ -292,6 +293,7 @@ class PerformanceController extends Controller
                 // check if a report is already created
                 if(!$create_report)
                 {
+                    $admin = User::where('email', 'sherryl.sanchez@personiv.com')->first();
                     $report = new Report;
 
                     $report->user_id = $request->user()->id;
@@ -307,6 +309,9 @@ class PerformanceController extends Controller
                     $notification = new Notification;
 
                     $notification->message = 'submitted a ';
+                    $notification->sender_user_id = $admin->id;
+                    $notification->receiver_user_id = $request->user()->id;
+                    $notification->subscriber = 'admin';
                     $notification->state = 'main.weekly-report';
                     $notification->event_id = $report->id;
                     $notification->event_id_type = 'report_id';
@@ -352,7 +357,7 @@ class PerformanceController extends Controller
                 $performance->output_error = $request->input($i.'.output_error');
                 // Round((Output / Hours Worked) * Daily Work Hours)
                 // store the rounded value
-                $performance->average_output = $request->input($i.'.output') / $request->input($i.'.hours_worked') * $request->input($i.'.daily_work_hours');
+                $performance->average_output = round($request->input($i.'.output') / $request->input($i.'.hours_worked') * $request->input($i.'.daily_work_hours'), 2);
                 // save performance to database
                 $performance->save();
 

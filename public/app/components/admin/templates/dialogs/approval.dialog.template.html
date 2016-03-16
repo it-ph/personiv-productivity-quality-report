@@ -1,0 +1,66 @@
+<md-dialog layout="column" flex  aria-label="Approval"  aria-label="Add Department" ng-cloak>
+	<md-dialog-content layout="column" flex layout-padding layout-wrap>
+		<div layout="row" layout-align="space-between center" flex>
+			<md-list flex>
+				<md-list-item class="md-3-line">
+					<h2 class="md-avatar md-headline purple-bg" layout="row" layout-align="center center">
+						<span class="weight-200 white-text">{{ details.first_letter }}</span>
+					</h2>
+					<div class="md-list-item-text">
+						<h3>{{details.project}}</h3>
+						<h4>{{details.date_start}} to {{details.date_end}}</h4>
+						<p>submitted by {{details.first_name}} {{details.last_name}} at {{details.created_at}}</p>
+					</div>
+				</md-list-item>
+			</md-list>
+			<md-button class="md-icon-button" ng-click="cancel()" aria-label="Cancel">
+				<md-icon class="mdi mdi-close grey"></md-icon>
+			</md-button>
+		</div>
+		<md-checkbox class="md-primary" ng-model="checkAll" ng-click="markAll()">Mark All</md-checkbox>
+		<div layout="row" layout-padding>
+			<div flex layout="column">
+				<h3 class="md-title center-text primary-text">Current</h3>
+				<table class="table">
+					<tr>
+						<th>Mark to include</th>
+						<th>Full Name</th>
+						<th>Position</th>
+						<th>Hours Worked</th>
+						<th>Output</th>
+						<th>Output w/Error(s)</th>
+					</tr>
+					<tr ng-repeat="performance in details.current">
+						<td><md-checkbox class="md-primary" ng-model="details.request[$index].include"></md-checkbox></td>
+						<td>{{performance.full_name}}</td>
+						<td ng-class="performance.position != details.request[$index].position ? 'primary-text' : 'main-text'">{{performance.position}}</td>
+						<td ng-class="performance.hours_worked != details.request[$index].hours_worked ? 'primary-text' : 'main-text'">{{performance.hours_worked}}</td>
+						<td ng-class="performance.output != details.request[$index].output ? 'primary-text' : 'main-text'">{{performance.output}}</td>
+						<td ng-class="performance.output_error != details.request[$index].output_error ? 'primary-text' : 'main-text'">{{performance.output_error}}</td>
+					</tr>
+				</table>
+			</div>
+			<div flex layout="column">
+				<h3 class="md-title center-text primary-text">Request</h3>
+				<table class="table">
+					<tr>
+						<th>Position</th>
+						<th>Hours Worked</th>
+						<th>Output</th>
+						<th>Output w/Error(s)</th>
+					</tr>
+					<tr ng-repeat="performanceApproval in details.request">
+						<td ng-class="performanceApproval.position != details.current[$index].position ? 'accent-text' : 'main-text'">{{performanceApproval.position}}</td>
+						<td ng-class="performanceApproval.hours_worked != details.current[$index].hours_worked ? 'accent-text' : 'main-text'">{{performanceApproval.hours_worked}}</td>
+						<td ng-class="performanceApproval.output != details.current[$index].output ? 'accent-text' : 'main-text'">{{performanceApproval.output}}</td>
+						<td ng-class="performanceApproval.output_error != details.current[$index].output_error ? 'accent-text' : 'main-text'">{{performanceApproval.output_error}}</td>
+					</tr>
+				</table>
+			</div>
+		</div>
+	</md-dialog-content>
+	<div class="md-actions" layout="row" layout-align="end center">
+	    <md-button ng-click="approve()">Approve</md-button>
+	    <md-button ng-click="decline()">Decline</md-button>
+	</div>
+</md-dialog>

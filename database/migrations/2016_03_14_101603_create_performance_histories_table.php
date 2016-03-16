@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreatePerformanceApprovalsTable extends Migration
+class CreatePerformanceHistoriesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -12,11 +12,8 @@ class CreatePerformanceApprovalsTable extends Migration
      */
     public function up()
     {
-        Schema::create('performance_approvals', function (Blueprint $table) {
+        Schema::create('performance_histories', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('status')->nullable();
-            $table->text('message');
-            $table->integer('approval_id');
             $table->integer('performance_id');
             $table->integer('report_id');
             $table->integer('result_id')->nullable();
@@ -43,6 +40,6 @@ class CreatePerformanceApprovalsTable extends Migration
      */
     public function down()
     {
-        Schema::drop('performance_approvals');
+        Schema::drop('performance_histories');
     }
 }

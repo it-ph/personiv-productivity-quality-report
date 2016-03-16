@@ -20,6 +20,10 @@ class EventServiceProvider extends ServiceProvider
         'App\Events\ReportSubmittedBroadCast' => [
             'App\Listeners\ReportNotificationListener',
         ],
+
+        'App\Events\ApprovalNotificationBroadCast' => [
+            'App\Listeners\ApprovalNotificationListener',
+        ],
     ];
 
     /**

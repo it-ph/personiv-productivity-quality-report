@@ -61,7 +61,7 @@
 							<!-- Total Total Hours Worked -->
 							<md-input-container flex>
 								<label>Total Hours Worked</label>
-								<input name="HoursWorked{{$index}}" type="number" min="0" max="{{ performance.limit }}" step="0.5" required ng-model="performance.hours_worked">
+								<input name="HoursWorked{{$index}}" type="number" min="{{ details.daily_work_hours }}" max="{{ performance.limit }}" step="0.5" required ng-model="performance.hours_worked">
 								<div ng-messages="form.editReportForm['HoursWorked' + $index].$error" ng-if="form.editReportForm['HoursWorked' + $index].$touched">
 									<div ng-messages-include="/app/shared/templates/validation-message.html"></div>
 								</div>
@@ -69,17 +69,18 @@
 							<!-- Total Output -->
 							<md-input-container flex>
 								<label>Total Output</label>
-								<input name="Output{{$index}}" type="number" min="0" required ng-model="performance.output">
-								<div ng-messages="form.editReportForm['Output' + $index].$error" ng-if="form.editReportForm['Output' + $index].$touched">
-									<div ng-messages-include="/app/shared/templates/validation-message-report.html"></div>
+								<input name="Output{{$index}}" type="number" min="1" required ng-model="performance.output">
+								<div class="hint" ng-if="!showErrors">Output must not be less than one.</div>
+								<div ng-messages="form.editReportForm['Output' + $index].$error" ng-if="form.editReportForm['Output' + $index].$touched && showErrors">
+									<div ng-messages-include="/app/shared/templates/validation-message-edit-report.html"></div>
 								</div>
 							</md-input-container>
 							<!-- Total Output w/error -->
 							<md-input-container flex>
 								<label>Total Output w/Error</label>
-								<input name="OutputError{{$index}}" type="number" min="0" required ng-model="performance.output_error">
+								<input name="OutputError{{$index}}" type="number" min="0" max="{{performance.output}}" required ng-model="performance.output_error">
 								<div ng-messages="form.editReportForm['OutputError' + $index].$error" ng-if="form.editReportForm['OutputError' + $index].$touched">
-									<div ng-messages-include="/app/shared/templates/validation-message-report.html"></div>
+									<div ng-messages-include="/app/shared/templates/validation-message-edit-report.html"></div>
 								</div>
 							</md-input-container>
 						</div>

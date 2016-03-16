@@ -14,10 +14,9 @@ class CreateApprovalsTable extends Migration
     {
         Schema::create('approvals', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('type');
-            $table->text('message');
-            $table->integer('performance_id');
-            $table->boolean('approved');
+            $table->string('action');
+            $table->integer('report_id');
+            $table->string('status');
             $table->timestamps();
             $table->softDeletes();
         });

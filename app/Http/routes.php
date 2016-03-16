@@ -55,6 +55,9 @@ Route::group(['middleware' => 'auth'], function () {
 	Route::get('report-paginate-details', 'ReportController@paginateDetails');
 	Route::get('report-paginate/{departmentID}', 'ReportController@paginateDepartment');
 	Route::get('report-paginate-details/{departmentID}', 'ReportController@paginateDepartmentDetails');
+	Route::get('approval-pending', 'ApprovalController@pending');
+	Route::get('approval-approved', 'ApprovalController@approved');
+	Route::get('approval-declined', 'ApprovalController@declined');
 
 	// Route resource search
 	Route::post('department-search', 'DepartmentController@search');
@@ -94,4 +97,7 @@ Route::group(['middleware' => 'auth'], function () {
 	Route::post('approval-performance-edit/{reportID}', 'ApprovalController@performanceEdit');
 	Route::post('performance-get-mondays', 'PerformanceController@getMondays');
 	Route::post('performance-get-weekends', 'PerformanceController@getWeekends');
+	Route::get('approval-details/{approvalID}', 'ApprovalController@details');
+	Route::get('performance-approval-approval', 'PerformanceApprovalController@approval');
+	Route::post('approval-approve', 'ApprovalController@approve');
 });

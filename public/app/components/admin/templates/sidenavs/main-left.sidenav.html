@@ -12,6 +12,15 @@
 			</md-button>
 		</div>
 	</li>
+	<li class="section" flex>
+		<div layout="row" class="section-button-container">
+			<md-button flex ng-click="setActive(0)" aria-label="section-0" ui-sref-active="active" ui-sref="main.approvals">
+				<div layout="row" flex>
+					<span class="white-text">Approvals</span>
+				</div>
+			</md-button>
+		</div>
+	</li>
 	<li ng-repeat="section in menu.section" class="section" flex>
 		<div layout="row" class="section-button-container">
 			<md-button flex ng-click="setActive($index + 1)" aria-label="section-{{ $index + 1}}">

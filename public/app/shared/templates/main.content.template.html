@@ -1,5 +1,5 @@
 <!-- Search reports -->
-<div class="fade-transition" layout="column" flex flex-gt-sm="70" ng-if="report.results && !report.show">
+<div class="fade-transition" layout="column" flex ng-if="report.results && !report.show">
 	<div layout="row" layout-padding flex ng-repeat="details in report.results | filter: toolbar.userInput">
 		<div flex>
 			<div class="panel panel-default">
