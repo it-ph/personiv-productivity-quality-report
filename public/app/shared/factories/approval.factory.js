@@ -24,11 +24,8 @@ sharedModule
 			pending: function(page){
 				return $http.get(urlBase + '-pending?page=' + page);
 			},
-			approved: function(page){
-				return $http.get(urlBase + '-approved?page=' + page);
-			},
-			declined: function(page){
-				return $http.get(urlBase + '-declined?page=' + page);
+			pendingUser: function(id, page){
+				return $http.get(urlBase + '-pending-user/'+ id +'?page=' + page);
 			},
 			details: function(id){
 				return $http.get(urlBase + '-details/' + id);

@@ -6,14 +6,14 @@
 					<md-content flex layout="column">
 						<div class="fade-transition" ng-if="pending.show" flex infinite-scroll='pending.paginateLoad()' infinite-scroll-distance="2" infinite-scroll-disabled="pending.busy" infinite-scroll-parent>
 							<md-list>
-								<md-list-item class="md-3-line" layout="row" ng-repeat="pending in pending.paginated | filter:toolbar.userInput" ng-click="show(pending.action,pending.approval_id)">
+								<md-list-item class="md-3-line" layout="row" ng-repeat="pending in pending.paginated | filter:toolbar.userInput" ng-click="showPending(pending.approval_id)">
 									<h2 class="md-avatar md-headline purple-bg" layout="row" layout-align="center center">
 										<span class="weight-200 white-text">{{ pending.first_letter }}</span>
 									</h2>
 									<div class="md-list-item-text" layout="column" flex>
 										<h3>{{ pending.first_name }} {{ pending.last_name }}</h3>
 										<h4>{{ pending.action }} weekly performance of <strong>{{ pending.project }}</strong></h4>
-										<p>{{ pending.created_at }}</p>
+										<p>{{ pending.created_at_formatted }}</p>
 									</div>
 								</md-list-item>
 							</md-list>
@@ -25,14 +25,14 @@
 					<md-content flex layout="column">
 						<div class="fade-transition" ng-if="approved.show" flex infinite-scroll='approved.paginateLoad()' infinite-scroll-distance="2" infinite-scroll-disabled="approved.busy" infinite-scroll-parent>
 							<md-list>
-								<md-list-item class="md-3-line" layout="row" ng-repeat="approved in approved.paginated | filter:toolbar.userInput" ng-click="show(pending.action,approved.approval_id)">
+								<md-list-item class="md-3-line" layout="row" ng-repeat="approved in approved.paginated | filter:toolbar.userInput" ng-click="showDetails(approved.id)">
 									<h2 class="md-avatar md-headline purple-bg" layout="row" layout-align="center center">
 										<span class="weight-200 white-text">{{ approved.first_letter }}</span>
 									</h2>
 									<div class="md-list-item-text" layout="column" flex>
-										<h3>{{ approved.first_name }} {{ approved.last_name }}</h3>
-										<h4>{{ approved.action }} weekly performance of <strong>{{ approved.project }}</strong></h4>
-										<p>{{ approved.created_at }}</p>
+										<h3>{{ approved.project }}</h3>
+										<h4>{{ approved.date_start_formatted }} to {{ approved.date_end_formatted }}</h4>
+										<p>{{ approved.message }}</p>
 									</div>
 								</md-list-item>
 							</md-list>
@@ -44,14 +44,14 @@
 					<md-content flex layout="column">
 						<div class="fade-transition" ng-if="declined.show" flex infinite-scroll='declined.paginateLoad()' infinite-scroll-distance="2" infinite-scroll-disabled="declined.busy" infinite-scroll-parent>
 							<md-list>
-								<md-list-item class="md-3-line" layout="row" ng-repeat="declined in declined.paginated | filter:toolbar.userInput" ng-click="show(pending.action,declined.approval_id)">
+								<md-list-item class="md-3-line" layout="row" ng-repeat="declined in declined.paginated | filter:toolbar.userInput" ng-click="showDetails(declined.id)">
 									<h2 class="md-avatar md-headline purple-bg" layout="row" layout-align="center center">
 										<span class="weight-200 white-text">{{ declined.first_letter }}</span>
 									</h2>
 									<div class="md-list-item-text" layout="column" flex>
-										<h3>{{ declined.first_name }} {{ declined.last_name }}</h3>
-										<h4>{{ declined.action }} weekly performance of <strong>{{ declined.project }}</strong></h4>
-										<p>{{ declined.created_at }}</p>
+										<h3>{{ declined.project }}</h3>
+										<h4>{{ declined.date_start_formatted }} to {{ declined.date_end_formatted }}</h4>
+										<p>{{ declined.message }}</p>
 									</div>
 								</md-list-item>
 							</md-list>
@@ -62,5 +62,4 @@
 			</md-tabs>
 		</md-card-content>
 	</md-card>
-		
 </md-content>

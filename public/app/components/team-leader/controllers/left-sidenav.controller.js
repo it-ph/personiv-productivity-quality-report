@@ -9,6 +9,11 @@ teamLeaderModule
 				'icon':'mdi-view-dashboard',
 			},
 			{
+				'name':'Approvals',
+				'state':'main.approvals',
+				'icon':'mdi-file-document-box',
+			},
+			{
 				'name':'Members',
 				'state': 'main.members',
 				'icon':'mdi-account-multiple',

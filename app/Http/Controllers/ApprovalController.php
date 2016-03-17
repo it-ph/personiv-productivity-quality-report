@@ -20,6 +20,63 @@ use App\User;
 
 class ApprovalController extends Controller
 {
+    public function decline(Request $request)
+    {
+        $create_notification = false;
+        $pending_count = count($request->all());
+        for ($i=0; $i < count($request->all()); $i++) {
+            if($request->input($i.'.include')){
+                $pending_count--;
+                $this->validate($request, [
+                    $i.'.approval_id' => 'required|numeric',
+                    $i.'.performance_approval_id' => 'required|numeric',
+                    $i.'.performance_id' => 'required|numeric',
+                ]);
+                if(!$create_notification)
+                {
+                    $admin = User::where('email', 'sherryl.sanchez@personiv.com')->first();
+                    $report = Report::where('id', $request->input($i.'.report_id'))->first();
+
+                    $notification = new Notification;
+                    $notification->receiver_user_id = $report->user_id;
+                    $notification->sender_user_id = $admin->id;
+                    $notification->subscriber = 'team-leader';
+                    $notification->message = 'declined changes on';
+                    $notification->state = 'main.approvals';
+                    $notification->event_id = $request->input($i.'.approval_id');
+                    $notification->event_id_type = 'approval_id';
+                    $notification->seen = false;
+                    $notification->save();
+
+                    $notify = DB::table('notifications')
+                        ->join('approvals', 'approvals.id', '=', 'notifications.event_id')
+                        ->join('reports', 'reports.id', '=', 'approvals.report_id')
+                        ->join('projects', 'projects.id', '=', 'reports.project_id')
+                        ->join('users', 'users.id', '=', 'notifications.sender_user_id')
+                        ->select(
+                            '*',
+                            DB::raw('LEFT(users.first_name, 1) as first_letter')
+                        )
+                        ->where('notifications.id', $notification->id)
+                        ->first();
+
+                    event(new ApprovalNotificationBroadCast($notify)); 
+                    // report 
+                    $create_notification = true;
+                }
+
+                $performance_approval = PerformanceApproval::where('id', $request->input($i.'.performance_approval_id'))->first();
+                $performance_approval->status = 'declined';
+                $performance_approval->save();
+            }
+        }
+        if(!$pending_count)
+        {
+            $approval = Approval::where('id', $request->input('0.approval_id'))->first();
+            $approval->status = 'done';
+            $approval->save();
+        }
+    }
     public function approve(Request $request)
     {
         $create_notification = false;
@@ -123,7 +180,7 @@ class ApprovalController extends Controller
         if(!$pending_count)
         {
             $approval = Approval::where('id', $request->input('0.approval_id'))->first();
-            $approval->status = 'approved';
+            $approval->status = 'done';
             $approval->save();
         }
     }
@@ -175,6 +232,25 @@ class ApprovalController extends Controller
 
         return response()->json($details);
     }
+    public function pendingUser($id)
+    {
+        return DB::table('approvals')
+            ->join('reports', 'reports.id', '=', 'approvals.report_id')
+            ->join('projects', 'projects.id', '=', 'reports.project_id')
+            ->join('users', 'users.id', '=', 'reports.user_id')
+            ->select(
+                '*',
+                'approvals.id as approval_id',
+                'projects.name as project',
+                DB::raw('DATE_FORMAT(approvals.created_at, "%h:%i %p %b. %d, %Y") as created_at_formatted'),
+                DB::raw('UPPER(LEFT(users.first_name, 1)) as first_letter')
+            )
+            ->where('approvals.status', 'pending')
+            ->where('reports.user_id', $id)
+            ->whereNull('approvals.deleted_at')
+            ->groupBy('approvals.id')
+            ->paginate(10);
+    }
     public function pending()
     {
         return DB::table('approvals')
@@ -185,74 +261,13 @@ class ApprovalController extends Controller
                 '*',
                 'approvals.id as approval_id',
                 'projects.name as project',
-                DB::raw('DATE_FORMAT(approvals.created_at, "%h:%i %p %b. %d, %Y") as created_at'),
+                DB::raw('DATE_FORMAT(approvals.created_at, "%h:%i %p %b. %d, %Y") as created_at_formatted'),
                 DB::raw('UPPER(LEFT(users.first_name, 1)) as first_letter')
             )
             ->where('approvals.status', 'pending')
             ->whereNull('approvals.deleted_at')
             ->groupBy('approvals.id')
             ->paginate(10);
-    }
-    public function approved()
-    {
-        return DB::table('approvals')
-            ->join('reports', 'reports.id', '=', 'approvals.report_id')
-            ->join('projects', 'projects.id', '=', 'reports.project_id')
-            ->join('users', 'users.id', '=', 'reports.user_id')
-            ->select(
-                '*',
-                'approvals.id as approval_id',
-                'projects.name as project',
-                 DB::raw('DATE_FORMAT(approvals.created_at, "%h:%i %p %b. %d, %Y") as created_at'),
-                 DB::raw('UPPER(LEFT(users.first_name, 1)) as first_letter')
-            )
-            ->where('approvals.status', 'approved')
-            ->whereNull('approvals.deleted_at')
-            ->groupBy('approvals.id')
-            ->paginate(10);
-    }
-    public function declined()
-    {
-        return DB::table('approvals')
-            ->join('reports', 'reports.id', '=', 'approvals.report_id')
-            ->join('projects', 'projects.id', '=', 'reports.project_id')
-            ->join('users', 'users.id', '=', 'reports.user_id')
-            ->select(
-                '*',
-                'approvals.id as approval_id',
-                'projects.name as project',
-                 DB::raw('DATE_FORMAT(approvals.created_at, "%h:%i %p %b. %d, %Y") as created_at'),
-                 DB::raw('UPPER(LEFT(users.first_name, 1)) as first_letter')
-            )
-            ->where('approvals.status', 'declined')
-            ->whereNull('approvals.deleted_at')
-            ->groupBy('approvals.id')
-            ->paginate(10);
-    }
-    public function performanceEditApproved($id)
-    {
-        $performance_approval = DB::table('performance_approval')
-            ->join('members', 'members.id', '=', 'performance_approval.member_id')
-            ->where('performance_approval.approval_id', $id)
-            ->first();
-
-        // fetch target
-        $target = Target::where('position_id', $performance_approval->position_id)->where('experience', $performance_approval->experience)->first();
-
-        $result = Result::where('id', $performance_approval->result_id)->first();
-        
-        // average output / target output * 100 to convert to percentage
-        $result->productivity = round($performance_approval->average_output / $target->value * 100);
-        // 1 - output w/error / output * 100 to convert to percentage
-        $result->quality = round((1 - $performance_approval->output_error / $performance_approval->output) * 100);
-        // $result->type = "weekly";
-
-        $result->save();
-
-        $performance_approval->result_id = $result->id;
-        $performance_approval->save();
-
-        // create notificaation here
     }
     public function performanceEdit(Request $request, $reportID)
     {

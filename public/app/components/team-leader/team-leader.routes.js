@@ -73,5 +73,20 @@ teamLeaderModule
 					},
 				}
 			})
+			.state('main.approvals',{
+				url:'approvals',
+				views: {
+					'content-container': {
+						templateUrl: '/app/components/admin/views/content-container.view.html',
+						controller: 'approvalsContentContainerController',
+					},
+					'toolbar@main.approvals': {
+						templateUrl: '/app/components/team-leader/templates/toolbar.template.html',
+					},
+					'content@main.approvals':{
+						templateUrl: '/app/shared/templates/content/approval.content.template.html',
+					},
+				}
+			})
 
 	}]);

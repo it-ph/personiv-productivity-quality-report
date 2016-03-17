@@ -56,8 +56,11 @@ Route::group(['middleware' => 'auth'], function () {
 	Route::get('report-paginate/{departmentID}', 'ReportController@paginateDepartment');
 	Route::get('report-paginate-details/{departmentID}', 'ReportController@paginateDepartmentDetails');
 	Route::get('approval-pending', 'ApprovalController@pending');
-	Route::get('approval-approved', 'ApprovalController@approved');
-	Route::get('approval-declined', 'ApprovalController@declined');
+	Route::get('approval-pending-user/{userID}', 'ApprovalController@pendingUser');
+	Route::get('performance-approval-approved', 'PerformanceApprovalController@approved');
+	Route::get('performance-approval-declined', 'PerformanceApprovalController@declined');
+	Route::get('performance-approval-approved-user/{userID}', 'PerformanceApprovalController@approvedUser');
+	Route::get('performance-approval-declined-user/{userID}', 'PerformanceApprovalController@declinedUser');
 
 	// Route resource search
 	Route::post('department-search', 'DepartmentController@search');
@@ -100,4 +103,6 @@ Route::group(['middleware' => 'auth'], function () {
 	Route::get('approval-details/{approvalID}', 'ApprovalController@details');
 	Route::get('performance-approval-approval', 'PerformanceApprovalController@approval');
 	Route::post('approval-approve', 'ApprovalController@approve');
+	Route::post('approval-decline', 'ApprovalController@decline');
+	Route::get('performance-approval-details/{performanceApprovalID}', 'PerformanceApprovalController@details');
 });

@@ -145,7 +145,7 @@ adminModule
 			})
 	}]);
 adminModule
-	.controller('approvalsContentContainerController', ['$scope', '$mdDialog', 'Approval', 'Preloader',  function($scope, $mdDialog, Approval, Preloader){
+	.controller('approvalsContentContainerController', ['$scope', '$mdDialog', 'PerformanceApproval', 'Approval', 'Preloader',  function($scope, $mdDialog, PerformanceApproval, Approval, Preloader){
 		/**
 		 * Object for toolbar
 		 *
@@ -162,6 +162,8 @@ adminModule
 		$scope.subheader.refresh = function(){
 			Preloader.preload();
 			$scope.pending.show = false;
+			$scope.approved.show = false;
+			$scope.declined.show = false;
 			$scope.pending.page = 2;
 			$scope.approved.page = 2;
 			$scope.declined.page = 2;
@@ -172,13 +174,13 @@ adminModule
 					$scope.pending.paginated = data.data;
 					
 				
-				Approval.approved()
+				PerformanceApproval.approved()
 					.success(function(data){
 						$scope.approved.details = data;
 						$scope.approved.paginated = data.data;
 						
 
-						Approval.declined()
+						PerformanceApproval.declined()
 							.success(function(data){
 								$scope.declined.details = data;
 								$scope.declined.paginated = data.data;
@@ -244,7 +246,7 @@ adminModule
 			});
 
 		/* Approved */
-		Approval.approved()
+		PerformanceApproval.approved()
 			.success(function(data){
 				$scope.approved.details = data;
 				$scope.approved.paginated = data.data;
@@ -263,7 +265,7 @@ adminModule
 					$scope.approved.busy = true;
 
 					// Calls the next page of pagination.
-					Approval.approved($scope.approved.page)
+					PerformanceApproval.approved($scope.approved.page)
 						.success(function(data){
 							// increment the page to set up next page for next AJAX Call
 							$scope.approved.page++;
@@ -284,7 +286,7 @@ adminModule
 			});
 
 		/* Declined */
-		Approval.declined()
+		PerformanceApproval.declined()
 			.success(function(data){
 				$scope.declined.details = data;
 				$scope.declined.paginated = data.data;
@@ -303,7 +305,7 @@ adminModule
 					$scope.declined.busy = true;
 
 					// Calls the next page of pagination.
-					Approval.declined($scope.declined.page)
+					PerformanceApproval.declined($scope.declined.page)
 						.success(function(data){
 							// increment the page to set up next page for next AJAX Call
 							$scope.declined.page++;
@@ -323,18 +325,26 @@ adminModule
 				Preloader.error();
 			});
 
-		$scope.show = function(action, id){
-			if(action=='update'){
-				Preloader.set(id);
-				$mdDialog.show({
-			      controller: 'approvalsDialogController',
-			      templateUrl: '/app/components/admin/templates/dialogs/approval.dialog.template.html',
-			      parent: angular.element(document.body),
-			    })
-			    .then(function(){
-			    	$scope.subheader.refresh();
-			    });
-			}
+		$scope.showPending = function(id){
+			Preloader.set(id);
+			$mdDialog.show({
+		      controller: 'approvalsDialogController',
+		      templateUrl: '/app/components/admin/templates/dialogs/approval.dialog.template.html',
+		      parent: angular.element(document.body),
+		    })
+		    .then(function(){
+		    	$scope.subheader.refresh();
+		    });
+		}
+
+		$scope.showDetails = function(id){
+			Preloader.set(id);
+			$mdDialog.show({
+		      controller: 'approvalsDetailsDialogController',
+		      templateUrl: '/app/components/admin/templates/dialogs/approval-details.dialog.template.html',
+		      parent: angular.element(document.body),
+		      clickOutsideToClose:true,
+		    });
 		}
 
 		/**
@@ -1787,6 +1797,19 @@ adminModule
 						Preloader.error();
 					});
 			}
+		}
+	}]);
+adminModule
+	.controller('approvalsDetailsDialogController', ['$scope', '$mdDialog', 'Approval', 'PerformanceApproval', 'Preloader', function($scope, $mdDialog, Approval, PerformanceApproval, Preloader){
+		var performanceApprovalID = Preloader.get();
+
+		PerformanceApproval.details(performanceApprovalID)
+			.success(function(data){
+				$scope.details = data;
+			});
+		
+		$scope.cancel = function(){
+			$mdDialog.cancel();
 		}
 	}]);
 adminModule
