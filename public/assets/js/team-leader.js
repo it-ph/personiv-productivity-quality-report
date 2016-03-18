@@ -1218,22 +1218,9 @@ teamLeaderModule
 			$mdDialog.cancel();
 		}
 
-
-		$scope.approve = function(){
+		$scope.cancelRequest = function(){
 			Preloader.preload();
-			Approval.approve($scope.details.request)
-				.success(function(){
-					// Stops Preloader 
-					Preloader.stop();
-				})
-				.error(function(){
-					Preloader.error();
-				});
-		}
-
-		$scope.decline = function(){
-			Preloader.preload();
-			Approval.decline($scope.details.request)
+			Approval.delete(approvalID)
 				.success(function(){
 					// Stops Preloader 
 					Preloader.stop();
