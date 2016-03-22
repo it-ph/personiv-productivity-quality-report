@@ -30,8 +30,11 @@ sharedModule
 			declinedUser: function(id, page){
 				return $http.get(urlBase + '-declined-user/'+ id +'?page=' + page);
 			},
-			details: function(id){
-				return $http.get(urlBase +'-details/' + id);
+			declinedDetails: function(id){
+				return $http.get(urlBase +'-declined-details/' + id);
+			},
+			approvedDetails: function(id){
+				return $http.get(urlBase +'-approved-details/' + id);
 			},
 		}
 	}])

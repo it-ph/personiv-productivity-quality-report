@@ -191,11 +191,21 @@ adminModule
 		    });
 		}
 
-		$scope.showDetails = function(id){
+		$scope.showApprovedDetails = function(id){
 			Preloader.set(id);
 			$mdDialog.show({
-		      controller: 'approvalsDetailsDialogController',
-		      templateUrl: '/app/components/admin/templates/dialogs/approval-details.dialog.template.html',
+		      controller: 'approvedApprovalsDetailsDialogController',
+		      templateUrl: '/app/components/admin/templates/dialogs/approved-approval-details.dialog.template.html',
+		      parent: angular.element(document.body),
+		      clickOutsideToClose:true,
+		    });
+		}
+
+		$scope.showDeclinedDetails = function(id){
+			Preloader.set(id);
+			$mdDialog.show({
+		      controller: 'declinedApprovalsDetailsDialogController',
+		      templateUrl: '/app/components/admin/templates/dialogs/declined-approval-details.dialog.template.html',
 		      parent: angular.element(document.body),
 		      clickOutsideToClose:true,
 		    });

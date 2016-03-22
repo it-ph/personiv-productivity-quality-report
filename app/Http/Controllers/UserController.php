@@ -8,9 +8,25 @@ use DB;
 use Carbon\Carbon;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
+use Hash;
 
 class UserController extends Controller
 {   
+    public function changePassword(Request $request)
+    {
+        $user = $request->user();
+
+        if($request->new == $request->confirm && $request->old != $request->new)
+        {
+            $user->password = Hash::make($request->new);
+        }
+
+        $user->save();
+    }
+    public function checkPassword(Request $request)
+    {
+        return response()->json(Hash::check($request->old, $request->user()->password));
+    }
     // fetch all team leaders
     public function teamLeader()
     {

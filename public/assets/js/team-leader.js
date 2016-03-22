@@ -291,11 +291,21 @@ teamLeaderModule
 		    });
 		}
 
-		$scope.showDetails = function(id){
+		$scope.showApprovedDetails = function(id){
 			Preloader.set(id);
 			$mdDialog.show({
-		      controller: 'approvalsDetailsDialogController',
-		      templateUrl: '/app/components/admin/templates/dialogs/approval-details.dialog.template.html',
+		      controller: 'approvedApprovalsDetailsDialogController',
+		      templateUrl: '/app/components/admin/templates/dialogs/approved-approval-details.dialog.template.html',
+		      parent: angular.element(document.body),
+		      clickOutsideToClose:true,
+		    });
+		}
+
+		$scope.showDeclinedDetails = function(id){
+			Preloader.set(id);
+			$mdDialog.show({
+		      controller: 'declinedApprovalsDetailsDialogController',
+		      templateUrl: '/app/components/admin/templates/dialogs/declined-approval-details.dialog.template.html',
 		      parent: angular.element(document.body),
 		      clickOutsideToClose:true,
 		    });
@@ -1180,19 +1190,6 @@ teamLeaderModule
 		}
 	}]);
 teamLeaderModule
-	.controller('approvalsDetailsDialogController', ['$scope', '$mdDialog', 'Approval', 'PerformanceApproval', 'Preloader', function($scope, $mdDialog, Approval, PerformanceApproval, Preloader){
-		var performanceApprovalID = Preloader.get();
-
-		PerformanceApproval.details(performanceApprovalID)
-			.success(function(data){
-				$scope.details = data;
-			});
-		
-		$scope.cancel = function(){
-			$mdDialog.cancel();
-		}
-	}]);
-teamLeaderModule
 	.controller('approvalsDialogController', ['$scope', '$mdDialog', 'Approval', 'PerformanceApproval', 'Preloader', function($scope, $mdDialog, Approval, PerformanceApproval, Preloader){
 		var approvalID = Preloader.get();
 
@@ -1228,6 +1225,32 @@ teamLeaderModule
 				.error(function(){
 					Preloader.error();
 				});
+		}
+	}]);
+teamLeaderModule
+	.controller('approvedApprovalsDetailsDialogController', ['$scope', '$mdDialog', 'Approval', 'PerformanceApproval', 'Preloader', function($scope, $mdDialog, Approval, PerformanceApproval, Preloader){
+		var performanceApprovalID = Preloader.get();
+
+		PerformanceApproval.approvedDetails(performanceApprovalID)
+			.success(function(data){
+				$scope.details = data;
+			});
+		
+		$scope.cancel = function(){
+			$mdDialog.cancel();
+		}
+	}]);
+teamLeaderModule
+	.controller('declinedApprovalsDetailsDialogController', ['$scope', '$mdDialog', 'Approval', 'PerformanceApproval', 'Preloader', function($scope, $mdDialog, Approval, PerformanceApproval, Preloader){
+		var performanceApprovalID = Preloader.get();
+
+		PerformanceApproval.declinedDetails(performanceApprovalID)
+			.success(function(data){
+				$scope.details = data;
+			});
+		
+		$scope.cancel = function(){
+			$mdDialog.cancel();
 		}
 	}]);
 teamLeaderModule

@@ -21,5 +21,11 @@ sharedModule
 			teamLeader: function(){
 				return $http.get(urlBase + '-team-leader');
 			},
+			checkPassword: function(data){
+				return $http.post(urlBase + '-check-password', data)
+			},
+			changePassword: function(data){
+				return $http.post(urlBase + '-change-password', data)
+			}
 		};
 	}])

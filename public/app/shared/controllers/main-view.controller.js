@@ -1,5 +1,21 @@
 sharedModule
-	.controller('mainViewController', ['$scope', '$state', '$mdSidenav', '$mdToast', 'User', 'Preloader', 'Notification', function($scope, $state, $mdSidenav, $mdToast, User, Preloader, Notification){
+	.controller('mainViewController', ['$scope', '$state', '$mdSidenav', '$mdToast', '$mdDialog', 'User', 'Preloader', 'Notification', function($scope, $state, $mdSidenav, $mdToast, $mdDialog, User, Preloader, Notification){
+		$scope.changePassword = function()
+		{
+			$mdDialog.show({
+		      controller: 'changePasswordDialogController',
+		      templateUrl: '/app/shared/templates/dialogs/change-password-dialog.template.html',
+		      parent: angular.element(document.body),
+		    })
+		    .then(function(){
+		    	$mdToast.show(
+		    		$mdToast.simple()
+				        .content('Password changed.')
+				        .position('bottom right')
+				        .hideDelay(3000)
+		    	);
+		    });
+		}
 		/**
 		 * Fetch authenticated user information
 		 *

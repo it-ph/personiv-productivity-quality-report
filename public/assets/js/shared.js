@@ -31,6 +31,48 @@ sharedModule
 			})
 	}]);
 sharedModule
+	.controller('changePasswordDialogController', ['$scope', '$mdDialog', 'User', 'Preloader', function($scope, $mdDialog, User, Preloader){
+		$scope.password = {};
+
+		$scope.cancel = function(){
+			$mdDialog.cancel();
+		}
+
+		$scope.checkPassword = function(){
+			User.checkPassword($scope.password)
+				.success(function(data){
+					$scope.match = data;
+					$scope.show = true;
+				});
+		}
+
+		$scope.submit = function(){
+			$scope.showErrors = true;
+			if($scope.changePasswordForm.$invalid){
+				angular.forEach($scope.changePasswordForm.$error, function(field){
+					angular.forEach(field, function(errorField){
+						errorField.$setTouched();
+					});
+				});
+			}
+			else if($scope.password.old == $scope.password.new || $scope.password.new != $scope.password.confirm)
+			{
+				return;
+			}
+			else {
+				Preloader.preload();
+
+				User.changePassword($scope.password)
+					.success(function(){
+						Preloader.stop();
+					})
+					.error(function(){
+						Preloader.error();
+					});
+			}
+		}
+	}]);
+sharedModule
 	.controller('homePageController', ['$scope', 'Department', function($scope, Department){
 		$scope.show = function(){
 			angular.element($('.main-view').removeClass('hidden-custom'));
@@ -42,7 +84,23 @@ sharedModule
 			});
 	}]);
 sharedModule
-	.controller('mainViewController', ['$scope', '$state', '$mdSidenav', '$mdToast', 'User', 'Preloader', 'Notification', function($scope, $state, $mdSidenav, $mdToast, User, Preloader, Notification){
+	.controller('mainViewController', ['$scope', '$state', '$mdSidenav', '$mdToast', '$mdDialog', 'User', 'Preloader', 'Notification', function($scope, $state, $mdSidenav, $mdToast, $mdDialog, User, Preloader, Notification){
+		$scope.changePassword = function()
+		{
+			$mdDialog.show({
+		      controller: 'changePasswordDialogController',
+		      templateUrl: '/app/shared/templates/dialogs/change-password-dialog.template.html',
+		      parent: angular.element(document.body),
+		    })
+		    .then(function(){
+		    	$mdToast.show(
+		    		$mdToast.simple()
+				        .content('Password changed.')
+				        .position('bottom right')
+				        .hideDelay(3000)
+		    	);
+		    });
+		}
 		/**
 		 * Fetch authenticated user information
 		 *
@@ -276,8 +334,11 @@ sharedModule
 			declinedUser: function(id, page){
 				return $http.get(urlBase + '-declined-user/'+ id +'?page=' + page);
 			},
-			details: function(id){
-				return $http.get(urlBase +'-details/' + id);
+			declinedDetails: function(id){
+				return $http.get(urlBase +'-declined-details/' + id);
+			},
+			approvedDetails: function(id){
+				return $http.get(urlBase +'-approved-details/' + id);
 			},
 		}
 	}])
@@ -505,6 +566,12 @@ sharedModule
 			teamLeader: function(){
 				return $http.get(urlBase + '-team-leader');
 			},
+			checkPassword: function(data){
+				return $http.post(urlBase + '-check-password', data)
+			},
+			changePassword: function(data){
+				return $http.post(urlBase + '-change-password', data)
+			}
 		};
 	}])
 sharedModule

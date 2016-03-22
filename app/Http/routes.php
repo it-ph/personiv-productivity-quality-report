@@ -104,5 +104,8 @@ Route::group(['middleware' => 'auth'], function () {
 	Route::get('performance-approval-approval', 'PerformanceApprovalController@approval');
 	Route::post('approval-approve', 'ApprovalController@approve');
 	Route::post('approval-decline', 'ApprovalController@decline');
-	Route::get('performance-approval-details/{performanceApprovalID}', 'PerformanceApprovalController@details');
+	Route::get('performance-approval-declined-details/{performanceApprovalID}', 'PerformanceApprovalController@declinedDetails');
+	Route::get('performance-approval-approved-details/{performanceApprovalID}', 'PerformanceApprovalController@approvedDetails');
+	Route::post('user-check-password', 'UserController@checkPassword');
+	Route::post('user-change-password', 'UserController@changePassword');
 });

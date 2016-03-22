@@ -25,7 +25,7 @@
 					<md-content flex layout="column">
 						<div class="fade-transition" ng-if="approved.show" flex infinite-scroll='approved.paginateLoad()' infinite-scroll-distance="2" infinite-scroll-disabled="approved.busy" infinite-scroll-parent>
 							<md-list>
-								<md-list-item class="md-3-line" layout="row" ng-repeat="approved in approved.paginated | filter:toolbar.userInput" ng-click="showDetails(approved.id)">
+								<md-list-item class="md-3-line" layout="row" ng-repeat="approved in approved.paginated | filter:toolbar.userInput" ng-click="showApprovedDetails(approved.id)">
 									<h2 class="md-avatar md-headline purple-bg" layout="row" layout-align="center center">
 										<span class="weight-200 white-text">{{ approved.first_letter }}</span>
 									</h2>
@@ -44,7 +44,7 @@
 					<md-content flex layout="column">
 						<div class="fade-transition" ng-if="declined.show" flex infinite-scroll='declined.paginateLoad()' infinite-scroll-distance="2" infinite-scroll-disabled="declined.busy" infinite-scroll-parent>
 							<md-list>
-								<md-list-item class="md-3-line" layout="row" ng-repeat="declined in declined.paginated | filter:toolbar.userInput" ng-click="showDetails(declined.id)">
+								<md-list-item class="md-3-line" layout="row" ng-repeat="declined in declined.paginated | filter:toolbar.userInput" ng-click="showDeclinedDetails(declined.id)">
 									<h2 class="md-avatar md-headline purple-bg" layout="row" layout-align="center center">
 										<span class="weight-200 white-text">{{ declined.first_letter }}</span>
 									</h2>

@@ -10,7 +10,51 @@ use App\Http\Controllers\Controller;
 
 class PerformanceApprovalController extends Controller
 {
-    public function details($id)
+    public function approvedDetails($id)
+    {
+        $performance_approval = PerformanceApproval::where('id', $id)->first();
+
+        $details = DB::table('approvals')
+            ->join('reports', 'reports.id', '=', 'approvals.report_id')
+            ->join('projects', 'projects.id', '=', 'reports.project_id')
+            ->join('users', 'users.id', '=', 'reports.user_id')
+            ->select(
+                '*',
+                'approvals.id as approval_id',
+                'projects.name as project',
+                DB::raw('UPPER(LEFT(projects.name, 1)) as first_letter'),
+                DB::raw('DATE_FORMAT(reports.date_start, "%b. %d, %Y") as date_start'),
+                DB::raw('DATE_FORMAT(reports.date_end, "%b. %d, %Y") as date_end'),
+                DB::raw('DATE_FORMAT(approvals.created_at, "%h:%i %p %b. %d, %Y") as created_at')
+            )
+            ->where('approvals.id', $performance_approval->approval_id)
+            ->first();
+
+        $details->current = DB::table('performances')
+            ->join('members', 'members.id', '=', 'performances.member_id')
+            ->join('positions', 'positions.id', '=', 'performances.position_id')
+            ->select(
+                'performances.*',
+                'members.full_name',
+                'positions.name as position'
+            )
+            ->where('performances.id', $performance_approval->performance_id)
+            ->first();
+
+        $details->previous =  DB::table('performance_histories')
+            ->join('positions', 'positions.id', '=', 'performance_histories.position_id')
+            ->select(
+                'performance_histories.*',
+                'positions.name as position'
+            )
+            ->where('performance_histories.performance_id', $performance_approval->performance_id)
+            ->orderBy('performance_histories.created_at', 'desc')
+            ->first();
+
+        return response()->json($details);
+    }
+
+    public function declinedDetails($id)
     {
         $performance_approval = PerformanceApproval::where('id', $id)->first();
 

@@ -65,45 +65,45 @@
 								</tr>
 								<tr>
 									<th>Beginner</th>
-									<td>{{detail[0].beginner_total_output}}</td>
-									<td>{{detail[0].beginner_total_man_hours}}</td>
-									<td>{{detail[0].beginner_total_average_output}}</td>
+									<td>{{detail[0].beginner_total_output | number: 1}}</td>
+									<td>{{detail[0].beginner_total_man_hours | number: 1}}</td>
+									<td>{{detail[0].beginner_total_average_output | number: 1}}</td>
 								</tr>
 								<tr ng-repeat="item in detail[0].begginer">
 									<td>{{item.position}}</td>
-									<td>{{item.total_output}}</td>
-									<td>{{item.total_man_hours}}</td>
-									<td>{{item.total_average_output}}</td>
+									<td>{{item.total_output | number: 1}}</td>
+									<td>{{item.total_man_hours | number: 1}}</td>
+									<td>{{item.total_average_output | number: 1}}</td>
 								</tr>
 								<tr>
 									<th>Moderately Experienced</th>
-									<td>{{detail[0].moderately_experienced_total_output}}</td>
-									<td>{{detail[0].moderately_experienced_total_man_hours}}</td>
-									<td>{{detail[0].moderately_experienced_total_average_output}}</td>
+									<td>{{detail[0].moderately_experienced_total_output | number: 1}}</td>
+									<td>{{detail[0].moderately_experienced_total_man_hours | number: 1}}</td>
+									<td>{{detail[0].moderately_experienced_total_average_output | number: 1}}</td>
 								</tr>
 								<tr ng-repeat="item in detail[0].moderately_experienced">
 									<td>{{item.position}}</td>
-									<td>{{item.total_output}}</td>
-									<td>{{item.total_man_hours}}</td>
-									<td>{{item.total_average_output}}</td>
+									<td>{{item.total_output | number: 1}}</td>
+									<td>{{item.total_man_hours | number: 1}}</td>
+									<td>{{item.total_average_output | number: 1}}</td>
 								</tr>
 								<tr>
 									<th>Experienced</th>
-									<td>{{detail[0].experienced_total_output}}</td>
-									<td>{{detail[0].experienced_total_man_hours}}</td>
-									<td>{{detail[0].experienced_total_average_output}}</td>
+									<td>{{detail[0].experienced_total_output | number: 1}}</td>
+									<td>{{detail[0].experienced_total_man_hours | number: 1}}</td>
+									<td>{{detail[0].experienced_total_average_output | number: 1}}</td>
 								</tr>
 								<tr ng-repeat="item in detail[0].experienced">
 									<td>{{item.position}}</td>
-									<td>{{item.total_output}}</td>
-									<td>{{item.total_man_hours}}</td>
-									<td>{{item.total_average_output}}</td>
+									<td>{{item.total_output | number: 1}}</td>
+									<td>{{item.total_man_hours | number: 1}}</td>
+									<td>{{item.total_average_output | number: 1}}</td>
 								</tr>
 								<tr>
 									<th>Grand Total</th>
-									<th>{{detail[0].overall_total_output}}</th>
-									<th>{{detail[0].overall_total_man_hours}}</th>
-									<th>{{detail[0].overall_total_average_output}}</th>
+									<th>{{detail[0].overall_total_output | number: 1}}</th>
+									<th>{{detail[0].overall_total_man_hours | number: 1}}</th>
+									<th>{{detail[0].overall_total_average_output | number: 1}}</th>
 								</tr>
 							</table>
 							<!-- <md-button class="md-fab md-mini md-primary" aria-label="Download">

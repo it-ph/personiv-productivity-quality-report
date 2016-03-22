@@ -337,11 +337,21 @@ adminModule
 		    });
 		}
 
-		$scope.showDetails = function(id){
+		$scope.showApprovedDetails = function(id){
 			Preloader.set(id);
 			$mdDialog.show({
-		      controller: 'approvalsDetailsDialogController',
-		      templateUrl: '/app/components/admin/templates/dialogs/approval-details.dialog.template.html',
+		      controller: 'approvedApprovalsDetailsDialogController',
+		      templateUrl: '/app/components/admin/templates/dialogs/approved-approval-details.dialog.template.html',
+		      parent: angular.element(document.body),
+		      clickOutsideToClose:true,
+		    });
+		}
+
+		$scope.showDeclinedDetails = function(id){
+			Preloader.set(id);
+			$mdDialog.show({
+		      controller: 'declinedApprovalsDetailsDialogController',
+		      templateUrl: '/app/components/admin/templates/dialogs/declined-approval-details.dialog.template.html',
 		      parent: angular.element(document.body),
 		      clickOutsideToClose:true,
 		    });
@@ -812,6 +822,7 @@ adminModule
 				
 				$scope.details.date_start = new Date(data[0].date_start);
 				$scope.details.date_end = new Date(data[0].date_end);
+				$scope.details.project_id = data[0].project_id;
 				$scope.details.project_name = data[0].project_name;
 				$scope.details.daily_work_hours = data[0].daily_work_hours;
 				$scope.details.first_letter = data[0].first_letter;
@@ -1800,19 +1811,6 @@ adminModule
 		}
 	}]);
 adminModule
-	.controller('approvalsDetailsDialogController', ['$scope', '$mdDialog', 'Approval', 'PerformanceApproval', 'Preloader', function($scope, $mdDialog, Approval, PerformanceApproval, Preloader){
-		var performanceApprovalID = Preloader.get();
-
-		PerformanceApproval.details(performanceApprovalID)
-			.success(function(data){
-				$scope.details = data;
-			});
-		
-		$scope.cancel = function(){
-			$mdDialog.cancel();
-		}
-	}]);
-adminModule
 	.controller('approvalsDialogController', ['$scope', '$mdDialog', 'Approval', 'PerformanceApproval', 'Preloader', function($scope, $mdDialog, Approval, PerformanceApproval, Preloader){
 		var approvalID = Preloader.get();
 
@@ -1861,6 +1859,32 @@ adminModule
 				.error(function(){
 					Preloader.error();
 				});
+		}
+	}]);
+adminModule
+	.controller('approvedApprovalsDetailsDialogController', ['$scope', '$mdDialog', 'Approval', 'PerformanceApproval', 'Preloader', function($scope, $mdDialog, Approval, PerformanceApproval, Preloader){
+		var performanceApprovalID = Preloader.get();
+
+		PerformanceApproval.approvedDetails(performanceApprovalID)
+			.success(function(data){
+				$scope.details = data;
+			});
+		
+		$scope.cancel = function(){
+			$mdDialog.cancel();
+		}
+	}]);
+adminModule
+	.controller('declinedApprovalsDetailsDialogController', ['$scope', '$mdDialog', 'Approval', 'PerformanceApproval', 'Preloader', function($scope, $mdDialog, Approval, PerformanceApproval, Preloader){
+		var performanceApprovalID = Preloader.get();
+
+		PerformanceApproval.declinedDetails(performanceApprovalID)
+			.success(function(data){
+				$scope.details = data;
+			});
+		
+		$scope.cancel = function(){
+			$mdDialog.cancel();
 		}
 	}]);
 adminModule

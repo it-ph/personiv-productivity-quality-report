@@ -66,9 +66,9 @@
 			<td>{{ $item->position }}</td>
 			<td>{{ $item->experience }}</td>
 			
-			@foreach($item->results as $average)
-				<td>{{ $average->productivity }}%</td>
-				<td>{{ $average->quality }}%</td>
+			@foreach($item->results as $result)
+				<td>{{ round($result->productivity,1) }}%</td>
+				<td>{{ round($result->quality,1) }}%</td>
 			@endforeach
 
 			<td>{{ $item->productivity_average }}%</td>

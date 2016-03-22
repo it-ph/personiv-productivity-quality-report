@@ -21,7 +21,13 @@
 			          	</md-button>
 			          	<md-menu-content width="2">
 				            <md-menu-item>
-				              	<md-button href="/auth/logout">
+				            	<md-button ng-click="changePassword()">
+				                	<md-icon md-menu-align-target class="mdi mdi-key-change grey"></md-icon>
+				                	Change Password
+				              	</md-button>
+				            </md-menu-item>
+				            <md-menu-item>
+					            <md-button href="/auth/logout">
 				                	<md-icon md-menu-align-target class="mdi mdi-logout grey"></md-icon>
 				                	Logout
 				              	</md-button>

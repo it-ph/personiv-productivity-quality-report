@@ -137,6 +137,7 @@ class ApprovalController extends Controller
                 $performance_history->date_end = $old_performance->date_end;
                 $performance_history->daily_work_hours = $old_performance->daily_work_hours;
                 $performance_history->output = $old_performance->output;
+                $performance_history->hours_worked = $old_performance->hours_worked;
                 $performance_history->output_error = $old_performance->output_error;
                 $performance_history->average_output = $old_performance->average_output;
 

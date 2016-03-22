@@ -122,7 +122,7 @@ class ReportController extends Controller
                             ->where('performances.position_id', $beginnerValue->position_id)
                             ->where('performances.daily_work_hours', 'like', $daily_work_hours.'%')
                             ->whereBetween('performances.date_start', [$this->date_start, $this->date_end])
-                            ->where('performances.project_id', $value->id)
+                            ->where('performances.project_id', $project_value->id)
                             ->whereNull('performances.deleted_at')
                             ->get();
 
@@ -266,7 +266,13 @@ class ReportController extends Controller
 
                 $project_value->overall_total_output = $project_value->beginner_total_output + $project_value->moderately_experienced_total_output + $project_value->experienced_total_output;
                 $project_value->overall_total_man_hours = $project_value->beginner_total_man_hours + $project_value->moderately_experienced_total_man_hours + $project_value->experienced_total_man_hours;
-                $project_value->overall_total_average_output = round($project_value->overall_total_output / $project_value->overall_total_man_hours * $daily_work_hours, 2);
+                if(!$project_value->overall_total_man_hours)
+                {
+                    $project_value->overall_total_average_output = 0;
+                }
+                else{
+                    $project_value->overall_total_average_output = round($project_value->overall_total_output / $project_value->overall_total_man_hours * $daily_work_hours, 2);
+                }
             }
         }
 

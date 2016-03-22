@@ -309,8 +309,8 @@ class PerformanceController extends Controller
                     $notification = new Notification;
 
                     $notification->message = 'submitted a ';
-                    $notification->sender_user_id = $admin->id;
-                    $notification->receiver_user_id = $request->user()->id;
+                    $notification->sender_user_id = $request->user()->id;
+                    $notification->receiver_user_id = $admin->id;
                     $notification->subscriber = 'admin';
                     $notification->state = 'main.weekly-report';
                     $notification->event_id = $report->id;
