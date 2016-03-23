@@ -16,10 +16,11 @@ class CreateNotificationsTable extends Migration
             $table->increments('id');
             $table->integer('sender_user_id');
             $table->integer('receiver_user_id');
-            $table->string('subsriber');
+            $table->string('subscriber');
             $table->text('message');
             $table->string('state');
             $table->integer('event_id');
+            $table->string('event_id_type');
             $table->boolean('seen');
             $table->timestamps();
         });

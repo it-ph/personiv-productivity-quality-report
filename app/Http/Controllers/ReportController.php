@@ -1574,7 +1574,8 @@ class ReportController extends Controller
                     'results.*',
                     'projects.*',
                     'projects.name as project',
-                    'positions.name as position'
+                    'positions.name as position',
+                    'reports.id as id'
                 )
                 ->whereNull('reports.deleted_at')
                 ->whereNull('performances.deleted_at')
