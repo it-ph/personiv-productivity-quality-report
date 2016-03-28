@@ -68,7 +68,22 @@ adminModule
 							*/
 							// sets to true to disable pagination call if still busy.
 							$scope.report.busy = true;
-
+							Report.paginateDepartmentDetails(departmentID, $scope.report.page)
+								.success(function(data){
+									// iterate over each data then splice it to the data array
+									angular.forEach(data.data, function(item, key){
+										$scope.report.details.data.push(item);
+										// fetch the targets
+										Target.project(item.project_id)
+											.success(function(data){
+												$scope.report.targets.splice(key, 0, data)
+											});
+										Performance.topPerformers(item.id)
+											.success(function(data){
+												$scope.report.topPerformers.splice(key, 0, data)
+											});
+									});
+								});
 							// Calls the next page of pagination.
 							Report.paginateDepartment(departmentID, $scope.report.page)
 								.success(function(data){
@@ -265,6 +280,7 @@ adminModule
 		};
 
 		$scope.deleteReport = function(id){
+			console.log(id);
 			var confirm = $mdDialog.confirm()
 		        .title('Delete Report')
 		        .content('Are you sure you want to delete this report?')
