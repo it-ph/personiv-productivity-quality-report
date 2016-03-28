@@ -355,6 +355,7 @@ teamLeaderModule
 teamLeaderModule
 	.controller('editReportContentContainerController', ['$scope', '$mdDialog', '$state', '$mdToast', '$stateParams', 'Preloader', 'Performance', 'Position', 'Project', 'Approval', function($scope, $mdDialog, $state, $mdToast, $stateParams, Preloader, Performance, Position, Project, Approval){
 		var reportID = $stateParams.reportID;
+		var busy = false;
 		$scope.form = {};
 
 		$scope.hours = [
@@ -461,41 +462,31 @@ teamLeaderModule
 			else{
 				Preloader.preload();
 
-				angular.forEach($scope.performances, function(item){
-					item.date_start = $scope.details.date_start;
-					item.date_end = $scope.details.date_end;
-					item.daily_work_hours = $scope.details.daily_work_hours;
-				});
+				if(!busy){
+					busy = true;
+					angular.forEach($scope.performances, function(item){
+						item.date_start = $scope.details.date_start;
+						item.date_end = $scope.details.date_end;
+						item.daily_work_hours = $scope.details.daily_work_hours;
+					});
 
-				Approval.performanceEdit(reportID, $scope.performances)
-					.success(function(){
-						$mdToast.show(
-					      	$mdToast.simple()
-						        .content('Edit report has been submitted for approval.')
-						        .position('bottom right')
-						        .hideDelay(3000)
-					    );
-						$state.go('main');
-						Preloader.stop();
-					})
-					.error(function(){
-						Preloader.error();
-					})
-
-				// Performance.update(reportID, $scope.performances)
-				// 	.success(function(){
-				// 		$mdToast.show(
-				// 	      	$mdToast.simple()
-				// 		        .content('Changes Saved.')
-				// 		        .position('bottom right')
-				// 		        .hideDelay(3000)
-				// 	    );
-				// 		$state.go('main');
-				// 		Preloader.stop();
-				// 	})
-				// 	.error(function(){
-				// 		Preloader.error();
-				// 	});
+					Approval.performanceEdit(reportID, $scope.performances)
+						.success(function(){
+							$mdToast.show(
+						      	$mdToast.simple()
+							        .content('Edit report has been submitted for approval.')
+							        .position('bottom right')
+							        .hideDelay(3000)
+						    );
+							$state.go('main');
+							Preloader.stop();
+							busy = false;
+						})
+						.error(function(){
+							Preloader.error();
+							busy = false;
+						})
+				}
 			}
 		};
 
@@ -582,6 +573,7 @@ teamLeaderModule
 							.success(function(data){
 								$scope.report.paginated = data;
 								$scope.report.show = true;
+								$scope.report.busy = false;
 								// set up the charts
 								// reports cycle
 								angular.forEach($scope.report.paginated, function(parentItem, parentKey){
@@ -593,7 +585,6 @@ teamLeaderModule
 										$scope.charts.data[parentKey].push([item.productivity, item.quality]);
 										$scope.charts.series[parentKey].push(item.full_name);
 									});
-								$scope.report.busy = false;
 								});
 								$scope.report.paginateLoad = function(){
 									// kills the function if ajax is busy or pagination reaches last page
@@ -606,6 +597,22 @@ teamLeaderModule
 									*/
 									// sets to true to disable pagination call if still busy.
 									$scope.report.busy = true;
+									Report.paginateDepartmentDetails(user.department_id, $scope.report.page)
+										.success(function(data){
+											// iterate over each data then splice it to the data array
+											angular.forEach(data.data, function(item, key){
+												$scope.report.details.data.push(item);
+												// fetch the targets
+												Target.project(item.project_id)
+													.success(function(data){
+														$scope.report.targets.splice(key, 0, data)
+													});
+												Performance.topPerformers(item.id)
+													.success(function(data){
+														$scope.report.topPerformers.splice(key, 0, data)
+													});
+											});
+										});
 
 									// Calls the next page of pagination.
 									Report.paginateDepartment(user.department_id, $scope.report.page)
@@ -958,6 +965,7 @@ teamLeaderModule
 	.controller('reportContentContainerController', ['$scope', '$state', '$mdDialog', '$mdToast', 'Preloader', 'Member', 'Project', 'Position', 'Performance', 'User', function($scope, $state, $mdDialog, $mdToast, Preloader, Member, Project, Position, Performance, User){		
 		var user = Preloader.getUser();
 		var departmentID = null;
+		var busy = false;
 		$scope.form = {};
 
 		$scope.months = [
@@ -1100,30 +1108,49 @@ teamLeaderModule
 				);
 			}
 			else{
-				Preloader.preload();
-
-				angular.forEach($scope.members, function(item){
-					item.department_id = departmentID;
-					item.date_start = $scope.details.date_start;
-					item.date_end = $scope.details.date_end;
-					item.project_id = $scope.details.project_id;
-					item.daily_work_hours = $scope.details.daily_work_hours;
-				});
-
-				Performance.store($scope.members)
-					.success(function(){
-						$mdToast.show(
-					      	$mdToast.simple()
-						        .content('Report Submitted.')
-						        .position('bottom right')
-						        .hideDelay(3000)
-					    );
-						$state.go('main');
-						Preloader.stop();
-					})
-					.error(function(){
-						Preloader.error();
+				if(!busy){
+					busy = true;
+					var count = 0;
+					angular.forEach($scope.members, function(item){
+						item.department_id = departmentID;
+						item.date_start = $scope.details.date_start;
+						item.date_end = $scope.details.date_end;
+						item.project_id = $scope.details.project_id;
+						item.daily_work_hours = $scope.details.daily_work_hours;
+						count = item.include ? count + 1 : count;
 					});
+
+					if(count){
+						Preloader.preload();
+						Performance.store($scope.members)
+							.success(function(){
+								$mdToast.show(
+							      	$mdToast.simple()
+								        .content('Report Submitted.')
+								        .position('bottom right')
+								        .hideDelay(3000)
+							    );
+								Preloader.stop();
+								$state.go('main');
+								busy = false;
+							})
+							.error(function(){
+								Preloader.error();
+								busy = false;
+							});
+					}
+					else{
+						$mdDialog.show(
+							$mdDialog.alert()
+								.parent(angular.element(document.body))
+								.clickOutsideToClose(true)
+						        .title('Report not submitted.')
+						        .content('Empty reports are not submitted.')
+						        .ariaLabel('Empty Report')
+						        .ok('Got it!')
+						);
+					}
+				}
 			}
 		};
 
@@ -1150,6 +1177,7 @@ teamLeaderModule
 teamLeaderModule
 	.controller('addMemberDialogController', ['$scope', '$mdDialog', 'Preloader', 'User', 'Member', function($scope, $mdDialog, Preloader, User, Member){
 		var user = Preloader.getUser();
+		var busy = false;
 		if(!user){
 			User.index()
 				.success(function(data){
@@ -1166,6 +1194,7 @@ teamLeaderModule
 
 		$scope.submit = function(){
 			$scope.showErrors = true;
+			busy = true;
 			if($scope.addMemberForm.$invalid){
 				angular.forEach($scope.addMemberForm.$error, function(field){
 					angular.forEach(field, function(errorField){
@@ -1179,13 +1208,18 @@ teamLeaderModule
 				/**
 				 * Stores Single Record
 				*/
-				Member.store($scope.member)
-					.then(function(){
-						// Stops Preloader 
-						Preloader.stop();
-					}, function(){
-						Preloader.error();
-					});
+				if(!busy){
+					busy = true;
+					Member.store($scope.member)
+						.then(function(){
+							// Stops Preloader 
+							Preloader.stop();
+							busy = false;
+						}, function(){
+							Preloader.error();
+							busy = false;
+						});
+				}
 			}
 		}
 	}]);
@@ -1256,6 +1290,7 @@ teamLeaderModule
 teamLeaderModule
 	.controller('editMemberDialogController', ['$scope', '$mdDialog', 'Preloader', 'Member', function($scope, $mdDialog, Preloader, Member){
 		var member_id = Preloader.get();
+		var busy = false;
 
 		$scope.cancel = function(){
 			$mdDialog.cancel();
@@ -1281,13 +1316,18 @@ teamLeaderModule
 				/**
 				 * Stores Single Record
 				*/
-				Member.update(member_id, $scope.member)
-					.then(function(){
-						// Stops Preloader 
-						Preloader.stop();
-					}, function(){
-						Preloader.error();
-					});
+				if(!busy){
+					busy = true;
+					Member.update(member_id, $scope.member)
+						.then(function(){
+							// Stops Preloader 
+							Preloader.stop();
+							busy = false; 
+						}, function(){
+							Preloader.error();
+							busy = false; 
+						});
+				}
 			}
 		}
 	}]);

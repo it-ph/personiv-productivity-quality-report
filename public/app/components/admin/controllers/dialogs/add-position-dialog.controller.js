@@ -2,6 +2,7 @@ adminModule
 	.controller('addPositionDialogController', ['$scope', '$stateParams', '$mdDialog', 'Preloader', 'Project', 'Position', 'Target', function($scope, $stateParams, $mdDialog, Preloader, Project, Position, Target){
 		var departmentID = $stateParams.departmentID;
 		var projectID = $stateParams.projectID;
+		var busy = false;
 
 		$scope.position = {};
 		$scope.position.department_id = departmentID;
@@ -76,38 +77,43 @@ adminModule
 				/**
 				 * Stores Single Record
 				*/
-				Position.store($scope.position)
-					.success(function(data){
-						angular.forEach($scope.productivity, function(item){
-							item.position_id = data.id;
-							item.department_id = departmentID;
-							item.project_id = projectID;
-						});
-
-						angular.forEach($scope.quality, function(item){
-							item.position_id = data.id;
-							item.department_id = departmentID;
-							item.project_id = projectID;
-						});
-
-						Target.store($scope.productivity)
-							.success(function(){
-								Target.store($scope.quality)
-									.success(function(){
-										// Stops Preloader
-										Preloader.stop();
-									})
-									.error(function(data){
-										Preloader.error();
-									});
-							})
-							.error(function(){
-								Preloader.error();
+				if(!busy){
+					busy = true;
+					Position.store($scope.position)
+						.success(function(data){
+							angular.forEach($scope.productivity, function(item){
+								item.position_id = data.id;
+								item.department_id = departmentID;
+								item.project_id = projectID;
 							});
-					})
-					.error(function(){
-						Preloader.error();
-					});
+
+							angular.forEach($scope.quality, function(item){
+								item.position_id = data.id;
+								item.department_id = departmentID;
+								item.project_id = projectID;
+							});
+
+							Target.store($scope.productivity)
+								.success(function(){
+									Target.store($scope.quality)
+										.success(function(){
+											// Stops Preloader
+											Preloader.stop();
+										})
+										.error(function(data){
+											Preloader.error();
+										});
+								})
+								.error(function(){
+									Preloader.error();
+								});
+							busy = false;
+						})
+						.error(function(){
+							Preloader.error();
+							busy = false;
+						});
+				}
 			}
 		}
 	}]);

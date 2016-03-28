@@ -68,8 +68,8 @@ class PerformanceController extends Controller
         $month = date_format(date_create($request->date_start), 'F');
         $year = date_format(date_create($request->date_start), 'Y');
 
-        $this->date_start = new Carbon('last day of last month '. $month .' '. $year);
-        $this->date_end = new Carbon('first day of next month'. $month .' '. $year);
+        $this->date_start = new Carbon('first Monday of '. $month .' '. $year);
+        $this->date_end = new Carbon('last Monday of '. $month .' '. $year);
 
         $performances = DB::table('performances')
             ->join('members', 'members.id', '=', 'performances.member_id')
@@ -85,6 +85,7 @@ class PerformanceController extends Controller
             )
             ->whereNull('performances.deleted_at')
             ->where('performances.member_id', $request->member_id)
+            ->where('performances.project_id', $request->project_id)
             ->whereBetween('performances.date_start', [$this->date_start, $this->date_end])
             ->where('performances.daily_work_hours', 'like', round($request->daily_work_hours,1).'%')
             ->get();

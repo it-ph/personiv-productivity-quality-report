@@ -280,7 +280,6 @@ adminModule
 		};
 
 		$scope.deleteReport = function(id){
-			console.log(id);
 			var confirm = $mdDialog.confirm()
 		        .title('Delete Report')
 		        .content('Are you sure you want to delete this report?')
@@ -292,7 +291,7 @@ adminModule
 		    			$scope.subheader.refresh();
 		    		})
 		    }, function() {
-		      return;
+		    	return;
 		    });
 		}
 	}]);

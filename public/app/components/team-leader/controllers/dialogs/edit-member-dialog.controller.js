@@ -1,6 +1,7 @@
 teamLeaderModule
 	.controller('editMemberDialogController', ['$scope', '$mdDialog', 'Preloader', 'Member', function($scope, $mdDialog, Preloader, Member){
 		var member_id = Preloader.get();
+		var busy = false;
 
 		$scope.cancel = function(){
 			$mdDialog.cancel();
@@ -26,13 +27,18 @@ teamLeaderModule
 				/**
 				 * Stores Single Record
 				*/
-				Member.update(member_id, $scope.member)
-					.then(function(){
-						// Stops Preloader 
-						Preloader.stop();
-					}, function(){
-						Preloader.error();
-					});
+				if(!busy){
+					busy = true;
+					Member.update(member_id, $scope.member)
+						.then(function(){
+							// Stops Preloader 
+							Preloader.stop();
+							busy = false; 
+						}, function(){
+							Preloader.error();
+							busy = false; 
+						});
+				}
 			}
 		}
 	}]);

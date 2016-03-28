@@ -47,6 +47,7 @@ teamLeaderModule
 							.success(function(data){
 								$scope.report.paginated = data;
 								$scope.report.show = true;
+								$scope.report.busy = false;
 								// set up the charts
 								// reports cycle
 								angular.forEach($scope.report.paginated, function(parentItem, parentKey){
@@ -58,7 +59,6 @@ teamLeaderModule
 										$scope.charts.data[parentKey].push([item.productivity, item.quality]);
 										$scope.charts.series[parentKey].push(item.full_name);
 									});
-								$scope.report.busy = false;
 								});
 								$scope.report.paginateLoad = function(){
 									// kills the function if ajax is busy or pagination reaches last page
@@ -71,6 +71,22 @@ teamLeaderModule
 									*/
 									// sets to true to disable pagination call if still busy.
 									$scope.report.busy = true;
+									Report.paginateDepartmentDetails(user.department_id, $scope.report.page)
+										.success(function(data){
+											// iterate over each data then splice it to the data array
+											angular.forEach(data.data, function(item, key){
+												$scope.report.details.data.push(item);
+												// fetch the targets
+												Target.project(item.project_id)
+													.success(function(data){
+														$scope.report.targets.splice(key, 0, data)
+													});
+												Performance.topPerformers(item.id)
+													.success(function(data){
+														$scope.report.topPerformers.splice(key, 0, data)
+													});
+											});
+										});
 
 									// Calls the next page of pagination.
 									Report.paginateDepartment(user.department_id, $scope.report.page)

@@ -1,6 +1,7 @@
 adminModule
 	.controller('addDepartmentDialogController', ['$scope', '$mdDialog', 'Preloader', 'Department', function($scope, $mdDialog, Preloader, Department){
 		$scope.department = {};
+		var busy = false;
 
 		$scope.cancel = function(){
 			$mdDialog.cancel();
@@ -20,13 +21,17 @@ adminModule
 				/**
 				 * Stores Single Record
 				*/
-				Department.store($scope.department)
-					.then(function(){
-						// Stops Preloader 
-						Preloader.stop();
-					}, function(){
-						Preloader.error();
-					});
+				if(!busy){
+					busy = true;
+					Department.store($scope.department)
+						.then(function(){
+							// Stops Preloader 
+							Preloader.stop();
+							busy = false;
+						}, function(){
+							Preloader.error();
+						});
+				}
 			}
 		}
 	}]);

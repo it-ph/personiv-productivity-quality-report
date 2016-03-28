@@ -1,6 +1,7 @@
 teamLeaderModule
 	.controller('editReportContentContainerController', ['$scope', '$mdDialog', '$state', '$mdToast', '$stateParams', 'Preloader', 'Performance', 'Position', 'Project', 'Approval', function($scope, $mdDialog, $state, $mdToast, $stateParams, Preloader, Performance, Position, Project, Approval){
 		var reportID = $stateParams.reportID;
+		var busy = false;
 		$scope.form = {};
 
 		$scope.hours = [
@@ -107,41 +108,31 @@ teamLeaderModule
 			else{
 				Preloader.preload();
 
-				angular.forEach($scope.performances, function(item){
-					item.date_start = $scope.details.date_start;
-					item.date_end = $scope.details.date_end;
-					item.daily_work_hours = $scope.details.daily_work_hours;
-				});
+				if(!busy){
+					busy = true;
+					angular.forEach($scope.performances, function(item){
+						item.date_start = $scope.details.date_start;
+						item.date_end = $scope.details.date_end;
+						item.daily_work_hours = $scope.details.daily_work_hours;
+					});
 
-				Approval.performanceEdit(reportID, $scope.performances)
-					.success(function(){
-						$mdToast.show(
-					      	$mdToast.simple()
-						        .content('Edit report has been submitted for approval.')
-						        .position('bottom right')
-						        .hideDelay(3000)
-					    );
-						$state.go('main');
-						Preloader.stop();
-					})
-					.error(function(){
-						Preloader.error();
-					})
-
-				// Performance.update(reportID, $scope.performances)
-				// 	.success(function(){
-				// 		$mdToast.show(
-				// 	      	$mdToast.simple()
-				// 		        .content('Changes Saved.')
-				// 		        .position('bottom right')
-				// 		        .hideDelay(3000)
-				// 	    );
-				// 		$state.go('main');
-				// 		Preloader.stop();
-				// 	})
-				// 	.error(function(){
-				// 		Preloader.error();
-				// 	});
+					Approval.performanceEdit(reportID, $scope.performances)
+						.success(function(){
+							$mdToast.show(
+						      	$mdToast.simple()
+							        .content('Edit report has been submitted for approval.')
+							        .position('bottom right')
+							        .hideDelay(3000)
+						    );
+							$state.go('main');
+							Preloader.stop();
+							busy = false;
+						})
+						.error(function(){
+							Preloader.error();
+							busy = false;
+						})
+				}
 			}
 		};
 

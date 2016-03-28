@@ -680,7 +680,6 @@ adminModule
 		};
 
 		$scope.deleteReport = function(id){
-			console.log(id);
 			var confirm = $mdDialog.confirm()
 		        .title('Delete Report')
 		        .content('Are you sure you want to delete this report?')
@@ -692,7 +691,7 @@ adminModule
 		    			$scope.subheader.refresh();
 		    		})
 		    }, function() {
-		      return;
+		    	return;
 		    });
 		}
 	}]);
@@ -806,6 +805,7 @@ adminModule
 adminModule
 	.controller('editReportContentContainerController', ['$scope', '$mdDialog', '$state', '$mdToast', '$stateParams', 'Preloader', 'Performance', 'Position', 'Project', function($scope, $mdDialog, $state, $mdToast, $stateParams, Preloader, Performance, Position, Project){
 		var reportID = $stateParams.reportID;
+		var busy = false;
 		$scope.form = {};
 
 		$scope.hours = [
@@ -910,29 +910,34 @@ adminModule
 				);
 			}
 			else{
+				busy = true;
 				Preloader.preload();
 
-				angular.forEach($scope.performances, function(item){
-					item.date_start = $scope.details.date_start;
-					item.date_end = $scope.details.date_end;
-					item.project_id = $scope.details.project_id;
-					item.daily_work_hours = $scope.details.daily_work_hours;
-				});
-
-				Performance.update(reportID, $scope.performances)
-					.success(function(){
-						$mdToast.show(
-					      	$mdToast.simple()
-						        .content('Changes Saved.')
-						        .position('bottom right')
-						        .hideDelay(3000)
-					    );
-						$state.go('main');
-						Preloader.stop();
-					})
-					.error(function(){
-						Preloader.error();
+				if(busy){
+					angular.forEach($scope.performances, function(item){
+						item.date_start = $scope.details.date_start;
+						item.date_end = $scope.details.date_end;
+						item.project_id = $scope.details.project_id;
+						item.daily_work_hours = $scope.details.daily_work_hours;
 					});
+
+					Performance.update(reportID, $scope.performances)
+						.success(function(){
+							$mdToast.show(
+						      	$mdToast.simple()
+							        .content('Changes Saved.')
+							        .position('bottom right')
+							        .hideDelay(3000)
+						    );
+							$state.go('main');
+							Preloader.stop();
+							busy = false;
+						})
+						.error(function(){
+							Preloader.error();
+							busy = false;
+						});
+				}
 			}
 		};
 
@@ -1575,6 +1580,7 @@ adminModule
 adminModule
 	.controller('addDepartmentDialogController', ['$scope', '$mdDialog', 'Preloader', 'Department', function($scope, $mdDialog, Preloader, Department){
 		$scope.department = {};
+		var busy = false;
 
 		$scope.cancel = function(){
 			$mdDialog.cancel();
@@ -1594,13 +1600,17 @@ adminModule
 				/**
 				 * Stores Single Record
 				*/
-				Department.store($scope.department)
-					.then(function(){
-						// Stops Preloader 
-						Preloader.stop();
-					}, function(){
-						Preloader.error();
-					});
+				if(!busy){
+					busy = true;
+					Department.store($scope.department)
+						.then(function(){
+							// Stops Preloader 
+							Preloader.stop();
+							busy = false;
+						}, function(){
+							Preloader.error();
+						});
+				}
 			}
 		}
 	}]);
@@ -1608,6 +1618,7 @@ adminModule
 	.controller('addPositionDialogController', ['$scope', '$stateParams', '$mdDialog', 'Preloader', 'Project', 'Position', 'Target', function($scope, $stateParams, $mdDialog, Preloader, Project, Position, Target){
 		var departmentID = $stateParams.departmentID;
 		var projectID = $stateParams.projectID;
+		var busy = false;
 
 		$scope.position = {};
 		$scope.position.department_id = departmentID;
@@ -1682,44 +1693,50 @@ adminModule
 				/**
 				 * Stores Single Record
 				*/
-				Position.store($scope.position)
-					.success(function(data){
-						angular.forEach($scope.productivity, function(item){
-							item.position_id = data.id;
-							item.department_id = departmentID;
-							item.project_id = projectID;
-						});
-
-						angular.forEach($scope.quality, function(item){
-							item.position_id = data.id;
-							item.department_id = departmentID;
-							item.project_id = projectID;
-						});
-
-						Target.store($scope.productivity)
-							.success(function(){
-								Target.store($scope.quality)
-									.success(function(){
-										// Stops Preloader
-										Preloader.stop();
-									})
-									.error(function(data){
-										Preloader.error();
-									});
-							})
-							.error(function(){
-								Preloader.error();
+				if(!busy){
+					busy = true;
+					Position.store($scope.position)
+						.success(function(data){
+							angular.forEach($scope.productivity, function(item){
+								item.position_id = data.id;
+								item.department_id = departmentID;
+								item.project_id = projectID;
 							});
-					})
-					.error(function(){
-						Preloader.error();
-					});
+
+							angular.forEach($scope.quality, function(item){
+								item.position_id = data.id;
+								item.department_id = departmentID;
+								item.project_id = projectID;
+							});
+
+							Target.store($scope.productivity)
+								.success(function(){
+									Target.store($scope.quality)
+										.success(function(){
+											// Stops Preloader
+											Preloader.stop();
+										})
+										.error(function(data){
+											Preloader.error();
+										});
+								})
+								.error(function(){
+									Preloader.error();
+								});
+							busy = false;
+						})
+						.error(function(){
+							Preloader.error();
+							busy = false;
+						});
+				}
 			}
 		}
 	}]);
 adminModule
 	.controller('addProjectDialogController', ['$scope', '$stateParams', '$mdDialog', 'Preloader', 'Department', 'Project', function($scope, $stateParams, $mdDialog, Preloader, Department, Project){
 		var departmentID = $stateParams.departmentID;
+		var busy = false;
 
 		$scope.project = {};
 		$scope.project.department_id = departmentID;
@@ -1747,19 +1764,25 @@ adminModule
 				/**
 				 * Stores Single Record
 				*/
-				Project.store($scope.project)
-					.success(function(){
-						Preloader.stop();
-					})
-					.error(function(){
-						Preloader.error();
-					});
+				if(!busy){
+					busy = true;
+					Project.store($scope.project)
+						.success(function(){
+							Preloader.stop();
+							busy = false;
+						})
+						.error(function(){
+							Preloader.error();
+							busy = false;
+						});
+				}
 			}
 		}
 	}]);
 adminModule
 	.controller('addTargetDialogController', ['$scope', '$mdDialog', 'Preloader', 'Target', function($scope, $mdDialog, Preloader, Target){
 		$scope.target = {};
+		var busy = false;
 
 		$scope.cancel = function(){
 			$mdDialog.cancel();
@@ -1779,20 +1802,25 @@ adminModule
 				/**
 				 * Stores Single Record
 				*/
-				Target.store($scope.target)
-					.then(function(){
-						// Stops Preloader 
-						Preloader.stop();
-					}, function(){
-						Preloader.error();
-					});
+				if(!busy){
+					busy = true;
+					Target.store($scope.target)
+						.then(function(){
+							// Stops Preloader 
+							Preloader.stop();
+							busy = false;
+						}, function(){
+							Preloader.error();
+							busy = false;
+						});
+				}
 			}
 		}
 	}]);
 adminModule
 	.controller('addTeamLeaderDialogController', ['$scope', '$mdDialog', 'Preloader', 'Department', 'User', function($scope, $mdDialog, Preloader, Department, User){
 		$scope.user = {};
-
+		var busy = false;
 		Department.index()
 			.success(function(data){
 				$scope.departments = data;
@@ -1816,13 +1844,18 @@ adminModule
 				/**
 				 * Stores Single Record
 				*/
-				User.store($scope.user)
-					.then(function(){
-						// Stops Preloader 
-						Preloader.stop();
-					}, function(){
-						Preloader.error();
-					});
+				if(!busy){
+					busy = true;
+					User.store($scope.user)
+						.then(function(){
+							// Stops Preloader 
+							Preloader.stop();
+							busy = false;
+						}, function(){
+							Preloader.error();
+							busy = false;
+						});
+				}
 			}
 		}
 	}]);
@@ -1963,7 +1996,6 @@ adminModule
 				.error(function(){
 					Preloader.error();
 				});
-
 		};
 
 		$scope.getWeekends = function(){	
@@ -2015,6 +2047,7 @@ adminModule
 		var departmentID = $stateParams.departmentID;
 		var projectID = $stateParams.projectID;
 		var positionID = Preloader.get();
+		var busy = false;
 
 		// $scope.position = {};
 		// $scope.position.department_id = departmentID;
@@ -2049,40 +2082,11 @@ adminModule
 				$scope.productivity = data;
 			});
 
-		// $scope.productivity = [
-		// 	{
-		// 		'type': 'Productivity',
-		// 		'experience': 'Beginner',
-		// 	},
-		// 	{
-		// 		'type': 'Productivity',
-		// 		'experience': 'Moderately Experienced',
-		// 	},
-		// 	{
-		// 		'type': 'Productivity',
-		// 		'experience': 'Experienced',
-		// 	},
-		// ];
 
 		Target.quality(positionID)
 			.success(function(data){
 				$scope.quality = data;
 			});
-
-		// $scope.quality = [
-		// 	{
-		// 		'type': 'Quality',
-		// 		'experience': 'Beginner',
-		// 	},
-		// 	{
-		// 		'type': 'Quality',
-		// 		'experience': 'Moderately Experienced',
-		// 	},
-		// 	{
-		// 		'type': 'Quality',
-		// 		'experience': 'Experienced',
-		// 	},
-		// ];
 
 		Project.show(projectID)
 			.success(function(data){
@@ -2108,38 +2112,32 @@ adminModule
 				/**
 				 * Stores Single Record
 				*/
-				Position.update(positionID, $scope.position)
-					.success(function(data){
-						// angular.forEach($scope.productivity, function(item){
-						// 	item.position_id = data.id;
-						// 	item.department_id = departmentID;
-						// 	item.project_id = projectID;
-						// });
+				if(!busy){
+					busy = true;
+					Position.update(positionID, $scope.position)
+						.success(function(data){
+							Target.update(positionID, $scope.productivity)
+								.success(function(){
+									Target.update(positionID, $scope.quality)
+										.success(function(){
+											// Stops Preloader
+											Preloader.stop();
+										})
+										.error(function(data){
+											Preloader.error();
+										});
+								})
+								.error(function(){
+									Preloader.error();
+								});
 
-						// angular.forEach($scope.quality, function(item){
-						// 	item.position_id = data.id;
-						// 	item.department_id = departmentID;
-						// 	item.project_id = projectID;
-						// });
-
-						Target.update(positionID, $scope.productivity)
-							.success(function(){
-								Target.update(positionID, $scope.quality)
-									.success(function(){
-										// Stops Preloader
-										Preloader.stop();
-									})
-									.error(function(data){
-										Preloader.error();
-									});
-							})
-							.error(function(){
-								Preloader.error();
-							});
-					})
-					.error(function(){
-						Preloader.error();
-					});
+							busy = false;
+						})
+						.error(function(){
+							Preloader.error();
+							busy = false;
+						});
+				}
 			}
 		}
 	}]);

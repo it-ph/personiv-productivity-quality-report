@@ -58,7 +58,6 @@ adminModule
 				.error(function(){
 					Preloader.error();
 				});
-
 		};
 
 		$scope.getWeekends = function(){	

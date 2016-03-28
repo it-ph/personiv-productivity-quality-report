@@ -3,6 +3,7 @@ adminModule
 		var departmentID = $stateParams.departmentID;
 		var projectID = $stateParams.projectID;
 		var positionID = Preloader.get();
+		var busy = false;
 
 		// $scope.position = {};
 		// $scope.position.department_id = departmentID;
@@ -37,40 +38,11 @@ adminModule
 				$scope.productivity = data;
 			});
 
-		// $scope.productivity = [
-		// 	{
-		// 		'type': 'Productivity',
-		// 		'experience': 'Beginner',
-		// 	},
-		// 	{
-		// 		'type': 'Productivity',
-		// 		'experience': 'Moderately Experienced',
-		// 	},
-		// 	{
-		// 		'type': 'Productivity',
-		// 		'experience': 'Experienced',
-		// 	},
-		// ];
 
 		Target.quality(positionID)
 			.success(function(data){
 				$scope.quality = data;
 			});
-
-		// $scope.quality = [
-		// 	{
-		// 		'type': 'Quality',
-		// 		'experience': 'Beginner',
-		// 	},
-		// 	{
-		// 		'type': 'Quality',
-		// 		'experience': 'Moderately Experienced',
-		// 	},
-		// 	{
-		// 		'type': 'Quality',
-		// 		'experience': 'Experienced',
-		// 	},
-		// ];
 
 		Project.show(projectID)
 			.success(function(data){
@@ -96,38 +68,32 @@ adminModule
 				/**
 				 * Stores Single Record
 				*/
-				Position.update(positionID, $scope.position)
-					.success(function(data){
-						// angular.forEach($scope.productivity, function(item){
-						// 	item.position_id = data.id;
-						// 	item.department_id = departmentID;
-						// 	item.project_id = projectID;
-						// });
+				if(!busy){
+					busy = true;
+					Position.update(positionID, $scope.position)
+						.success(function(data){
+							Target.update(positionID, $scope.productivity)
+								.success(function(){
+									Target.update(positionID, $scope.quality)
+										.success(function(){
+											// Stops Preloader
+											Preloader.stop();
+										})
+										.error(function(data){
+											Preloader.error();
+										});
+								})
+								.error(function(){
+									Preloader.error();
+								});
 
-						// angular.forEach($scope.quality, function(item){
-						// 	item.position_id = data.id;
-						// 	item.department_id = departmentID;
-						// 	item.project_id = projectID;
-						// });
-
-						Target.update(positionID, $scope.productivity)
-							.success(function(){
-								Target.update(positionID, $scope.quality)
-									.success(function(){
-										// Stops Preloader
-										Preloader.stop();
-									})
-									.error(function(data){
-										Preloader.error();
-									});
-							})
-							.error(function(){
-								Preloader.error();
-							});
-					})
-					.error(function(){
-						Preloader.error();
-					});
+							busy = false;
+						})
+						.error(function(){
+							Preloader.error();
+							busy = false;
+						});
+				}
 			}
 		}
 	}]);

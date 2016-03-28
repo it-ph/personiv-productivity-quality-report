@@ -1,6 +1,7 @@
 teamLeaderModule
 	.controller('addMemberDialogController', ['$scope', '$mdDialog', 'Preloader', 'User', 'Member', function($scope, $mdDialog, Preloader, User, Member){
 		var user = Preloader.getUser();
+		var busy = false;
 		if(!user){
 			User.index()
 				.success(function(data){
@@ -17,6 +18,7 @@ teamLeaderModule
 
 		$scope.submit = function(){
 			$scope.showErrors = true;
+			busy = true;
 			if($scope.addMemberForm.$invalid){
 				angular.forEach($scope.addMemberForm.$error, function(field){
 					angular.forEach(field, function(errorField){
@@ -30,13 +32,18 @@ teamLeaderModule
 				/**
 				 * Stores Single Record
 				*/
-				Member.store($scope.member)
-					.then(function(){
-						// Stops Preloader 
-						Preloader.stop();
-					}, function(){
-						Preloader.error();
-					});
+				if(!busy){
+					busy = true;
+					Member.store($scope.member)
+						.then(function(){
+							// Stops Preloader 
+							Preloader.stop();
+							busy = false;
+						}, function(){
+							Preloader.error();
+							busy = false;
+						});
+				}
 			}
 		}
 	}]);

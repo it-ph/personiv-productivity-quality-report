@@ -1,6 +1,7 @@
 adminModule
 	.controller('addTargetDialogController', ['$scope', '$mdDialog', 'Preloader', 'Target', function($scope, $mdDialog, Preloader, Target){
 		$scope.target = {};
+		var busy = false;
 
 		$scope.cancel = function(){
 			$mdDialog.cancel();
@@ -20,13 +21,18 @@ adminModule
 				/**
 				 * Stores Single Record
 				*/
-				Target.store($scope.target)
-					.then(function(){
-						// Stops Preloader 
-						Preloader.stop();
-					}, function(){
-						Preloader.error();
-					});
+				if(!busy){
+					busy = true;
+					Target.store($scope.target)
+						.then(function(){
+							// Stops Preloader 
+							Preloader.stop();
+							busy = false;
+						}, function(){
+							Preloader.error();
+							busy = false;
+						});
+				}
 			}
 		}
 	}]);

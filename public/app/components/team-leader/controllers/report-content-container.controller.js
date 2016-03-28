@@ -2,6 +2,7 @@ teamLeaderModule
 	.controller('reportContentContainerController', ['$scope', '$state', '$mdDialog', '$mdToast', 'Preloader', 'Member', 'Project', 'Position', 'Performance', 'User', function($scope, $state, $mdDialog, $mdToast, Preloader, Member, Project, Position, Performance, User){		
 		var user = Preloader.getUser();
 		var departmentID = null;
+		var busy = false;
 		$scope.form = {};
 
 		$scope.months = [
@@ -144,30 +145,49 @@ teamLeaderModule
 				);
 			}
 			else{
-				Preloader.preload();
-
-				angular.forEach($scope.members, function(item){
-					item.department_id = departmentID;
-					item.date_start = $scope.details.date_start;
-					item.date_end = $scope.details.date_end;
-					item.project_id = $scope.details.project_id;
-					item.daily_work_hours = $scope.details.daily_work_hours;
-				});
-
-				Performance.store($scope.members)
-					.success(function(){
-						$mdToast.show(
-					      	$mdToast.simple()
-						        .content('Report Submitted.')
-						        .position('bottom right')
-						        .hideDelay(3000)
-					    );
-						$state.go('main');
-						Preloader.stop();
-					})
-					.error(function(){
-						Preloader.error();
+				if(!busy){
+					busy = true;
+					var count = 0;
+					angular.forEach($scope.members, function(item){
+						item.department_id = departmentID;
+						item.date_start = $scope.details.date_start;
+						item.date_end = $scope.details.date_end;
+						item.project_id = $scope.details.project_id;
+						item.daily_work_hours = $scope.details.daily_work_hours;
+						count = item.include ? count + 1 : count;
 					});
+
+					if(count){
+						Preloader.preload();
+						Performance.store($scope.members)
+							.success(function(){
+								$mdToast.show(
+							      	$mdToast.simple()
+								        .content('Report Submitted.')
+								        .position('bottom right')
+								        .hideDelay(3000)
+							    );
+								Preloader.stop();
+								$state.go('main');
+								busy = false;
+							})
+							.error(function(){
+								Preloader.error();
+								busy = false;
+							});
+					}
+					else{
+						$mdDialog.show(
+							$mdDialog.alert()
+								.parent(angular.element(document.body))
+								.clickOutsideToClose(true)
+						        .title('Report not submitted.')
+						        .content('Empty reports are not submitted.')
+						        .ariaLabel('Empty Report')
+						        .ok('Got it!')
+						);
+					}
+				}
 			}
 		};
 

@@ -1,6 +1,7 @@
 adminModule
 	.controller('addProjectDialogController', ['$scope', '$stateParams', '$mdDialog', 'Preloader', 'Department', 'Project', function($scope, $stateParams, $mdDialog, Preloader, Department, Project){
 		var departmentID = $stateParams.departmentID;
+		var busy = false;
 
 		$scope.project = {};
 		$scope.project.department_id = departmentID;
@@ -28,13 +29,18 @@ adminModule
 				/**
 				 * Stores Single Record
 				*/
-				Project.store($scope.project)
-					.success(function(){
-						Preloader.stop();
-					})
-					.error(function(){
-						Preloader.error();
-					});
+				if(!busy){
+					busy = true;
+					Project.store($scope.project)
+						.success(function(){
+							Preloader.stop();
+							busy = false;
+						})
+						.error(function(){
+							Preloader.error();
+							busy = false;
+						});
+				}
 			}
 		}
 	}]);

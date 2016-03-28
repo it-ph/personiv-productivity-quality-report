@@ -1,7 +1,7 @@
 adminModule
 	.controller('addTeamLeaderDialogController', ['$scope', '$mdDialog', 'Preloader', 'Department', 'User', function($scope, $mdDialog, Preloader, Department, User){
 		$scope.user = {};
-
+		var busy = false;
 		Department.index()
 			.success(function(data){
 				$scope.departments = data;
@@ -25,13 +25,18 @@ adminModule
 				/**
 				 * Stores Single Record
 				*/
-				User.store($scope.user)
-					.then(function(){
-						// Stops Preloader 
-						Preloader.stop();
-					}, function(){
-						Preloader.error();
-					});
+				if(!busy){
+					busy = true;
+					User.store($scope.user)
+						.then(function(){
+							// Stops Preloader 
+							Preloader.stop();
+							busy = false;
+						}, function(){
+							Preloader.error();
+							busy = false;
+						});
+				}
 			}
 		}
 	}]);

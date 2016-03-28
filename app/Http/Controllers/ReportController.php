@@ -293,8 +293,10 @@ class ReportController extends Controller
     {
         $all = array();
         $daily_work_hours = (float)$request->daily_work_hours;
-        $this->date_start = new Carbon('last day of last month '. $request->month .' '. $request->year);
-        $this->date_end = new Carbon('first day of next month'. $request->month .' '. $request->year);
+        // $this->date_start = new Carbon('last day of last month '. $request->month .' '. $request->year);
+        // $this->date_end = new Carbon('first day of next month'. $request->month .' '. $request->year);
+        $this->date_start = new Carbon('first Monday of '. $request->month .' '. $request->year);
+        $this->date_end = new Carbon('last Monday of '. $request->month .' '. $request->year);
         $this->projects = DB::table('projects')->get();
 
         foreach ($this->projects as $key => $value) {
@@ -572,6 +574,7 @@ class ReportController extends Controller
 
                 $results = DB::table('performances')
                     ->leftJoin('results', 'results.performance_id', '=', 'performances.id')
+                    ->leftJoin('projects', 'projects.id', '=', 'performances.project_id')
                     ->leftJoin('members', 'members.id', '=', 'performances.member_id')
                     ->leftJoin('positions', 'positions.id', '=', 'performances.position_id')
                     ->select(
@@ -583,6 +586,7 @@ class ReportController extends Controller
                     )
                     ->whereNull('performances.deleted_at')
                     ->where('members.id', $value1->member_id)
+                    ->where('projects.id', $value->id)
                     ->where('performances.daily_work_hours', 'like', $daily_work_hours.'%')
                     ->whereBetween('performances.date_start', [$this->date_start, $this->date_end])
                     // ->whereBetween('performances.date_end', [$this->date_start, $this->date_end])
@@ -627,8 +631,10 @@ class ReportController extends Controller
     {
         $all = array();
 
-        $this->date_start = new Carbon('last day of last month'); // last month
-        $this->date_end = new Carbon('first day of next month'); // next month
+        // $this->date_start = new Carbon('last day of last month'); // last month
+        // $this->date_end = new Carbon('first day of next month'); // next month
+        $this->date_start = new Carbon('first Monday of this month'); // first Monday of the month
+        $this->date_end = new Carbon('last Monday of this month'); // last Monday of the month
         $this->projects = DB::table('projects')->get();
 
         foreach ($this->projects as $key => $value) {
@@ -905,6 +911,7 @@ class ReportController extends Controller
                 $results = DB::table('performances')
                     ->leftJoin('results', 'results.performance_id', '=', 'performances.id')
                     ->leftJoin('members', 'members.id', '=', 'performances.member_id')
+                    ->leftJoin('projects', 'projects.id', '=', 'performances.project_id')
                     ->leftJoin('positions', 'positions.id', '=', 'performances.position_id')
                     ->select(
                         '*',
@@ -915,6 +922,7 @@ class ReportController extends Controller
                     )
                     ->whereNull('performances.deleted_at')
                     ->where('members.id', $value1->member_id)
+                    ->where('projects.id', $value->id)
                     ->whereBetween('performances.date_start', [$this->date_start, $this->date_end])
                     // ->whereBetween('performances.date_end', [$this->date_start, $this->date_end])
                     ->orderBy('positions.name')
@@ -1035,9 +1043,13 @@ class ReportController extends Controller
                 ->whereNull('deleted_at')
                 ->where('project_id', $value->id)
                 ->whereBetween('date_start', [$this->date_start, $this->date_end])
-                ->where('daily_work_hours', 'like', $daily_work_hours)
+                ->where('daily_work_hours', 'like', $daily_work_hours. '%')
                 ->groupBy('date_start')
                 ->get();
+
+            // if($parentKey == 2){
+            //     return $reports;
+            // }
 
             // fetch all members of per project
             $members = DB::table('performances')
@@ -1097,8 +1109,8 @@ class ReportController extends Controller
                     }
                 }
 
-                $this->productivity_average = round($this->productivity_average / count($reports), 1); 
-                $this->quality_average = round($this->quality_average / count($reports), 1);
+                $this->productivity_average = count($reports) ? round($this->productivity_average / count($reports), 1) : 0; 
+                $this->quality_average = count($reports) ? round($this->quality_average / count($reports), 1) : 0;
 
                 $members[$key1]->results = $results;
                 $members[$key1]->productivity_average = $this->productivity_average;
