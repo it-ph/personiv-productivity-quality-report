@@ -17,9 +17,134 @@ use App\PerformanceHistory;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use App\User;
+use Auth;
 
 class ApprovalController extends Controller
 {
+    public function declineDelete(Request $request)
+    {
+        $approval = DB::table('approvals')
+            ->join('reports', 'reports.id', '=', 'approvals.report_id')
+            ->select(
+                'approvals.*',
+                'reports.user_id'
+            )
+            ->where('approvals.id', $request->approval_id)
+            ->first();
+
+        $notification = new Notification;
+
+        $notification->sender_user_id = $request->user()->id;
+        $notification->receiver_user_id = $approval->user_id;
+        $notification->subscriber = 'team-leader';
+        $notification->message = 'declined delete request';
+        $notification->state = 'main.approvals';
+        $notification->event_id = $approval->report_id;
+        $notification->event_id_type = 'report_id';
+        $notification->seen = false;
+
+        $notification->save();
+
+        $notify = DB::table('notifications')
+            ->join('approvals', 'approvals.report_id', '=', 'notifications.event_id')
+            ->join('reports', 'reports.id', '=', 'approvals.report_id')
+            ->join('projects', 'projects.id', '=', 'reports.project_id')
+            ->join('users', 'users.id', '=', 'notifications.sender_user_id')
+            ->select(
+                '*',
+                DB::raw('LEFT(users.first_name, 1) as first_letter')
+            )
+            ->where('notifications.id', $notification->id)
+            ->first();
+
+        event(new ApprovalNotificationBroadCast($notify));
+
+        $approval_update = Approval::where('approvals.id', $request->approval_id)->first();
+        $approval_update->status = 'done';
+        $approval_update->save();
+    }
+    public function approveDelete(Request $request)
+    {
+        $approval = Approval::where('id', $request->approval_id)->first();
+
+        $report = Report::where('id', $approval->report_id)->first();
+        
+        $admin = User::where('email', 'sherryl.sanchez@personiv.com')->first();
+        
+        $notification = new Notification;
+
+        $notification->sender_user_id = $request->user()->id;
+        $notification->receiver_user_id = $report->user_id;
+        $notification->subscriber = 'team-leader';
+        $notification->message = 'approved delete request';
+        $notification->state = 'main.approvals';
+        $notification->event_id = $approval->id;
+        $notification->event_id_type = 'approval_id';
+        $notification->seen = false;
+
+        $notification->save();
+
+        $report->delete();
+        $performances = Performance::where('report_id', $approval->report_id)->delete();
+        $results = Result::where('report_id', $approval->report_id)->delete();
+
+        $notify = DB::table('notifications')
+            ->join('approvals', 'approvals.id', '=', 'notifications.event_id')
+            ->join('reports', 'reports.id', '=', 'approvals.report_id')
+            ->join('projects', 'projects.id', '=', 'reports.project_id')
+            ->join('users', 'users.id', '=', 'notifications.sender_user_id')
+            ->select(
+                '*',
+                DB::raw('LEFT(users.first_name, 1) as first_letter')
+            )
+            ->where('notifications.id', $notification->id)
+            ->first();
+
+        event(new ApprovalNotificationBroadCast($notify));
+
+        $approval->status = 'done';
+        $approval->save();
+    }
+    public function reportDelete(Request $request, $id)
+    {
+        $approval = new Approval;
+
+        $approval->action = 'delete';
+        $approval->report_id = $id;
+        $approval->status = 'pending';
+
+        $approval->save();
+
+        $admin = User::where('email', 'sherryl.sanchez@personiv.com')->first();
+
+        $notification = new Notification;
+        $notification->receiver_user_id = $admin->id;
+        $notification->sender_user_id = $request->user()->id;
+        $notification->subscriber = 'admin';
+        $notification->message = 'deletes ';
+        $notification->state = 'main.approvals';
+        $notification->event_id = $id;
+        $notification->event_id_type = 'report_id';
+        $notification->seen = false;
+
+        $notification->save();
+
+        $notify = DB::table('reports')
+            ->join('users', 'users.id', '=', 'reports.user_id')
+            ->join('projects', 'projects.id', '=', 'reports.project_id')
+            ->join('notifications', 'notifications.event_id', '=', 'reports.id')
+            ->select(
+                'reports.*',
+                'users.*',
+                DB::raw('LEFT(users.first_name, 1) as first_letter'),
+                'projects.*',
+                'notifications.*'
+            )
+            ->where('notifications.id', $notification->id)
+            ->first();
+
+        event(new ReportSubmittedBroadCast($notify));
+    }
     public function decline(Request $request)
     {
         $create_notification = false;
@@ -43,13 +168,15 @@ class ApprovalController extends Controller
                     $notification->subscriber = 'team-leader';
                     $notification->message = 'declined changes on';
                     $notification->state = 'main.approvals';
-                    $notification->event_id = $request->input($i.'.approval_id');
-                    $notification->event_id_type = 'approval_id';
+                    // $notification->event_id = $request->input($i.'.approval_id');
+                    // $notification->event_id_type = 'approval_id';
+                    $notification->event_id = $report->id;
+                    $notification->event_id_type = 'report_id';
                     $notification->seen = false;
                     $notification->save();
 
                     $notify = DB::table('notifications')
-                        ->join('approvals', 'approvals.id', '=', 'notifications.event_id')
+                        ->join('approvals', 'approvals.report_id', '=', 'notifications.event_id')
                         ->join('reports', 'reports.id', '=', 'approvals.report_id')
                         ->join('projects', 'projects.id', '=', 'reports.project_id')
                         ->join('users', 'users.id', '=', 'notifications.sender_user_id')
@@ -101,13 +228,15 @@ class ApprovalController extends Controller
                     $notification->subscriber = 'team-leader';
                     $notification->message = 'approved changes on';
                     $notification->state = 'main.approvals';
-                    $notification->event_id = $request->input($i.'.approval_id');
-                    $notification->event_id_type = 'approval_id';
+                    // $notification->event_id = $request->input($i.'.approval_id');
+                    // $notification->event_id_type = 'approval_id';
+                    $notification->event_id = $report->id;
+                    $notification->event_id_type = 'report_id';
                     $notification->seen = false;
                     $notification->save();
 
                     $notify = DB::table('notifications')
-                        ->join('approvals', 'approvals.id', '=', 'notifications.event_id')
+                        ->join('approvals', 'approvals.report_id', '=', 'notifications.event_id')
                         ->join('reports', 'reports.id', '=', 'approvals.report_id')
                         ->join('projects', 'projects.id', '=', 'reports.project_id')
                         ->join('users', 'users.id', '=', 'notifications.sender_user_id')
@@ -195,6 +324,7 @@ class ApprovalController extends Controller
                 '*',
                 'approvals.id as approval_id',
                 'projects.name as project',
+                'reports.id as report_id',
                 DB::raw('UPPER(LEFT(projects.name, 1)) as first_letter'),
                 DB::raw('DATE_FORMAT(reports.date_start, "%b. %d, %Y") as date_start'),
                 DB::raw('DATE_FORMAT(reports.date_end, "%b. %d, %Y") as date_end'),
@@ -203,33 +333,47 @@ class ApprovalController extends Controller
             ->where('approvals.id', $id)
             ->first();
 
-        $details->current = DB::table('performance_approvals')
-            ->join('performances', 'performances.id', '=', 'performance_approvals.performance_id')
-            ->join('members', 'members.id', '=', 'performances.member_id')
-            ->join('positions', 'positions.id', '=', 'performances.position_id')
-            ->select(
-                'performances.*',
-                'members.full_name',
-                'positions.name as position',
-                'performance_approvals.id as performance_approval_id',
-                'performance_approvals.approval_id'
-            )
-            ->where('performance_approvals.approval_id', $id)
-            ->whereNull('performance_approvals.status')
-            ->get();
+        if($details->action == 'update'){
+            $details->current = DB::table('performance_approvals')
+                ->join('performances', 'performances.id', '=', 'performance_approvals.performance_id')
+                ->join('members', 'members.id', '=', 'performances.member_id')
+                ->join('positions', 'positions.id', '=', 'performances.position_id')
+                ->select(
+                    'performances.*',
+                    'members.full_name',
+                    'positions.name as position',
+                    'performance_approvals.id as performance_approval_id',
+                    'performance_approvals.approval_id'
+                )
+                ->where('performance_approvals.approval_id', $id)
+                ->whereNull('performance_approvals.status')
+                ->get();
 
-        $details->request = DB::table('performance_approvals')
-            ->join('performances', 'performances.id', '=', 'performance_approvals.performance_id')
-            ->join('positions', 'positions.id', '=', 'performance_approvals.position_id')
-            ->select(
-                'performances.*',
-                'performance_approvals.*',
-                'performance_approvals.id as performance_approval_id',
-                'positions.name as position'
-            )
-            ->where('performance_approvals.approval_id', $id)
-            ->whereNull('performance_approvals.status')
-            ->get();        
+            $details->request = DB::table('performance_approvals')
+                ->join('performances', 'performances.id', '=', 'performance_approvals.performance_id')
+                ->join('positions', 'positions.id', '=', 'performance_approvals.position_id')
+                ->select(
+                    'performances.*',
+                    'performance_approvals.*',
+                    'performance_approvals.id as performance_approval_id',
+                    'positions.name as position'
+                )
+                ->where('performance_approvals.approval_id', $id)
+                ->whereNull('performance_approvals.status')
+                ->get();        
+        }
+        else{
+            $details->current = DB::table('performances')
+                ->join('members', 'members.id', '=', 'performances.member_id')
+                ->join('positions', 'positions.id', '=', 'performances.position_id')
+                ->select(
+                    'performances.*',
+                    'members.full_name',
+                    'positions.name as position'
+                )
+                ->where('performances.report_id', $details->report_id)
+                ->get();
+        }
 
         return response()->json($details);
     }
@@ -268,6 +412,7 @@ class ApprovalController extends Controller
             ->where('approvals.status', 'pending')
             ->whereNull('approvals.deleted_at')
             ->groupBy('approvals.id')
+            ->orderBy('approvals.created_at', 'desc')
             ->paginate(10);
     }
     public function performanceEdit(Request $request, $reportID)
@@ -349,7 +494,7 @@ class ApprovalController extends Controller
                 $performance_approval->message = $request->input($i.'.message');
                 $performance_approval->result_id = $request->input($i.'.result_id');
                 $performance_approval->performance_id = $request->input($i.'.performance_id');
-                $performance_approval->member_id = $request->input($i.'.id');
+                $performance_approval->member_id = $request->input($i.'.member_id');
                 $performance_approval->position_id = $request->input($i.'.position_id');
                 $performance_approval->department_id = $request->input($i.'.department_id');
                 $performance_approval->project_id = $request->input($i.'.project_id');

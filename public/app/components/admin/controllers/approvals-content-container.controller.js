@@ -1,5 +1,5 @@
 adminModule
-	.controller('approvalsContentContainerController', ['$scope', '$mdDialog', 'PerformanceApproval', 'Approval', 'Preloader',  function($scope, $mdDialog, PerformanceApproval, Approval, Preloader){
+	.controller('approvalsContentContainerController', ['$scope', '$state', '$mdDialog', 'PerformanceApproval', 'Approval', 'Preloader',  function($scope, $state, $mdDialog, PerformanceApproval, Approval, Preloader){
 		/**
 		 * Object for toolbar
 		 *
@@ -187,7 +187,8 @@ adminModule
 		      parent: angular.element(document.body),
 		    })
 		    .then(function(){
-		    	$scope.subheader.refresh();
+		    	// $scope.subheader.refresh();
+		    	$state.go($state.current, {}, {reload:true});
 		    });
 		}
 

@@ -7,7 +7,7 @@
 						<div class="fade-transition" ng-if="pending.show" flex infinite-scroll='pending.paginateLoad()' infinite-scroll-distance="2" infinite-scroll-disabled="pending.busy" infinite-scroll-parent>
 							<md-list>
 								<md-list-item class="md-3-line" layout="row" ng-repeat="pending in pending.paginated | filter:toolbar.userInput" ng-click="showPending(pending.approval_id)">
-									<h2 class="md-avatar md-headline purple-bg" layout="row" layout-align="center center">
+									<h2 class="md-avatar md-headline" ng-class="pending.action == 'update' ? 'purple-bg' : 'pink-bg'" layout="row" layout-align="center center">
 										<span class="weight-200 white-text">{{ pending.first_letter }}</span>
 									</h2>
 									<div class="md-list-item-text" layout="column" flex>

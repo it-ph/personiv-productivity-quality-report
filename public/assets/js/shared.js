@@ -226,6 +226,15 @@ sharedModule
 			decline: function(data){
 				return $http.post(urlBase + '-decline', data);
 			},
+			reportDelete: function(id){
+				return $http.post(urlBase + '-report-delete/' + id);
+			},
+			approveDelete: function(data){
+				return $http.post(urlBase + '-approve-delete', data);
+			},
+			declineDelete: function(data){
+				return $http.post(urlBase + '-decline-delete', data);
+			},
 		}
 	}])
 sharedModule

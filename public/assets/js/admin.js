@@ -145,7 +145,7 @@ adminModule
 			})
 	}]);
 adminModule
-	.controller('approvalsContentContainerController', ['$scope', '$mdDialog', 'PerformanceApproval', 'Approval', 'Preloader',  function($scope, $mdDialog, PerformanceApproval, Approval, Preloader){
+	.controller('approvalsContentContainerController', ['$scope', '$state', '$mdDialog', 'PerformanceApproval', 'Approval', 'Preloader',  function($scope, $state, $mdDialog, PerformanceApproval, Approval, Preloader){
 		/**
 		 * Object for toolbar
 		 *
@@ -333,7 +333,8 @@ adminModule
 		      parent: angular.element(document.body),
 		    })
 		    .then(function(){
-		    	$scope.subheader.refresh();
+		    	// $scope.subheader.refresh();
+		    	$state.go($state.current, {}, {reload:true});
 		    });
 		}
 
@@ -1862,10 +1863,12 @@ adminModule
 adminModule
 	.controller('approvalsDialogController', ['$scope', '$mdDialog', 'Approval', 'PerformanceApproval', 'Preloader', function($scope, $mdDialog, Approval, PerformanceApproval, Preloader){
 		var approvalID = Preloader.get();
+		var count = 0;
 
 		Approval.details(approvalID)
 			.success(function(data){
 				$scope.details = data;
+				$scope.show = true;
 			});
 			
 		$scope.markAll = function(){
@@ -1888,26 +1891,50 @@ adminModule
 
 		$scope.approve = function(){
 			Preloader.preload();
-			Approval.approve($scope.details.request)
-				.success(function(){
-					// Stops Preloader 
-					Preloader.stop();
-				})
-				.error(function(){
-					Preloader.error();
-				});
+			if($scope.details.action == 'update'){
+				Approval.approve($scope.details.request)
+					.success(function(){
+						// Stops Preloader 
+						Preloader.stop();
+					})
+					.error(function(){
+						Preloader.error();
+					});
+			}
+			else{
+				Approval.approveDelete($scope.details)
+					.success(function(){
+						// Stops Preloader 
+						Preloader.stop();
+					})
+					.error(function(){
+						Preloader.error();	
+					})
+			}
 		}
 
 		$scope.decline = function(){
 			Preloader.preload();
-			Approval.decline($scope.details.request)
-				.success(function(){
-					// Stops Preloader 
-					Preloader.stop();
-				})
-				.error(function(){
-					Preloader.error();
-				});
+			if($scope.details.action == 'update'){
+				Approval.decline($scope.details.request)
+					.success(function(){
+						// Stops Preloader 
+						Preloader.stop();
+					})
+					.error(function(){
+						Preloader.error();
+					});
+			}
+			else{
+				Approval.declineDelete($scope.details)
+					.success(function(){
+						// Stops Preloader 
+						Preloader.stop();
+					})
+					.error(function(){
+						Preloader.error();	
+					})
+			}
 		}
 	}]);
 adminModule

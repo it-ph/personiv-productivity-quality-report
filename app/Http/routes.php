@@ -108,4 +108,7 @@ Route::group(['middleware' => 'auth'], function () {
 	Route::get('performance-approval-approved-details/{performanceApprovalID}', 'PerformanceApprovalController@approvedDetails');
 	Route::post('user-check-password', 'UserController@checkPassword');
 	Route::post('user-change-password', 'UserController@changePassword');
+	Route::post('approval-report-delete/{id}', 'ApprovalController@reportDelete');
+	Route::post('approval-approve-delete', 'ApprovalController@approveDelete');
+	Route::post('approval-decline-delete', 'ApprovalController@declineDelete');
 });

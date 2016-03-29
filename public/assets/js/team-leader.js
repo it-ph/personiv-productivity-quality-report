@@ -525,7 +525,7 @@ teamLeaderModule
 		};
 	}]);
 teamLeaderModule
-	.controller('mainContentContainerController', ['$scope', '$state', 'Preloader', 'Report', 'Performance', 'Target', 'User', function($scope, $state, Preloader, Report, Performance, Target, User){
+	.controller('mainContentContainerController', ['$scope', '$state', '$mdToast', '$mdDialog', 'Approval', 'Preloader', 'Report', 'Performance', 'Target', 'User', function($scope, $state, $mdToast, $mdDialog, Approval, Preloader, Report, Performance, Target, User){
 		var user = null;
 		/**
 		 * Object for charts
@@ -806,6 +806,30 @@ teamLeaderModule
 		$scope.editReport = function(id){
 			$state.go('main.edit-report', {'reportID':id});
 		};
+
+		$scope.deleteReport = function(id){
+			var confirm = $mdDialog.confirm()
+		        .title('Delete Report')
+		        .content('Are you sure you want to delete this report?')
+		        .ok('Delete')
+		        .cancel('Cancel');
+		    $mdDialog.show(confirm)
+		    	.then(function() {
+		    		Preloader.preload();
+			    	Approval.reportDelete(id)
+			    		.success(function(){
+			    			Preloader.stop();
+			    			$mdToast.show(
+						    	$mdToast.simple()
+							        .content('Request has been submitted for approval.')
+							        .position('bottom right')
+							        .hideDelay(3000)
+						    );
+			    		})
+			    }, function() {
+			    	return;
+			    });
+		}
 	}]);
 teamLeaderModule
 	.controller('membersContentContainerController', ['$scope', '$mdDialog', 'Preloader', 'Member', 'User', function($scope, $mdDialog, Preloader, Member, User){
