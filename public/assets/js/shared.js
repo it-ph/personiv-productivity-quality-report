@@ -580,7 +580,10 @@ sharedModule
 			},
 			changePassword: function(data){
 				return $http.post(urlBase + '-change-password', data)
-			}
+			},
+			search: function(data){
+				return $http.post(urlBase + '-search', data);
+			},
 		};
 	}])
 sharedModule

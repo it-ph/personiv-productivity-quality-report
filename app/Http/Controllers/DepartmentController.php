@@ -16,7 +16,6 @@ class DepartmentController extends Controller
             ->select('*', DB::raw('UPPER(LEFT(name, 1)) as first_letter'), DB::raw('DATE_FORMAT(created_at, "%h:%i %p, %b. %d, %Y") as created_at'))
             ->where('name', 'like', '%'. $request->userInput .'%')
             ->whereNull('deleted_at')
-            ->groupBy('id')
             ->orderBy('name')
             ->get();
     }

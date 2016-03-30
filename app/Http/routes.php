@@ -111,4 +111,5 @@ Route::group(['middleware' => 'auth'], function () {
 	Route::post('approval-report-delete/{id}', 'ApprovalController@reportDelete');
 	Route::post('approval-approve-delete', 'ApprovalController@approveDelete');
 	Route::post('approval-decline-delete', 'ApprovalController@declineDelete');
+	Route::post('user-search', 'UserController@search');
 });

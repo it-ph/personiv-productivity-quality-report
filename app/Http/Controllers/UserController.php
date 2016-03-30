@@ -12,6 +12,23 @@ use Hash;
 
 class UserController extends Controller
 {   
+    public function search(Request $request)
+    {
+        return DB::table('users')
+            ->join('departments', 'departments.id', '=', 'users.department_id')
+            ->select(
+                'users.*',
+                DB::raw('UPPER(LEFT(users.first_name, 1)) as first_letter'),
+                DB::raw('DATE_FORMAT(users.created_at, "%h:%i %p, %b. %d, %Y") as created_at'),
+                'departments.name as department_name'
+                )
+            ->where('users.first_name', 'like', '%'. $request->userInput .'%')
+            ->orWhere('departments.name', 'like', '%'. $request->userInput .'%')
+            ->orWhere('users.last_name', 'like', '%'. $request->userInput .'%')
+            ->orWhere('users.email', 'like', '%'. $request->userInput .'%')
+            ->orderBy('users.first_name')
+            ->get();
+    }
     public function changePassword(Request $request)
     {
         $user = $request->user();
