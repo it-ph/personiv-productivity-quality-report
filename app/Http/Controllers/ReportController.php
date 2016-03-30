@@ -329,6 +329,7 @@ class ReportController extends Controller
                 ->select(
                     '*',
                     'members.id as member_id',
+                    'members.experience',
                     'positions.name as position',
                     'projects.id as project_id'
                 )
@@ -597,6 +598,12 @@ class ReportController extends Controller
                 $total_output_error = 0;
                 $total_hours_worked = 0;
 
+                $target = DB::table('targets')
+                    ->where('position_id', $value1->position_id)
+                    ->where('type', 'Productivity')
+                    ->where('experience', $value1->experience)
+                    ->first();
+
                 $results = DB::table('performances')
                     ->leftJoin('results', 'results.performance_id', '=', 'performances.id')
                     ->leftJoin('projects', 'projects.id', '=', 'performances.project_id')
@@ -627,7 +634,7 @@ class ReportController extends Controller
                     $total_hours_worked += $value4->hours_worked;
                 }
 
-                $this->productivity_average = round($total_output /  $total_hours_worked * $daily_work_hours, 1);
+                $this->productivity_average = round((($total_output /  $total_hours_worked * $daily_work_hours) / $target->value) * 100, 1);
                 $this->quality_average =  round((1 - $total_output_error / $total_output) * 100, 1);
                 
                 // average its results
@@ -674,6 +681,7 @@ class ReportController extends Controller
                 ->select(
                     '*',
                     'members.id as member_id',
+                    'members.experience',
                     'positions.name as position',
                     'projects.id as project_id',
                     DB::raw('DATE_FORMAT(performances.date_start, "%b. %d") as date_start'),
@@ -940,6 +948,12 @@ class ReportController extends Controller
                 $total_output_error = 0;
                 $total_hours_worked = 0;
 
+                $target = DB::table('targets')
+                    ->where('position_id', $value1->position_id)
+                    ->where('type', 'Productivity')
+                    ->where('experience', $value1->experience)
+                    ->first();
+
                 $results = DB::table('performances')
                     ->leftJoin('results', 'results.performance_id', '=', 'performances.id')
                     ->leftJoin('members', 'members.id', '=', 'performances.member_id')
@@ -971,9 +985,7 @@ class ReportController extends Controller
                 }
                 
                 // average its results
-                // $this->productivity_average = round($this->productivity_average / count($results), 1); 
-                // $this->quality_average = round($this->quality_average / count($results), 1);
-                $this->productivity_average = round($total_output /  $total_hours_worked * $daily_work_hours, 1);
+                $this->productivity_average = round((($total_output /  $total_hours_worked * $daily_work_hours) / $target->value) * 100, 1);
                 $this->quality_average =  round((1 - $total_output_error / $total_output) * 100, 1);
 
                 $details[$key1]->results = $results;
@@ -1095,6 +1107,7 @@ class ReportController extends Controller
                 ->select(
                     '*',
                     'members.id as member_id',
+                    'members.experience',
                     'positions.name as position',
                     DB::raw('DATE_FORMAT(performances.date_start, "%b. %d") as date_start'),
                     DB::raw('DATE_FORMAT(performances.date_end, "%b. %d") as date_end')
@@ -1112,6 +1125,12 @@ class ReportController extends Controller
                 $total_output_error = 0;
                 $total_hours_worked = 0;
                 $results = array();
+
+                $target = DB::table('targets')
+                    ->where('position_id', $value3->position_id)
+                    ->where('type', 'Productivity')
+                    ->where('experience', $value3->experience)
+                    ->first();
 
                 foreach ($reports as $report_key => $report_value) {
                     $query = DB::table('performances')
@@ -1149,7 +1168,7 @@ class ReportController extends Controller
                     
                 }
 
-                $this->productivity_average = count($reports) && $total_hours_worked ? round($total_output / $total_hours_worked * $daily_work_hours, 1) : 0; 
+                $this->productivity_average = count($reports) && $total_hours_worked ? round((($total_output / $total_hours_worked * $daily_work_hours) / $target->value) * 100, 1) : 0; 
                 $this->quality_average = count($reports) && $total_output ? round((1 - $total_output_error / $total_output) * 100, 1) : 0;
 
                 $members[$key1]->results = $results;
