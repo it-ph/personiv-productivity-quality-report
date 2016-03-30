@@ -593,6 +593,9 @@ class ReportController extends Controller
             foreach ($details as $key1 => $value1) {
                 $this->productivity_average = 0;
                 $this->quality_average = 0;
+                $total_output = 0;
+                $total_output_error = 0;
+                $total_hours_worked = 0;
 
                 $results = DB::table('performances')
                     ->leftJoin('results', 'results.performance_id', '=', 'performances.id')
@@ -619,13 +622,17 @@ class ReportController extends Controller
 
                 // foreach members performance add its results 
                 foreach ($results as $key2 => $value4) {
-                    $this->productivity_average += $value4->productivity;
-                    $this->quality_average += $value4->quality;
+                    $total_output += $value4->output;
+                    $total_output_error += $value4->output_error;
+                    $total_hours_worked += $value4->hours_worked;
                 }
+
+                $this->productivity_average = round($total_output /  $total_hours_worked * $daily_work_hours, 1);
+                $this->quality_average =  round((1 - $total_output_error / $total_output) * 100, 1);
                 
                 // average its results
-                $this->productivity_average = round($this->productivity_average / count($results), 1); 
-                $this->quality_average = round($this->quality_average / count($results), 1);
+                // $this->productivity_average = round($this->productivity_average / count($results), 1); 
+                // $this->quality_average = round($this->quality_average / count($results), 1);
 
                 $details[$key1]->results = $results;
                 $details[$key1]->productivity_average = $this->productivity_average;
@@ -929,6 +936,9 @@ class ReportController extends Controller
             foreach ($details as $key1 => $value1) {
                 $this->productivity_average = 0;
                 $this->quality_average = 0;
+                $total_output = 0;
+                $total_output_error = 0;
+                $total_hours_worked = 0;
 
                 $results = DB::table('performances')
                     ->leftJoin('results', 'results.performance_id', '=', 'performances.id')
@@ -954,13 +964,17 @@ class ReportController extends Controller
 
                 // foreach members performance add its results 
                 foreach ($results as $key2 => $value4) {
-                    $this->productivity_average += $value4->productivity;
-                    $this->quality_average += $value4->quality;
+                    $total_output += $value4->output;
+                    $total_output_error += $value4->output_error;
+                    $total_hours_worked += $value4->hours_worked;
+                    $daily_work_hours = $value4->daily_work_hours;
                 }
                 
                 // average its results
-                $this->productivity_average = round($this->productivity_average / count($results), 1); 
-                $this->quality_average = round($this->quality_average / count($results), 1);
+                // $this->productivity_average = round($this->productivity_average / count($results), 1); 
+                // $this->quality_average = round($this->quality_average / count($results), 1);
+                $this->productivity_average = round($total_output /  $total_hours_worked * $daily_work_hours, 1);
+                $this->quality_average =  round((1 - $total_output_error / $total_output) * 100, 1);
 
                 $details[$key1]->results = $results;
                 $details[$key1]->productivity_average = $this->productivity_average;
@@ -1056,7 +1070,7 @@ class ReportController extends Controller
             $experienced_temp = array();
             $quality_temp = array();
 
-            $reports = DB::table('performances')
+            $reports = DB::table('reports')
                 ->select(
                     '*',
                     DB::raw('DATE_FORMAT(date_start, "%b. %d") as date_start_formatted'),
@@ -1066,7 +1080,7 @@ class ReportController extends Controller
                 ->where('project_id', $value->id)
                 ->whereBetween('date_start', [$this->date_start, $this->date_end])
                 ->where('daily_work_hours', 'like', $daily_work_hours. '%')
-                ->groupBy('date_start')
+                // ->groupBy('date_start')
                 ->get();
 
             // if($parentKey == 2){
@@ -1094,6 +1108,9 @@ class ReportController extends Controller
             foreach ($members as $key1 => $value3) {
                 $this->productivity_average = 0;
                 $this->quality_average = 0;
+                $total_output = 0;
+                $total_output_error = 0;
+                $total_hours_worked = 0;
                 $results = array();
 
                 foreach ($reports as $report_key => $report_value) {
@@ -1110,6 +1127,7 @@ class ReportController extends Controller
                         )
                         ->whereNull('performances.deleted_at')
                         ->where('members.id', $value3->member_id)
+                        ->where('performances.report_id', $report_value->id)
                         ->whereBetween('performances.date_start', [$report_value->date_start, $report_value->date_end])
                         ->orderBy('positions.name')
                         ->orderBy('members.full_name')
@@ -1125,14 +1143,14 @@ class ReportController extends Controller
                         array_push($results, $blank);
                     }
 
-                    foreach ($results as $key2 => $value4) {
-                        $this->productivity_average += $value4->productivity;
-                        $this->quality_average += $value4->quality;
-                    }
+                    $total_output += $query->output;
+                    $total_output_error += $query->output_error;
+                    $total_hours_worked += $query->hours_worked;
+                    
                 }
 
-                $this->productivity_average = count($reports) ? round($this->productivity_average / count($reports), 1) : 0; 
-                $this->quality_average = count($reports) ? round($this->quality_average / count($reports), 1) : 0;
+                $this->productivity_average = count($reports) && $total_hours_worked ? round($total_output / $total_hours_worked * $daily_work_hours, 1) : 0; 
+                $this->quality_average = count($reports) && $total_output ? round((1 - $total_output_error / $total_output) * 100, 1) : 0;
 
                 $members[$key1]->results = $results;
                 $members[$key1]->productivity_average = $this->productivity_average;

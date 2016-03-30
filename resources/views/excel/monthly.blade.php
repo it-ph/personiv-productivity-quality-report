@@ -56,8 +56,8 @@
 			<th>Productivity</th>
 			<th>Quality</th>
 		@endforeach
-		<th>Productivity Average</th>
-		<th>Quality Average</th>
+		<th>Monthly Productivity</th>
+		<th>Monthly Quality</th>
 		<th>Remarks</th>
 	</tr>
 	@foreach($members as $key => $item)
