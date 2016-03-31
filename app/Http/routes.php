@@ -47,6 +47,7 @@ Route::group(['middleware' => 'auth'], function () {
 	Route::resource('report', 'ReportController');
 	Route::resource('approval', 'ApprovalController');
 	Route::resource('performance-approval', 'PerformanceApprovalController');
+	Route::resource('walk-through', 'WalkThroughController');
 
 	// Route resource paginate
 	Route::get('member-paginate/{teamLeaderID}', 'MemberController@paginateTeamLeader');

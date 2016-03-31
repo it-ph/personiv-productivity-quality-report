@@ -1028,7 +1028,7 @@ adminModule
 			$scope.reports = [];
 			$scope.charts = [];
 			$scope.chart = {};
-			$scope.chart.series = ['Average Productivity', 'Average Quality'];
+			$scope.chart.series = ['Productivity', 'Quality'];
 
 			Report.monthly()
 				.success(function(data){
@@ -1120,7 +1120,7 @@ adminModule
 
 		$scope.charts = [];
 		$scope.chart = {};
-		$scope.chart.series = ['Average Productivity', 'Average Quality'];
+		$scope.chart.series = ['Productivity', 'Quality'];
 
 		Report.monthly()
 			.success(function(data){

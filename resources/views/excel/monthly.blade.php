@@ -56,6 +56,9 @@
 			<th>Productivity</th>
 			<th>Quality</th>
 		@endforeach
+		<th>Total Output</th>
+		<th>Total Output Error</th>
+		<th>Total Hours Worked</th>
 		<th>Monthly Productivity</th>
 		<th>Monthly Quality</th>
 		<th>Remarks</th>
@@ -70,7 +73,10 @@
 				<td>{{ round($result->productivity,1) }}%</td>
 				<td>{{ round($result->quality,1) }}%</td>
 			@endforeach
-
+			
+			<td>{{ $item->total_output }}</td>
+			<td>{{ $item->total_output_error }}</td>
+			<td>{{ $item->total_hours_worked }}</td>
 			<td>{{ $item->productivity_average }}%</td>
 			<td>{{ $item->quality_average }}%</td>
 			<td>{{ $item->quota }}</td>

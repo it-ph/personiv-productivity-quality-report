@@ -1121,9 +1121,9 @@ class ReportController extends Controller
             foreach ($members as $key1 => $value3) {
                 $this->productivity_average = 0;
                 $this->quality_average = 0;
-                $total_output = 0;
-                $total_output_error = 0;
-                $total_hours_worked = 0;
+                $this->total_output = 0;
+                $this->total_output_error = 0;
+                $this->total_hours_worked = 0;
                 $results = array();
 
                 $target = DB::table('targets')
@@ -1162,18 +1162,21 @@ class ReportController extends Controller
                         array_push($results, $blank);
                     }
 
-                    $total_output += $query->output;
-                    $total_output_error += $query->output_error;
-                    $total_hours_worked += $query->hours_worked;
+                    $this->total_output += $query->output;
+                    $this->total_output_error += $query->output_error;
+                    $this->total_hours_worked += $query->hours_worked;
                     
                 }
 
-                $this->productivity_average = count($reports) && $total_hours_worked ? round((($total_output / $total_hours_worked * $daily_work_hours) / $target->value) * 100, 1) : 0; 
-                $this->quality_average = count($reports) && $total_output ? round((1 - $total_output_error / $total_output) * 100, 1) : 0;
+                $this->productivity_average = count($reports) && $this->total_hours_worked ? round((($this->total_output / $this->total_hours_worked * $daily_work_hours) / $target->value) * 100, 1) : 0; 
+                $this->quality_average = count($reports) && $this->total_output ? round((1 - $this->total_output_error / $this->total_output) * 100, 1) : 0;
 
                 $members[$key1]->results = $results;
                 $members[$key1]->productivity_average = $this->productivity_average;
                 $members[$key1]->quality_average = $this->quality_average;
+                $members[$key1]->total_output = $this->total_output;
+                $members[$key1]->total_output_error = $this->total_output_error;
+                $members[$key1]->total_hours_worked = $this->total_hours_worked;
 
                 $quality_target = DB::table('targets')
                     ->join('positions', 'positions.id', '=', 'targets.position_id')
