@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-
+use App\Walkthrough;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
@@ -37,7 +37,16 @@ class WalkthroughController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $this->validate($request, [
+            'id' =>'required',
+        ]);
+
+        $walk_through = new Walkthrough;
+
+        $walk_through->user_id = $request->id;
+        $walk_through->show = false;
+
+        $walk_through->save();
     }
 
     /**
@@ -48,7 +57,7 @@ class WalkthroughController extends Controller
      */
     public function show($id)
     {
-        //
+        return $walk_through = Walkthrough::where('user_id', $id)->first();
     }
 
     /**

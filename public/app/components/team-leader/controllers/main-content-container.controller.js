@@ -1,6 +1,24 @@
 teamLeaderModule
-	.controller('mainContentContainerController', ['$scope', '$state', '$mdToast', '$mdDialog', 'Approval', 'Preloader', 'Report', 'Performance', 'Target', 'User', function($scope, $state, $mdToast, $mdDialog, Approval, Preloader, Report, Performance, Target, User){
+	.controller('mainContentContainerController', ['$scope', '$state', '$mdToast', '$mdDialog', 'Approval', 'Preloader', 'Report', 'Performance', 'Target', 'User', 'WalkThrough', function($scope, $state, $mdToast, $mdDialog, Approval, Preloader, Report, Performance, Target, User, WalkThrough){
 		var user = null;
+		$scope.tour = {};
+		$scope.tour.search = 'Need to find something? I\'ll help you find what you\'re looking for.';
+		$scope.tour.notification = 'You don\'t have to wait for the confirmation of your request. I\'ll notify you when something needs your attention.';
+		$scope.tour.refresh = 'Refreshes the current displayed data.'
+		$scope.subheaderTour = function(){
+			$scope.subheaderTour = 0;
+		}
+		$scope.stopTours = function(){
+			WalkThrough.show(user.id)
+				.success(function(data){
+					if(!data){			
+						WalkThrough.store(user)
+							.error(function(){
+								Preloader.error();
+							});
+					}
+				})
+		}
 		/**
 		 * Object for charts
 		 *

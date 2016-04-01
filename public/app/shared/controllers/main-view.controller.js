@@ -1,5 +1,5 @@
 sharedModule
-	.controller('mainViewController', ['$scope', '$state', '$mdSidenav', '$mdToast', '$mdDialog', 'User', 'Preloader', 'Notification', function($scope, $state, $mdSidenav, $mdToast, $mdDialog, User, Preloader, Notification){
+	.controller('mainViewController', ['$scope', '$state', '$mdSidenav', '$mdToast', '$mdDialog', 'User', 'Preloader', 'Notification', 'WalkThrough', function($scope, $state, $mdSidenav, $mdToast, $mdDialog, User, Preloader, Notification, WalkThrough){
 		$scope.changePassword = function()
 		{
 			$mdDialog.show({
@@ -16,6 +16,10 @@ sharedModule
 		    	);
 		    });
 		}
+
+		// $scope.startTour = function(){
+		// 	$scope.leftSidenavTour = 0;
+		// }
 		/**
 		 * Fetch authenticated user information
 		 *
@@ -53,6 +57,14 @@ sharedModule
 				    });
 				}
 				else{
+					WalkThrough.show($scope.user.id)
+						.success(function(data){
+							$scope.leftSidenavTour = data ? -1 : 0;
+						});
+
+					$scope.toolbarTour = function(){
+						$scope.toolbarTour = 0;
+					}
 					var channel = pusher.subscribe('approvals.' + $scope.user.id);
 				    
 				    channel.bind('App\\Events\\ApprovalNotificationBroadCast', function(data) {

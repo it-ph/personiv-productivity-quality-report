@@ -1,6 +1,8 @@
-<div layout="row" layout-align="start center" flex>
-	<md-button class="md-icon-button" ng-click="subheader.refresh()">
-		<md-icon class="mdi mdi-refresh grey" aria-label="Refresh"></md-icon>
-		<md-tooltip>Refresh</md-tooltip>
-	</md-button>
-</div>
+<tour step="subheaderTour" post-tour="stopTours()">	
+	<div layout="row" layout-align="start center" flex>
+		<md-button class="md-icon-button" ng-click="subheader.refresh()" tourtip="{{tour.refresh}}" tourtip-placement="bottom" tourtip-next-label="GOT IT!">
+			<md-icon class="mdi mdi-refresh grey" aria-label="Refresh"></md-icon>
+			<md-tooltip>Refresh</md-tooltip>
+		</md-button>
+	</div>
+</tour>

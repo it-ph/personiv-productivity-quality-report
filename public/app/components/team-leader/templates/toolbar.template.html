@@ -1,64 +1,66 @@
-<div layout="row" layout-align="start center" flex flex-gt-md="70">
-	<div layout="row" ng-if="!searchBar" layout-align="start center">
-		<md-button class="md-icon-button" ng-click="toolbar.back()" ng-if="toolbar.showBack">
-			<md-icon class="mdi mdi-arrow-left grey" aria-label="Back"></md-icon>
-		</md-button>
-		<span class="md-headline main-text"> <span hide-md hide-sm>{{ toolbar.parentState }}</span>
-			<md-icon class="mdi mdi-chevron-right grey" aria-label="chevron right" ng-if="toolbar.parentState && toolbar.childState" hide-md hide-sm></md-icon>
-			<span ng-if="toolbar.childState">{{ toolbar.childState }}</span>
-		</span>
-	</div>
-	<!-- Search Bar -->
-	<div layout="row" ng-if="searchBar" flex layout-align="center center">
-		<md-button class="md-icon-button" ng-click="hideSearchBar()">
-			<md-icon class="mdi mdi-arrow-left grey" aria-label="Hide Search Bar"></md-icon>
-		</md-button>
-		<!-- Search Bar -->
-		<div layout="row" flex>
-			<md-input-container flex>
-				<label>Search</label>
-				<input type="text" ng-model="toolbar.userInput">
-			</md-input-container>
-		</div>
-
-		<md-button class="md-icon-button" ng-click="searchUserInput()">
-			<md-icon class="mdi mdi-magnify grey" aria-label="Search"></md-icon>
-			<md-tooltip>Search</md-tooltip>
-		</md-button>
-	</div>
-	<!-- Icon Buttons -->
-	<div flex layout="row" layout-align="end center" ng-if="!searchBar">
-		<span flex></span>
-		<md-button class="md-icon-button" ng-click="showSearchBar()" ng-if="subheader.state!='report'">
-			<md-icon class="mdi mdi-magnify grey" aria-label="Search"></md-icon>
-		</md-button>
-		<md-menu>
-			<md-button class="md-icon-button" ng-click="$mdOpenMenu($event)">
-				<md-icon class="mdi mdi-bell" ng-class="notifications.length ? 'pink' : 'grey'" aria-label="Notifications"></md-icon>
-				<span class="badge" ng-if="notifications.length">{{ notifications.length }}</span>
+<tour step="toolbarTour" post-tour="subheaderTour()" flex>
+	<div layout="row" layout-align="start center" flex flex-gt-md="70">
+		<div layout="row" ng-if="!searchBar" layout-align="start center">
+			<md-button class="md-icon-button" ng-click="toolbar.back()" ng-if="toolbar.showBack">
+				<md-icon class="mdi mdi-arrow-left grey" aria-label="Back"></md-icon>
 			</md-button>
+			<span class="md-headline main-text"> <span hide-md hide-sm>{{ toolbar.parentState }}</span>
+				<md-icon class="mdi mdi-chevron-right grey" aria-label="chevron right" ng-if="toolbar.parentState && toolbar.childState" hide-md hide-sm></md-icon>
+				<span ng-if="toolbar.childState">{{ toolbar.childState }}</span>
+			</span>
+		</div>
+		<!-- Search Bar -->
+		<div layout="row" ng-if="searchBar" flex layout-align="center center">
+			<md-button class="md-icon-button" ng-click="hideSearchBar()">
+				<md-icon class="mdi mdi-arrow-left grey" aria-label="Hide Search Bar"></md-icon>
+			</md-button>
+			<!-- Search Bar -->
+			<div layout="row" flex>
+				<md-input-container flex>
+					<label>Search</label>
+					<input type="text" ng-model="toolbar.userInput">
+				</md-input-container>
+			</div>
 
-			<md-menu-content width="6">
-				<p flex layout="column" layout-align="center center" ng-if="!notifications.length">
-					<span>No unseen notifications</span>
-				</p>
-				<div ng-repeat="notification in notifications">
-					<md-list-item class="md-3-line" ng-click="viewNotification($index)">
-				        <h2 class="md-headline purple-bg md-avatar" layout="row" layout-align="center center">
-				            <span class="weight-200 white-text">{{ notification.first_letter }}</span>
-				        </h2>
-				        <div class="md-list-item-text">
-				            <h3>{{ notification.first_name }} {{ notification.last_name }}</h3>
-				            <h4>{{ notification.message }} <strong>{{ notification.name }}</strong> report.</h4>
-				            <p>{{ notification.created_at }}</p>
-				        </div>
-				    </md-list-item>
-				</div>
-			</md-menu-content>
-		</md-menu>
-		<!-- Toggle Left Sidenav Button -->
-		<md-button class="md-icon-button" ng-click="toggleSidenav('left')" hide-gt-md>
-			<md-icon class="mdi mdi-menu grey" aria-label="Toogle Sidenav"></md-icon>
-		</md-button>
+			<md-button class="md-icon-button" ng-click="searchUserInput()">
+				<md-icon class="mdi mdi-magnify grey" aria-label="Search"></md-icon>
+				<md-tooltip>Search</md-tooltip>
+			</md-button>
+		</div>
+		<!-- Icon Buttons -->
+		<div flex layout="row" layout-align="end center" ng-if="!searchBar">
+			<span flex></span>
+			<md-button class="md-icon-button" ng-click="showSearchBar()" ng-if="subheader.state!='report'" tourtip="{{tour.search}}" tourtip-placement="bottom" tourtip-next-label="NEXT" tourtip-step="0">
+				<md-icon class="mdi mdi-magnify grey" aria-label="Search"></md-icon>
+			</md-button>
+			<md-menu>
+				<md-button class="md-icon-button" ng-click="$mdOpenMenu($event)" tourtip="{{tour.notification}}" tourtip-placement="bottom" tourtip-next-label="NEXT" tourtip-step="1">
+					<md-icon class="mdi mdi-bell" ng-class="notifications.length ? 'pink' : 'grey'" aria-label="Notifications"></md-icon>
+					<span class="badge" ng-if="notifications.length">{{ notifications.length }}</span>
+				</md-button>
+
+				<md-menu-content width="6">
+					<p flex layout="column" layout-align="center center" ng-if="!notifications.length">
+						<span>No unseen notifications</span>
+					</p>
+					<div ng-repeat="notification in notifications">
+						<md-list-item class="md-3-line" ng-click="viewNotification($index)">
+					        <h2 class="md-headline purple-bg md-avatar" layout="row" layout-align="center center">
+					            <span class="weight-200 white-text">{{ notification.first_letter }}</span>
+					        </h2>
+					        <div class="md-list-item-text">
+					            <h3>{{ notification.first_name }} {{ notification.last_name }}</h3>
+					            <h4>{{ notification.message }} <strong>{{ notification.name }}</strong> report.</h4>
+					            <p>{{ notification.created_at }}</p>
+					        </div>
+					    </md-list-item>
+					</div>
+				</md-menu-content>
+			</md-menu>
+			<!-- Toggle Left Sidenav Button -->
+			<md-button class="md-icon-button" ng-click="toggleSidenav('left')" hide-gt-md>
+				<md-icon class="mdi mdi-menu grey" aria-label="Toogle Sidenav"></md-icon>
+			</md-button>
+		</div>
 	</div>
-</div>
+</tour>

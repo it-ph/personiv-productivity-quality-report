@@ -5,7 +5,8 @@ var sharedModule = angular.module('sharedModule', [
 	'ngMessages',
 	'infinite-scroll',
 	'chart.js',
-	'mgcrea.ngStrap'
+	'mgcrea.ngStrap',
+	'angular-tour'
 ]);
 sharedModule
 	.config(['$urlRouterProvider', '$stateProvider', '$mdThemingProvider', function($urlRouterProvider, $stateProvider, $mdThemingProvider){
@@ -84,7 +85,7 @@ sharedModule
 			});
 	}]);
 sharedModule
-	.controller('mainViewController', ['$scope', '$state', '$mdSidenav', '$mdToast', '$mdDialog', 'User', 'Preloader', 'Notification', function($scope, $state, $mdSidenav, $mdToast, $mdDialog, User, Preloader, Notification){
+	.controller('mainViewController', ['$scope', '$state', '$mdSidenav', '$mdToast', '$mdDialog', 'User', 'Preloader', 'Notification', 'WalkThrough', function($scope, $state, $mdSidenav, $mdToast, $mdDialog, User, Preloader, Notification, WalkThrough){
 		$scope.changePassword = function()
 		{
 			$mdDialog.show({
@@ -101,6 +102,10 @@ sharedModule
 		    	);
 		    });
 		}
+
+		// $scope.startTour = function(){
+		// 	$scope.leftSidenavTour = 0;
+		// }
 		/**
 		 * Fetch authenticated user information
 		 *
@@ -138,6 +143,14 @@ sharedModule
 				    });
 				}
 				else{
+					WalkThrough.show($scope.user.id)
+						.success(function(data){
+							$scope.leftSidenavTour = data ? -1 : 0;
+						});
+
+					$scope.toolbarTour = function(){
+						$scope.toolbarTour = 0;
+					}
 					var channel = pusher.subscribe('approvals.' + $scope.user.id);
 				    
 				    channel.bind('App\\Events\\ApprovalNotificationBroadCast', function(data) {
@@ -583,6 +596,28 @@ sharedModule
 			},
 			search: function(data){
 				return $http.post(urlBase + '-search', data);
+			},
+		};
+	}])
+sharedModule
+	.factory('WalkThrough', ['$http', function($http){
+		var urlBase = '/walk-through';
+
+		return {
+			index: function(){
+				return $http.get(urlBase);
+			},
+			show: function(id){
+				return $http.get(urlBase + '/' + id);
+			},
+			store: function(data){
+				return $http.post(urlBase, data);
+			},
+			update: function(id, data){
+				return $http.put(urlBase + '/' + id, data);
+			},
+			delete: function(id){
+				return $http.delete(urlBase + '/' + id);
 			},
 		};
 	}])

@@ -318,6 +318,14 @@ md-toolbar.md-warn > md-tabs.md-default-theme, md-tabs > md-tabs-wrapper > md-ta
 md-toolbar.md-warn > md-tabs.md-default-theme, md-tabs > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > md-tab-item:not([disabled]) {
   color: #727272; }
 
+.tour-tip p, .tour-tip button, .tour-tip .button {
+  font-size: 1.2em; }
+
+.tour-tip button, .tour-tip .button {
+  background-color: #2196F3; }
+  .tour-tip button:hover, .tour-tip .button:hover {
+    background-color: #2196F3; }
+
 /* transition duration */
 .transition, .fade-transition, .main-view {
   transition: all 0.3s cubic-bezier(0.55, 0, 0.55, 0.2); }

@@ -348,3 +348,14 @@ md-toolbar.md-warn > md-tabs.md-default-theme, md-tabs > md-tabs-wrapper > md-ta
 md-toolbar.md-warn > md-tabs.md-default-theme, md-tabs > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > md-tab-item:not([disabled]){
 	color: $secondary-text;
 }
+
+.tour-tip p , .tour-tip button, .tour-tip .button{
+	font-size: 1.2em;
+}
+
+.tour-tip button, .tour-tip .button{
+	background-color: $primary500;
+	&:hover{
+		background-color: $primary500;
+	}
+}
