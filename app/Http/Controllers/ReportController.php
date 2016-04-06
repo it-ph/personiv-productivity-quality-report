@@ -1055,7 +1055,7 @@ class ReportController extends Controller
                     ->where('type', 'Productivity')
                     ->where('position_id', $value2->id)
                     ->where('experience', 'Beginner')
-                    ->where('created_at', '<=', $this->date_start)
+                    ->where('created_at', '<=', $this->date_end)
                     ->orderBy('created_at', 'desc')
                     ->first();
 
@@ -1063,7 +1063,7 @@ class ReportController extends Controller
                     ->where('type', 'Productivity')
                     ->where('position_id', $value2->id)
                     ->where('experience', 'Moderately Experienced')
-                    ->where('created_at', '<=', $this->date_start)
+                    ->where('created_at', '<=', $this->date_end)
                     ->orderBy('created_at', 'desc')
                     ->first();
 
@@ -1071,14 +1071,14 @@ class ReportController extends Controller
                     ->where('type', 'Productivity')
                     ->where('position_id', $value2->id)
                     ->where('experience', 'Experienced')
-                    ->where('created_at', '<=', $this->date_start)
+                    ->where('created_at', '<=', $this->date_end)
                     ->orderBy('created_at', 'desc')
                     ->first();
 
                 $quality = DB::table('targets')
                     ->where('type', 'Quality')
                     ->where('position_id', $value2->id)
-                    ->where('created_at', '<=', $this->date_start)
+                    ->where('created_at', '<=', $this->date_end)
                     ->orderBy('created_at', 'desc')
                     ->first();
 
@@ -1146,7 +1146,7 @@ class ReportController extends Controller
                     ->where('position_id', $value3->position_id)
                     ->where('type', 'Productivity')
                     ->where('experience', $value3->experience)
-                    ->where('created_at', '<=', $this->date_start)
+                    ->where('created_at', '<=', $this->date_end)
                     ->orderBy('created_at', 'desc')
                     ->first();
 
@@ -1203,7 +1203,7 @@ class ReportController extends Controller
                     ->where('targets.position_id', $value3->position_id)
                     ->where('targets.experience', $value3->experience)
                     ->where('targets.type', 'Quality')
-                    ->where('targets.created_at', '<=', $this->date_start)
+                    ->where('targets.created_at', '<=', $this->date_end)
                     ->orderBy('targets.created_at', 'desc')
                     ->first();
 
@@ -1319,7 +1319,7 @@ class ReportController extends Controller
                     ->where('type', 'Productivity')
                     ->where('position_id', $value->id)
                     ->where('experience', 'Beginner')
-                    ->where('created_at', '<=', $this->date_start)
+                    ->where('created_at', '<=', $date_end)
                     ->orderBy('created_at', 'desc')
                     ->first();
 
@@ -1327,7 +1327,7 @@ class ReportController extends Controller
                     ->where('type', 'Productivity')
                     ->where('position_id', $value->id)
                     ->where('experience', 'Moderately Experienced')
-                    ->where('created_at', '<=', $this->date_start)
+                    ->where('created_at', '<=', $date_end)
                     ->orderBy('created_at', 'desc')
                     ->first();
 
@@ -1335,14 +1335,14 @@ class ReportController extends Controller
                     ->where('type', 'Productivity')
                     ->where('position_id', $value->id)
                     ->where('experience', 'Experienced')
-                    ->where('created_at', '<=', $this->date_start)
+                    ->where('created_at', '<=', $date_end)
                     ->orderBy('created_at', 'desc')
                     ->first();
 
                 $quality = DB::table('targets')
                     ->where('type', 'Quality')
                     ->where('position_id', $value->id)
-                    ->where('created_at', '<=', $this->date_start)
+                    ->where('created_at', '<=', $date_end)
                     ->orderBy('created_at', 'desc')
                     ->first();            
 
@@ -1433,7 +1433,7 @@ class ReportController extends Controller
                 ->where('type', 'Productivity')
                 ->where('project_id', $value->project_id)
                 ->where('experience', 'Beginner')
-                ->where('created_at', '<=', $this->date_start)
+                ->where('created_at', '<=', $this->date_end)
                 ->orderBy('created_at', 'desc')
                 ->get();
 
@@ -1441,7 +1441,7 @@ class ReportController extends Controller
                 ->where('type', 'Productivity')
                 ->where('project_id', $value->project_id)
                 ->where('experience', 'Moderately Experienced')
-                ->where('created_at', '<=', $this->date_start)
+                ->where('created_at', '<=', $this->date_end)
                 ->orderBy('created_at', 'desc')
                 ->get();
 
@@ -1449,7 +1449,7 @@ class ReportController extends Controller
                 ->where('type', 'Productivity')
                 ->where('project_id', $value->project_id)
                 ->where('experience', 'Experienced')
-                ->where('created_at', '<=', $this->date_start)
+                ->where('created_at', '<=', $this->date_end)
                 ->orderBy('created_at', 'desc')
                 ->get();
 
@@ -1457,7 +1457,7 @@ class ReportController extends Controller
                 ->where('type', 'Quality')
                 ->where('project_id', $value->project_id)
                 ->groupBy('position_id')
-                ->where('created_at', '<=', $this->date_start)
+                ->where('created_at', '<=', $this->date_end)
                 ->orderBy('created_at', 'desc')
                 ->get();
         }
@@ -1648,7 +1648,7 @@ class ReportController extends Controller
                     ->where('targets.position_id', $queryValue->position_id)
                     ->where('targets.experience', $queryValue->experience)
                     ->where('targets.type', 'Quality')
-                    ->where('targets.created_at', '<=', $this->date_start)
+                    ->where('targets.created_at', '<=', $this->date_end)
                     ->orderBy('targets.created_at', 'desc')
                     ->first();
 
@@ -1706,7 +1706,7 @@ class ReportController extends Controller
                         ->where('targets.position_id', $queryValue->position_id)
                         ->where('targets.experience', $queryValue->experience)
                         ->where('targets.type', 'Quality')
-                        ->where('targets.created_at', '<=', 'date_end')
+                        ->where('targets.created_at', '<=', $value->date_end)
                         ->orderBy('targets.created_at', 'desc')
                         ->first();
 
