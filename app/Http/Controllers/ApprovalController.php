@@ -294,7 +294,7 @@ class ApprovalController extends Controller
                 $performance->save();
 
                 // fetch target
-                $target = Target::where('position_id', $performance_approval->position_id)->where('experience', $performance_approval->experience)->first();
+                $target = Target::where('position_id', $performance_approval->position_id)->where('experience', $performance_approval->experience)->where('created_at', '<=', $request->input($i.'.date_end'))->orderBy('created_at', 'desc')->first();
                 // recompute results
                 $result = Result::where('id', $performance_approval->result_id)->first();
                 

@@ -363,7 +363,7 @@ class PerformanceController extends Controller
                 $performance->save();
 
                 // fetch target
-                $target = Target::where('position_id', $request->input($i.'.position_id'))->where('experience', $request->input($i.'.experience'))->first();
+                $target = Target::where('type', 'Productivity')->where('position_id', $request->input($i.'.position_id'))->where('experience', $request->input($i.'.experience'))->where('created_at', '<=', $request->input($i.'.date_end'))->orderBy('created_at', 'desc')->first();
 
                 $result = new Result;
                 $result->report_id = $report->id;

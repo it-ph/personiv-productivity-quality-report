@@ -51,7 +51,7 @@ teamLeaderModule
 						$scope.report.busy = true;
 						angular.forEach(data.data, function(item, key){
 							// fetch the targets
-							Target.project(item.project_id)
+							Target.project(item.id)
 								.success(function(data){
 									$scope.report.targets.splice(key, 0, data)
 								});
@@ -95,7 +95,7 @@ teamLeaderModule
 											angular.forEach(data.data, function(item, key){
 												$scope.report.details.data.push(item);
 												// fetch the targets
-												Target.project(item.project_id)
+												Target.project(item.id)
 													.success(function(data){
 														$scope.report.targets.splice(key, 0, data)
 													});
@@ -173,7 +173,7 @@ teamLeaderModule
 					$scope.report.details = data;
 					angular.forEach(data.data, function(item, key){
 						// fetch the targets
-						Target.project(item.project_id)
+						Target.project(item.id)
 							.success(function(data){
 								$scope.report.targets.splice(key, 0, data)
 							});
@@ -247,7 +247,7 @@ teamLeaderModule
 				.success(function(data){
 					$scope.report.results = data;
 					angular.forEach(data, function(item, key){
-						Target.project(item[0].project_id)
+						Target.project(item[0].id)
 							.success(function(data){
 								$scope.report.targets.splice(key, 0, data)
 							});

@@ -94,7 +94,7 @@ Route::group(['middleware' => 'auth'], function () {
 
 	Route::get('report-monthly', 'ReportController@monthly');
 	Route::post('report-search-monthly', 'ReportController@searchMonthly');
-	Route::get('target-project/{projectID}', 'TargetController@project');
+	Route::get('target-project/{reportID}', 'TargetController@project');
 	Route::get('performance-top-performers/{reportID}', 'PerformanceController@topPerformers');
 	Route::post('performance-monthly', 'PerformanceController@monthly');
 	Route::get('report-team-performance/{month}/year/{year}/daily-work-hours/{daily_work_hours}', 'ReportController@teamPerformance');

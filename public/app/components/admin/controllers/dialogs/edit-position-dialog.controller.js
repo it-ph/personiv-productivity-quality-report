@@ -38,7 +38,6 @@ adminModule
 				$scope.productivity = data;
 			});
 
-
 		Target.quality(positionID)
 			.success(function(data){
 				$scope.quality = data;

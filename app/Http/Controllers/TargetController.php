@@ -4,17 +4,20 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Target;
+use App\Report;
 use DB;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
+use Carbon\Carbon;
 
 class TargetController extends Controller
 {
-    public function project($project_id)
+    public function project($report_id)
     {
-        $project = DB::table('projects')->where('id', $project_id)->first();
+        $report = Report::where('id', $report_id)->first();
+        $project = DB::table('projects')->where('id', $report->project_id)->first();
 
-        $project->positions = DB::table('positions')->where('project_id', $project_id)->get();
+        $project->positions = DB::table('positions')->where('project_id', $report->project_id)->get();
 
         $project->beginner_productivity =  array();
         $project->moderately_experienced_productivity =  array();
@@ -26,14 +29,14 @@ class TargetController extends Controller
 
         foreach ($project->positions as $key => $value) {
             /* Productivity */
-            $beginner_productivity = Target::where('position_id', $value->id)->where('type', 'Productivity')->where('experience', 'Beginner')->first()->value;
-            $moderately_experienced_productivity = Target::where('position_id', $value->id)->where('type', 'Productivity')->where('experience', 'Moderately Experienced')->first()->value;
-            $experienced_productivity = Target::where('position_id', $value->id)->where('type', 'Productivity')->where('experience', 'Experienced')->first()->value;
+            $beginner_productivity = Target::where('position_id', $value->id)->where('type', 'Productivity')->where('experience', 'Beginner')->where('created_at', '<=', $report->date_end)->orderBy('created_at', 'desc')->first()->value;
+            $moderately_experienced_productivity = Target::where('position_id', $value->id)->where('type', 'Productivity')->where('experience', 'Moderately Experienced')->where('created_at', '<=', $report->date_end)->orderBy('created_at', 'desc')->first()->value;
+            $experienced_productivity = Target::where('position_id', $value->id)->where('type', 'Productivity')->where('experience', 'Experienced')->where('created_at', '<=', $report->date_end)->orderBy('created_at', 'desc')->first()->value;
 
             /* Quality */
-            $beginner_quality = Target::where('position_id', $value->id)->where('type', 'Quality')->where('experience', 'Beginner')->first()->value;
-            $moderately_experienced_quality = Target::where('position_id', $value->id)->where('type', 'Quality')->where('experience', 'Moderately Experienced')->first()->value;
-            $experienced_quality = Target::where('position_id', $value->id)->where('type', 'Quality')->where('experience', 'Experienced')->first()->value;
+            $beginner_quality = Target::where('position_id', $value->id)->where('type', 'Quality')->where('experience', 'Beginner')->where('created_at', '<=', $report->date_end)->orderBy('created_at', 'desc')->first()->value;
+            $moderately_experienced_quality = Target::where('position_id', $value->id)->where('type', 'Quality')->where('experience', 'Moderately Experienced')->where('created_at', '<=', $report->date_end)->orderBy('created_at', 'desc')->first()->value;
+            $experienced_quality = Target::where('position_id', $value->id)->where('type', 'Quality')->where('experience', 'Experienced')->where('created_at', '<=', $report->date_end)->orderBy('created_at', 'desc')->first()->value;
 
             array_push($project->beginner_productivity, $beginner_productivity);
             array_push($project->moderately_experienced_productivity, $moderately_experienced_productivity);
@@ -48,11 +51,11 @@ class TargetController extends Controller
     }
     public function productivity($position_id)
     {
-        return Target::where('position_id', $position_id)->where('type', 'Productivity')->get();
+        return Target::where('position_id', $position_id)->where('type', 'Productivity')->where('active', true)->get();
     }
     public function quality($position_id)
     {
-        return Target::where('position_id', $position_id)->where('type', 'Quality')->get();
+        return Target::where('position_id', $position_id)->where('type', 'Quality')->where('active', true)->get();
     }
     // public function department($department_id)
     // {
@@ -81,6 +84,7 @@ class TargetController extends Controller
                 DB::raw('CONCAT(UPPER(LEFT(type, 1)), SUBSTRING(type, 2)) as type')
             )
             ->where('position_id', $position_id)
+            ->where('active', true)
             ->get();
     }
     /**
@@ -170,23 +174,28 @@ class TargetController extends Controller
             
             $this->validate($request, [
                 $i.'.value' => 'required|numeric',
-                // $i.'.type' => 'required|string',
-                // $i.'.experience' => 'required|string',
-                // $i.'.position_id' => 'required|numeric',
-                // $i.'.project_id' => 'required|numeric',
-                // $i.'.department_id' => 'required|numeric',
+                $i.'.type' => 'required|string',
+                $i.'.experience' => 'required|string',
+                $i.'.position_id' => 'required|numeric',
+                $i.'.project_id' => 'required|numeric',
+                $i.'.department_id' => 'required|numeric',
             ]);
 
             $target = Target::where('id', $request->input($i.'.id'))->first();
-
-            $target->value = $request->input($i.'.value');
-            // $target->type = $request->input($i.'.type');
-            // $target->experience = $request->input($i.'.experience');
-            // $target->position_id = $request->input($i.'.position_id');
-            // $target->project_id = $request->input($i.'.project_id');
-            // $target->department_id = $request->input($i.'.department_id');
-
+            $target->active = false;
             $target->save();
+
+            $new_target = new Target;
+
+            $new_target->value = $request->input($i.'.value');
+            $new_target->type = $request->input($i.'.type');
+            $new_target->experience = $request->input($i.'.experience');
+            $new_target->position_id = $request->input($i.'.position_id');
+            $new_target->project_id = $request->input($i.'.project_id');
+            $new_target->department_id = $request->input($i.'.department_id');
+            $new_target->active = true;
+
+            $new_target->save();
         }
     }
 

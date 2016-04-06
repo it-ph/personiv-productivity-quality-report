@@ -20,6 +20,7 @@ class CreateTargetsTable extends Migration
             $table->integer('position_id');
             $table->integer('project_id');
             $table->integer('department_id');
+            $table->boolean('active');
             $table->timestamps();
         });
     }
