@@ -11,6 +11,20 @@ use App\Http\Controllers\Controller;
 
 class MemberController extends Controller
 {
+    public function department($department_id)
+    {
+        return DB::table('members')
+            ->join('users', 'users.id', '=', 'members.team_leader_id')
+            ->select(
+                'members.*',
+                DB::raw('UPPER(LEFT(members.full_name, 1)) as first_letter'),
+                DB::raw('DATE_FORMAT(date_hired, "%b. %d, %Y") as date_hired')
+            )
+            ->where('users.department_id', $department_id)
+            ->whereNull('deleted_at')
+            ->orderBy('members.full_name')
+            ->get();
+    }
     public function updateTenure($team_leader_id)
     {
         $members = Member::where('team_leader_id', $team_leader_id)->get();

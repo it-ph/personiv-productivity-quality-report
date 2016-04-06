@@ -142,7 +142,7 @@ sharedModule
 				    		});
 				    });
 				}
-				else{
+				else if ($scope.user.role == 'team-leader'){
 					WalkThrough.show($scope.user.id)
 						.success(function(data){
 							$scope.leftSidenavTour = data ? -1 : 0;
@@ -302,6 +302,9 @@ sharedModule
 			},
 			updateTenure: function(id){
 				return $http.put(urlBase + '-update-tenure/' + id);
+			},
+			department: function(id){
+				return $http.get(urlBase +'-department/' + id);
 			},
 		}
 	}])

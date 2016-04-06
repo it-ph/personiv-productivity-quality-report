@@ -1,6 +1,7 @@
 teamLeaderModule
 	.controller('approvalsDialogController', ['$scope', '$mdDialog', 'Approval', 'PerformanceApproval', 'Preloader', function($scope, $mdDialog, Approval, PerformanceApproval, Preloader){
 		var approvalID = Preloader.get();
+		$scope.user = Preloader.getUser();
 
 		Approval.details(approvalID)
 			.success(function(data){
@@ -23,7 +24,6 @@ teamLeaderModule
 		$scope.cancel = function(){
 			$mdDialog.cancel();
 		}
-
 		$scope.cancelRequest = function(){
 			Preloader.preload();
 			Approval.delete(approvalID)

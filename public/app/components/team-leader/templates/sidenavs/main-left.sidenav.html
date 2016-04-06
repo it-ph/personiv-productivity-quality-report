@@ -4,7 +4,7 @@
 			<span flex="5"></span>
 			<h2 class="md-subhead white-text">Productivity and Quality Report</h2>
 		</li>
-		<li ng-repeat="section in menu.section" class="section" flex>
+		<li ng-repeat="section in menu.section" class="section fade-transition" flex>
 			<div layout="row" class="section-button-container">
 				<md-button flex ng-click="setActive($index + 1)" ui-sref="{{ section.state }}" aria-label="section-{{ $index + 1}}" tourtip-title="{{section.name}}" tourtip="{{section.tip}}" tourtip-placement="right" tourtip-next-label="NEXT">
 					<div layout="row" flex layout-align="start center">

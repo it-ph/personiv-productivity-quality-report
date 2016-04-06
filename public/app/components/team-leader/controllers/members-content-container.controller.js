@@ -31,29 +31,77 @@ teamLeaderModule
 				});
 		};
 		/**
+		 * Object for content view
+		 *
+		*/
+		$scope.fab = {};
+
+		$scope.fab.icon = 'mdi-plus';
+		$scope.fab.label = 'Member';
+
+		$scope.fab.action = function(){
+			$mdDialog.show({
+	    		controller: 'addMemberDialogController',
+		      	templateUrl: '/app/components/team-leader/templates/dialogs/add-member.dialog.template.html',
+		      	parent: angular.element(document.body),
+		    })
+		    .then(function(){
+		    	$scope.subheader.refresh();
+		    })
+		};
+		/**
 		 * Object for member
 		 *
 		*/
-		var user = Preloader.getUser();
+		$scope.user = Preloader.getUser();
 		$scope.member = {};
-		if(!user){
+		if(!$scope.user){
+			console.log('new')
 			User.index()
 				.success(function(data){
 					$scope.toolbar.team_leader_id = data.id
-					Member.teamLeader(data.id)
-						.success(function(data){
-							$scope.member.all = data;
-							$scope.member.all.show = true;
-						});
+					$scope.user = data;
+					if(data.role=='team-leader')
+					{
+						Member.teamLeader(data.id)
+							.success(function(data){
+								$scope.member.all = data;
+								$scope.member.all.show = true;
+								$scope.option = true;
+							});
+					}
+					else{
+						Member.department(data.department_id)
+							.success(function(data){
+								$scope.member.all = data;
+								$scope.member.all.show = true;
+								$scope.option = false;
+							});
+					}
+					$scope.fab.show = $scope.user.role == 'team-leader' ? true : false;
 				});
 		}
 		else{
-			$scope.toolbar.team_leader_id = user.id
-			Member.teamLeader(user.id)
-				.success(function(data){
-					$scope.member.all = data;
-					$scope.member.all.show = true;
-				});
+			console.log('old');
+			$scope.toolbar.team_leader_id = $scope.user.id
+			$scope.fab.show = $scope.user.role == 'team-leader' ? true : false;
+			if($scope.user.role=='team-leader')
+			{
+				Member.teamLeader($scope.user.id)
+					.success(function(data){
+						$scope.member.all = data;
+						$scope.member.all.show = true;
+						$scope.option = true;
+					});
+			}
+			else{
+				Member.department($scope.user.department_id)
+					.success(function(data){
+						$scope.member.all = data;
+						$scope.member.all.show = true;
+						$scope.option = false;
+					});
+			}
 		}
 
 		/**
@@ -120,27 +168,5 @@ teamLeaderModule
 		    }, function() {
 		      return;
 		    });			
-		};
-
-		/**
-		 * Object for content view
-		 *
-		*/
-		$scope.fab = {};
-
-		$scope.fab.icon = 'mdi-plus';
-		$scope.fab.label = 'Member';
-		
-		$scope.fab.show = true;
-
-		$scope.fab.action = function(){
-			$mdDialog.show({
-	    		controller: 'addMemberDialogController',
-		      	templateUrl: '/app/components/team-leader/templates/dialogs/add-member.dialog.template.html',
-		      	parent: angular.element(document.body),
-		    })
-		    .then(function(){
-		    	$scope.subheader.refresh();
-		    })
 		};
 	}]);

@@ -59,7 +59,7 @@
 			</div>
 		</div>
 	</md-dialog-content>
-	<div class="md-actions" layout="row" layout-align="end center">
+	<div class="md-actions" layout="row" layout-align="end center" ng-if="user!='manager'">
 	    <md-button ng-click="cancelRequest()">Cancel Request</md-button>
 	</div>
 </md-dialog>

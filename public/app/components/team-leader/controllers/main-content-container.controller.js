@@ -1,5 +1,5 @@
 teamLeaderModule
-	.controller('mainContentContainerController', ['$scope', '$state', '$mdToast', '$mdDialog', 'Approval', 'Preloader', 'Report', 'Performance', 'Target', 'User', 'WalkThrough', function($scope, $state, $mdToast, $mdDialog, Approval, Preloader, Report, Performance, Target, User, WalkThrough){
+	.controller('mainContentContainerController', ['$scope', '$state', '$mdToast', '$mdDialog', 'Approval', 'Preloader', 'Report', 'Performance', 'Target', 'User', 'WalkThrough', 'Project', function($scope, $state, $mdToast, $mdDialog, Approval, Preloader, Report, Performance, Target, User, WalkThrough, Project){
 		var user = null;
 		$scope.tour = {};
 		$scope.tour.search = 'Need to find something? I\'ll help you find what you\'re looking for.';
@@ -19,6 +19,7 @@ teamLeaderModule
 					}
 				})
 		}
+
 		/**
 		 * Object for charts
 		 *
@@ -41,9 +42,15 @@ teamLeaderModule
 		// 2 is default so the next page to be loaded will be page 2 
 		$scope.report.page = 2;
 
+		
 		User.index()
 			.success(function(data){
 				user = data;
+				
+				Project.department(user.department_id)
+					.success(function(data){
+						$scope.projects = data;
+					});
 				// fetch the details of the pagination 
 				Report.paginateDepartmentDetails(user.department_id)
 					.success(function(data){

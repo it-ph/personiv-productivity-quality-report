@@ -492,34 +492,64 @@ teamLeaderModule
 
 	}]);
 teamLeaderModule
-	.controller('leftSidenavController', ['$scope', '$mdSidenav', function($scope, $mdSidenav){
+	.controller('leftSidenavController', ['$scope', '$mdSidenav', 'User', function($scope, $mdSidenav, User){
 		$scope.menu = {};
-		$scope.menu.section = [
-			{
-				'name':'Dashboard',
-				'state':'main',
-				'icon':'mdi-view-dashboard',
-				'tip': 'Dashboard: tracks your team\'s weekly performance, targets, and top performers.',
-			},
-			{
-				'name':'Approvals',
-				'state':'main.approvals',
-				'icon':'mdi-file-document-box',
-				'tip': 'Approvals: shows pending request for report changes.',
-			},
-			{
-				'name':'Members',
-				'state': 'main.members',
-				'icon':'mdi-account-multiple',
-				'tip': 'Members: manage people in your team.',
-			},
-			{
-				'name':'Report',
-				'state': 'main.report',
-				'icon':'mdi-file-document',
-				'tip': 'Report: submit team\'s weekly reports',
-			},
-		];
+		User.index()
+			.success(function(data){
+				var user = data;
+				
+				if(user.role=='team-leader')
+				{
+					$scope.menu.section = [
+						{
+							'name':'Dashboard',
+							'state':'main',
+							'icon':'mdi-view-dashboard',
+							'tip': 'Dashboard: tracks your team\'s weekly performance, targets, and top performers.',
+						},
+						{
+							'name':'Approvals',
+							'state':'main.approvals',
+							'icon':'mdi-file-document-box',
+							'tip': 'Approvals: shows pending request for report changes.',
+						},
+						{
+							'name':'Members',
+							'state': 'main.members',
+							'icon':'mdi-account-multiple',
+							'tip': 'Members: manage people in your team.',
+						},
+						{
+							'name':'Report',
+							'state': 'main.report',
+							'icon':'mdi-file-document',
+							'tip': 'Report: submit team\'s weekly reports',
+						},
+					];
+				}
+				else{
+					$scope.menu.section = [
+						{
+							'name':'Dashboard',
+							'state':'main',
+							'icon':'mdi-view-dashboard',
+							'tip': 'Dashboard: tracks your team\'s weekly performance, targets, and top performers.',
+						},
+						{
+							'name':'Approvals',
+							'state':'main.approvals',
+							'icon':'mdi-file-document-box',
+							'tip': 'Approvals: shows pending request for report changes.',
+						},
+						{
+							'name':'Members',
+							'state': 'main.members',
+							'icon':'mdi-account-multiple',
+							'tip': 'Members: manage people in your team.',
+						},
+					];
+				}
+			});
 
 		// set section as active
 		$scope.setActive = function(index){
@@ -528,7 +558,7 @@ teamLeaderModule
 		};
 	}]);
 teamLeaderModule
-	.controller('mainContentContainerController', ['$scope', '$state', '$mdToast', '$mdDialog', 'Approval', 'Preloader', 'Report', 'Performance', 'Target', 'User', 'WalkThrough', function($scope, $state, $mdToast, $mdDialog, Approval, Preloader, Report, Performance, Target, User, WalkThrough){
+	.controller('mainContentContainerController', ['$scope', '$state', '$mdToast', '$mdDialog', 'Approval', 'Preloader', 'Report', 'Performance', 'Target', 'User', 'WalkThrough', 'Project', function($scope, $state, $mdToast, $mdDialog, Approval, Preloader, Report, Performance, Target, User, WalkThrough, Project){
 		var user = null;
 		$scope.tour = {};
 		$scope.tour.search = 'Need to find something? I\'ll help you find what you\'re looking for.';
@@ -548,6 +578,7 @@ teamLeaderModule
 					}
 				})
 		}
+
 		/**
 		 * Object for charts
 		 *
@@ -570,9 +601,15 @@ teamLeaderModule
 		// 2 is default so the next page to be loaded will be page 2 
 		$scope.report.page = 2;
 
+		
 		User.index()
 			.success(function(data){
 				user = data;
+				
+				Project.department(user.department_id)
+					.success(function(data){
+						$scope.projects = data;
+					});
 				// fetch the details of the pagination 
 				Report.paginateDepartmentDetails(user.department_id)
 					.success(function(data){
@@ -885,29 +922,77 @@ teamLeaderModule
 				});
 		};
 		/**
+		 * Object for content view
+		 *
+		*/
+		$scope.fab = {};
+
+		$scope.fab.icon = 'mdi-plus';
+		$scope.fab.label = 'Member';
+
+		$scope.fab.action = function(){
+			$mdDialog.show({
+	    		controller: 'addMemberDialogController',
+		      	templateUrl: '/app/components/team-leader/templates/dialogs/add-member.dialog.template.html',
+		      	parent: angular.element(document.body),
+		    })
+		    .then(function(){
+		    	$scope.subheader.refresh();
+		    })
+		};
+		/**
 		 * Object for member
 		 *
 		*/
-		var user = Preloader.getUser();
+		$scope.user = Preloader.getUser();
 		$scope.member = {};
-		if(!user){
+		if(!$scope.user){
+			console.log('new')
 			User.index()
 				.success(function(data){
 					$scope.toolbar.team_leader_id = data.id
-					Member.teamLeader(data.id)
-						.success(function(data){
-							$scope.member.all = data;
-							$scope.member.all.show = true;
-						});
+					$scope.user = data;
+					if(data.role=='team-leader')
+					{
+						Member.teamLeader(data.id)
+							.success(function(data){
+								$scope.member.all = data;
+								$scope.member.all.show = true;
+								$scope.option = true;
+							});
+					}
+					else{
+						Member.department(data.department_id)
+							.success(function(data){
+								$scope.member.all = data;
+								$scope.member.all.show = true;
+								$scope.option = false;
+							});
+					}
+					$scope.fab.show = $scope.user.role == 'team-leader' ? true : false;
 				});
 		}
 		else{
-			$scope.toolbar.team_leader_id = user.id
-			Member.teamLeader(user.id)
-				.success(function(data){
-					$scope.member.all = data;
-					$scope.member.all.show = true;
-				});
+			console.log('old');
+			$scope.toolbar.team_leader_id = $scope.user.id
+			$scope.fab.show = $scope.user.role == 'team-leader' ? true : false;
+			if($scope.user.role=='team-leader')
+			{
+				Member.teamLeader($scope.user.id)
+					.success(function(data){
+						$scope.member.all = data;
+						$scope.member.all.show = true;
+						$scope.option = true;
+					});
+			}
+			else{
+				Member.department($scope.user.department_id)
+					.success(function(data){
+						$scope.member.all = data;
+						$scope.member.all.show = true;
+						$scope.option = false;
+					});
+			}
 		}
 
 		/**
@@ -974,28 +1059,6 @@ teamLeaderModule
 		    }, function() {
 		      return;
 		    });			
-		};
-
-		/**
-		 * Object for content view
-		 *
-		*/
-		$scope.fab = {};
-
-		$scope.fab.icon = 'mdi-plus';
-		$scope.fab.label = 'Member';
-		
-		$scope.fab.show = true;
-
-		$scope.fab.action = function(){
-			$mdDialog.show({
-	    		controller: 'addMemberDialogController',
-		      	templateUrl: '/app/components/team-leader/templates/dialogs/add-member.dialog.template.html',
-		      	parent: angular.element(document.body),
-		    })
-		    .then(function(){
-		    	$scope.subheader.refresh();
-		    })
 		};
 	}]);
 teamLeaderModule
@@ -1271,6 +1334,7 @@ teamLeaderModule
 teamLeaderModule
 	.controller('approvalsDialogController', ['$scope', '$mdDialog', 'Approval', 'PerformanceApproval', 'Preloader', function($scope, $mdDialog, Approval, PerformanceApproval, Preloader){
 		var approvalID = Preloader.get();
+		$scope.user = Preloader.getUser();
 
 		Approval.details(approvalID)
 			.success(function(data){
@@ -1293,7 +1357,6 @@ teamLeaderModule
 		$scope.cancel = function(){
 			$mdDialog.cancel();
 		}
-
 		$scope.cancelRequest = function(){
 			Preloader.preload();
 			Approval.delete(approvalID)

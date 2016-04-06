@@ -56,7 +56,7 @@ sharedModule
 				    		});
 				    });
 				}
-				else{
+				else if ($scope.user.role == 'team-leader'){
 					WalkThrough.show($scope.user.id)
 						.success(function(data){
 							$scope.leftSidenavTour = data ? -1 : 0;

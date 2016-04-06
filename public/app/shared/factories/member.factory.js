@@ -27,5 +27,8 @@ sharedModule
 			updateTenure: function(id){
 				return $http.put(urlBase + '-update-tenure/' + id);
 			},
+			department: function(id){
+				return $http.get(urlBase +'-department/' + id);
+			},
 		}
 	}])

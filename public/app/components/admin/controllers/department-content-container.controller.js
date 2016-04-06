@@ -1,6 +1,12 @@
 adminModule
-	.controller('departmentContentContainerController', ['$scope', '$state', '$stateParams', '$mdDialog', 'Preloader', 'Department', 'Report', 'Performance', 'Target', 'User', function($scope, $state, $stateParams, $mdDialog, Preloader, Department, Report, Performance, Target, User){
+	.controller('departmentContentContainerController', ['$scope', '$state', '$stateParams', '$mdDialog', 'Preloader', 'Department', 'Report', 'Performance', 'Target', 'User', 'Project', function($scope, $state, $stateParams, $mdDialog, Preloader, Department, Report, Performance, Target, User, Project){
 		var departmentID = $stateParams.departmentID;
+
+		Project.department(departmentID)
+			.success(function(data){
+				$scope.projects = data;
+			});
+
 		/**
 		 * Object for charts
 		 *

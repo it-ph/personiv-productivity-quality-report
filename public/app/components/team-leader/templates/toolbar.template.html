@@ -33,7 +33,7 @@
 			<md-button class="md-icon-button" ng-click="showSearchBar()" ng-if="subheader.state!='report'" tourtip="{{tour.search}}" tourtip-placement="bottom" tourtip-next-label="NEXT" tourtip-step="0">
 				<md-icon class="mdi mdi-magnify grey" aria-label="Search"></md-icon>
 			</md-button>
-			<md-menu>
+			<md-menu ng-if="user.role!='manager'">
 				<md-button class="md-icon-button" ng-click="$mdOpenMenu($event)" tourtip="{{tour.notification}}" tourtip-placement="bottom" tourtip-next-label="NEXT" tourtip-step="1">
 					<md-icon class="mdi mdi-bell" ng-class="notifications.length ? 'pink' : 'grey'" aria-label="Notifications"></md-icon>
 					<span class="badge" ng-if="notifications.length">{{ notifications.length }}</span>
