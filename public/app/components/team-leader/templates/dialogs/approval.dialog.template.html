@@ -17,13 +17,13 @@
 				<md-icon class="mdi mdi-close grey"></md-icon>
 			</md-button>
 		</div>
-		<md-checkbox class="md-primary" ng-model="checkAll" ng-click="markAll()">Mark All</md-checkbox>
+		<!-- <md-checkbox class="md-primary" ng-model="checkAll" ng-click="markAll()">Mark All</md-checkbox> -->
 		<div layout="row" layout-padding>
 			<div flex layout="column">
 				<h3 class="md-title center-text primary-text">Current</h3>
 				<table class="table">
 					<tr>
-						<th>Mark to include</th>
+						<!-- <th>Mark to include</th> -->
 						<th>Full Name</th>
 						<th>Position</th>
 						<th>Hours Worked</th>
@@ -31,7 +31,7 @@
 						<th>Output w/Error(s)</th>
 					</tr>
 					<tr ng-repeat="performance in details.current">
-						<td><md-checkbox class="md-primary" ng-model="details.request[$index].include"></md-checkbox></td>
+						<!-- <td><md-checkbox class="md-primary" ng-model="details.request[$index].include"></md-checkbox></td> -->
 						<td>{{performance.full_name}}</td>
 						<td ng-class="performance.position != details.request[$index].position ? 'primary-text' : 'main-text'">{{performance.position}}</td>
 						<td ng-class="performance.hours_worked != details.request[$index].hours_worked ? 'primary-text' : 'main-text'">{{performance.hours_worked}}</td>
@@ -60,6 +60,6 @@
 		</div>
 	</md-dialog-content>
 	<div class="md-actions" layout="row" layout-align="end center" ng-if="user!='manager'">
-	    <md-button ng-click="cancelRequest()">Cancel Request</md-button>
+	    <!-- <md-button ng-click="cancelRequest()">Cancel Request</md-button> -->
 	</div>
 </md-dialog>
