@@ -145,6 +145,7 @@ adminModule
 		/* Refreshes the list */
 		$scope.subheader.refresh = function(){
 			$scope.report.show = false;
+			$scope.subheader.project = '';
 			// start preloader
 			Preloader.preload();
 			// clear report

@@ -257,13 +257,13 @@ teamLeaderModule
 					$scope.pending.paginated = data.data;
 					
 				
-				PerformanceApproval.approved($user.id)
+				PerformanceApproval.approvedUser($user.id)
 					.success(function(data){
 						$scope.approved.details = data;
 						$scope.approved.paginated = data.data;
 						
 
-						PerformanceApproval.declined($user.id)
+						PerformanceApproval.declinedUser($user.id)
 							.success(function(data){
 								$scope.declined.details = data;
 								$scope.declined.paginated = data.data;
@@ -287,7 +287,8 @@ teamLeaderModule
 		      parent: angular.element(document.body),
 		    })
 		    .then(function(){
-		    	$scope.subheader.refresh();
+		    	// $scope.subheader.refresh();
+		    	$state.go($state.current, {}, {reload:true});
 		    });
 		}
 
@@ -947,7 +948,7 @@ teamLeaderModule
 		$scope.user = Preloader.getUser();
 		$scope.member = {};
 		if(!$scope.user){
-			console.log('new')
+			// console.log('new')
 			User.index()
 				.success(function(data){
 					$scope.toolbar.team_leader_id = data.id
@@ -973,7 +974,7 @@ teamLeaderModule
 				});
 		}
 		else{
-			console.log('old');
+			// console.log('old');
 			$scope.toolbar.team_leader_id = $scope.user.id
 			$scope.fab.show = $scope.user.role == 'team-leader' ? true : false;
 			if($scope.user.role=='team-leader')
@@ -1302,7 +1303,6 @@ teamLeaderModule
 
 		$scope.submit = function(){
 			$scope.showErrors = true;
-			busy = true;
 			if($scope.addMemberForm.$invalid){
 				angular.forEach($scope.addMemberForm.$error, function(field){
 					angular.forEach(field, function(errorField){
@@ -1316,6 +1316,7 @@ teamLeaderModule
 				/**
 				 * Stores Single Record
 				*/
+				console.log(busy);
 				if(!busy){
 					busy = true;
 					Member.store($scope.member)

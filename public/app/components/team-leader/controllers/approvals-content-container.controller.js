@@ -161,13 +161,13 @@ teamLeaderModule
 					$scope.pending.paginated = data.data;
 					
 				
-				PerformanceApproval.approved($user.id)
+				PerformanceApproval.approvedUser($user.id)
 					.success(function(data){
 						$scope.approved.details = data;
 						$scope.approved.paginated = data.data;
 						
 
-						PerformanceApproval.declined($user.id)
+						PerformanceApproval.declinedUser($user.id)
 							.success(function(data){
 								$scope.declined.details = data;
 								$scope.declined.paginated = data.data;
@@ -191,7 +191,8 @@ teamLeaderModule
 		      parent: angular.element(document.body),
 		    })
 		    .then(function(){
-		    	$scope.subheader.refresh();
+		    	// $scope.subheader.refresh();
+		    	$state.go($state.current, {}, {reload:true});
 		    });
 		}
 

@@ -56,7 +56,7 @@ teamLeaderModule
 		$scope.user = Preloader.getUser();
 		$scope.member = {};
 		if(!$scope.user){
-			console.log('new')
+			// console.log('new')
 			User.index()
 				.success(function(data){
 					$scope.toolbar.team_leader_id = data.id
@@ -82,7 +82,7 @@ teamLeaderModule
 				});
 		}
 		else{
-			console.log('old');
+			// console.log('old');
 			$scope.toolbar.team_leader_id = $scope.user.id
 			$scope.fab.show = $scope.user.role == 'team-leader' ? true : false;
 			if($scope.user.role=='team-leader')

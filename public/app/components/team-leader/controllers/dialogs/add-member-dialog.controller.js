@@ -18,7 +18,6 @@ teamLeaderModule
 
 		$scope.submit = function(){
 			$scope.showErrors = true;
-			busy = true;
 			if($scope.addMemberForm.$invalid){
 				angular.forEach($scope.addMemberForm.$error, function(field){
 					angular.forEach(field, function(errorField){
@@ -32,6 +31,7 @@ teamLeaderModule
 				/**
 				 * Stores Single Record
 				*/
+				console.log(busy);
 				if(!busy){
 					busy = true;
 					Member.store($scope.member)
