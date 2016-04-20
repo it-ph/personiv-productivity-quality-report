@@ -1,27 +1,26 @@
 adminModule
-	.controller('departmentSettingsContentContainerController', ['$scope', '$state', '$mdDialog', 'Preloader', 'Department', function($scope, $state, $mdDialog, Preloader, Department){
+	.controller('workHoursContentContainerController', ['$scope', '$mdDialog', 'Programme', 'Preloader', function($scope, $mdDialog, Programme, Preloader){
 		/**
 		 * Object for toolbar
 		 *
 		*/
 		$scope.toolbar = {};
 		$scope.toolbar.parentState = 'Settings';
-		$scope.toolbar.childState = 'Departments';
+		$scope.toolbar.childState = 'Work Hours';
 		/**
 		 * Object for subheader
 		 *
 		*/
 		$scope.subheader = {};
-		$scope.subheader.state = 'settings';
+		$scope.subheader.state = 'work-hours';
 
 		/* Refreshes the list */
 		$scope.subheader.refresh = function(){
 			// start preloader
 			Preloader.preload();
-			// clear department
-			$scope.setting.all = {};
-			$scope.setting.page = 2;
-			Department.index()
+			// clear user
+			$scope.setting.all = [];
+			Programme.index()
 				.success(function(data){
 					$scope.setting.all = data;
 					$scope.setting.all.show = true;
@@ -36,7 +35,7 @@ adminModule
 		 *
 		*/
 		$scope.setting = {};
-		Department.index()
+		Programme.index()
 			.success(function(data){
 				$scope.setting.all = data;
 				$scope.setting.all.show = true;
@@ -69,7 +68,7 @@ adminModule
 		$scope.searchUserInput = function(){
 			$scope.setting.all.show = false;
 			Preloader.preload()
-			Department.search($scope.toolbar)
+			Programme.search($scope.toolbar)
 				.success(function(data){
 					$scope.setting.results = data;
 					Preloader.stop();
@@ -78,29 +77,57 @@ adminModule
 					Preloader.error();
 				});
 		};
-
-		$scope.show = function(id){
-			$state.go('main.projects', {'departmentID':id});
-		};
-		/**
+/**
 		 * Object for content view
 		 *
 		*/
 		$scope.fab = {};
 
 		$scope.fab.icon = 'mdi-plus';
-		$scope.fab.label = 'Department';
+		$scope.fab.label = 'Work Hours';
 		
 		$scope.fab.show = true;
 
 		$scope.fab.action = function(){
 			$mdDialog.show({
-	    		controller: 'addDepartmentDialogController',
-		      	templateUrl: '/app/components/admin/templates/dialogs/add-department.dialog.template.html',
+		    	controller: 'addWorkHoursDialogController',
+		      	templateUrl: '/app/components/admin/templates/dialogs/add-work-hours.dialog.template.html',
 		      	parent: angular.element(document.body),
 		    })
 		    .then(function(){
 		    	$scope.subheader.refresh();
 		    })
 		};
+
+		$scope.edit = function(id){
+			Preloader.set(id);
+			$mdDialog.show({
+		    	controller: 'editWorkHoursDialogController',
+		      	templateUrl: '/app/components/admin/templates/dialogs/add-work-hours.dialog.template.html',
+		      	parent: angular.element(document.body),
+		    })
+		    .then(function(){
+		    	$scope.subheader.refresh();
+		    })
+		}
+
+		$scope.delete = function(id){
+			var confirm = $mdDialog.confirm()
+		        .title('Delete Work Hour Scheme')
+		        .content('Are you sure you want to delete this work hour scheme?')
+		       	.ariaLabel('Delete Work Hour Scheme')
+		        .ok('Delete')
+		        .cancel('Cancel');
+		    $mdDialog.show(confirm).then(function() {
+		    	Programme.delete(id)
+		    		.success(function(){
+		    			$scope.subheader.refresh();
+		    		})
+		    		.error(function(){
+		    			Preloader.error();
+		    		})
+		    }, function() {
+		    	return;
+		    });
+		}
 	}]);

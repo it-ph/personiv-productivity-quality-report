@@ -16,29 +16,6 @@
 		      	<md-radio-button class="md-primary" value="Team Performance">Team Performance</md-radio-button>
 		    </md-radio-group>
 			<div ng-if="details.type=='Weekly'" layout="column">
-				<!-- <div layout="row">
-					Date Start
-					<md-input-container flex>
-						<label>Date Start</label>
-						<input type="text" name="DateStart" required ng-model="details.date_start" data-date-format="yyyy-MM-dd" data-max-date="today" data-autoclose="1" bs-datepicker data-timezone="UTC">
-						<div ng-messages="downloadReportForm.DateStart.$error" ng-if="downloadReportForm.DateStart.$touched">
-							<div ng-messages-include="/app/shared/templates/validation-message.html"></div>
-						</div>
-					</md-input-container>
-					Date End
-					<md-input-container flex>
-						<label>Date End</label>
-						<input type="text" name="DateEnd" required ng-model="details.date_end" data-date-format="yyyy-MM-dd" data-max-date="today" data-min-date="{{details.date_start}}" data-autoclose="1" bs-datepicker data-timezone="UTC">
-						<div ng-messages="downloadReportForm.DateEnd.$error" ng-if="downloadReportForm.DateEnd.$touched">
-							<div ng-messages-include="/app/shared/templates/validation-message.html"></div>
-						</div>
-					</md-input-container>
-				</div>
-				<br>
-				<br>
-				<br>
-				<br>
-				<br> -->
 				<div layout="row" layout-align="center center">
 					<!-- Date Start Month -->
 					<md-input-container flex>
@@ -88,8 +65,8 @@
 				<md-input-container flex>
 					<label>Daily Work Hours</label>
 					<md-select name="WorkHours" required ng-model="details.daily_work_hours">
-						<md-option ng-repeat="hour in hours" value="{{ hour }}">
-							{{ hour }}
+						<md-option ng-repeat="hour in work_hours" value="{{ hour.daily_work_hours }}">
+							{{ hour.label }} - {{ hour.daily_work_hours }} hour(s)
 						</md-option>
 					</md-select>
 					<div ng-messages="downloadReportForm.WorkHours.$error" ng-if="downloadReportForm.WorkHours.$touched">
@@ -127,8 +104,8 @@
 				<md-input-container flex>
 					<label>Daily Work Hours</label>
 					<md-select name="WorkHours" required ng-model="details.daily_work_hours">
-						<md-option ng-repeat="hour in hours" value="{{ hour }}">
-							{{ hour }}
+						<md-option ng-repeat="hour in work_hours" value="{{ hour.daily_work_hours }}">
+							{{ hour.label }} - {{ hour.daily_work_hours }} hour(s)
 						</md-option>
 					</md-select>
 					<div ng-messages="downloadReportForm.WorkHours.$error" ng-if="downloadReportForm.WorkHours.$touched">
@@ -166,8 +143,8 @@
 				<md-input-container flex>
 					<label>Daily Work Hours</label>
 					<md-select name="WorkHours" required ng-model="details.daily_work_hours">
-						<md-option ng-repeat="hour in hours" value="{{ hour }}">
-							{{ hour }}
+						<md-option ng-repeat="hour in work_hours" value="{{ hour.daily_work_hours }}">
+							{{ hour.label }} - {{ hour.daily_work_hours }} hour(s)
 						</md-option>
 					</md-select>
 					<div ng-messages="downloadReportForm.WorkHours.$error" ng-if="downloadReportForm.WorkHours.$touched">

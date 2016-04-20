@@ -20,6 +20,81 @@ teamLeaderModule
 				})
 		}
 
+		$scope.filterDate = {};
+		$scope.filterDate.type = 'Weekly';
+
+		$scope.months = [
+			{'value': '01', 'month': 'January'},
+			{'value': '02', 'month': 'February'},
+			{'value': '03', 'month': 'March'},
+			{'value': '04', 'month': 'April'},
+			{'value': '05', 'month': 'May'},
+			{'value': '06', 'month': 'June'},
+			{'value': '07', 'month': 'July'},
+			{'value': '08', 'month': 'August'},
+			{'value': '09', 'month': 'September'},
+			{'value': '10', 'month': 'October'},
+			{'value': '11', 'month': 'November'},
+			{'value': '12', 'month': 'December'},
+		];
+
+		$scope.months_array = [
+			'January',
+			'February',
+			'March',
+			'April',
+			'May',
+			'June',
+			'July',
+			'August',
+			'September',
+			'October',
+			'November',
+			'December',
+		];
+
+		$scope.years = [];
+		
+		var dateCreated = 2015;
+
+		// will generate the dates that will be used in drop down menu
+		for (var i = new Date().getFullYear(); i >= dateCreated; i--) {
+			$scope.years.push(i);
+		};
+
+		$scope.filterDate.date_start_month = $scope.months_array[new Date().getMonth()];
+		$scope.filterDate.date_start_year = $scope.years[0];
+		
+		$scope.getMondays = function(){
+			$scope.filterDate.date_end = null;
+			$scope.filterDate.date_start = null;
+			$scope.filterDate.weekend = [];
+			Performance.getMondays($scope.filterDate)
+				.success(function(data){
+					$scope.mondays = data;
+				})
+				.error(function(){
+					Preloader.error();
+				});
+		};
+
+		$scope.getWeekends = function(){	
+			$scope.filterDate.date_end = null;	
+			$scope.filterDate.weekend = [];
+			Performance.getWeekends($scope.filterDate)
+				.success(function(data){
+					$scope.weekends = data;
+				})
+				.error(function(){
+					Preloader.error();
+				});
+		};
+
+		$scope.clearFilter = function(){
+			$scope.subheader.project = '';
+			$scope.filterDate.date_start = '';
+			$scope.filterDate.date_end = ''
+		}
 		/**
 		 * Object for charts
 		 *
@@ -298,9 +373,9 @@ teamLeaderModule
 		// 	return;
 		// };
 
-		// $scope.rightSidenav = {};
+		$scope.rightSidenav = {};
 
-		// $scope.rightSidenav.show = true;
+		$scope.rightSidenav.show = true;
 
 		$scope.editReport = function(id){
 			$state.go('main.edit-report', {'reportID':id});

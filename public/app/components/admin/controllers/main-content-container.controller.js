@@ -1,5 +1,5 @@
 adminModule
-	.controller('mainContentContainerController', ['$scope', '$state', '$stateParams', '$mdDialog', 'Preloader', 'Report', 'User', 'Target', function($scope, $state, $stateParams, $mdDialog, Preloader, Report, User, Target){
+	.controller('mainContentContainerController', ['$scope', '$state', '$stateParams', '$mdDialog', 'Preloader', 'Report', 'User', 'Target', 'Programme', function($scope, $state, $stateParams, $mdDialog, Preloader, Report, User, Target, Programme){
 		$scope.report = {};
 		$scope.months = [
 			'January',
@@ -23,7 +23,10 @@ adminModule
 			$scope.years.push(i);
 		};
 
-		$scope.hours = [7.5, 8.3, 9.1];
+		Programme.index()
+			.success(function(data){
+				$scope.work_hours = data;
+			});
 
 		$scope.currentMonth = $scope.months[new Date().getMonth()];
 

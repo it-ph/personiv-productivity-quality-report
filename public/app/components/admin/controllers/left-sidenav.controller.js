@@ -20,6 +20,10 @@ adminModule
 				'name':'Team Leaders',
 				'state':'main.team-leaders',
 			},
+			{
+				'name':'Work hours',
+				'state':'main.work-hours',
+			},
 		],
 
 		/* AJAX Request Department */

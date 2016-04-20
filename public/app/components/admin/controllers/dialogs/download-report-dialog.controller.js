@@ -1,9 +1,14 @@
 adminModule
-	.controller('downloadReportDialogController', ['$scope', '$mdDialog', '$filter', 'Preloader', 'Report', 'Performance', function($scope, $mdDialog, $filter, Preloader, Report, Performance){
+	.controller('downloadReportDialogController', ['$scope', '$mdDialog', '$filter', 'Preloader', 'Report', 'Performance', 'Programme', function($scope, $mdDialog, $filter, Preloader, Report, Performance, Programme){
 		$scope.details = {};
 		$scope.details.type = 'Weekly';
 
-		$scope.hours = [7.5, 8.3, 9.1];
+		Programme.index()
+			.success(function(data){
+				$scope.work_hours = data;
+			})
+
+		// $scope.hours = [7.5, 8.3, 9.1];
 
 		$scope.months = [
 			{'value': '01', 'month': 'January'},

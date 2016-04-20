@@ -1022,10 +1022,14 @@ class ReportController extends Controller
     public function downloadMonthlySummary($month, $year, $daily_work_hours)
     {
         $this->projects = DB::table('projects')->get();
-        $this->month = $month;
-        $this->year = $year;
-        $this->date_start = $this->year.'-'.$this->month.'-'.'01';
-        $this->date_end = $this->year.'-'.$this->month.'-'.'31';
+        // $this->month = $month;
+        // $this->year = $year;
+        // $this->date_start = $this->year.'-'.$this->month.'-'.'01';
+        // $this->date_end = $this->year.'-'.$this->month.'-'.'31';
+        // $tihs->date_start = new Carbon::('first day of ')
+        $months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+        $this->date_start = new Carbon('last day of last month '. $months[(int)$month-1] .' '. $year);
+        $this->date_end = new Carbon('first day of next month'. $months[(int)$month-1] .' '. $year);
         $this->date_start_format = date_create($this->date_start)->format("F Y");
         $this->date_end_format = date_create($this->date_end)->format("F Y");
         
@@ -1172,17 +1176,22 @@ class ReportController extends Controller
 
                     if($query){
                         array_push($results, $query);
+
+                        $this->total_output += $query->output;
+                        $this->total_output_error += $query->output_error;
+                        $this->total_hours_worked += $query->hours_worked;
                     }
                     else{
                         $blank = new Performance;
                         $blank->productivity = 0;
                         $blank->quality = 0;
                         array_push($results, $blank);
+
+                        $this->total_output += $blank->output;
+                        $this->total_output_error += $blank->output_error;
+                        $this->total_hours_worked += $blank->hours_worked;
                     }
 
-                    $this->total_output += $query->output;
-                    $this->total_output_error += $query->output_error;
-                    $this->total_hours_worked += $query->hours_worked;
                     
                 }
 
@@ -1663,11 +1672,11 @@ class ReportController extends Controller
 
     public function paginateDepartmentDetails($departmentID)
     {
-        return Report::where('department_id', $departmentID)->orderBy('created_at', 'desc')->paginate(4);
+        return Report::where('department_id', $departmentID)->orderBy('date_start', 'desc')->paginate(4);
     }
     public function paginateDepartment($departmentID)
     {
-        $report = Report::where('department_id', $departmentID)->orderBy('created_at', 'desc')->paginate(4);
+        $report = Report::where('department_id', $departmentID)->orderBy('date_start', 'desc')->paginate(4);
         $report_array = array();
 
         // will fetch every performance and results for the specific report

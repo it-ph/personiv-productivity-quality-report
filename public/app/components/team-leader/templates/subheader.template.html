@@ -4,16 +4,5 @@
 			<md-icon class="mdi mdi-refresh grey" aria-label="Refresh"></md-icon>
 			<md-tooltip>Refresh</md-tooltip>
 		</md-button>
-		<md-input-container ng-if="subheader.state=='dashboard'" flex>
-			<label>Projects</label>
-			<md-select ng-model="subheader.project">
-				<md-option value="">
-					<span class="accent-text"></span>
-				</md-option>
-				<md-option ng-repeat="project in projects" value="{{project.name}}">
-					{{project.name}}
-				</md-option>
-			</md-select>
-		</md-input-container>
 	</div>
 </tour>

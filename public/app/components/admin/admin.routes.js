@@ -46,6 +46,21 @@ adminModule
 					}
 				}
 			})
+			.state('main.work-hours', {
+				url:'work-hours',
+				views: {
+					'content-container': {
+						templateUrl: '/app/components/admin/views/content-container.view.html',
+						controller: 'workHoursContentContainerController',
+					},
+					'toolbar@main.work-hours': {
+						templateUrl: '/app/components/admin/templates/toolbar.template.html',
+					},
+					'content@main.work-hours':{
+						templateUrl: '/app/components/admin/templates/content/work-hours.content.template.html',
+					},
+				},
+			})
 			.state('main.team-leaders', {
 				url:'team-leaders',
 				views: {

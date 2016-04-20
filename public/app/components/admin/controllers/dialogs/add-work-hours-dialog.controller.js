@@ -1,6 +1,6 @@
 adminModule
-	.controller('addDepartmentDialogController', ['$scope', '$mdDialog', 'Preloader', 'Department', function($scope, $mdDialog, Preloader, Department){
-		$scope.department = {};
+	.controller('addWorkHoursDialogController', ['$scope', '$mdDialog', 'Preloader', 'Programme', function($scope, $mdDialog, Preloader, Programme){
+		$scope.programme = {};
 		var busy = false;
 
 		$scope.cancel = function(){
@@ -8,8 +8,8 @@ adminModule
 		}
 
 		$scope.submit = function(){
-			if($scope.addDepartmentForm.$invalid){
-				angular.forEach($scope.addDepartmentForm.$error, function(field){
+			if($scope.addProgrammeForm.$invalid){
+				angular.forEach($scope.addProgrammeForm.$error, function(field){
 					angular.forEach(field, function(errorField){
 						errorField.$setTouched();
 					});
@@ -23,7 +23,7 @@ adminModule
 				*/
 				if(!busy){
 					busy = true;
-					Department.store($scope.department)
+					Programme.store($scope.programme)
 						.success(function(){
 							// Stops Preloader 
 							Preloader.stop();

@@ -7,15 +7,4 @@
 		<md-icon class="mdi mdi-download grey" aria-label="Download"></md-icon>
 		<md-tooltip>Download</md-tooltip>
 	</md-button>
-	<md-input-container ng-if="subheader.state=='department'" flex="20">
-		<label>Projects</label>
-		<md-select ng-model="subheader.project">
-			<md-option value="">
-				<span class="accent-text"></span>
-			</md-option>
-			<md-option ng-repeat="project in projects" value="{{project.name}}">
-				{{project.name}}
-			</md-option>
-		</md-select>
-	</md-input-container>
 </div>

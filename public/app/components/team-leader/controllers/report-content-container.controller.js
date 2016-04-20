@@ -1,5 +1,5 @@
 teamLeaderModule
-	.controller('reportContentContainerController', ['$scope', '$state', '$mdDialog', '$mdToast', 'Preloader', 'Member', 'Project', 'Position', 'Performance', 'User', function($scope, $state, $mdDialog, $mdToast, Preloader, Member, Project, Position, Performance, User){		
+	.controller('reportContentContainerController', ['$scope', '$state', '$mdDialog', '$mdToast', 'Preloader', 'Member', 'Project', 'Position', 'Performance', 'User', 'Programme', function($scope, $state, $mdDialog, $mdToast, Preloader, Member, Project, Position, Performance, User, Programme){		
 		var user = Preloader.getUser();
 		var departmentID = null;
 		var busy = false;
@@ -96,11 +96,16 @@ teamLeaderModule
 				});
 		};
 
-		$scope.hours = [
-			{'value': 7.5},
-			{'value': 8.3},
-			{'value': 9.1},
-		];
+		Programme.index()
+			.success(function(data){
+				$scope.work_hours = data;
+			})
+
+		// $scope.hours = [
+		// 	{'value': 7.5},
+		// 	{'value': 8.3},
+		// 	{'value': 9.1},
+		// ];
 		/**
 		 * Object for toolbar
 		 *

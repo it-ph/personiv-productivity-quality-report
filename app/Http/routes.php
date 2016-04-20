@@ -36,6 +36,7 @@ Route::get('home', 'HomeController@role');
 // Route resource
 Route::group(['middleware' => 'auth'], function () {
 	Route::resource('department', 'DepartmentController');
+	Route::resource('programme', 'ProgrammeController');
 	Route::resource('member', 'MemberController');
 	Route::resource('notification', 'NotificationController');
 	Route::resource('position', 'PositionController');
@@ -65,6 +66,7 @@ Route::group(['middleware' => 'auth'], function () {
 
 	// Route resource search
 	Route::post('department-search', 'DepartmentController@search');
+	Route::post('programme-search', 'ProgrammeController@search');
 	Route::post('project-search', 'ProjectController@search');
 	Route::post('position-search', 'PositionController@search');
 	Route::post('member-search', 'MemberController@search');

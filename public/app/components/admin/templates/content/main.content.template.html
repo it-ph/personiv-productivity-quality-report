@@ -27,8 +27,8 @@
 			<md-input-container flex>
 				<label>Daily Work Hours</label>
 				<md-select ng-model="report.daily_work_hours" required name="DailyWorkHours">
-					<md-option ng-repeat="hour in hours" value="{{ hour }}">
-						{{ hour }}
+					<md-option ng-repeat="hour in work_hours" value="{{ hour.daily_work_hours }}">
+						{{ hour.label }} - {{ hour.daily_work_hours }} hour(s)
 					</md-option>
 				</md-select>
 				<div ng-messages="form.searchMonthlyForm.DailyWorkHours.$error" ng-if="form.searchMonthlyForm.DailyWorkHours.$touched">

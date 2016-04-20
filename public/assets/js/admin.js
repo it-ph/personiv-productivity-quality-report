@@ -50,6 +50,21 @@ adminModule
 					}
 				}
 			})
+			.state('main.work-hours', {
+				url:'work-hours',
+				views: {
+					'content-container': {
+						templateUrl: '/app/components/admin/views/content-container.view.html',
+						controller: 'workHoursContentContainerController',
+					},
+					'toolbar@main.work-hours': {
+						templateUrl: '/app/components/admin/templates/toolbar.template.html',
+					},
+					'content@main.work-hours':{
+						templateUrl: '/app/components/admin/templates/content/work-hours.content.template.html',
+					},
+				},
+			})
 			.state('main.team-leaders', {
 				url:'team-leaders',
 				views: {
@@ -408,6 +423,82 @@ adminModule
 				$scope.projects = data;
 			});
 
+		$scope.filterDate = {};
+		$scope.filterDate.type = 'Weekly';
+
+		$scope.months = [
+			{'value': '01', 'month': 'January'},
+			{'value': '02', 'month': 'February'},
+			{'value': '03', 'month': 'March'},
+			{'value': '04', 'month': 'April'},
+			{'value': '05', 'month': 'May'},
+			{'value': '06', 'month': 'June'},
+			{'value': '07', 'month': 'July'},
+			{'value': '08', 'month': 'August'},
+			{'value': '09', 'month': 'September'},
+			{'value': '10', 'month': 'October'},
+			{'value': '11', 'month': 'November'},
+			{'value': '12', 'month': 'December'},
+		];
+
+		$scope.months_array = [
+			'January',
+			'February',
+			'March',
+			'April',
+			'May',
+			'June',
+			'July',
+			'August',
+			'September',
+			'October',
+			'November',
+			'December',
+		];
+
+		$scope.years = [];
+		
+		var dateCreated = 2015;
+
+		// will generate the dates that will be used in drop down menu
+		for (var i = new Date().getFullYear(); i >= dateCreated; i--) {
+			$scope.years.push(i);
+		};
+
+		$scope.filterDate.date_start_month = $scope.months_array[new Date().getMonth()];
+		$scope.filterDate.date_start_year = $scope.years[0];
+		
+		$scope.getMondays = function(){
+			$scope.filterDate.date_end = null;
+			$scope.filterDate.date_start = null;
+			$scope.filterDate.weekend = [];
+			Performance.getMondays($scope.filterDate)
+				.success(function(data){
+					$scope.mondays = data;
+				})
+				.error(function(){
+					Preloader.error();
+				});
+		};
+
+		$scope.getWeekends = function(){	
+			$scope.filterDate.date_end = null;	
+			$scope.filterDate.weekend = [];
+			Performance.getWeekends($scope.filterDate)
+				.success(function(data){
+					$scope.weekends = data;
+				})
+				.error(function(){
+					Preloader.error();
+				});
+		};
+
+		$scope.clearFilter = function(){
+			$scope.subheader.project = '';
+			$scope.filterDate.date_start = '';
+			$scope.filterDate.date_end = ''
+		}
+
 		/**
 		 * Object for charts
 		 *
@@ -678,9 +769,9 @@ adminModule
 		// 	return;
 		// };
 
-		// $scope.rightSidenav = {};
+		$scope.rightSidenav = {};
 
-		// $scope.rightSidenav.show = true;
+		$scope.rightSidenav.show = true;
 
 		$scope.editReport = function(id){
 			$state.go('main.edit-report', {'reportID':id});
@@ -704,7 +795,6 @@ adminModule
 	}]);
 adminModule
 	.controller('departmentSettingsContentContainerController', ['$scope', '$state', '$mdDialog', 'Preloader', 'Department', function($scope, $state, $mdDialog, Preloader, Department){
-		
 		/**
 		 * Object for toolbar
 		 *
@@ -971,6 +1061,10 @@ adminModule
 				'name':'Team Leaders',
 				'state':'main.team-leaders',
 			},
+			{
+				'name':'Work hours',
+				'state':'main.work-hours',
+			},
 		],
 
 		/* AJAX Request Department */
@@ -986,7 +1080,7 @@ adminModule
 		};
 	}]);
 adminModule
-	.controller('mainContentContainerController', ['$scope', '$state', '$stateParams', '$mdDialog', 'Preloader', 'Report', 'User', 'Target', function($scope, $state, $stateParams, $mdDialog, Preloader, Report, User, Target){
+	.controller('mainContentContainerController', ['$scope', '$state', '$stateParams', '$mdDialog', 'Preloader', 'Report', 'User', 'Target', 'Programme', function($scope, $state, $stateParams, $mdDialog, Preloader, Report, User, Target, Programme){
 		$scope.report = {};
 		$scope.months = [
 			'January',
@@ -1010,7 +1104,10 @@ adminModule
 			$scope.years.push(i);
 		};
 
-		$scope.hours = [7.5, 8.3, 9.1];
+		Programme.index()
+			.success(function(data){
+				$scope.work_hours = data;
+			});
 
 		$scope.currentMonth = $scope.months[new Date().getMonth()];
 
@@ -1585,6 +1682,139 @@ adminModule
 		};
 	}]);
 adminModule
+	.controller('workHoursContentContainerController', ['$scope', '$mdDialog', 'Programme', 'Preloader', function($scope, $mdDialog, Programme, Preloader){
+		/**
+		 * Object for toolbar
+		 *
+		*/
+		$scope.toolbar = {};
+		$scope.toolbar.parentState = 'Settings';
+		$scope.toolbar.childState = 'Work Hours';
+		/**
+		 * Object for subheader
+		 *
+		*/
+		$scope.subheader = {};
+		$scope.subheader.state = 'work-hours';
+
+		/* Refreshes the list */
+		$scope.subheader.refresh = function(){
+			// start preloader
+			Preloader.preload();
+			// clear user
+			$scope.setting.all = [];
+			Programme.index()
+				.success(function(data){
+					$scope.setting.all = data;
+					$scope.setting.all.show = true;
+					Preloader.stop();
+				})
+				.error(function(){
+					Preloader.stop();
+				});
+		};
+		/**
+		 * Object for setting
+		 *
+		*/
+		$scope.setting = {};
+		Programme.index()
+			.success(function(data){
+				$scope.setting.all = data;
+				$scope.setting.all.show = true;
+			});
+
+		/**
+		 * Status of search bar.
+		 *
+		*/
+		$scope.searchBar = false;
+
+		/**
+		 * Reveals the search bar.
+		 *
+		*/
+		$scope.showSearchBar = function(){
+			$scope.searchBar = true;
+		};
+
+		/**
+		 * Hides the search bar.
+		 *
+		*/
+		$scope.hideSearchBar = function(){
+			$scope.toolbar.userInput = '';
+			$scope.searchBar = false;
+		};
+		
+		
+		$scope.searchUserInput = function(){
+			$scope.setting.all.show = false;
+			Preloader.preload()
+			Programme.search($scope.toolbar)
+				.success(function(data){
+					$scope.setting.results = data;
+					Preloader.stop();
+				})
+				.error(function(data){
+					Preloader.error();
+				});
+		};
+/**
+		 * Object for content view
+		 *
+		*/
+		$scope.fab = {};
+
+		$scope.fab.icon = 'mdi-plus';
+		$scope.fab.label = 'Work Hours';
+		
+		$scope.fab.show = true;
+
+		$scope.fab.action = function(){
+			$mdDialog.show({
+		    	controller: 'addWorkHoursDialogController',
+		      	templateUrl: '/app/components/admin/templates/dialogs/add-work-hours.dialog.template.html',
+		      	parent: angular.element(document.body),
+		    })
+		    .then(function(){
+		    	$scope.subheader.refresh();
+		    })
+		};
+
+		$scope.edit = function(id){
+			Preloader.set(id);
+			$mdDialog.show({
+		    	controller: 'editWorkHoursDialogController',
+		      	templateUrl: '/app/components/admin/templates/dialogs/add-work-hours.dialog.template.html',
+		      	parent: angular.element(document.body),
+		    })
+		    .then(function(){
+		    	$scope.subheader.refresh();
+		    })
+		}
+
+		$scope.delete = function(id){
+			var confirm = $mdDialog.confirm()
+		        .title('Delete Work Hour Scheme')
+		        .content('Are you sure you want to delete this work hour scheme?')
+		       	.ariaLabel('Delete Work Hour Scheme')
+		        .ok('Delete')
+		        .cancel('Cancel');
+		    $mdDialog.show(confirm).then(function() {
+		    	Programme.delete(id)
+		    		.success(function(){
+		    			$scope.subheader.refresh();
+		    		})
+		    		.error(function(){
+		    			Preloader.error();
+		    		})
+		    }, function() {
+		    	return;
+		    });
+		}
+	}]);
+adminModule
 	.controller('addDepartmentDialogController', ['$scope', '$mdDialog', 'Preloader', 'Department', function($scope, $mdDialog, Preloader, Department){
 		$scope.department = {};
 		var busy = false;
@@ -1610,7 +1840,7 @@ adminModule
 				if(!busy){
 					busy = true;
 					Department.store($scope.department)
-						.then(function(){
+						.success(function(){
 							// Stops Preloader 
 							Preloader.stop();
 							busy = false;
@@ -1867,6 +2097,43 @@ adminModule
 		}
 	}]);
 adminModule
+	.controller('addWorkHoursDialogController', ['$scope', '$mdDialog', 'Preloader', 'Programme', function($scope, $mdDialog, Preloader, Programme){
+		$scope.programme = {};
+		var busy = false;
+
+		$scope.cancel = function(){
+			$mdDialog.cancel();
+		}
+
+		$scope.submit = function(){
+			if($scope.addProgrammeForm.$invalid){
+				angular.forEach($scope.addProgrammeForm.$error, function(field){
+					angular.forEach(field, function(errorField){
+						errorField.$setTouched();
+					});
+				});
+			}
+			else{
+				/* Starts Preloader */
+				Preloader.preload();
+				/**
+				 * Stores Single Record
+				*/
+				if(!busy){
+					busy = true;
+					Programme.store($scope.programme)
+						.success(function(){
+							// Stops Preloader 
+							Preloader.stop();
+							busy = false;
+						}, function(){
+							Preloader.error();
+						});
+				}
+			}
+		}
+	}]);
+adminModule
 	.controller('approvalsDialogController', ['$scope', '$mdDialog', 'Approval', 'PerformanceApproval', 'Preloader', function($scope, $mdDialog, Approval, PerformanceApproval, Preloader){
 		var approvalID = Preloader.get();
 		var count = 0;
@@ -1970,11 +2237,16 @@ adminModule
 		}
 	}]);
 adminModule
-	.controller('downloadReportDialogController', ['$scope', '$mdDialog', '$filter', 'Preloader', 'Report', 'Performance', function($scope, $mdDialog, $filter, Preloader, Report, Performance){
+	.controller('downloadReportDialogController', ['$scope', '$mdDialog', '$filter', 'Preloader', 'Report', 'Performance', 'Programme', function($scope, $mdDialog, $filter, Preloader, Report, Performance, Programme){
 		$scope.details = {};
 		$scope.details.type = 'Weekly';
 
-		$scope.hours = [7.5, 8.3, 9.1];
+		Programme.index()
+			.success(function(data){
+				$scope.work_hours = data;
+			})
+
+		// $scope.hours = [7.5, 8.3, 9.1];
 
 		$scope.months = [
 			{'value': '01', 'month': 'January'},
@@ -2168,6 +2440,52 @@ adminModule
 						.error(function(){
 							Preloader.error();
 							busy = false;
+						});
+				}
+			}
+		}
+	}]);
+adminModule
+	.controller('editWorkHoursDialogController', ['$scope', '$mdDialog', 'Preloader', 'Programme', function($scope, $mdDialog, Preloader, Programme){
+		var programmeID = Preloader.get();
+		
+		Programme.show(programmeID)
+			.success(function(data){
+				$scope.programme = data;
+			})
+			.error(function(){
+				Preloader.error();
+			});
+
+		var busy = false;
+
+		$scope.cancel = function(){
+			$mdDialog.cancel();
+		}
+
+		$scope.submit = function(){
+			if($scope.addProgrammeForm.$invalid){
+				angular.forEach($scope.addProgrammeForm.$error, function(field){
+					angular.forEach(field, function(errorField){
+						errorField.$setTouched();
+					});
+				});
+			}
+			else{
+				/* Starts Preloader */
+				Preloader.preload();
+				/**
+				 * Stores Single Record
+				*/
+				if(!busy){
+					busy = true;
+					Programme.update(programmeID, $scope.programme)
+						.success(function(){
+							// Stops Preloader 
+							Preloader.stop();
+							busy = false;
+						}, function(){
+							Preloader.error();
 						});
 				}
 			}

@@ -1,24 +1,62 @@
 <md-toolbar class="white-toolbar"> 
 	<div class="md-toolbar-tools">
-		<h2 class="primary-text">Targets</h2>
+		<h2 class="primary-text">Filters</h2>
 	</div>
 </md-toolbar>
-<md-content>
-	<md-subheader>
-		<p>Yellow: Beginner</p>
-		<p>Green: Moderately Experienced</p>
-		<p>Blue: Experienced</p>
-	</md-subheader>
-	<md-list layout="row" layout-wrap>
-		<md-list-item flex class="md-2-line" ng-repeat="target in targets">
-			<h2 class="md-avatar md-headline" ng-class="{'orange-bg': target.first_letter=='B' , 'teal-bg': target.first_letter=='M', 'blue-bg': target.first_letter=='E'}" layout="row" layout-align="center center">
-				<span class="weight-200 white-text">{{ target.first_letter }}</span>
-			</h2>
-			<div class="md-list-item-text" layout="column" flex>
-				<h3>{{ target.position }}</h3>
-				<h4>{{ target.project }}</h4>
-				<p>{{ target.type }}: {{ target.value | number:1 }}<span ng-if="target.type=='Quality'">%</span></p>
-			</div>
-		</md-list-item>
-	</md-list>
+<md-content layout-padding>
+	<md-input-container flex>
+		<label>Projects</label>
+		<md-select ng-model="subheader.project">
+			<md-option ng-repeat="project in projects" value="{{project.name}}">
+				{{project.name}}
+			</md-option>
+		</md-select>
+	</md-input-container>
+
+	<!-- Date Start Month -->
+	<md-input-container flex>
+		<label>Month</label>
+		<md-select name="DateStartMonth" ng-model="filterDate.date_start_month" ng-change="getMondays()">
+			<md-option ng-repeat="month in months_array" value="{{month}}">{{month}}</md-option>
+		</md-select>
+		<div ng-messages="form.createReportForm.DateStartMonth.$error" ng-if="form.createReportForm.DateStartMonth.$touched">
+			<div ng-messages-include="/app/shared/templates/validation-message-date.html"></div>
+		</div>
+	</md-input-container>
+	<!-- Mondays -->
+	<md-input-container flex>
+		<label>Date Start</label>
+		<md-select name="DateStart" ng-model="filterDate.date_start" ng-change="getWeekends()">
+			<md-option ng-repeat="monday in mondays.mondays" value="{{monday}}">{{mondays.day[$index]}}</md-option>
+		</md-select>
+		<!-- <div class="hint" ng-if="!showErrors">Date Start is always Monday</div> -->
+		<div ng-messages="form.createReportForm.DateStart.$error" ng-if="form.createReportForm.DateStart.$touched && showErrors">
+			<div ng-messages-include="/app/shared/templates/validation-message-date.html"></div>
+		</div>
+	</md-input-container>
+	<!-- <span flex="5" class="center-text">to</span> -->
+	<!-- Weekend -->
+	<md-input-container flex>
+		<label>Date End</label>
+		<md-select name="DateStart" ng-model="filterDate.date_end">
+			<md-option ng-repeat="weekend in weekends.weekends" value="{{weekend}}">{{weekends.day[$index]}}</md-option>
+		</md-select>
+		<!-- <div class="hint" ng-if="!showErrors">Date End is either Friday or Saturday</div> -->
+		<div ng-messages="form.createReportForm.DateStart.$error" ng-if="form.createReportForm.DateStart.$touched && showErrors">
+			<div ng-messages-include="/app/shared/templates/validation-message-date.html"></div>
+		</div>
+	</md-input-container>
+	<!-- Date Start Year -->
+	<md-input-container flex>
+		<label>Year</label>
+		<md-select name="DateStartYear" ng-model="filterDate.date_start_year" ng-change="getMondays()">
+			<md-option ng-repeat="year in years" value="{{year}}">{{year}}</md-option>
+		</md-select>
+		<div ng-messages="form.createReportForm.DateStartYear.$error" ng-if="form.createReportForm.DateStartYear.$touched">
+			<div ng-messages-include="/app/shared/templates/validation-message-date.html"></div>
+		</div>
+	</md-input-container>
+	<md-button class="md-accent md-raised" ng-click="clearFilter()">
+		Clear
+	</md-button>
 </md-content>

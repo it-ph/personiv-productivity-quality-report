@@ -8,9 +8,9 @@
 						<span class="weight-200 white-text">{{ setting.first_letter }}</span>
 					</h2>
 					<div class="md-list-item-text" layout="column" flex>
-						<h3>{{ setting.name }} {{ setting.first_name }} {{ setting.last_name }}</h3>
-						<h4>{{ setting.department_name }}</h4>
-						<p>{{ setting.email }}</p>
+						<h3>{{ setting.name }} {{ setting.first_name }} {{ setting.last_name }} {{ setting.label }}</h3>
+						<h4>{{ setting.department_name }} {{ setting.daily_work_hours }} <span ng-if="setting.daily_work_hours">hours</span></h4>
+						<p>{{ setting.email }} {{ setting.created_at_formatted }}</p>
 					</div>
 				</md-list-item>
 			</md-list>
@@ -32,9 +32,9 @@
 							<span class="weight-200 white-text">{{ setting.first_letter }}</span>
 						</h2>
 						<div class="md-list-item-text" layout="column" flex>
-							<h3>{{ setting.name }} {{ setting.first_name }} {{ setting.last_name }}</h3>
-							<h4>{{ setting.department_name }}</h4>
-							<p>{{ setting.email }}</p>
+							<h3>{{ setting.name }} {{ setting.first_name }} {{ setting.last_name }} {{ setting.label }}</h3>
+							<h4>{{ setting.department_name }} {{ setting.daily_work_hours }} <span ng-if="setting.daily_work_hours">hours</span></h4>
+							<p>{{ setting.email }} {{ setting.created_at_formatted }}</p>
 						</div>
 					</md-list-item>
 				</md-list>

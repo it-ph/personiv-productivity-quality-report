@@ -38,7 +38,7 @@
 						<!-- Weekend -->
 						<md-input-container flex>
 							<label>Date End</label>
-							<md-select name="DateStart" ng-model="details.date_end" required>
+							<md-select name="DateStart" ng-model="details.date_end" required ng-change="resetMembers()">
 								<md-option ng-repeat="weekend in weekends.weekends" value="{{weekend}}">{{weekends.day[$index]}}</md-option>
 							</md-select>
 							<div class="hint" ng-if="!showErrors">Date End is either Friday or Saturday</div>
@@ -74,8 +74,8 @@
 						<md-input-container flex>
 							<label>Daily Work Hours</label>
 							<md-select name="WorkHours" ng-change="resetMembers()" required ng-model="details.daily_work_hours">
-								<md-option ng-repeat="hour in hours" value="{{ hour.value }}">
-									{{ hour.value }}
+								<md-option ng-repeat="hour in work_hours" value="{{ hour.daily_work_hours }}">
+									{{ hour.label }} - {{ hour.daily_work_hours }} hour(s)
 								</md-option>
 							</md-select>
 							<div ng-messages="form.createReportForm.WorkHours.$error" ng-if="form.createReportForm.WorkHours.$touched">
