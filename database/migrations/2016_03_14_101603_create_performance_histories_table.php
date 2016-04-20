@@ -21,8 +21,8 @@ class CreatePerformanceHistoriesTable extends Migration
             $table->integer('position_id');
             $table->integer('department_id');
             $table->integer('project_id');
-            $table->date('date_start');
-            $table->date('date_end');
+            $table->dateTime('date_start');
+            $table->dateTime('date_end');
             $table->float('daily_work_hours');
             $table->integer('output');
             $table->float('hours_worked');
