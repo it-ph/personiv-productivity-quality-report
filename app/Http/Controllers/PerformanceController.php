@@ -112,7 +112,7 @@ class PerformanceController extends Controller
                     ->where('targets.experience', $value->experience)
                     ->where('targets.type', 'Quality')
                     // ->where('created_at', '<=', $value->date_end)
-                    where('targets.active', true)
+                    ->where('targets.active', true)
                     // ->orderBy('created_at', 'desc')
                     ->first();
             }

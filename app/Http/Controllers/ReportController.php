@@ -991,7 +991,7 @@ class ReportController extends Controller
                         ->where('type', 'Productivity')
                         ->where('experience', $value1->experience)
                         // ->where('created_at', '<=', $this->date_end)
-                        -->where('active', true)
+                        ->where('active', true)
                         ->first();
                 }
 

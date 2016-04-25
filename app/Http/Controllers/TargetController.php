@@ -29,46 +29,63 @@ class TargetController extends Controller
 
         foreach ($project->positions as $key => $value) {
             /* Productivity */
-            $beginner_productivity = Target::where('position_id', $value->id)->where('type', 'Productivity')->where('experience', 'Beginner')->where('created_at', '<=', $report->date_end)->orderBy('created_at', 'desc')->first()->value;
+            $beginner_productivity_query = Target::where('position_id', $value->id)->where('type', 'Productivity')->where('experience', 'Beginner')->where('created_at', '<=', $report->date_end)->orderBy('created_at', 'desc')->first();
             
-            if(!$beginner_productivity)
+            if($beginner_productivity_query)
             {
-                $beginner_productivity = Target::where('position_id', $value->id)->where('type', 'Productivity')->where('experience', 'Beginner')->orderBy('created_at', 'desc')->first()->value;
+                $beginner_productivity = $beginner_productivity_query->value;
+            }
+            else{
+               $beginner_productivity = Target::where('position_id', $value->id)->where('type', 'Productivity')->where('experience', 'Beginner')->orderBy('created_at', 'desc')->first()->value;
             }
 
-            $moderately_experienced_productivity = Target::where('position_id', $value->id)->where('type', 'Productivity')->where('experience', 'Moderately Experienced')->where('created_at', '<=', $report->date_end)->orderBy('created_at', 'desc')->first()->value;
-
-            if(!$moderately_experienced_productivity)
+            $moderately_experienced_productivity_query = Target::where('position_id', $value->id)->where('type', 'Productivity')->where('experience', 'Moderately Experienced')->where('created_at', '<=', $report->date_end)->orderBy('created_at', 'desc')->first();
+            if($moderately_experienced_productivity_query)
             {
+                $moderately_experienced_productivity = $moderately_experienced_productivity_query->value;
+            }
+            else{
                 $moderately_experienced_productivity = Target::where('position_id', $value->id)->where('type', 'Productivity')->where('experience', 'Moderately Experienced')->orderBy('created_at', 'desc')->first()->value;
             }
+            
 
-            $experienced_productivity = Target::where('position_id', $value->id)->where('type', 'Productivity')->where('experience', 'Experienced')->where('created_at', '<=', $report->date_end)->orderBy('created_at', 'desc')->first()->value;
+            $experienced_productivity_query = Target::where('position_id', $value->id)->where('type', 'Productivity')->where('experience', 'Experienced')->where('created_at', '<=', $report->date_end)->orderBy('created_at', 'desc')->first();
 
-            if(!$experienced_productivity)
-            {
+            if($experienced_productivity_query){
+                $experienced_productivity = $experienced_productivity_query->value;
+            }
+            else{
                 $experienced_productivity = Target::where('position_id', $value->id)->where('type', 'Productivity')->where('experience', 'Experienced')->orderBy('created_at', 'desc')->first()->value;                
             }
 
             /* Quality */
-            $beginner_quality = Target::where('position_id', $value->id)->where('type', 'Quality')->where('experience', 'Beginner')->where('created_at', '<=', $report->date_end)->orderBy('created_at', 'desc')->first()->value;
+            $beginner_quality_query = Target::where('position_id', $value->id)->where('type', 'Quality')->where('experience', 'Beginner')->where('created_at', '<=', $report->date_end)->orderBy('created_at', 'desc')->first();
 
-            if(!$beginner_quality)
+            if($beginner_quality_query)
             {
-                $beginner_quality = Target::where('position_id', $value->id)->where('type', 'Quality')->where('experience', 'Beginner')->orderBy('created_at', 'desc')->first()->value;                
+                $beginner_quality = $beginner_quality_query->value;
             }
-
-            $moderately_experienced_quality = Target::where('position_id', $value->id)->where('type', 'Quality')->where('experience', 'Moderately Experienced')->where('created_at', '<=', $report->date_end)->orderBy('created_at', 'desc')->first()->value;
+            else{
+                $beginner_quality = Target::where('position_id', $value->id)->where('type', 'Quality')->where('experience', 'Beginner')->orderBy('created_at', 'desc')->first()->value;
+            }
             
-            if(!$moderately_experienced_quality)
-            {
+
+            $moderately_experienced_quality_query = Target::where('position_id', $value->id)->where('type', 'Quality')->where('experience', 'Moderately Experienced')->where('created_at', '<=', $report->date_end)->orderBy('created_at', 'desc')->first();
+
+            if($moderately_experienced_quality_query){
+                $moderately_experienced_quality = $moderately_experienced_quality_query->value;
+            }
+            else{
                 $moderately_experienced_quality = Target::where('position_id', $value->id)->where('type', 'Quality')->where('experience', 'Moderately Experienced')->orderBy('created_at', 'desc')->first()->value;    
             }
+            
+            
+            $experienced_quality_query = Target::where('position_id', $value->id)->where('type', 'Quality')->where('experience', 'Experienced')->where('created_at', '<=', $report->date_end)->orderBy('created_at', 'desc')->first();
 
-            $experienced_quality = Target::where('position_id', $value->id)->where('type', 'Quality')->where('experience', 'Experienced')->where('created_at', '<=', $report->date_end)->orderBy('created_at', 'desc')->first()->value;
-
-            if(!$experienced_quality)
-            {
+            if($experienced_quality_query){
+                $experienced_quality = $experienced_quality_query->value;
+            }
+            else{
                 $experienced_quality = Target::where('position_id', $value->id)->where('type', 'Quality')->where('experience', 'Experienced')->orderBy('created_at', 'desc')->first()->value;
             }
 
