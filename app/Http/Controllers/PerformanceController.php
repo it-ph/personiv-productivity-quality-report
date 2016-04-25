@@ -98,7 +98,7 @@ class PerformanceController extends Controller
                 ->where('targets.position_id', $value->position_id)
                 ->where('targets.experience', $value->experience)
                 ->where('targets.type', 'Quality')
-                ->where('created_at', '<=', $value->date_end)
+                ->where('targets.created_at', '<=', $value->date_end)
                 ->orderBy('created_at', 'desc')
                 ->first();
 
@@ -112,7 +112,8 @@ class PerformanceController extends Controller
                     ->where('targets.experience', $value->experience)
                     ->where('targets.type', 'Quality')
                     // ->where('created_at', '<=', $value->date_end)
-                    ->orderBy('created_at', 'desc')
+                    where('targets.active', true)
+                    // ->orderBy('created_at', 'desc')
                     ->first();
             }
 
@@ -383,7 +384,7 @@ class PerformanceController extends Controller
 
                 if(!$target)
                 {
-                     $target = Target::where('type', 'Productivity')->where('position_id', $request->input($i.'.position_id'))->where('experience', $request->input($i.'.experience'))->orderBy('created_at', 'desc')->first();
+                     $target = Target::where('type', 'Productivity')->where('position_id', $request->input($i.'.position_id'))->where('experience', $request->input($i.'.experience'))->where('active', true)->first();
                 }
 
                 $result = new Result;
@@ -474,7 +475,7 @@ class PerformanceController extends Controller
 
                 if(!$target)
                 {
-                    $target = Target::where('type', 'Productivity')->where('position_id', $request->input($i.'.position_id'))->where('experience', $request->input($i.'.experience'))->orderBy('created_at', 'desc')->first();
+                    $target = Target::where('type', 'Productivity')->where('position_id', $request->input($i.'.position_id'))->where('experience', $request->input($i.'.experience'))->where('active', true)->first();
                 }
 
                 $result = Result::where('id', $request->input($i.'.result_id'))->first();
