@@ -606,6 +606,17 @@ class ReportController extends Controller
                     ->orderBy('created_at', 'desc')
                     ->first();
 
+                if(!$target)
+                {
+                    $target = DB::table('targets')
+                        ->where('position_id', $value1->position_id)
+                        ->where('type', 'Productivity')
+                        ->where('experience', $value1->experience)
+                        ->where('created_at', '<=', $this->date_end)
+                        // ->orderBy('created_at', 'desc')
+                        ->first();
+                }
+
                 $results = DB::table('performances')
                     ->leftJoin('results', 'results.performance_id', '=', 'performances.id')
                     ->leftJoin('projects', 'projects.id', '=', 'performances.project_id')
@@ -657,6 +668,20 @@ class ReportController extends Controller
                     ->where('targets.created_at', '<=', $this->date_end)
                     ->orderBy('targets.created_at', 'desc')
                     ->first();
+
+                if(!$quality_target)
+                {
+                    $quality_target = DB::table('targets')
+                        ->join('positions', 'positions.id', '=', 'targets.position_id')
+                        ->join('members', 'members.experience', '=', 'targets.experience')
+                        ->select('*')
+                        ->where('targets.position_id', $value1->position_id)
+                        ->where('targets.experience', $value1->experience)
+                        ->where('targets.type', 'Quality')
+                        // ->where('targets.created_at', '<=', $this->date_end)
+                        ->orderBy('targets.created_at', 'desc')
+                        ->first();
+                }
 
                 $details[$key1]->quota = (($this->productivity_average >= 100) && ($this->quality_average >= $quality_target->value)) ? 'Met' : 'Not met';
                 
@@ -960,6 +985,17 @@ class ReportController extends Controller
                     ->orderBy('created_at', 'desc')
                     ->first();
 
+                if(!$target)
+                {
+                    $target = DB::table('targets')
+                        ->where('position_id', $value1->position_id)
+                        ->where('type', 'Productivity')
+                        ->where('experience', $value1->experience)
+                        // ->where('created_at', '<=', $this->date_end)
+                        ->orderBy('created_at', 'desc')
+                        ->first();
+                }
+
                 $results = DB::table('performances')
                     ->leftJoin('results', 'results.performance_id', '=', 'performances.id')
                     ->leftJoin('members', 'members.id', '=', 'performances.member_id')
@@ -1008,6 +1044,20 @@ class ReportController extends Controller
                     ->where('targets.created_at', '<=', $this->date_end)
                     ->orderBy('targets.created_at', 'desc')
                     ->first();
+
+                if(!$quality_target)
+                {
+                    $quality_target = DB::table('targets')
+                    ->join('positions', 'positions.id', '=', 'targets.position_id')
+                    ->join('members', 'members.experience', '=', 'targets.experience')
+                    ->select('*')
+                    ->where('targets.position_id', $value1->position_id)
+                    ->where('targets.experience', $value1->experience)
+                    ->where('targets.type', 'Quality')
+                    // ->where('targets.created_at', '<=', $this->date_end)
+                    ->orderBy('targets.created_at', 'desc')
+                    ->first();
+                }
 
                 $details[$key1]->quota = (($this->productivity_average >= 100) && ($this->quality_average >= $quality_target->value)) ? 'Met' : 'Not met';
             
@@ -1063,6 +1113,17 @@ class ReportController extends Controller
                     ->orderBy('created_at', 'desc')
                     ->first();
 
+                if(!$beginner)
+                {
+                    $beginner = DB::table('targets')
+                    ->where('type', 'Productivity')
+                    ->where('position_id', $value2->id)
+                    ->where('experience', 'Beginner')
+                    // ->where('created_at', '<=', $this->date_end)
+                    ->orderBy('created_at', 'desc')
+                    ->first();
+                }
+
                 $moderately_experienced = DB::table('targets')
                     ->where('type', 'Productivity')
                     ->where('position_id', $value2->id)
@@ -1070,6 +1131,17 @@ class ReportController extends Controller
                     ->where('created_at', '<=', $this->date_end)
                     ->orderBy('created_at', 'desc')
                     ->first();
+
+                if(!$moderately_experienced)
+                {
+                     $moderately_experienced = DB::table('targets')
+                    ->where('type', 'Productivity')
+                    ->where('position_id', $value2->id)
+                    ->where('experience', 'Moderately Experienced')
+                    // ->where('created_at', '<=', $this->date_end)
+                    ->orderBy('created_at', 'desc')
+                    ->first();
+                }
 
                 $experienced = DB::table('targets')
                     ->where('type', 'Productivity')
@@ -1079,12 +1151,33 @@ class ReportController extends Controller
                     ->orderBy('created_at', 'desc')
                     ->first();
 
+                if(!$experienced)
+                {
+                    $experienced = DB::table('targets')
+                    ->where('type', 'Productivity')
+                    ->where('position_id', $value2->id)
+                    ->where('experience', 'Experienced')
+                    // ->where('created_at', '<=', $this->date_end)
+                    ->orderBy('created_at', 'desc')
+                    ->first();                    
+                }
+
                 $quality = DB::table('targets')
                     ->where('type', 'Quality')
                     ->where('position_id', $value2->id)
                     ->where('created_at', '<=', $this->date_end)
                     ->orderBy('created_at', 'desc')
                     ->first();
+
+                if(!$quality)
+                {
+                    $quality = DB::table('targets')
+                        ->where('type', 'Quality')
+                        ->where('position_id', $value2->id)
+                        // ->where('created_at', '<=', $this->date_end)
+                        ->orderBy('created_at', 'desc')
+                        ->first();
+                }
 
                 array_push($beginner_temp, $beginner);
                 array_push($moderately_experienced_temp, $moderately_experienced);
@@ -1154,6 +1247,17 @@ class ReportController extends Controller
                     ->orderBy('created_at', 'desc')
                     ->first();
 
+                if(!$target)
+                {
+                    $target = DB::table('targets')
+                        ->where('position_id', $value3->position_id)
+                        ->where('type', 'Productivity')
+                        ->where('experience', $value3->experience)
+                        // ->where('created_at', '<=', $this->date_end)
+                        ->orderBy('created_at', 'desc')
+                        ->first();                    
+                }
+
                 foreach ($reports as $report_key => $report_value) {
                     $query = DB::table('performances')
                         ->leftJoin('results', 'results.performance_id', '=', 'performances.id')
@@ -1215,6 +1319,20 @@ class ReportController extends Controller
                     ->where('targets.created_at', '<=', $this->date_end)
                     ->orderBy('targets.created_at', 'desc')
                     ->first();
+                
+                if(!$quality_target)
+                {
+                    $quality_target = DB::table('targets')
+                        ->join('positions', 'positions.id', '=', 'targets.position_id')
+                        ->join('members', 'members.experience', '=', 'targets.experience')
+                        ->select('*')
+                        ->where('targets.position_id', $value3->position_id)
+                        ->where('targets.experience', $value3->experience)
+                        ->where('targets.type', 'Quality')
+                        // ->where('targets.created_at', '<=', $this->date_end)
+                        ->orderBy('targets.created_at', 'desc')
+                        ->first();    
+                }
 
                 $members[$key1]->quota = (($this->productivity_average >= 100) && ($this->quality_average >= $quality_target->value)) ? 'Met' : 'Not met';
 
@@ -1332,6 +1450,17 @@ class ReportController extends Controller
                     ->orderBy('created_at', 'desc')
                     ->first();
 
+                if(!$beginner)
+                {
+                    $beginner = DB::table('targets')
+                        ->where('type', 'Productivity')
+                        ->where('position_id', $value->id)
+                        ->where('experience', 'Beginner')
+                        // ->where('created_at', '<=', $date_end)
+                        ->orderBy('created_at', 'desc')
+                        ->first();                    
+                }
+
                 $moderately_experienced = DB::table('targets')
                     ->where('type', 'Productivity')
                     ->where('position_id', $value->id)
@@ -1339,6 +1468,17 @@ class ReportController extends Controller
                     ->where('created_at', '<=', $date_end)
                     ->orderBy('created_at', 'desc')
                     ->first();
+
+                if(!$moderately_experienced)
+                {
+                    $moderately_experienced = DB::table('targets')
+                        ->where('type', 'Productivity')
+                        ->where('position_id', $value->id)
+                        ->where('experience', 'Moderately Experienced')
+                        // ->where('created_at', '<=', $date_end)
+                        ->orderBy('created_at', 'desc')
+                        ->first();                    
+                }
 
                 $experienced = DB::table('targets')
                     ->where('type', 'Productivity')
@@ -1348,12 +1488,33 @@ class ReportController extends Controller
                     ->orderBy('created_at', 'desc')
                     ->first();
 
+                if(!$experined)
+                {
+                    $experienced = DB::table('targets')
+                        ->where('type', 'Productivity')
+                        ->where('position_id', $value->id)
+                        ->where('experience', 'Experienced')
+                        // ->where('created_at', '<=', $date_end)
+                        ->orderBy('created_at', 'desc')
+                        ->first();
+                }
+
                 $quality = DB::table('targets')
                     ->where('type', 'Quality')
                     ->where('position_id', $value->id)
                     ->where('created_at', '<=', $date_end)
                     ->orderBy('created_at', 'desc')
-                    ->first();            
+                    ->first();
+
+                if(!$quality)
+                {
+                    $quality = DB::table('targets')
+                        ->where('type', 'Quality')
+                        ->where('position_id', $value->id)
+                        // ->where('created_at', '<=', $date_end)
+                        ->orderBy('created_at', 'desc')
+                        ->first();                    
+                }            
 
                 array_push($beginner_temp, $beginner);
                 array_push($moderately_experienced_temp, $moderately_experienced);
@@ -1446,6 +1607,17 @@ class ReportController extends Controller
                 ->orderBy('created_at', 'desc')
                 ->get();
 
+            if(!$beginner)
+            {
+                $beginner = DB::table('targets')
+                    ->where('type', 'Productivity')
+                    ->where('project_id', $value->project_id)
+                    ->where('experience', 'Beginner')
+                    // ->where('created_at', '<=', $this->date_end)
+                    ->orderBy('created_at', 'desc')
+                    ->get();                
+            }
+
             $moderately_experienced = DB::table('targets')
                 ->where('type', 'Productivity')
                 ->where('project_id', $value->project_id)
@@ -1453,6 +1625,17 @@ class ReportController extends Controller
                 ->where('created_at', '<=', $this->date_end)
                 ->orderBy('created_at', 'desc')
                 ->get();
+
+            if(!$moderately_experienced)
+            {
+                $moderately_experienced = DB::table('targets')
+                    ->where('type', 'Productivity')
+                    ->where('project_id', $value->project_id)
+                    ->where('experience', 'Moderately Experienced')
+                    // ->where('created_at', '<=', $this->date_end)
+                    ->orderBy('created_at', 'desc')
+                    ->get();                
+            }
 
             $experienced = DB::table('targets')
                 ->where('type', 'Productivity')
@@ -1462,6 +1645,18 @@ class ReportController extends Controller
                 ->orderBy('created_at', 'desc')
                 ->get();
 
+            if(!$experienced)
+            {
+                $experienced = DB::table('targets')
+                    ->where('type', 'Productivity')
+                    ->where('project_id', $value->project_id)
+                    ->where('experience', 'Experienced')
+                    // ->where('created_at', '<=', $this->date_end)
+                    ->orderBy('created_at', 'desc')
+                    ->get();
+
+            }
+
             $quality = DB::table('targets')
                 ->where('type', 'Quality')
                 ->where('project_id', $value->project_id)
@@ -1469,6 +1664,18 @@ class ReportController extends Controller
                 ->where('created_at', '<=', $this->date_end)
                 ->orderBy('created_at', 'desc')
                 ->get();
+
+            if(!$quality)
+            {
+                $quality = DB::table('targets')
+                    ->where('type', 'Quality')
+                    ->where('project_id', $value->project_id)
+                    ->groupBy('position_id')
+                    // ->where('created_at', '<=', $this->date_end)
+                    ->orderBy('created_at', 'desc')
+                    ->get();
+
+            }
         }
 
         Excel::create('PQR - '. $details->department_name .' ('. $details->project_name.')', function($excel) {
@@ -1661,6 +1868,20 @@ class ReportController extends Controller
                     ->orderBy('targets.created_at', 'desc')
                     ->first();
 
+                if(!$quality_target)
+                {
+                    $quality_target = DB::table('targets')
+                    ->join('positions', 'positions.id', '=', 'targets.position_id')
+                    ->join('members', 'members.experience', '=', 'targets.experience')
+                    ->select('*')
+                    ->where('targets.position_id', $queryValue->position_id)
+                    ->where('targets.experience', $queryValue->experience)
+                    ->where('targets.type', 'Quality')
+                    // ->where('targets.created_at', '<=', $this->date_end)
+                    ->orderBy('targets.created_at', 'desc')
+                    ->first();
+                }
+
                     $queryValue->quota = (($queryValue->productivity >= 100) && ($queryValue->quality >= $quality_target->value)) ? 'Met' : 'Not met';
             }
 
@@ -1718,6 +1939,20 @@ class ReportController extends Controller
                         ->where('targets.created_at', '<=', $value->date_end)
                         ->orderBy('targets.created_at', 'desc')
                         ->first();
+
+                    if(!$quality_target)
+                    {
+                        $quality_target = DB::table('targets')
+                            ->join('positions', 'positions.id', '=', 'targets.position_id')
+                            ->join('members', 'members.experience', '=', 'targets.experience')
+                            ->select('*')
+                            ->where('targets.position_id', $queryValue->position_id)
+                            ->where('targets.experience', $queryValue->experience)
+                            ->where('targets.type', 'Quality')
+                            // ->where('targets.created_at', '<=', $value->date_end)
+                            ->orderBy('targets.created_at', 'desc')
+                            ->first();
+                    }
 
                         $queryValue->quota = (($queryValue->productivity >= 100) && ($queryValue->quality >= $quality_target->value)) ? 'Met' : 'Not met';
                 }

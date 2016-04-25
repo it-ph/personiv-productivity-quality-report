@@ -30,13 +30,47 @@ class TargetController extends Controller
         foreach ($project->positions as $key => $value) {
             /* Productivity */
             $beginner_productivity = Target::where('position_id', $value->id)->where('type', 'Productivity')->where('experience', 'Beginner')->where('created_at', '<=', $report->date_end)->orderBy('created_at', 'desc')->first()->value;
+            
+            if(!$beginner_productivity)
+            {
+                $beginner_productivity = Target::where('position_id', $value->id)->where('type', 'Productivity')->where('experience', 'Beginner')->orderBy('created_at', 'desc')->first()->value;
+            }
+
             $moderately_experienced_productivity = Target::where('position_id', $value->id)->where('type', 'Productivity')->where('experience', 'Moderately Experienced')->where('created_at', '<=', $report->date_end)->orderBy('created_at', 'desc')->first()->value;
+
+            if(!$moderately_experienced_productivity)
+            {
+                $moderately_experienced_productivity = Target::where('position_id', $value->id)->where('type', 'Productivity')->where('experience', 'Moderately Experienced')->orderBy('created_at', 'desc')->first()->value;
+            }
+
             $experienced_productivity = Target::where('position_id', $value->id)->where('type', 'Productivity')->where('experience', 'Experienced')->where('created_at', '<=', $report->date_end)->orderBy('created_at', 'desc')->first()->value;
+
+            if(!$experienced_productivity)
+            {
+                $experienced_productivity = Target::where('position_id', $value->id)->where('type', 'Productivity')->where('experience', 'Experienced')->orderBy('created_at', 'desc')->first()->value;                
+            }
 
             /* Quality */
             $beginner_quality = Target::where('position_id', $value->id)->where('type', 'Quality')->where('experience', 'Beginner')->where('created_at', '<=', $report->date_end)->orderBy('created_at', 'desc')->first()->value;
+
+            if(!$beginner_quality)
+            {
+                $beginner_quality = Target::where('position_id', $value->id)->where('type', 'Quality')->where('experience', 'Beginner')->orderBy('created_at', 'desc')->first()->value;                
+            }
+
             $moderately_experienced_quality = Target::where('position_id', $value->id)->where('type', 'Quality')->where('experience', 'Moderately Experienced')->where('created_at', '<=', $report->date_end)->orderBy('created_at', 'desc')->first()->value;
+            
+            if(!$moderately_experienced_quality)
+            {
+                $moderately_experienced_quality = Target::where('position_id', $value->id)->where('type', 'Quality')->where('experience', 'Moderately Experienced')->orderBy('created_at', 'desc')->first()->value;    
+            }
+
             $experienced_quality = Target::where('position_id', $value->id)->where('type', 'Quality')->where('experience', 'Experienced')->where('created_at', '<=', $report->date_end)->orderBy('created_at', 'desc')->first()->value;
+
+            if(!$experienced_quality)
+            {
+                $experienced_quality = Target::where('position_id', $value->id)->where('type', 'Quality')->where('experience', 'Experienced')->orderBy('created_at', 'desc')->first()->value;
+            }
 
             array_push($project->beginner_productivity, $beginner_productivity);
             array_push($project->moderately_experienced_productivity, $moderately_experienced_productivity);
@@ -134,6 +168,7 @@ class TargetController extends Controller
             $target->position_id = $request->input($i.'.position_id');
             $target->project_id = $request->input($i.'.project_id');
             $target->department_id = $request->input($i.'.department_id');
+            $target->active = true;
 
             $target->save();
         }

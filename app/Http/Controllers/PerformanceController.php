@@ -98,7 +98,23 @@ class PerformanceController extends Controller
                 ->where('targets.position_id', $value->position_id)
                 ->where('targets.experience', $value->experience)
                 ->where('targets.type', 'Quality')
+                ->where('created_at', '<=', $value->date_end)
+                ->orderBy('created_at', 'desc')
                 ->first();
+
+            if(!$quality_target)
+            {
+                $quality_target = DB::table('targets')
+                    ->join('positions', 'positions.id', '=', 'targets.position_id')
+                    ->join('members', 'members.experience', '=', 'targets.experience')
+                    ->select('*')
+                    ->where('targets.position_id', $value->position_id)
+                    ->where('targets.experience', $value->experience)
+                    ->where('targets.type', 'Quality')
+                    // ->where('created_at', '<=', $value->date_end)
+                    ->orderBy('created_at', 'desc')
+                    ->first();
+            }
 
             $value->quota = (($value->productivity >= 100) && ($value->quality >= $quality_target->value)) ? 'Met' : 'Not met';
         }
@@ -365,6 +381,11 @@ class PerformanceController extends Controller
                 // fetch target
                 $target = Target::where('type', 'Productivity')->where('position_id', $request->input($i.'.position_id'))->where('experience', $request->input($i.'.experience'))->where('created_at', '<=', $request->input($i.'.date_end'))->orderBy('created_at', 'desc')->first();
 
+                if(!$target)
+                {
+                     $target = Target::where('type', 'Productivity')->where('position_id', $request->input($i.'.position_id'))->where('experience', $request->input($i.'.experience'))->orderBy('created_at', 'desc')->first();
+                }
+
                 $result = new Result;
                 $result->report_id = $report->id;
                 // average output / target output * 100 to convert to percentage
@@ -449,7 +470,12 @@ class PerformanceController extends Controller
                 $performance->save();
 
                 // fetch target
-                $target = Target::where('position_id', $request->input($i.'.position_id'))->where('experience', $request->input($i.'.experience'))->first();
+                $target = Target::where('type', 'Productivity')->where('position_id', $request->input($i.'.position_id'))->where('experience', $request->input($i.'.experience'))->where('created_at', '<=', $request->input($i.'.date_end'))->orderBy('created_at', 'desc')->first();
+
+                if(!$target)
+                {
+                    $target = Target::where('type', 'Productivity')->where('position_id', $request->input($i.'.position_id'))->where('experience', $request->input($i.'.experience'))->orderBy('created_at', 'desc')->first();
+                }
 
                 $result = Result::where('id', $request->input($i.'.result_id'))->first();
                 
