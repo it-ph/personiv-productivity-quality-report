@@ -326,6 +326,9 @@ md-toolbar.md-warn > md-tabs.md-default-theme, md-tabs > md-tabs-wrapper > md-ta
   .tour-tip button:hover, .tour-tip .button:hover {
     background-color: #2196F3; }
 
+.hide-overflow {
+  overflow: hidden; }
+
 /* transition duration */
 .transition, .fade-transition, .main-view {
   transition: all 0.3s cubic-bezier(0.55, 0, 0.55, 0.2); }
