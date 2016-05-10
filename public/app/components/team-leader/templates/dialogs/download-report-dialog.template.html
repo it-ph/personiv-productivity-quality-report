@@ -1,0 +1,122 @@
+<md-dialog layout="column" flex flex-gt-md="50"  aria-label="Download Report" ng-cloak>
+	<form name="downloadReportForm" novalidate>
+		<md-toolbar>
+			<div class="md-toolbar-tools">
+				<h2>Download Reports</h2>
+				<span flex></span>
+				<md-button class="md-icon-button" ng-click="cancel()">
+					<md-icon class="mdi mdi-close" aria-label="cancel"></md-icon>
+				</md-button>
+			</div>
+		</md-toolbar>
+		<md-dialog-content layout="column" flex layout-padding layout-wrap>
+			<md-radio-group ng-model="details.type" layout="row">
+			    <md-radio-button class="md-primary" value="Weekly">Weekly</md-radio-button>
+		      	<md-radio-button class="md-primary" value="Monthly">Monthly</md-radio-button>
+		    </md-radio-group>
+			<div ng-if="details.type=='Weekly'" layout="column">
+				<div layout="row" layout-align="center center">
+					<!-- Date Start Month -->
+					<md-input-container flex>
+						<label>Month</label>
+						<md-select name="DateStartMonth" ng-model="details.date_start_month" required ng-change="getMondays()">
+							<md-option ng-repeat="month in months_array" value="{{month}}">{{month}}</md-option>
+						</md-select>
+						<div ng-messages="form.createReportForm.DateStartMonth.$error" ng-if="form.createReportForm.DateStartMonth.$touched">
+							<div ng-messages-include="/app/shared/templates/validation-message-date.html"></div>
+						</div>
+					</md-input-container>
+					<!-- Mondays -->
+					<md-input-container flex>
+						<label>Date Start</label>
+						<md-select name="DateStart" ng-model="details.date_start" required ng-change="getWeekends()">
+							<md-option ng-repeat="monday in mondays.mondays" value="{{monday}}">{{mondays.day[$index]}}</md-option>
+						</md-select>
+						<div class="hint" ng-if="!showErrors">Date Start is always Monday</div>
+						<div ng-messages="form.createReportForm.DateStart.$error" ng-if="form.createReportForm.DateStart.$touched && showErrors">
+							<div ng-messages-include="/app/shared/templates/validation-message-date.html"></div>
+						</div>
+					</md-input-container>
+					<span flex="5" class="center-text">to</span>
+					<!-- Weekend -->
+					<md-input-container flex>
+						<label>Date End</label>
+						<md-select name="DateStart" ng-model="details.date_end" required>
+							<md-option ng-repeat="weekend in weekends.weekends" value="{{weekend}}">{{weekends.day[$index]}}</md-option>
+						</md-select>
+						<div class="hint" ng-if="!showErrors">Date End is either Friday or Saturday</div>
+						<div ng-messages="form.createReportForm.DateStart.$error" ng-if="form.createReportForm.DateStart.$touched && showErrors">
+							<div ng-messages-include="/app/shared/templates/validation-message-date.html"></div>
+						</div>
+					</md-input-container>
+					<!-- Date Start Year -->
+					<md-input-container flex>
+						<label>Year</label>
+						<md-select name="DateStartYear" ng-model="details.date_start_year" required ng-change="getMondays()">
+							<md-option ng-repeat="year in years" value="{{year}}">{{year}}</md-option>
+						</md-select>
+						<div ng-messages="form.createReportForm.DateStartYear.$error" ng-if="form.createReportForm.DateStartYear.$touched">
+							<div ng-messages-include="/app/shared/templates/validation-message-date.html"></div>
+						</div>
+					</md-input-container>
+				</div>
+				<!-- Daily Work Hours -->
+				<md-input-container flex>
+					<label>Daily Work Hours</label>
+					<md-select name="WorkHours" required ng-model="details.daily_work_hours">
+						<md-option ng-repeat="hour in work_hours" value="{{ hour.daily_work_hours }}">
+							{{ hour.label }} - {{ hour.daily_work_hours }} hour(s)
+						</md-option>
+					</md-select>
+					<div ng-messages="downloadReportForm.WorkHours.$error" ng-if="downloadReportForm.WorkHours.$touched">
+						<div ng-messages-include="/app/shared/templates/validation-message-report.html"></div>
+					</div>
+				</md-input-container>
+			</div>
+			<div layout-padding ng-if="details.type=='Monthly'" layout="column">
+				<div layout="row">
+					<md-input-container flex>
+						<label>Month</label>
+						<md-select name="Month" required ng-model="details.month">
+							<md-option ng-repeat="month in months" value="{{month.value}}">
+								{{ month.month }}
+							</md-option>
+						</md-select>
+						<div ng-messages="downloadReportForm.Month.$error" ng-if="downloadReportForm.Month.$touched">
+							<div ng-messages-include="/app/shared/templates/validation-message.html"></div>
+						</div>
+					</md-input-container>
+
+					<md-input-container flex>
+						<label>Year</label>
+						<md-select name="Year" required ng-model="details.year">
+							<md-option ng-repeat="year in years" value="{{ year }}">
+								{{ year }}
+							</md-option>
+						</md-select>
+						<div ng-messages="downloadReportForm.Year.$error" ng-if="downloadReportForm.Year.$touched">
+							<div ng-messages-include="/app/shared/templates/validation-message.html"></div>
+						</div>
+					</md-input-container>
+				</div>
+				<!-- Daily Work Hours -->
+				<md-input-container flex>
+					<label>Daily Work Hours</label>
+					<md-select name="WorkHours" required ng-model="details.daily_work_hours">
+						<md-option ng-repeat="hour in work_hours" value="{{ hour.daily_work_hours }}">
+							{{ hour.label }} - {{ hour.daily_work_hours }} hour(s)
+						</md-option>
+					</md-select>
+					<div ng-messages="downloadReportForm.WorkHours.$error" ng-if="downloadReportForm.WorkHours.$touched">
+						<div ng-messages-include="/app/shared/templates/validation-message-report.html"></div>
+					</div>
+				</md-input-container>
+			</div>
+		</md-dialog-content>
+	</form>
+	<div layout="row" layout-align="end center">		
+		<md-button class="md-fab md-primary" aria-label="Submit" ng-click="submit()">
+			<md-icon class="mdi mdi-check"></md-icon>
+		</md-button>
+	</div>
+</md-dialog>

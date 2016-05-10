@@ -89,10 +89,12 @@ Route::group(['middleware' => 'auth'], function () {
 	Route::put('member-update-tenure/{teamLeaderID}', 'MemberController@updateTenure');
 	Route::post('performance-check-limit/{memberID}', 'PerformanceController@checkLimit');
 	Route::post('performance-check-limit-edit/{memberID}', 'PerformanceController@checkLimitEdit');
+	Route::get('performance-report/{reportID}', 'PerformanceController@report');
 	Route::get('report-download/{reportID}', 'ReportController@download');
 	Route::get('report-download-summary/{date_start}/to/{date_end}/daily-work-hours/{daily_work_hours}', 'ReportController@downloadSummary');
-	Route::get('performance-report/{reportID}', 'PerformanceController@report');
+	Route::get('report-download-weekly-department/{departmentID}/date_start/{date_start}/to/{date_end}/daily-work-hours/{daily_work_hours}', 'ReportController@downloadWeeklyDepartment');
 	Route::get('report-download-monthly-summary/{month}/year/{year}/daily-work-hours/{daily_work_hours}', 'ReportController@downloadMonthlySummary');
+	Route::get('report-download-monthly-department/{departmentID}/month/{month}/year/{year}/daily-work-hours/{daily_work_hours}', 'ReportController@downloadMonthlyDepartment');
 
 	Route::get('report-monthly', 'ReportController@monthly');
 	Route::post('report-search-monthly', 'ReportController@searchMonthly');

@@ -294,6 +294,14 @@ teamLeaderModule
 				});
 		};
 
+		$scope.subheader.download = function(){
+			$mdDialog.show({
+		    	controller: 'downloadReportDialogController',
+		      	templateUrl: '/app/components/team-leader/templates/dialogs/download-report-dialog.template.html',
+		      	parent: angular.element(document.body),
+		    });
+		}
+
 		/**
 		 * Status of search bar.
 		 *
