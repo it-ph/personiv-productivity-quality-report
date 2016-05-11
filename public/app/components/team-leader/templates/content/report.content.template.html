@@ -90,7 +90,7 @@
 				<md-subheader class="md-no-sticky md-accent">
 					<span>Members</span>
 				</md-subheader>
-				<md-card ng-repeat="member in members">
+				<md-card ng-repeat="member in members | filter:toolbar.userInput">
 					<md-card-content>
 						<md-list layout="row" layout-align="space-between center">
 							<md-list-item class="md-2-line" layout="row">
@@ -127,7 +127,7 @@
 									<!-- Total Output -->
 									<md-input-container flex>
 										<label>Total Output</label>
-										<input name="Output{{$index}}" type="number" min="1" required ng-model="member.output">
+										<input name="Output{{$index}}" type="number" min="0.1" required ng-model="member.output">
 										<div class="hint" ng-if="!showErrors">Output must not be less than one.</div>
 										<div ng-messages="form.createReportForm['Output' + $index].$error" ng-if="form.createReportForm['Output' + $index].$touched && showErrors">
 											<div ng-messages-include="/app/shared/templates/validation-message.html"></div>
@@ -136,7 +136,7 @@
 									<!-- Total Total Hours Worked -->
 									<md-input-container flex>
 										<label>Total Hours Worked</label>
-										<input name="HoursWorked{{$index}}" type="number" min="1" max="{{ member.limit }}" step="0.5" required ng-model="member.hours_worked">
+										<input name="HoursWorked{{$index}}" type="number" min="0.1" max="{{ member.limit }}" step="0.5" required ng-model="member.hours_worked">
 										<div ng-messages="form.createReportForm['HoursWorked' + $index].$error" ng-if="form.createReportForm['HoursWorked' + $index].$touched">
 											<div ng-messages-include="/app/shared/templates/validation-message.html"></div>
 										</div>

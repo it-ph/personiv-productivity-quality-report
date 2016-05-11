@@ -118,7 +118,28 @@ teamLeaderModule
 		*/
 		$scope.subheader = {};
 		$scope.subheader.state = 'report';
+		/**
+		 * Status of search bar.
+		 *
+		*/
+		$scope.searchBar = false;
 
+		/**
+		 * Reveals the search bar.
+		 *
+		*/
+		$scope.showSearchBar = function(){
+			$scope.searchBar = true;
+		};
+
+		/**
+		 * Hides the search bar.
+		 *
+		*/
+		$scope.hideSearchBar = function(){
+			$scope.toolbar.userInput = '';
+			$scope.searchBar = false;
+		};
 		/**
 		 * Object for content view
 		 *

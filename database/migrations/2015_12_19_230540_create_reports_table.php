@@ -18,8 +18,8 @@ class CreateReportsTable extends Migration
             $table->integer('department_id');
             $table->integer('project_id');
             $table->float('daily_work_hours');
-            $table->date('date_start');
-            $table->date('date_end');
+            $table->dateTime('date_start');
+            $table->dateTime('date_end');
             $table->timestamps();
             $table->softDeletes();
         });
