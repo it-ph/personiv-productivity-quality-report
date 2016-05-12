@@ -2151,7 +2151,11 @@ class ReportController extends Controller
 
         Excel::create('PQR - '. $details->department_name .' ('. $details->project_name.')', function($excel) {
             global $details;
-            $excel->sheet($details->date_start .' to '. $details->date_end, function($sheet) {
+            $date_start_create = date_create($details->date_start);
+            $date_end_create = date_create($details->date_end);
+            $date_start_format =  date_format($date_start_create,"Y-m-d"); 
+            $date_end_format =  date_format($date_end_create,"Y-m-d"); 
+            $excel->sheet($date_start_format .' to '. $date_end_format, function($sheet) {
                 global $report, $quality, $positions, $beginner, $moderately_experienced, $experienced;
                 $sheet->loadView('excel.weekly')
                     ->with('data',$report)
@@ -2511,5 +2515,8 @@ class ReportController extends Controller
 
         Performance::where('report_id', $id)->delete();
         Result::where('report_id', $id)->delete();
+        DB::table('approvals')->where('report_id')->delete();
+        DB::table('performance_approvals')->where('report_id')->delete();
+        DB::table('performance_histories')->where('report_id')->delete();
     }
 }

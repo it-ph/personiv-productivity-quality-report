@@ -27,9 +27,9 @@ class CreatePerformanceApprovalsTable extends Migration
             $table->dateTime('date_start');
             $table->dateTime('date_end');
             $table->float('daily_work_hours');
-            $table->integer('output');
+            $table->float('output');
             $table->float('hours_worked');
-            $table->integer('output_error');
+            $table->float('output_error');
             $table->float('average_output');
             $table->timestamps();
             $table->softDeletes();
