@@ -6,8 +6,8 @@
 <md-content layout-padding>
 	<md-input-container flex>
 		<label>Projects</label>
-		<md-select ng-model="subheader.project">
-			<md-option ng-repeat="project in projects" value="{{project.name}}">
+		<md-select ng-model="filterData.project" ng-change="getPositions()">
+			<md-option ng-repeat="project in projects" value="{{$index}}">
 				{{project.name}}
 			</md-option>
 		</md-select>
@@ -56,6 +56,17 @@
 			<div ng-messages-include="/app/shared/templates/validation-message-date.html"></div>
 		</div>
 	</md-input-container>
+	<!-- Position -->
+	<md-input-container flex>
+		<label>Position</label>
+		<md-select name="Position" ng-model="filterData.position">
+			<md-option ng-repeat="position in positions" value="{{position.name}}">{{position.name}}</md-option>
+		</md-select>
+		<div ng-messages="form.createReportForm.Position.$error" ng-if="form.createReportForm.Position.$touched">
+			<div ng-messages-include="/app/shared/templates/validation-message-date.html"></div>
+		</div>
+	</md-input-container>
+	
 	<md-button class="md-accent md-raised" ng-click="clearFilter()">
 		Clear
 	</md-button>

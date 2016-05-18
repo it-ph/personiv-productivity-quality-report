@@ -9,4 +9,14 @@ class Approval extends Model
 {
     use SoftDeletes;
     protected $dates = ['deleted_at'];
+
+    public function performance_approvals()
+    {
+    	return $this->hasMany('App\PerformanceApproval');
+    }
+
+    public function report()
+    {
+    	return $this->belongsTo('App\Report');
+    }
 }

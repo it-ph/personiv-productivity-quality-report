@@ -1,6 +1,6 @@
 <!-- Search reports -->
 <div class="fade-transition" layout="column" flex ng-if="report.results && !report.show">
-	<div layout="row" layout-padding flex ng-repeat="details in report.results | filter: subheader.project | filter:filterDate.date_start | filter:filterDate.date_end | filter: toolbar.userInput">
+	<div layout="row" layout-padding flex ng-repeat="details in report.results | filter: projects[filterData.project].name | filter:filterDate.date_start | filter:filterDate.date_end | filter: toolbar.userInput">
 		<div flex>
 			<div class="panel panel-default">
 				<div class="panel-heading">
@@ -202,7 +202,7 @@
 									</a>
 								</th>
 							</tr>
-							<tr ng-repeat="item in details | filter: toolbar.userInput | orderBy:sortType:sortReverse" ng-class="{shaded:hover}" ng-mouseenter="hover = true" ng-mouseleave="hover = false">
+							<tr ng-repeat="item in details | filter: filterData.position | filter: toolbar.userInput | orderBy:sortType:sortReverse" ng-class="{shaded:hover}" ng-mouseenter="hover = true" ng-mouseleave="hover = false">
 								<td>{{ item.full_name }}</td>
 								<td>{{ item.position }}</td>
 								<td>{{ item.experience }}</td>
@@ -229,7 +229,7 @@
 
 <!-- Paginated Data -->
 <div class="fade-transition" ng-if="report.show" flex infinite-scroll='report.paginateLoad()' infinite-scroll-distance="2" infinite-scroll-disabled="report.busy" infinite-scroll-parent>
-	<div layout="row" layout-padding flex ng-repeat="details in report.paginated | filter: subheader.project | filter:filterDate.date_start | filter:filterDate.date_end | filter: toolbar.userInput">
+	<div layout="row" layout-padding flex ng-repeat="details in report.paginated | filter: projects[filterData.project].name | filter:filterDate.date_start | filter:filterDate.date_end | filter: toolbar.userInput">
 		<div flex>
 			<div class="panel panel-default">
 				<div class="panel-heading">
@@ -443,7 +443,7 @@
 									</a>
 								</th>
 							</tr>
-							<tr ng-repeat="item in details | filter: toolbar.userInput | orderBy:sortType:sortReverse" ng-class="{shaded:hover}" ng-mouseenter="hover = true" ng-mouseleave="hover = false">
+							<tr ng-repeat="item in details | filter: filterData.position | filter: toolbar.userInput | orderBy:sortType:sortReverse" ng-class="{shaded:hover}" ng-mouseenter="hover = true" ng-mouseleave="hover = false">
 								<td>{{ item.full_name }}</td>
 								<td>{{ item.position }}</td>
 								<td>{{ item.experience }}</td>

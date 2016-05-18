@@ -559,7 +559,7 @@ teamLeaderModule
 		};
 	}]);
 teamLeaderModule
-	.controller('mainContentContainerController', ['$scope', '$state', '$mdToast', '$mdDialog', 'Approval', 'Preloader', 'Report', 'Performance', 'Target', 'User', 'WalkThrough', 'Project', function($scope, $state, $mdToast, $mdDialog, Approval, Preloader, Report, Performance, Target, User, WalkThrough, Project){
+	.controller('mainContentContainerController', ['$scope', '$state', '$mdToast', '$mdDialog', 'Approval', 'Preloader', 'Position', 'Report', 'Performance', 'Target', 'User', 'WalkThrough', 'Project', function($scope, $state, $mdToast, $mdDialog, Approval, Preloader, Position, Report, Performance, Target, User, WalkThrough, Project){
 		var user = null;
 		$scope.tour = {};
 		$scope.tour.search = 'Need to find something? I\'ll help you find what you\'re looking for.';
@@ -581,6 +581,7 @@ teamLeaderModule
 		}
 
 		$scope.filterDate = {};
+		$scope.filterData = {};
 		$scope.filterDate.type = 'Weekly';
 
 		$scope.months = [
@@ -650,8 +651,17 @@ teamLeaderModule
 				});
 		};
 
+		$scope.getPositions = function(){
+			Position.project($scope.projects[$scope.filterData.project].id)
+				.success(function(data){
+					$scope.positions = data;
+				})
+		}
+
 		$scope.clearFilter = function(){
-			$scope.subheader.project = '';
+			$scope.positions = [];
+			$scope.filterData.project = '';
+			$scope.filterData.position = '';
 			$scope.filterDate.date_start = '';
 			$scope.filterDate.date_end = ''
 		}

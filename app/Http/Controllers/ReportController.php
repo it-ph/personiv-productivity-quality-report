@@ -12,9 +12,111 @@ use Carbon\CarbonInterval;
 use Excel;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
+use Auth;
+use App\Project;
+use App\Target;
+use App\Position;
 
 class ReportController extends Controller
 {
+    public function test()
+    {
+        $user = Auth::user();
+
+        $department = DB::table('departments')->where('id', $user->department_id)->first();
+
+        $this->date_start = new Carbon('first Monday of April 2016'); // first Monday of the month
+        $this->date_end = new Carbon('last Monday of April 2016'); // last Monday of the month
+        $results_array = array();
+        // fetch all the projects under the department of the user
+        $projects = Project::where('department_id', Auth::user()->department_id)->with('positions')->get();
+        /* Head Count */
+        $department->program_head_count = 0;
+        // for each project fetch get the monthly results of the project
+        foreach ($projects as $project_key => $project_value) {
+            // fetch the members 
+            $members = Performance::where('project_id', $project_value->id)->whereBetween('date_start', [$this->date_start,$this->date_end])->groupBy('member_id')->with('member')->get();
+            
+            // for every member fetch its performances
+            foreach ($members as $member_key => $member_value) {
+                $performances = Performance::where('member_id', $member_value->member->id)->whereBetween('date_start', [$this->date_start,$this->date_end])->with('result')->get();
+                
+                // fetch the target of the user
+                $target = Target::where('position_id', $member_value->position_id)
+                    ->where('type', 'Productivity')
+                    ->where('experience', $member_value->member->experience)
+                    ->where('created_at', '<=', $this->date_end)
+                    ->orderBy('created_at', 'desc')
+                    ->first();
+
+                // if the target didnt fetch any back targets fetch the active
+                if(!$target)
+                {
+                    $target = DB::table('targets')
+                        ->where('position_id', $member_value->position_id)
+                        ->where('type', 'Productivity')
+                        ->where('experience', $member_value->member->experience)
+                        ->where('active', true)
+                        ->first();
+                }
+
+                // set the computation
+                $total_output = 0;
+                $total_output_error = 0;
+                $total_hours_worked = 0;
+                $daily_work_hours = 0;
+
+                // compute every performance of the member
+                foreach ($performances as $performance_key => $perforamnce_value) {
+                    $total_output += $perforamnce_value->output;            
+                    $total_output_error += $perforamnce_value->output_error;            
+                    $total_hours_worked += $perforamnce_value->hours_worked;
+                    $daily_work_hours = $perforamnce_value->daily_work_hours;   
+                }
+
+                $member_value->member->productivity_average = round((($total_output /  $total_hours_worked * $daily_work_hours) / $target->value) * 100, 1);
+                $member_value->member->quality_average =  round((1 - $total_output_error / $total_output) * 100, 1);
+                $member_value->member->performances = $performances;
+
+                array_push($results_array, $member_value->member);
+            }
+
+            $department->positions = $project_value->positions;
+            // iterate every position and count the members within it
+            foreach ($project_value->positions as $position_key => $position_value) {
+                $position_head_count_array = array();
+                $date_end = Carbon::parse('first Monday of April 2016')->addWeek();
+                // iterate every week
+                for ($date_start = Carbon::parse('first Monday of April 2016'); $date_start->lt($this->date_end); $date_start->addWeek()) { 
+                    $performances = Performance::where('position_id', $position_value->id)->whereBetween('date_start', [$date_start, $date_end])->groupBy('member_id')->get();
+                    
+                    array_push($position_head_count_array, $performances);
+
+                    // increment the date end
+                    $date_end->addWeek();              
+                }
+                // for each positions count the members per week and compare its head count
+                foreach ($position_head_count_array as $position_head_count_array_key => $position_head_count_array_value) {
+                    if($position_head_count_array_key == 0){
+                        $head_count = count($position_head_count_array_value);
+                    }
+                    else{
+                        $head_count = $head_count < count($position_head_count_array_value) ? count($position_head_count_array_value) : $head_count;
+                    }
+                }
+
+                $position_value->head_count = $head_count;
+                $department->program_head_count += $head_count;
+            }
+        }
+
+        $department->members = $results_array;
+        $department->date_cover_start = Carbon::parse('first Monday of April 2016')->toFormattedDateString();
+        $department->date_cover_end = Carbon::parse('last Monday of April 2016')->addDays(5)->toFormattedDateString();
+
+        return response()->json($department);
+    }
+
     public function teamPerformance($month, $year, $daily_work_hours)
     {
         $months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];

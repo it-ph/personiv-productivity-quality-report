@@ -9,4 +9,14 @@ class Result extends Model
 {
     use SoftDeletes;
     protected $dates = ['deleted_at'];
+
+    public function performance()
+    {
+    	return $this->belongsTo('App\Performance');
+    }
+
+    public function report()
+    {
+    	return $this->belongsTo('App\Report');
+    }
 }
