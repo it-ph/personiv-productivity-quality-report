@@ -12,6 +12,12 @@ teamLeaderModule
 							'name':'Dashboard',
 							'state':'main',
 							'icon':'mdi-view-dashboard',
+							'tip': 'Dashboard: tracks your team\'s monthly performance.',
+						},
+						{
+							'name':'Weekly Report',
+							'state':'main.weekly-report',
+							'icon':'mdi-view-carousel',
 							'tip': 'Dashboard: tracks your team\'s weekly performance, targets, and top performers.',
 						},
 						{

@@ -239,7 +239,7 @@ teamLeaderModule
 		 *
 		*/
 		$scope.toolbar = {};
-		$scope.toolbar.childState = 'Dashboard';
+		$scope.toolbar.childState = 'Weekly Report';
 		/**
 		 * Object for subheader
 		 *

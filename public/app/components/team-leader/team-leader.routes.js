@@ -17,12 +17,30 @@ teamLeaderModule
 					},
 					'content-container@main': {
 						templateUrl: '/app/components/team-leader/views/content-container.view.html',
-						controller: 'mainContentContainerController',
+						controller: 'mainMonthlyContentContainerController',
 					},
 					'content@main': {
-						templateUrl: '/app/shared/templates/main.content.template.html',
+						templateUrl: '/app/components/team-leader/templates/content/main-monthly.content.template.html',
 					},
 					'right-sidenav@main': {
+						templateUrl: '/app/components/team-leader/templates/sidenavs/main-monthly-right.sidenav.html',
+					}
+				}
+			})
+			.state('main.weekly-report',{
+				url:'weekly-report',
+				views: {
+					'content-container': {
+						templateUrl: '/app/components/team-leader/views/content-container.view.html',
+						controller: 'mainContentContainerController',
+					},
+					'toolbar@main.weekly-report': {
+						templateUrl: '/app/components/team-leader/templates/toolbar.template.html',
+					},
+					'content@main.weekly-report': {
+						templateUrl: '/app/shared/templates/main.content.template.html',
+					},
+					'right-sidenav@main.weekly-report': {
 						templateUrl: '/app/components/team-leader/templates/sidenavs/main-right.sidenav.html',
 					}
 				}

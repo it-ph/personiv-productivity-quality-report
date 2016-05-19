@@ -21,12 +21,30 @@ teamLeaderModule
 					},
 					'content-container@main': {
 						templateUrl: '/app/components/team-leader/views/content-container.view.html',
-						controller: 'mainContentContainerController',
+						controller: 'mainMonthlyContentContainerController',
 					},
 					'content@main': {
-						templateUrl: '/app/shared/templates/main.content.template.html',
+						templateUrl: '/app/components/team-leader/templates/content/main-monthly.content.template.html',
 					},
 					'right-sidenav@main': {
+						templateUrl: '/app/components/team-leader/templates/sidenavs/main-monthly-right.sidenav.html',
+					}
+				}
+			})
+			.state('main.weekly-report',{
+				url:'weekly-report',
+				views: {
+					'content-container': {
+						templateUrl: '/app/components/team-leader/views/content-container.view.html',
+						controller: 'mainContentContainerController',
+					},
+					'toolbar@main.weekly-report': {
+						templateUrl: '/app/components/team-leader/templates/toolbar.template.html',
+					},
+					'content@main.weekly-report': {
+						templateUrl: '/app/shared/templates/main.content.template.html',
+					},
+					'right-sidenav@main.weekly-report': {
 						templateUrl: '/app/components/team-leader/templates/sidenavs/main-right.sidenav.html',
 					}
 				}
@@ -506,6 +524,12 @@ teamLeaderModule
 							'name':'Dashboard',
 							'state':'main',
 							'icon':'mdi-view-dashboard',
+							'tip': 'Dashboard: tracks your team\'s monthly performance.',
+						},
+						{
+							'name':'Weekly Report',
+							'state':'main.weekly-report',
+							'icon':'mdi-view-carousel',
 							'tip': 'Dashboard: tracks your team\'s weekly performance, targets, and top performers.',
 						},
 						{
@@ -799,7 +823,7 @@ teamLeaderModule
 		 *
 		*/
 		$scope.toolbar = {};
-		$scope.toolbar.childState = 'Dashboard';
+		$scope.toolbar.childState = 'Weekly Report';
 		/**
 		 * Object for subheader
 		 *
@@ -982,6 +1006,108 @@ teamLeaderModule
 			    	return;
 			    });
 		}
+	}]);
+teamLeaderModule
+	.controller('mainMonthlyContentContainerController', ['$scope', '$mdDialog', 'Preloader', 'Report', function($scope, $mdDialog, Preloader, Report){
+		$scope.report = {};
+		/**
+		 * Object for toolbar
+		 *
+		*/
+		$scope.toolbar = {};
+		$scope.toolbar.childState = 'Dashboard';
+		/**
+		 * Object for subheader
+		 *
+		*/
+		$scope.subheader = {};
+		$scope.subheader.state = 'dashboard';
+		$scope.subheader.refresh = function(){
+			$scope.report = {};
+			Preloader.preload();
+			$scope.init(true);
+		}
+
+		$scope.subheader.download = function(){
+			$mdDialog.show({
+		    	controller: 'downloadReportDialogController',
+		      	templateUrl: '/app/components/team-leader/templates/dialogs/download-report-dialog.template.html',
+		      	parent: angular.element(document.body),
+		    });
+		}
+
+		$scope.searchUserInput = function(){
+			Preloader.preload();
+			$scope.init(true, $scope.toolbar);
+		}
+
+		/**
+		 * Status of search bar.
+		 *
+		*/
+		$scope.searchBar = false;
+
+		/**
+		 * Reveals the search bar.
+		 *
+		*/
+		$scope.showSearchBar = function(){
+			$scope.searchBar = true;
+		};
+
+		/**
+		 * Hides the search bar.
+		 *
+		*/
+		$scope.hideSearchBar = function(){
+			$scope.toolbar.userInput = '';
+			$scope.searchBar = false;
+		};
+
+		/**
+		 * Object for right sidenav
+		 *
+		*/
+		$scope.rightSidenav = {};
+		$scope.rightSidenav.show = true;
+
+		$scope.init = function(refresh, query){
+			Report.departmentMonthly(query)
+				.success(function(data){
+					if(query){
+						$scope.report.results = data;
+						$scope.report.showCurrent = false;
+					}
+					else{
+						$scope.report.current = data;
+						$scope.report.showCurrent = true;
+						console.log($scope.report.current);
+					}
+
+					if(refresh)
+					{
+						Preloader.stop();
+					}
+				})
+				.error(function(){
+					Preloader.error();
+				});
+		}
+
+		$scope.view = function(data){
+			Preloader.set(data);
+			$mdDialog.show({
+		    	controller: 'performanceMonthlyViewDialogController',
+		      	templateUrl: '/app/components/admin/templates/dialogs/performance-monthly-view.dialog.template.html',
+		      	parent: angular.element(document.body),
+		      	clickOutsideToClose:true,
+		    });
+
+		}
+
+		$scope.init();
+
+
 	}]);
 teamLeaderModule
 	.controller('membersContentContainerController', ['$scope', '$mdDialog', 'Preloader', 'Member', 'User', function($scope, $mdDialog, Preloader, Member, User){
@@ -1677,6 +1803,22 @@ teamLeaderModule
 						});
 				}
 			}
+		}
+	}]);
+teamLeaderModule
+	.controller('performanceMonthlyViewDialogController', ['$scope', '$mdDialog', 'Performance', 'Preloader', function($scope, $mdDialog, Performance, Preloader){		
+		$scope.member = Preloader.get();
+
+		Performance.monthly($scope.member.performances[0])
+			.success(function(data){
+				$scope.performances = data;
+			})
+			.error(function(){
+				Preloader.error();
+			});
+
+		$scope.cancel = function(){
+			$mdDialog.cancel();
 		}
 	}]);
 //# sourceMappingURL=team-leader.js.map

@@ -16,79 +16,291 @@ use Auth;
 use App\Project;
 use App\Target;
 use App\Position;
+use App\Member;
 
 class ReportController extends Controller
 {
-    public function test()
+    public function departmentMonthly(Request $request)
+    // public function test(Request $request)
     {
-        $user = Auth::user();
-
-        $department = DB::table('departments')->where('id', $user->department_id)->first();
-
-        $this->date_start = new Carbon('first Monday of April 2016'); // first Monday of the month
-        $this->date_end = new Carbon('last Monday of April 2016'); // last Monday of the month
-        $results_array = array();
+        $this->date_start = ($request->month && $request->year) ? new Carbon('first Monday of '. $request->month .' '. $request->year) : new Carbon('first Monday of this month'); // first Monday of the month
+        $this->date_end = ($request->month && $request->year) ? new Carbon('last Monday of '. $request->month .' '. $request->year) : new Carbon('last Monday of this month'); // last Monday of the month
         // fetch all the projects under the department of the user
         $projects = Project::where('department_id', Auth::user()->department_id)->with('positions')->get();
         /* Head Count */
-        $department->program_head_count = 0;
         // for each project fetch get the monthly results of the project
         foreach ($projects as $project_key => $project_value) {
-            // fetch the members 
-            $members = Performance::where('project_id', $project_value->id)->whereBetween('date_start', [$this->date_start,$this->date_end])->groupBy('member_id')->with('member')->get();
+            $member_details = array();
+            $project_value->beginner_total_output = 0;
+            $project_value->beginner_total_man_hours = 0;
+            $project_value->beginner_total_average_output = 0;
             
-            // for every member fetch its performances
-            foreach ($members as $member_key => $member_value) {
-                $performances = Performance::where('member_id', $member_value->member->id)->whereBetween('date_start', [$this->date_start,$this->date_end])->with('result')->get();
-                
-                // fetch the target of the user
-                $target = Target::where('position_id', $member_value->position_id)
-                    ->where('type', 'Productivity')
-                    ->where('experience', $member_value->member->experience)
-                    ->where('created_at', '<=', $this->date_end)
-                    ->orderBy('created_at', 'desc')
-                    ->first();
+            $project_value->moderately_experienced_total_output = 0;
+            $project_value->moderately_experienced_total_man_hours = 0;
+            $project_value->moderately_experienced_total_average_output = 0;
+            
+            $project_value->experienced_total_output = 0;
+            $project_value->experienced_total_man_hours = 0;
+            $project_value->experienced_total_average_output = 0;
 
-                // if the target didnt fetch any back targets fetch the active
-                if(!$target)
+            $project_value->program_head_count = 0;
+
+
+            if($request->daily_work_hours)
+            {
+                $report = Report::where('project_id', $project_value->id)->where('daily_work_hours', 'like', $request->daily_work_hours. '%')->whereBetween('date_start', [$this->date_start,$this->date_end])->first();
+            }
+            else{
+                $report = Report::where('project_id', $project_value->id)->whereBetween('date_start', [$this->date_start,$this->date_end])->first();
+            }
+            // fetch the members 
+            $members = Performance::where('project_id', $project_value->id)->where('daily_work_hours', 'like', $report->daily_work_hours. '%')->whereBetween('date_start', [$this->date_start,$this->date_end])->groupBy('member_id')->with('member')->get();
+
+            $beginner = DB::table('performances')
+                    ->join('members', 'members.id', '=', 'performances.member_id')
+                    ->select('performances.*')
+                    ->where('members.experience', 'Beginner')
+                    ->where('performances.daily_work_hours', 'like', $report->daily_work_hours.'%')
+                    ->whereNull('performances.deleted_at')
+                    ->whereBetween('performances.date_start', [$this->date_start, $this->date_end])
+                    ->where('performances.project_id', $project_value->id)
+                    ->get();
+
+                if($beginner)
                 {
-                    $target = DB::table('targets')
-                        ->where('position_id', $member_value->position_id)
+                    foreach ($beginner as $beginnerKey => $beginnerValue) {
+                         $project_value->beginner_total_output += $beginnerValue->output;
+                         $project_value->beginner_total_man_hours += $beginnerValue->hours_worked;
+                    }
+
+                    $project_value->beginner_total_average_output = $project_value->beginner_total_output / $project_value->beginner_total_man_hours * $report->daily_work_hours;
+                    
+                    $project_value->beginner = DB::table('performances')
+                        ->join('positions', 'positions.id', '=', 'performances.position_id')
+                        ->join('members', 'members.id', '=', 'performances.member_id')
+                        ->select(
+                            'performances.*',
+                            'positions.name as position'
+                        )
+                        ->where('members.experience', 'Beginner')
+                        ->where('performances.daily_work_hours', 'like', $report->daily_work_hours.'%')
+                        ->whereNull('performances.deleted_at')
+                        ->whereBetween('performances.date_start', [$this->date_start, $this->date_end])
+                        ->where('performances.project_id', $project_value->id)
+                        ->groupBy('positions.id')
+                        ->get();
+
+                    foreach ($project_value->beginner as $beginnerKey => $beginnerValue) {
+                        $query = DB::table('performances')
+                            ->join('members', 'members.id', '=', 'performances.member_id')
+                            ->where('members.experience', 'Beginner')
+                            ->where('performances.position_id', $beginnerValue->position_id)
+                            ->where('performances.daily_work_hours', 'like', $report->daily_work_hours.'%')
+                            ->whereNull('performances.deleted_at')
+                            ->whereBetween('performances.date_start', [$this->date_start, $this->date_end])
+                            ->where('performances.project_id', $project_value->id)
+                            ->get();
+
+                        $beginnerValue->total_output = 0;
+                        $beginnerValue->total_man_hours = 0;
+                        $beginnerValue->total_average_output = 0;
+
+                        if($query)
+                        {
+                            foreach ($query as $queryKey => $queryValue) {
+                                $beginnerValue->total_output += $queryValue->output;
+                                $beginnerValue->total_man_hours += $queryValue->hours_worked;
+                            }
+
+                            $beginnerValue->total_average_output = round($beginnerValue->total_output / $beginnerValue->total_man_hours * $report->daily_work_hours, 2);
+                        }
+                    }
+                }
+
+                $moderately_experienced = DB::table('performances')
+                    ->join('members', 'members.id', '=', 'performances.member_id')
+                    ->select('performances.*')
+                    ->where('members.experience', 'Moderately Experienced')
+                    ->where('performances.daily_work_hours', 'like', $report->daily_work_hours.'%')
+                    ->whereNull('performances.deleted_at')
+                    ->whereBetween('performances.date_start', [$this->date_start, $this->date_end])
+                    ->where('performances.project_id', $project_value->id)
+                    ->get();
+
+                if($moderately_experienced)
+                {
+                    foreach ($moderately_experienced as $moderatelyExperiencedKey => $moderatelyExperiencedValue) {
+                         $project_value->moderately_experienced_total_output += $moderatelyExperiencedValue->output;
+                         $project_value->moderately_experienced_total_man_hours += $moderatelyExperiencedValue->hours_worked;
+                    }
+
+                    $project_value->moderately_experienced_total_average_output = $project_value->moderately_experienced_total_output / $project_value->moderately_experienced_total_man_hours * $report->daily_work_hours;
+                    
+                    $project_value->moderately_experienced = DB::table('performances')
+                        ->join('positions', 'positions.id', '=', 'performances.position_id')
+                        ->join('members', 'members.id', '=', 'performances.member_id')
+                        ->select(
+                            'performances.*',
+                            'positions.name as position'
+                        )
+                        ->where('members.experience', 'Moderately Experienced')
+                        ->where('performances.daily_work_hours', 'like', $report->daily_work_hours.'%')
+                        ->whereNull('performances.deleted_at')
+                        ->whereBetween('performances.date_start', [$this->date_start, $this->date_end])
+                        ->where('performances.project_id', $project_value->id)
+                        ->groupBy('positions.id')
+                        ->get();
+
+                    foreach ($project_value->moderately_experienced as $moderatelyExperiencedKey => $moderatelyExperiencedValue) {
+                        $query = DB::table('performances')
+                            ->join('members', 'members.id', '=', 'performances.member_id')
+                            ->whereNull('performances.deleted_at')
+                            ->where('members.experience', 'Moderately Experienced')
+                            ->where('performances.position_id', $moderatelyExperiencedValue->position_id)
+                            ->where('performances.daily_work_hours', 'like', $report->daily_work_hours.'%')
+                            ->whereBetween('performances.date_start', [$this->date_start, $this->date_end])
+                            ->where('performances.project_id', $project_value->id)
+                            ->get();
+
+                        $moderatelyExperiencedValue->total_output = 0;
+                        $moderatelyExperiencedValue->total_man_hours = 0;
+                        $moderatelyExperiencedValue->total_average_output = 0;
+
+                        if($query)
+                        {
+                            foreach ($query as $queryKey => $queryValue) {
+                                $moderatelyExperiencedValue->total_output += $queryValue->output;
+                                $moderatelyExperiencedValue->total_man_hours += $queryValue->hours_worked;
+                            }
+
+                            $moderatelyExperiencedValue->total_average_output = round($moderatelyExperiencedValue->total_output / $moderatelyExperiencedValue->total_man_hours * $report->daily_work_hours, 2);
+                        }
+                    }
+                }
+
+                $experienced = DB::table('performances')
+                    ->join('members', 'members.id', '=', 'performances.member_id')
+                    ->select('performances.*')
+                    ->whereNull('performances.deleted_at')
+                    ->where('members.experience', 'Experienced')
+                    ->where('performances.daily_work_hours', 'like', $report->daily_work_hours.'%')
+                    ->whereBetween('performances.date_start', [$this->date_start, $this->date_end])
+                    ->where('performances.project_id', $project_value->id)
+                    ->get();
+
+                if($experienced)
+                {
+                    foreach ($experienced as $experiencedKey => $experiencedValue) {
+                         $project_value->experienced_total_output += $experiencedValue->output;
+                         $project_value->experienced_total_man_hours += $experiencedValue->hours_worked;
+                    }
+
+                    $project_value->experienced_total_average_output = round($project_value->experienced_total_output / $project_value->experienced_total_man_hours * $report->daily_work_hours, 2);
+                    
+                    $project_value->experienced = DB::table('performances')
+                        ->join('positions', 'positions.id', '=', 'performances.position_id')
+                        ->join('members', 'members.id', '=', 'performances.member_id')
+                        ->select(
+                            'performances.*',
+                            'positions.name as position'
+                        )
+                        ->whereNull('performances.deleted_at')
+                        ->where('members.experience', 'Experienced')
+                        ->where('performances.daily_work_hours', 'like', $report->daily_work_hours.'%')
+                        ->whereBetween('performances.date_start', [$this->date_start, $this->date_end])
+                        ->where('performances.project_id', $project_value->id)
+                        ->groupBy('positions.id')
+                        ->get();
+
+                    foreach ($project_value->experienced as $experiencedKey => $experiencedValue) {
+                        $query = DB::table('performances')
+                            ->join('members', 'members.id', '=', 'performances.member_id')
+                            ->whereNull('performances.deleted_at')
+                            ->where('members.experience', 'Experienced')
+                            ->where('performances.position_id', $experiencedValue->position_id)
+                            ->where('performances.daily_work_hours', 'like', $report->daily_work_hours.'%')
+                            ->whereBetween('performances.date_start', [$this->date_start, $this->date_end])
+                            ->where('performances.project_id', $project_value->id)
+                            ->get();
+
+                        $experiencedValue->total_output = 0;
+                        $experiencedValue->total_man_hours = 0;
+                        $experiencedValue->total_average_output = 0;
+
+                        if($query)
+                        {
+                            foreach ($query as $queryKey => $queryValue) {
+                                $experiencedValue->total_output += $queryValue->output;
+                                $experiencedValue->total_man_hours += $queryValue->hours_worked;
+                            }
+
+                            $experiencedValue->total_average_output = round($experiencedValue->total_output / $experiencedValue->total_man_hours * $report->daily_work_hours, 2);
+                        }
+                    }
+                }
+
+                $project_value->overall_total_output = $project_value->beginner_total_output + $project_value->moderately_experienced_total_output + $project_value->experienced_total_output;
+                $project_value->overall_total_man_hours = $project_value->beginner_total_man_hours + $project_value->moderately_experienced_total_man_hours + $project_value->experienced_total_man_hours;
+                $project_value->overall_total_average_output = round($project_value->overall_total_output / $project_value->overall_total_man_hours * $report->daily_work_hours, 2);
+
+            // for every member fetch its performances
+            if(count($members))
+            {
+                foreach ($members as $member_key => $member_value) {
+                    $performances = Performance::where('member_id', $member_value->member->id)->where('project_id', $member_value->project_id)->where('daily_work_hours', 'like', $report->daily_work_hours. '%')->whereBetween('date_start', [$this->date_start,$this->date_end])->with('result')->get();
+                    
+                    // fetch the target of the user
+                    $target = Target::where('position_id', $member_value->position_id)
                         ->where('type', 'Productivity')
                         ->where('experience', $member_value->member->experience)
-                        ->where('active', true)
+                        ->where('created_at', '<=', $this->date_end)
+                        ->orderBy('created_at', 'desc')
                         ->first();
+
+                    // if the target didnt fetch any back targets fetch the active
+                    if(!$target)
+                    {
+                        $target = DB::table('targets')
+                            ->where('position_id', $member_value->position_id)
+                            ->where('type', 'Productivity')
+                            ->where('experience', $member_value->member->experience)
+                            ->where('active', true)
+                            ->first();
+                    }
+
+                    // set the computation
+                    $total_output = 0;
+                    $total_output_error = 0;
+                    $total_hours_worked = 0;
+                    $daily_work_hours = 0;
+
+                    // compute every performance of the member
+                    foreach ($performances as $performance_key => $perforamnce_value) {
+                        $total_output += $perforamnce_value->output;            
+                        $total_output_error += $perforamnce_value->output_error;            
+                        $total_hours_worked += $perforamnce_value->hours_worked;
+                        $daily_work_hours = $perforamnce_value->daily_work_hours;   
+                    }
+
+                    $member_value->member->productivity_average = round((($total_output /  $total_hours_worked * $daily_work_hours) / $target->value) * 100, 1);
+                    $member_value->member->quality_average =  round((1 - $total_output_error / $total_output) * 100, 1);
+                    $member_value->member->performances = $performances;
+
+                    array_push($member_details, $member_value->member);
                 }
-
-                // set the computation
-                $total_output = 0;
-                $total_output_error = 0;
-                $total_hours_worked = 0;
-                $daily_work_hours = 0;
-
-                // compute every performance of the member
-                foreach ($performances as $performance_key => $perforamnce_value) {
-                    $total_output += $perforamnce_value->output;            
-                    $total_output_error += $perforamnce_value->output_error;            
-                    $total_hours_worked += $perforamnce_value->hours_worked;
-                    $daily_work_hours = $perforamnce_value->daily_work_hours;   
-                }
-
-                $member_value->member->productivity_average = round((($total_output /  $total_hours_worked * $daily_work_hours) / $target->value) * 100, 1);
-                $member_value->member->quality_average =  round((1 - $total_output_error / $total_output) * 100, 1);
-                $member_value->member->performances = $performances;
-
-                array_push($results_array, $member_value->member);
             }
 
-            $department->positions = $project_value->positions;
+            $project_value->members = $member_details;
+            $project_value->date_cover_start = ($request->month && $request->year) ? Carbon::parse('first Monday of '. $request->month .' '. $request->year)->toFormattedDateString() : Carbon::parse('first Monday of this month')->toFormattedDateString();
+            $project_value->date_cover_end = ($request->month && $request->year) ? Carbon::parse('last Monday of '. $request->month .' '. $request->year)->addDays(5)->toFormattedDateString() : Carbon::parse('last Monday of this month')->addDays(5)->toFormattedDateString();
+
             // iterate every position and count the members within it
             foreach ($project_value->positions as $position_key => $position_value) {
                 $position_head_count_array = array();
-                $date_end = Carbon::parse('first Monday of April 2016')->addWeek();
+                $date_end = ($request->month && $request->year) ? Carbon::parse('first Monday of '. $request->month .' '. $request->year)->addWeek() : Carbon::parse('first Monday of this month')->addWeek();
                 // iterate every week
-                for ($date_start = Carbon::parse('first Monday of April 2016'); $date_start->lt($this->date_end); $date_start->addWeek()) { 
-                    $performances = Performance::where('position_id', $position_value->id)->whereBetween('date_start', [$date_start, $date_end])->groupBy('member_id')->get();
+                for ($date_start = ($request->month && $request->year) ? Carbon::parse('first Monday of '. $request->month .' '. $request->year) : Carbon::parse('first Monday of this month'); $date_start->lt($this->date_end); $date_start->addWeek()) { 
+                    $performances = Performance::where('position_id', $position_value->id)->where('project_id', $project_value->id)->whereBetween('date_start', [$date_start, $date_end])->groupBy('member_id')->get();
                     
                     array_push($position_head_count_array, $performances);
 
@@ -104,17 +316,12 @@ class ReportController extends Controller
                         $head_count = $head_count < count($position_head_count_array_value) ? count($position_head_count_array_value) : $head_count;
                     }
                 }
-
                 $position_value->head_count = $head_count;
-                $department->program_head_count += $head_count;
+                $project_value->program_head_count += $head_count;
             }
         }
 
-        $department->members = $results_array;
-        $department->date_cover_start = Carbon::parse('first Monday of April 2016')->toFormattedDateString();
-        $department->date_cover_end = Carbon::parse('last Monday of April 2016')->addDays(5)->toFormattedDateString();
-
-        return response()->json($department);
+        return response()->json($projects);
     }
 
     public function teamPerformance($month, $year, $daily_work_hours)

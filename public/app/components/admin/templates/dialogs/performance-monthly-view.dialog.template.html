@@ -27,7 +27,6 @@
 				<th>Average Output</th>
 				<th>Productivity</th>
 				<th>Quality</th>
-				<th>Remarks</th>
 			</tr>
 			<tr class="fade-transition" ng-repeat="performance in performances">
 				<td>{{performance.date_start}}</td>
@@ -41,7 +40,6 @@
 				<td>{{performance.average_output | number: 1}}</td>
 				<td>{{performance.productivity | number: 1}}%</td>
 				<td>{{performance.quality | number: 1}}%</td>
-				<td ng-class="performance.quota == 'Not met' ? 'accent-text': 'main-text'">{{performance.quota}}</td>
 			</tr>
 		</table>
 	</md-dialog-content>

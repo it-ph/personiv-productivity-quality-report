@@ -528,6 +528,9 @@ sharedModule
 			searchMonthly: function(data){
 				return $http.post(urlBase + '-search-monthly', data);
 			},
+			departmentMonthly: function(data){
+				return $http.post(urlBase + '-department-monthly', data);
+			},
 		}
 	}])
 sharedModule
