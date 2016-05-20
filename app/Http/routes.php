@@ -120,5 +120,5 @@ Route::group(['middleware' => 'auth'], function () {
 	Route::get('member-department/{departmentID}', 'MemberController@department');
 	Route::get('report-test', 'ReportController@test');
 	Route::post('report-department-monthly', 'ReportController@departmentMonthly');
-	Route::get('report-test', 'ReportController@test');
+	Route::get('position-department/{departmentID}', 'PositionController@department');
 });

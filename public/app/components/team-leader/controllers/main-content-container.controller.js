@@ -1,5 +1,5 @@
 teamLeaderModule
-	.controller('mainContentContainerController', ['$scope', '$state', '$mdToast', '$mdDialog', 'Approval', 'Preloader', 'Position', 'Report', 'Performance', 'Target', 'User', 'WalkThrough', 'Project', function($scope, $state, $mdToast, $mdDialog, Approval, Preloader, Position, Report, Performance, Target, User, WalkThrough, Project){
+	.controller('mainContentContainerController', ['$scope', '$filter', '$state', '$mdToast', '$mdDialog', 'Approval', 'Preloader', 'Member', 'Position', 'Report', 'Performance', 'Target', 'User', 'WalkThrough', 'Project', function($scope, $filter, $state, $mdToast, $mdDialog, Approval, Preloader, Member, Position, Report, Performance, Target, User, WalkThrough, Project){
 		var user = null;
 		$scope.tour = {};
 		$scope.tour.search = 'Need to find something? I\'ll help you find what you\'re looking for.';
@@ -23,6 +23,28 @@ teamLeaderModule
 		$scope.filterDate = {};
 		$scope.filterData = {};
 		$scope.filterDate.type = 'Weekly';
+
+		$scope.rightSidenav = {};
+		$scope.rightSidenav.show = true;
+		$scope.rightSidenav.items = [];
+		$scope.rightSidenav.queryMember = function(query){
+			var results = query ? $filter('filter')($scope.rightSidenav.items, query) : $scope.rightSidenav.items;
+			return results;
+		}
+
+		Member.index()
+			.success(function(data){
+				angular.forEach(data, function(item){
+					var member = {};
+					member.full_name = item.full_name;
+					$scope.rightSidenav.items.push(member);
+				});
+			})
+
+		Position.index()
+			.success(function(data){
+				$scope.positions = data;
+			});
 
 		$scope.months = [
 			{'value': '01', 'month': 'January'},
@@ -56,7 +78,7 @@ teamLeaderModule
 
 		$scope.years = [];
 		
-		var dateCreated = 2015;
+		var dateCreated = 2016;
 
 		// will generate the dates that will be used in drop down menu
 		for (var i = new Date().getFullYear(); i >= dateCreated; i--) {
@@ -390,10 +412,6 @@ teamLeaderModule
 		// $scope.fab.action = function(){
 		// 	return;
 		// };
-
-		$scope.rightSidenav = {};
-
-		$scope.rightSidenav.show = true;
 
 		$scope.editReport = function(id){
 			$state.go('main.edit-report', {'reportID':id});

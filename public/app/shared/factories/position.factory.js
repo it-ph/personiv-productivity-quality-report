@@ -21,5 +21,8 @@ sharedModule
 			project: function(id){
 				return $http.get(urlBase + '-project/' + id);
 			},
+			department: function(id){
+				return $http.get(urlBase + '-department/' + id);
+			},
 		}
 	}])

@@ -55,7 +55,7 @@ teamLeaderModule
 
 		$scope.years = [];
 		
-		var dateCreated = 2015;
+		var dateCreated = 2016;
 
 		// will generate the dates that will be used in drop down menu
 		for (var i = new Date().getFullYear(); i >= dateCreated; i--) {

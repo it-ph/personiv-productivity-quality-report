@@ -8,6 +8,7 @@ use DB;
 use Carbon\Carbon;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
+use Auth;
 
 class MemberController extends Controller
 {
@@ -72,7 +73,7 @@ class MemberController extends Controller
      */
     public function index()
     {   
-        //
+        return Member::where('team_leader_id', Auth::user()->id)->get();   
     }
 
     /**

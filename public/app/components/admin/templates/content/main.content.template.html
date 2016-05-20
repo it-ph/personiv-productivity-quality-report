@@ -187,17 +187,16 @@
 									</a>
 								</th>
 								<th>
-									<a href="#" class="main-text" ng-click="sortType = 'quota' ; sortReverse = !sortReverse">
-										<span>Remarks</span>
-										<md-icon ng-show="sortType == 'quota' && !sortReverse" class="mdi mdi-chevron-down grey"></md-icon>
-										<md-icon ng-show="sortType == 'quota' && sortReverse" class="mdi mdi-chevron-up grey"></md-icon>
+									<a href="#" class="main-text" ng-click="sortType = 'quadrant' ; sortReverse = !sortReverse">
+										<span>Quadrant</span>
+										<md-icon ng-show="sortType == 'quadrant' && !sortReverse" class="mdi mdi-chevron-down grey"></md-icon>
+										<md-icon ng-show="sortType == 'quadrant' && sortReverse" class="mdi mdi-chevron-up grey"></md-icon>
 										<md-tooltip>
 											<span ng-show="sortReverse">Ascending</span>
 											<span ng-show="!sortReverse">Descending</span>
 										</md-tooltip>
 									</a>
 								</th>
-								<th>Status</th>
 							</tr>
 							<tr ng-repeat="item in detail | orderBy:sortType:sortReverse" ng-click="test(item)">
 								<td>{{item.full_name}}</td>
@@ -221,11 +220,12 @@
 								</td> -->
 								<td>{{item.productivity_average}}%</td>
 								<td>{{item.quality_average}}%</td>
-								<td ng-class="{'accent-text':item.quota=='Not met'}">{{item.quota}}</td>
-								<td layout="row" layout-align="center center">
-									<div class="dots" ng-class="item.results.length >= 4 ? 'primary' : 'accent'"></div>
-									<md-tooltip ng-if="item.results.length >= 4">Complete</md-tooltip>
-									<md-tooltip ng-if="item.results.length < 4">Incomplete</md-tooltip>
+								<td>
+									{{item.quadrant}}
+									<md-tooltip ng-if="item.quadrant == 'Quadrant 1'">Producitivity is not met, but Quality is met.</md-tooltip>
+									<md-tooltip ng-if="item.quadrant == 'Quadrant 2'">Producitivity and quality are both met.</md-tooltip>
+									<md-tooltip ng-if="item.quadrant == 'Quadrant 3'">Producitivity is met, but Quality is not met.</md-tooltip>
+									<md-tooltip ng-if="item.quadrant == 'Quadrant 4'">Producitivity and quality are both not met.</md-tooltip>
 								</td>
 							</tr>
 						</table>

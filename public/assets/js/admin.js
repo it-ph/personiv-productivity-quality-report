@@ -415,7 +415,7 @@ adminModule
 
 	}]);
 adminModule
-	.controller('departmentContentContainerController', ['$scope', '$state', '$stateParams', '$mdDialog', 'Preloader', 'Department', 'Report', 'Performance', 'Target', 'User', 'Project', function($scope, $state, $stateParams, $mdDialog, Preloader, Department, Report, Performance, Target, User, Project){
+	.controller('departmentContentContainerController', ['$scope', '$filter', '$state', '$stateParams', '$mdDialog', 'Preloader', 'Member', 'Position', 'Department', 'Report', 'Performance', 'Target', 'User', 'Project', function($scope, $filter, $state, $stateParams, $mdDialog, Preloader, Member, Position, Department, Report, Performance, Target, User, Project){
 		var departmentID = $stateParams.departmentID;
 
 		Project.department(departmentID)
@@ -424,7 +424,31 @@ adminModule
 			});
 
 		$scope.filterDate = {};
+		$scope.filterData = {};
 		$scope.filterDate.type = 'Weekly';
+
+		$scope.rightSidenav = {};
+
+		$scope.rightSidenav.show = true;
+		$scope.rightSidenav.items = [];
+		$scope.rightSidenav.queryMember = function(query){
+			var results = query ? $filter('filter')($scope.rightSidenav.items, query) : $scope.rightSidenav.items;
+			return results;
+		}
+
+		Member.department(departmentID)
+			.success(function(data){
+				angular.forEach(data, function(item){
+					var member = {};
+					member.full_name = item.full_name;
+					$scope.rightSidenav.items.push(member);
+				});
+			})
+
+		Position.department(departmentID)
+			.success(function(data){
+				$scope.positions = data;
+			});
 
 		$scope.months = [
 			{'value': '01', 'month': 'January'},
@@ -496,7 +520,8 @@ adminModule
 		$scope.clearFilter = function(){
 			$scope.subheader.project = '';
 			$scope.filterDate.date_start = '';
-			$scope.filterDate.date_end = ''
+			$scope.filterDate.date_end = '';
+			$scope.filterData.position = '';
 		}
 
 		/**
@@ -768,10 +793,6 @@ adminModule
 		// $scope.fab.action = function(){
 		// 	return;
 		// };
-
-		$scope.rightSidenav = {};
-
-		$scope.rightSidenav.show = true;
 
 		$scope.editReport = function(id){
 			$state.go('main.edit-report', {'reportID':id});
@@ -1096,7 +1117,7 @@ adminModule
 			'November',
 			'December',
 		];
-		var dateCreated = 2015;
+		var dateCreated = 2016;
 
 		$scope.years = [];
 
@@ -2280,7 +2301,7 @@ adminModule
 
 		$scope.years = [];
 		
-		var dateCreated = 2015;
+		var dateCreated = 2016;
 
 		// will generate the dates that will be used in drop down menu
 		for (var i = new Date().getFullYear(); i >= dateCreated; i--) {

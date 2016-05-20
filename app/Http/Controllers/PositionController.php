@@ -7,9 +7,14 @@ use App\Position;
 use DB;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
+use Auth;
 
 class PositionController extends Controller
 {
+    public function department($id)
+    {
+        return Position::where('department_id', $id)->groupBy('name')->get();
+    }
     public function search(Request $request)
     {
         return DB::table('positions')
@@ -31,7 +36,7 @@ class PositionController extends Controller
      */
     public function index()
     {
-        //
+        return Position::where('department_id', Auth::user()->department_id)->groupBy('name')->get();
     }
 
     /**

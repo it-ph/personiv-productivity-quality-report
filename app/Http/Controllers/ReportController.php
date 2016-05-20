@@ -53,6 +53,12 @@ class ReportController extends Controller
             else{
                 $report = Report::where('project_id', $project_value->id)->whereBetween('date_start', [$this->date_start,$this->date_end])->first();
             }
+
+            // execute only if report has been fetch
+            if(!$report)
+            {
+                return;
+            }
             // fetch the members 
             $members = Performance::where('project_id', $project_value->id)->where('daily_work_hours', 'like', $report->daily_work_hours. '%')->whereBetween('date_start', [$this->date_start,$this->date_end])->groupBy('member_id')->with('member')->get();
 
@@ -285,6 +291,22 @@ class ReportController extends Controller
                     $member_value->member->productivity_average = round((($total_output /  $total_hours_worked * $daily_work_hours) / $target->value) * 100, 1);
                     $member_value->member->quality_average =  round((1 - $total_output_error / $total_output) * 100, 1);
                     $member_value->member->performances = $performances;
+
+                    if($member_value->member->productivity_average < 100 && $member_value->member->quality_average >= 100)
+                    {
+                        $member_value->member->quadrant = 'Quadrant 1';
+                    }
+                    else if($member_value->member->productivity_average >= 100 && $member_value->member->quality_average >= 100)
+                    {
+                        $member_value->member->quadrant = 'Quadrant 2';
+                    }
+                    else if ($member_value->member->productivity_average >= 100 && $member_value->member->quality_average < 100)
+                    {
+                        $member_value->member->quadrant = 'Quadrant 3';
+                    }
+                    else{
+                        $member_value->member->quadrant = 'Quadrant 4';
+                    }
 
                     array_push($member_details, $member_value->member);
                 }
@@ -991,7 +1013,22 @@ class ReportController extends Controller
                         ->first();
                 }
 
-                $details[$key1]->quota = (($this->productivity_average >= 100) && ($this->quality_average >= $quality_target->value)) ? 'Met' : 'Not met';
+                if($this->productivity_average < 100 && $this->quality_average >= 100)
+                {
+                    $details[$key1]->quadrant = 'Quadrant 1';
+                }
+                else if($this->productivity_average >= 100 && $this->quality_average >= 100)
+                {
+                    $details[$key1]->quadrant = 'Quadrant 2';
+                }
+                else if ($this->productivity_average >= 100 && $this->quality_average < 100)
+                {
+                    $details[$key1]->quadrant = 'Quadrant 3';
+                }
+                else{
+                    $details[$key1]->quadrant = 'Quadrant 4';
+                }
+                // $details[$key1]->quota = (($this->productivity_average >= 100) && ($this->quality_average >= $quality_target->value)) ? 'Met' : 'Not met';
                 
             }
 
@@ -1367,7 +1404,22 @@ class ReportController extends Controller
                     ->first();
                 }
 
-                $details[$key1]->quota = (($this->productivity_average >= 100) && ($this->quality_average >= $quality_target->value)) ? 'Met' : 'Not met';
+                if($this->productivity_average < 100 && $this->quality_average >= 100)
+                {
+                    $details[$key1]->quadrant = 'Quadrant 1';
+                }
+                else if($this->productivity_average >= 100 && $this->quality_average >= 100)
+                {
+                    $details[$key1]->quadrant = 'Quadrant 2';
+                }
+                else if ($this->productivity_average >= 100 && $this->quality_average < 100)
+                {
+                    $details[$key1]->quadrant = 'Quadrant 3';
+                }
+                else{
+                    $details[$key1]->quadrant = 'Quadrant 4';
+                }
+                // $details[$key1]->quota = (($this->productivity_average >= 100) && ($this->quality_average >= $quality_target->value)) ? 'Met' : 'Not met';
             
             }
 
@@ -1636,8 +1688,23 @@ class ReportController extends Controller
                         ->where('targets.active', true)
                         ->first();    
                 }
+                if($this->productivity_average < 100 && $this->quality_average >= 100)
+                {
+                    $members[$key1]->quadrant = 'Quadrant 1';
+                }
+                else if($this->productivity_average >= 100 && $this->quality_average >= 100)
+                {
+                    $members[$key1]->quadrant = 'Quadrant 2';
+                }
+                else if ($this->productivity_average >= 100 && $this->quality_average < 100)
+                {
+                    $members[$key1]->quadrant = 'Quadrant 3';
+                }
+                else{
+                    $members[$key1]->quadrant = 'Quadrant 4';
+                }
 
-                $members[$key1]->quota = (($this->productivity_average >= 100) && ($this->quality_average >= $quality_target->value)) ? 'Met' : 'Not met';
+                // $members[$key1]->quota = (($this->productivity_average >= 100) && ($this->quality_average >= $quality_target->value)) ? 'Met' : 'Not met';
 
                 // foreach members performance add its results 
                 
@@ -1922,7 +1989,23 @@ class ReportController extends Controller
                         ->first();    
                 }
 
-                $members[$key1]->quota = (($this->productivity_average >= 100) && ($this->quality_average >= $quality_target->value)) ? 'Met' : 'Not met';
+                if($this->productivity_average < 100 && $this->quality_average >= 100)
+                {
+                    $members[$key1]->quadrant = 'Quadrant 1';
+                }
+                else if($this->productivity_average >= 100 && $this->quality_average >= 100)
+                {
+                    $members[$key1]->quadrant = 'Quadrant 2';
+                }
+                else if ($this->productivity_average >= 100 && $this->quality_average < 100)
+                {
+                    $members[$key1]->quadrant = 'Quadrant 3';
+                }
+                else{
+                    $members[$key1]->quadrant = 'Quadrant 4';
+                }
+
+                // $members[$key1]->quota = (($this->productivity_average >= 100) && ($this->quality_average >= $quality_target->value)) ? 'Met' : 'Not met';
 
                 // foreach members performance add its results 
                 
@@ -2016,6 +2099,25 @@ class ReportController extends Controller
                 ->orderBy('positions.name')
                 ->orderBy('members.full_name')
                 ->get();
+            
+            foreach ($reports as $report_key => $report_value) {
+
+                if($report_value->productivity < 100 && $report_value->quality >= 100)
+                {
+                    $report_value->quadrant = 'Quadrant 1';
+                }
+                else if($report_value->productivity >= 100 && $report_value->quality >= 100)
+                {
+                    $report_value->quadrant = 'Quadrant 2';
+                }
+                else if ($report_value->productivity >= 100 && $report_value->quality < 100)
+                {
+                    $report_value->quadrant = 'Quadrant 3';
+                }
+                else{
+                    $report_value->quadrant = 'Quadrant 4';
+                }
+            }
 
             // push each results to custom array
             array_push($report_array, $reports);
@@ -2212,8 +2314,28 @@ class ReportController extends Controller
                 ->orderBy('members.full_name')
                 ->get();
 
+            foreach ($reports as $report_key => $report_value) {
+
+                if($report_value->productivity < 100 && $report_value->quality >= 100)
+                {
+                    $report_value->quadrant = 'Quadrant 1';
+                }
+                else if($report_value->productivity >= 100 && $report_value->quality >= 100)
+                {
+                    $report_value->quadrant = 'Quadrant 2';
+                }
+                else if ($report_value->productivity >= 100 && $report_value->quality < 100)
+                {
+                    $report_value->quadrant = 'Quadrant 3';
+                }
+                else{
+                    $report_value->quadrant = 'Quadrant 4';
+                }
+            }
+
             // push each results to custom array
             array_push($report_array, $reports);
+
 
             $positions = DB::table('positions')
                 ->where('project_id', $value->project_id)
@@ -2302,6 +2424,8 @@ class ReportController extends Controller
                 array_push($experienced_temp, $experienced);
                 array_push($quality_temp, $quality);
             }
+
+
 
             // push in for per report
             array_push($beginner_array, $beginner_temp);
@@ -2455,6 +2579,22 @@ class ReportController extends Controller
                     ->where('active', true)
                     ->get();
 
+            }
+
+            if($value->productivity < 100 && $value->quality >= 100)
+            {
+                $value->quadrant = 'Quadrant 1';
+            }
+            else if($value->productivity >= 100 && $value->quality >= 100)
+            {
+                $value->quadrant = 'Quadrant 2';
+            }
+            else if ($value->productivity >= 100 && $value->quality < 100)
+            {
+                $value->quadrant = 'Quadrant 3';
+            }
+            else{
+                $value->quadrant = 'Quadrant 4';
             }
         }
 
@@ -2666,7 +2806,23 @@ class ReportController extends Controller
                     ->first();
                 }
 
-                    $queryValue->quota = (($queryValue->productivity >= 100) && ($queryValue->quality >= $quality_target->value)) ? 'Met' : 'Not met';
+                    if($queryValue->productivity < 100 && $queryValue->quality >= 100)
+                    {
+                        $queryValue->quadrant = 'Quadrant 1';
+                    }
+                    else if($queryValue->productivity >= 100 && $queryValue->quality >= 100)
+                    {
+                        $queryValue->quadrant = 'Quadrant 2';
+                    }
+                    else if ($queryValue->productivity >= 100 && $queryValue->quality < 100)
+                    {
+                        $queryValue->quadrant = 'Quadrant 3';
+                    }
+                    else{
+                        $queryValue->quadrant = 'Quadrant 4';
+                    }
+
+                    // $queryValue->quota = (($queryValue->productivity >= 100) && ($queryValue->quality >= $quality_target->value)) ? 'Met' : 'Not met';
             }
 
                 // push each results to custom array
@@ -2737,8 +2893,23 @@ class ReportController extends Controller
                             ->where('targets.active', true)
                             ->first();
                     }
+                        if($queryValue->productivity < 100 && $queryValue->quality >= 100)
+                        {
+                            $queryValue->quadrant = 'Quadrant 1';
+                        }
+                        else if($queryValue->productivity >= 100 && $queryValue->quality >= 100)
+                        {
+                            $queryValue->quadrant = 'Quadrant 2';
+                        }
+                        else if ($queryValue->productivity >= 100 && $queryValue->quality < 100)
+                        {
+                            $queryValue->quadrant = 'Quadrant 3';
+                        }
+                        else{
+                            $queryValue->quadrant = 'Quadrant 4';
+                        }
 
-                        $queryValue->quota = (($queryValue->productivity >= 100) && ($queryValue->quality >= $quality_target->value)) ? 'Met' : 'Not met';
+                        // $queryValue->quota = (($queryValue->productivity >= 100) && ($queryValue->quality >= $quality_target->value)) ? 'Met' : 'Not met';
                 }
 
                 // push each results to custom array
