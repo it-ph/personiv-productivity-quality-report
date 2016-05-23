@@ -55,7 +55,7 @@ class UserController extends Controller
                 DB::raw('DATE_FORMAT(users.created_at, "%h:%i %p, %b. %d, %Y") as created_at'),
                 'departments.name as department_name'
             )
-            ->where('role', 'team-leader')
+            ->whereIn('role', ['team-leader', 'manager'])
             ->get();
     }
     /**
@@ -90,6 +90,7 @@ class UserController extends Controller
             'first_name' => 'required|string',
             'last_name' => 'required|string',
             'department_id' => 'required|numeric',
+            'role' => 'required|string',
             'email' => 'required|email|unique:users',
             'password' => 'required|confirmed|min:6',
         ]);
@@ -99,7 +100,7 @@ class UserController extends Controller
         $user->first_name = $request->first_name;
         $user->last_name = $request->last_name;
         $user->department_id = $request->department_id;
-        $user->role = 'team-leader';
+        $user->role = $request->role;
         $user->email = $request->email;
         $user->password = bcrypt($request->password);
 

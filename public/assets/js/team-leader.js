@@ -47,7 +47,7 @@ teamLeaderModule
 					'right-sidenav@main.weekly-report': {
 						templateUrl: '/app/components/team-leader/templates/sidenavs/main-right.sidenav.html',
 					}
-				}
+				},
 			})
 			.state('main.members', {
 				url:'members',
@@ -77,7 +77,15 @@ teamLeaderModule
 					'content@main.report':{
 						templateUrl: '/app/components/team-leader/templates/content/report.content.template.html',
 					},
-				}
+				},
+				onEnter: ['$state', 'User', function($state, User){
+					User.index()
+						.success(function(data){
+							if(data.role == 'manager'){
+								$state.go('page-not-found');
+							}
+						});
+				}],
 			})
 			.state('main.edit-report',{
 				url:'edit-report/{reportID}',
@@ -93,7 +101,15 @@ teamLeaderModule
 					'content@main.edit-report':{
 						templateUrl: '/app/shared/templates/content/edit-report.content.template.html',
 					},
-				}
+				},
+				onEnter: ['$state', 'User', function($state, User){
+					User.index()
+						.success(function(data){
+							if(data.role == 'manager'){
+								$state.go('page-not-found');
+							}
+						});
+				}],
 			})
 			.state('main.approvals',{
 				url:'approvals',
@@ -108,7 +124,15 @@ teamLeaderModule
 					'content@main.approvals':{
 						templateUrl: '/app/shared/templates/content/approval.content.template.html',
 					},
-				}
+				},
+				onEnter: ['$state', 'User', function($state, User){
+					User.index()
+						.success(function(data){
+							if(data.role == 'manager'){
+								$state.go('page-not-found');
+							}
+						});
+				}],
 			})
 
 	}]);
@@ -760,7 +784,6 @@ teamLeaderModule
 		User.index()
 			.success(function(data){
 				user = data;
-				
 				Project.department(user.department_id)
 					.success(function(data){
 						$scope.projects = data;

@@ -1,6 +1,7 @@
 adminModule
 	.controller('addTeamLeaderDialogController', ['$scope', '$mdDialog', 'Preloader', 'Department', 'User', function($scope, $mdDialog, Preloader, Department, User){
 		$scope.user = {};
+		$scope.user.role = 'team-leader';
 		var busy = false;
 		Department.index()
 			.success(function(data){

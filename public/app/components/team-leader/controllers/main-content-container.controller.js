@@ -153,7 +153,6 @@ teamLeaderModule
 		User.index()
 			.success(function(data){
 				user = data;
-				
 				Project.department(user.department_id)
 					.success(function(data){
 						$scope.projects = data;

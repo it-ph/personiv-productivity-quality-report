@@ -17,7 +17,7 @@ adminModule
 				'state':'main.department-settings',
 			},
 			{
-				'name':'Team Leaders',
+				'name':'User Accounts',
 				'state':'main.team-leaders',
 			},
 			{

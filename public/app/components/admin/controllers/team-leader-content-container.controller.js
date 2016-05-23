@@ -6,7 +6,7 @@ adminModule
 		*/
 		$scope.toolbar = {};
 		$scope.toolbar.parentState = 'Settings';
-		$scope.toolbar.childState = 'Team Leaders';
+		$scope.toolbar.childState = 'User Accounts';
 		/**
 		 * Object for subheader
 		 *

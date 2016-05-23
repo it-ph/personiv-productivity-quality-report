@@ -1079,7 +1079,7 @@ adminModule
 				'state':'main.department-settings',
 			},
 			{
-				'name':'Team Leaders',
+				'name':'User Accounts',
 				'state':'main.team-leaders',
 			},
 			{
@@ -1598,7 +1598,7 @@ adminModule
 		*/
 		$scope.toolbar = {};
 		$scope.toolbar.parentState = 'Settings';
-		$scope.toolbar.childState = 'Team Leaders';
+		$scope.toolbar.childState = 'User Accounts';
 		/**
 		 * Object for subheader
 		 *
@@ -2078,6 +2078,7 @@ adminModule
 adminModule
 	.controller('addTeamLeaderDialogController', ['$scope', '$mdDialog', 'Preloader', 'Department', 'User', function($scope, $mdDialog, Preloader, Department, User){
 		$scope.user = {};
+		$scope.user.role = 'team-leader';
 		var busy = false;
 		Department.index()
 			.success(function(data){

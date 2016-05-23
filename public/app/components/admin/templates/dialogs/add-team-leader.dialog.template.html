@@ -28,7 +28,7 @@
 					</div>
 				</md-input-container>
 			</div>
-			<div layout="column" flex>			
+			<div layout="row" layout-align="space-between center" flex>			
 				<!-- Department -->
 				<md-input-container flex>
 					<label>Department</label>
@@ -41,6 +41,14 @@
 						<div ng-messages-include="/app/shared/templates/validation-message.html"></div>
 					</div>
 				</md-input-container>
+	
+				<!-- Role -->
+				<md-radio-group ng-model="user.role" layout="row" flex>
+			    	<md-radio-button value="team-leader" class="md-primary" flex>Team Leader</md-radio-button>
+			      	<md-radio-button value="manager" class="md-primary" flex>Manager</md-radio-button>
+			    </md-radio-group>
+			</div>
+			<div layout="column" flex>
 				<!-- Email -->
 				<md-input-container flex>
 					<label>Email</label>
