@@ -7,8 +7,29 @@
 				</div>
 				<div class="panel-body" layout="column" flex>
 					<div layout="row" layout-align="center center" flex ng-if="detail.showCharts">
-						<div flex>					
-							<canvas id="bar" class="chart chart-bar" chart-data="charts.data[$index]" chart-labels="charts.labels" chart-legend="true" chart-series="charts.series[$index]"></canvas>
+						<div layout="column" flex>
+							<md-radio-group ng-model="detail.chartType" layout="row">
+								<md-radio-button value="bar" class="md-primary">Bar</md-radio-button>
+								<md-radio-button value="line" class="md-primary">Line</md-radio-button>
+							</md-radio-group>
+							<div layout="row">
+								<div flex>
+									<!-- Bar -->
+									<canvas ng-if="detail.chartType=='bar'" class="chart chart-bar" chart-data="charts.productivity.data[$index]" chart-labels="charts.productivity.labels[$index]"  chart-series="charts.productivity.series"></canvas>
+									<!-- Line -->
+									<canvas ng-if="detail.chartType=='line'" class="chart chart-line" chart-data="charts.productivity.data[$index]" chart-labels="charts.productivity.labels[$index]"  chart-series="charts.productivity.series"></canvas>
+									
+									<h3 class="md-subhead center-text">Productivity</h3>					
+								</div>
+								<div flex>					
+									<!-- Bar -->
+									<canvas ng-if="detail.chartType=='bar'" class="chart chart-bar" chart-data="charts.quality.data[$index]" chart-labels="charts.quality.labels[$index]" chart-series="charts.quality.series" chart-colours="['#FF4081']"></canvas>
+									<!-- Line -->
+									<canvas ng-if="detail.chartType=='line'" class="chart chart-line" chart-data="charts.quality.data[$index]" chart-labels="charts.quality.labels[$index]"  chart-series="charts.quality.series"></canvas>
+
+									<h3 class="md-subhead center-text">Quality</h3>					
+								</div>
+							</div>
 						</div>
 						<div flex layout="column" layout-align="end end">
 							<table class="table">
@@ -163,7 +184,10 @@
 				<div class="panel-body" layout="column" flex>
 					<div layout="row" layout-align="center center" flex ng-if="detail.showCharts">
 						<div flex>					
-							<canvas id="bar" class="chart chart-bar" chart-data="charts.data[$index]" chart-labels="charts.labels" chart-legend="true" chart-series="charts.series[$index]"></canvas>
+							<canvas id="bar" class="chart chart-bar" chart-data="charts.productivity.data[$index]" chart-labels="charts.productivity.labels[$index]"  chart-series="charts.productivity.series"></canvas>
+						</div>
+						<div flex>					
+							<canvas id="bar" class="chart chart-bar" chart-data="charts.quality.data[$index]" chart-labels="charts.quality.labels[$index]" chart-series="charts.quality.series" chart-colours="['#FF4081']"></canvas>
 						</div>
 						<!-- <div flex="25">			
 							<canvas id="pie" class="chart chart-pie" chart-data="charts[$index].position_head_count" chart-labels="charts[$index].positions" chart-legend="true"></canvas>

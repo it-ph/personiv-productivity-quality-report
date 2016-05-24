@@ -2659,8 +2659,8 @@ class ReportController extends Controller
                     'reports.id as report_id',
                     'members.*',
                     'performances.*',
-                    DB::raw('DATE_FORMAT(performances.date_start, "%b. %d, %Y") as date_start'),
-                    DB::raw('DATE_FORMAT(performances.date_end, "%b. %d, %Y") as date_end'),
+                    DB::raw('DATE_FORMAT(performances.date_start, "%b. %d, %Y") as date_start_formatted'),
+                    DB::raw('DATE_FORMAT(performances.date_end, "%b. %d, %Y") as date_end_formatted'),
                     'results.*',
                     'projects.*',
                     'projects.name as project',
@@ -2675,7 +2675,9 @@ class ReportController extends Controller
                 ->orderBy('members.full_name')
                 ->get();
 
-            array_push($report_array, $query);
+            if($query){
+                array_push($report_array, $query);
+            }
         }
         return response()->json($report_array);
     }

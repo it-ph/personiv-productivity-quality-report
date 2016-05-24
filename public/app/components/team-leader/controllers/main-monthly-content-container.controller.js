@@ -131,9 +131,15 @@ teamLeaderModule
 			 * Object for charts
 			*/
 			$scope.charts = {};
-			$scope.charts.data = [];
-			$scope.charts.series = [];
-			$scope.charts.labels = ['Productivity', 'Quality'];
+			$scope.charts.productivity = {};
+			$scope.charts.productivity.data = [];
+			$scope.charts.productivity.series = ['Productivity'];
+			$scope.charts.productivity.labels = [];
+
+			$scope.charts.quality = {};
+			$scope.charts.quality.data = [];
+			$scope.charts.quality.series = ['Productivity'];
+			$scope.charts.quality.labels = [];
 
 			Report.departmentMonthly(query)
 				.success(function(data){
@@ -147,15 +153,26 @@ teamLeaderModule
 						$scope.report.current = data;
 						$scope.report.showCurrent = true;
 						angular.forEach(data, function(project, projectKey){
-							$scope.charts.data.push([]);
-							$scope.charts.series.push([]);
-							angular.forEach(project.members, function(member){
-								$scope.charts.series[projectKey].push(member.full_name);
+							project.chartType = 'bar';
+							$scope.charts.productivity.data.push([]);
+							$scope.charts.productivity.labels.push([]);
+							$scope.charts.productivity.data[projectKey].push([]);
+							
+							$scope.charts.quality.data.push([]);
+							$scope.charts.quality.labels.push([]);
+							$scope.charts.quality.data[projectKey].push([]);
+
+							
+							angular.forEach(project.members, function(member, memberKey){
+								$scope.charts.productivity.labels[projectKey].push(member.full_name);
+								$scope.charts.quality.labels[projectKey].push(member.full_name);
 								angular.forEach(member.performances, function(performance){
-									$scope.charts.data[projectKey].push([performance.result.productivity, performance.result.quality]);
+									$scope.charts.productivity.data[projectKey][0].push(performance.result.productivity);
+									$scope.charts.quality.data[projectKey][0].push(performance.result.quality);
 								});
 							});
 						});
+						// console.log($scope.charts);
 					}
 
 					if(refresh)

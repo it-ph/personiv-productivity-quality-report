@@ -7,11 +7,30 @@
 					<span class="primary-text md-title">{{ details[0].date_start_formatted }} to {{ details[0].date_end_formatted }}</span>
 				</div>
 				<div class="panel-body" layout="column">
-					<div layout="row" flex ng-if="showCharts" class="fade-transition">
-						<div flex="65">						
-							<!-- Chart	-->
-							<canvas id="bar-{{$index}}" class="chart chart-bar" chart-data="charts.data[$index]" chart-labels="charts.labels" chart-legend="true" chart-series="charts.series[$index]">
-							</canvas>
+					<div layout="row" flex ng-if="details.showCharts" class="fade-transition">
+						<div layout="column" flex="65">
+							<md-radio-group ng-model="details.chartType" layout="row">
+								<md-radio-button value="bar" class="md-primary">Bar</md-radio-button>
+								<md-radio-button value="line" class="md-primary">Line</md-radio-button>
+							</md-radio-group>
+							<div layout="row">
+								<div flex>
+									<!-- Bar -->
+									<canvas ng-if="details.chartType=='bar'" class="chart chart-bar" chart-data="charts.productivity.data[$index]" chart-labels="charts.productivity.labels[$index]"  chart-series="charts.productivity.series"></canvas>
+									<!-- Line -->
+									<canvas ng-if="details.chartType=='line'" class="chart chart-line" chart-data="charts.productivity.data[$index]" chart-labels="charts.productivity.labels[$index]"  chart-series="charts.productivity.series"></canvas>
+									
+									<h3 class="md-subhead center-text">Productivity</h3>					
+								</div>
+								<div flex>					
+									<!-- Bar -->
+									<canvas ng-if="details.chartType=='bar'" class="chart chart-bar" chart-data="charts.quality.data[$index]" chart-labels="charts.quality.labels[$index]" chart-series="charts.quality.series" chart-colours="['#FF4081']"></canvas>
+									<!-- Line -->
+									<canvas ng-if="details.chartType=='line'" class="chart chart-line" chart-data="charts.quality.data[$index]" chart-labels="charts.quality.labels[$index]"  chart-series="charts.quality.series"></canvas>
+
+									<h3 class="md-subhead center-text">Quality</h3>					
+								</div>
+							</div>
 						</div>
 						<div flex>						
 							<table class="table">
@@ -243,10 +262,34 @@
 				</div>
 				<div class="panel-body" layout="column">
 					<div layout="row" flex ng-if="details.showCharts" class="fade-transition">
-						<div flex="65">						
-							<!-- Chart	-->
+						<!-- <div flex="65">						
+							Chart
 							<canvas id="bar-{{$index}}" class="chart chart-bar" chart-data="charts.data[$index]" chart-labels="charts.labels" chart-legend="true" chart-series="charts.series[$index]">
 							</canvas>
+						</div> -->
+						<div layout="column" flex="65">
+							<md-radio-group ng-model="details.chartType" layout="row">
+								<md-radio-button value="bar" class="md-primary">Bar</md-radio-button>
+								<md-radio-button value="line" class="md-primary">Line</md-radio-button>
+							</md-radio-group>
+							<div layout="row">
+								<div flex>
+									<!-- Bar -->
+									<canvas ng-if="details.chartType=='bar'" class="chart chart-bar" chart-data="charts.productivity.data[$index]" chart-labels="charts.productivity.labels[$index]"  chart-series="charts.productivity.series"></canvas>
+									<!-- Line -->
+									<canvas ng-if="details.chartType=='line'" class="chart chart-line" chart-data="charts.productivity.data[$index]" chart-labels="charts.productivity.labels[$index]"  chart-series="charts.productivity.series"></canvas>
+									
+									<h3 class="md-subhead center-text">Productivity</h3>					
+								</div>
+								<div flex>					
+									<!-- Bar -->
+									<canvas ng-if="details.chartType=='bar'" class="chart chart-bar" chart-data="charts.quality.data[$index]" chart-labels="charts.quality.labels[$index]" chart-series="charts.quality.series" chart-colours="['#FF4081']"></canvas>
+									<!-- Line -->
+									<canvas ng-if="details.chartType=='line'" class="chart chart-line" chart-data="charts.quality.data[$index]" chart-labels="charts.quality.labels[$index]"  chart-series="charts.quality.series"></canvas>
+
+									<h3 class="md-subhead center-text">Quality</h3>					
+								</div>
+							</div>
 						</div>
 						<div flex>						
 							<table class="table">

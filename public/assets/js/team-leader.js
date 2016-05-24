@@ -762,13 +762,37 @@ teamLeaderModule
 		 * Object for charts
 		 *
 		*/
+		// $scope.charts = {};
+		// $scope.charts.result = {};
+		// $scope.charts.data = [];
+		// $scope.charts.result.data = [];
+		// $scope.charts.series = [];
+		// $scope.charts.result.series = [];
+		// $scope.charts.labels = ['Productivity', 'Quality'];
+
 		$scope.charts = {};
+		$scope.charts.productivity = {};
+		$scope.charts.productivity.data = [];
+		$scope.charts.productivity.series = ['Productivity'];
+		$scope.charts.productivity.labels = [];
+
+		$scope.charts.quality = {};
+		$scope.charts.quality.data = [];
+		$scope.charts.quality.series = ['Productivity'];
+		$scope.charts.quality.labels = [];
+
 		$scope.charts.result = {};
-		$scope.charts.data = [];
-		$scope.charts.result.data = [];
-		$scope.charts.series = [];
-		$scope.charts.result.series = [];
-		$scope.charts.labels = ['Productivity', 'Quality'];
+		$scope.charts.result.productivity = {};
+		$scope.charts.result.productivity.data = [];
+		$scope.charts.result.productivity.series = ['Productivity'];
+		$scope.charts.result.productivity.labels = [];
+
+		$scope.charts.result.quality = {};
+		$scope.charts.result.quality.data = [];
+		$scope.charts.result.quality.series = ['Productivity'];
+		$scope.charts.result.quality.labels = [];
+
+
 		/**
 		 * Object for report
 		 *
@@ -813,13 +837,24 @@ teamLeaderModule
 								// set up the charts
 								// reports cycle
 								angular.forEach($scope.report.paginated, function(parentItem, parentKey){
+									parentItem.chartType = 'bar';
 									// performance cycle 
-									$scope.charts.data.push([]);
-									$scope.charts.series.push([]);
+									// $scope.charts.data.push([]);
+									// $scope.charts.series.push([]);
+									$scope.charts.productivity.data.push([]);
+									$scope.charts.productivity.labels.push([]);
+									$scope.charts.productivity.data[parentKey].push([]);
+									
+									$scope.charts.quality.data.push([]);
+									$scope.charts.quality.labels.push([]);
+									$scope.charts.quality.data[parentKey].push([]);
 									angular.forEach(parentItem, function(item, key){
 										// push every productivity and quality of per employee
-										$scope.charts.data[parentKey].push([item.productivity, item.quality]);
-										$scope.charts.series[parentKey].push(item.full_name);
+										// $scope.charts.data[parentKey].push([item.productivity, item.quality]);
+										$scope.charts.productivity.data[parentKey][0].push(item.productivity);
+										$scope.charts.quality.data[parentKey][0].push(item.quality);
+										$scope.charts.productivity.labels[parentKey].push(item.full_name);
+										$scope.charts.quality.labels[parentKey].push(item.full_name);
 									});
 								});
 								$scope.report.paginateLoad = function(){
@@ -864,12 +899,25 @@ teamLeaderModule
 											// reports cycle
 											angular.forEach(data, function(parentItem, parentKey){
 												// performance cycle 
-												$scope.charts.data.push([]);
-												$scope.charts.series.push([]);
+												// $scope.charts.data.push([]);
+												// $scope.charts.series.push([]);
+
+												$scope.charts.productivity.data.push([]);
+												$scope.charts.productivity.labels.push([]);
+												$scope.charts.productivity.data[$scope.charts.productivity.data.length -1].push([]);
+												
+												$scope.charts.quality.data.push([]);
+												$scope.charts.quality.labels.push([]);
+												$scope.charts.quality.data[$scope.charts.quality.data.length -1].push([]);
+
 												angular.forEach(parentItem, function(item, key){
 													// push every productivity and quality of per employee
-													$scope.charts.data[$scope.charts.data.length -1].push([item.productivity, item.quality]);
-													$scope.charts.series[$scope.charts.series.length -1].push(item.full_name);
+													// $scope.charts.data[$scope.charts.data.length -1].push([item.productivity, item.quality]);
+													// $scope.charts.series[$scope.charts.series.length -1].push(item.full_name);
+													$scope.charts.productivity.data[$scope.charts.productivity.data.length -1][0].push(item.productivity);
+													$scope.charts.quality.data[$scope.charts.quality.data.length -1][0].push(item.quality);
+													$scope.charts.productivity.labels[$scope.charts.productivity.data.length -1].push(item.full_name);
+													$scope.charts.quality.labels[$scope.charts.quality.data.length -1].push(item.full_name);
 												});
 											});
 											// Enables again the pagination call for next call.
@@ -909,11 +957,24 @@ teamLeaderModule
 			$scope.report.targets = [];
 			$scope.report.topPerformers = [];
 			$scope.report.page = 2;
-			$scope.charts.data = [];
-			$scope.charts.series = [];
+			// $scope.charts.data = [];
+			// $scope.charts.series = [];
+
+			$scope.charts = {};
+			$scope.charts.productivity = {};
+			$scope.charts.productivity.data = [];
+			$scope.charts.productivity.series = ['Productivity'];
+			$scope.charts.productivity.labels = [];
+
+			$scope.charts.quality = {};
+			$scope.charts.quality.data = [];
+			$scope.charts.quality.series = ['Productivity'];
+			$scope.charts.quality.labels = [];
+
 			$scope.report.busy = true;
 			Report.paginateDepartmentDetails(user.department_id)
 				.success(function(data){
+					data.chartType = 'bar';
 					$scope.report.details = data;
 					angular.forEach(data.data, function(item, key){
 						// fetch the targets
@@ -935,13 +996,27 @@ teamLeaderModule
 							// set up the charts
 							// reports cycle
 							angular.forEach($scope.report.paginated, function(parentItem, parentKey){
+								parentItem.chartType = 'bar';
 								// performance cycle 
-								$scope.charts.data.push([]);
-								$scope.charts.series.push([]);
+								// $scope.charts.data.push([]);
+								// $scope.charts.series.push([]);
+								$scope.charts.productivity.data.push([]);
+								$scope.charts.productivity.labels.push([]);
+								$scope.charts.productivity.data[parentKey].push([]);
+								
+								$scope.charts.quality.data.push([]);
+								$scope.charts.quality.labels.push([]);
+								$scope.charts.quality.data[parentKey].push([]);
+
 								angular.forEach(parentItem, function(item, key){
 									// push every productivity and quality of per employee
-									$scope.charts.data[parentKey].push([item.productivity, item.quality]);
-									$scope.charts.series[parentKey].push(item.full_name);
+									// $scope.charts.data[parentKey].push([item.productivity, item.quality]);
+									// $scope.charts.series[parentKey].push(item.full_name);
+
+									$scope.charts.productivity.data[parentKey][0].push(item.productivity);
+									$scope.charts.quality.data[parentKey][0].push(item.quality);
+									$scope.charts.productivity.labels[parentKey].push(item.full_name);
+									$scope.charts.quality.labels[parentKey].push(item.full_name);
 								});
 							})
 							$scope.report.busy = false;
@@ -992,13 +1067,15 @@ teamLeaderModule
 			$scope.report.show = false;
 			$scope.report.targets = [];
 			$scope.report.topPerformers = [];
-			$scope.charts.result.data = [];
-			$scope.charts.result.series = [];
+			// $scope.charts.result.data = [];
+			// $scope.charts.result.series = [];
 			Preloader.preload();
 			Report.searchDepartment(user.department_id, $scope.toolbar)
 				.success(function(data){
 					$scope.report.results = data;
+					console.log(data);
 					angular.forEach(data, function(item, key){
+						
 						Target.project(item[0].id)
 							.success(function(data){
 								$scope.report.targets.splice(key, 0, data)
@@ -1010,12 +1087,26 @@ teamLeaderModule
 					});
 					angular.forEach($scope.report.results, function(parentItem, parentKey){
 						// performance cycle 
-						$scope.charts.result.data.push([]);
-						$scope.charts.result.series.push([]);
+						// $scope.charts.result.data.push([]);
+						// $scope.charts.result.series.push([]);
+						parentItem.chartType = 'bar';
+						$scope.charts.productivity.data.push([]);
+						$scope.charts.productivity.labels.push([]);
+						$scope.charts.productivity.data[parentKey].push([]);
+						
+						$scope.charts.quality.data.push([]);
+						$scope.charts.quality.labels.push([]);
+						$scope.charts.quality.data[parentKey].push([]);
+
 						angular.forEach(parentItem, function(item, key){
 							// push every productivity and quality of per employee
-							$scope.charts.result.data[parentKey].push([item.productivity, item.quality]);
-							$scope.charts.result.series[parentKey].push(item.full_name);
+							// $scope.charts.result.data[parentKey].push([item.productivity, item.quality]);
+							// $scope.charts.result.series[parentKey].push(item.full_name);
+
+							$scope.charts.productivity.data[parentKey][0].push(item.productivity);
+							$scope.charts.quality.data[parentKey][0].push(item.quality);
+							$scope.charts.productivity.labels[parentKey].push(item.full_name);
+							$scope.charts.quality.labels[parentKey].push(item.full_name);
 						});
 					})
 					Preloader.stop();
@@ -1204,9 +1295,15 @@ teamLeaderModule
 			 * Object for charts
 			*/
 			$scope.charts = {};
-			$scope.charts.data = [];
-			$scope.charts.series = [];
-			$scope.charts.labels = ['Productivity', 'Quality'];
+			$scope.charts.productivity = {};
+			$scope.charts.productivity.data = [];
+			$scope.charts.productivity.series = ['Productivity'];
+			$scope.charts.productivity.labels = [];
+
+			$scope.charts.quality = {};
+			$scope.charts.quality.data = [];
+			$scope.charts.quality.series = ['Productivity'];
+			$scope.charts.quality.labels = [];
 
 			Report.departmentMonthly(query)
 				.success(function(data){
@@ -1220,15 +1317,26 @@ teamLeaderModule
 						$scope.report.current = data;
 						$scope.report.showCurrent = true;
 						angular.forEach(data, function(project, projectKey){
-							$scope.charts.data.push([]);
-							$scope.charts.series.push([]);
-							angular.forEach(project.members, function(member){
-								$scope.charts.series[projectKey].push(member.full_name);
+							project.chartType = 'bar';
+							$scope.charts.productivity.data.push([]);
+							$scope.charts.productivity.labels.push([]);
+							$scope.charts.productivity.data[projectKey].push([]);
+							
+							$scope.charts.quality.data.push([]);
+							$scope.charts.quality.labels.push([]);
+							$scope.charts.quality.data[projectKey].push([]);
+
+							
+							angular.forEach(project.members, function(member, memberKey){
+								$scope.charts.productivity.labels[projectKey].push(member.full_name);
+								$scope.charts.quality.labels[projectKey].push(member.full_name);
 								angular.forEach(member.performances, function(performance){
-									$scope.charts.data[projectKey].push([performance.result.productivity, performance.result.quality]);
+									$scope.charts.productivity.data[projectKey][0].push(performance.result.productivity);
+									$scope.charts.quality.data[projectKey][0].push(performance.result.quality);
 								});
 							});
 						});
+						// console.log($scope.charts);
 					}
 
 					if(refresh)
