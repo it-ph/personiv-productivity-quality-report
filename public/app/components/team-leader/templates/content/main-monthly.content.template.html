@@ -25,7 +25,7 @@
 									<!-- Bar -->
 									<canvas ng-if="detail.chartType=='bar'" class="chart chart-bar" chart-data="charts.quality.data[$index]" chart-labels="charts.quality.labels[$index]" chart-series="charts.quality.series" chart-colours="['#FF4081']"></canvas>
 									<!-- Line -->
-									<canvas ng-if="detail.chartType=='line'" class="chart chart-line" chart-data="charts.quality.data[$index]" chart-labels="charts.quality.labels[$index]"  chart-series="charts.quality.series"></canvas>
+									<canvas ng-if="detail.chartType=='line'" class="chart chart-line" chart-data="charts.quality.data[$index]" chart-labels="charts.quality.labels[$index]"  chart-series="charts.quality.series" chart-colours="['#FF4081']"></canvas>
 
 									<h3 class="md-subhead center-text">Quality</h3>					
 								</div>
@@ -183,11 +183,23 @@
 				</div>
 				<div class="panel-body" layout="column" flex>
 					<div layout="row" layout-align="center center" flex ng-if="detail.showCharts">
-						<div flex>					
-							<canvas id="bar" class="chart chart-bar" chart-data="charts.productivity.data[$index]" chart-labels="charts.productivity.labels[$index]"  chart-series="charts.productivity.series"></canvas>
-						</div>
-						<div flex>					
-							<canvas id="bar" class="chart chart-bar" chart-data="charts.quality.data[$index]" chart-labels="charts.quality.labels[$index]" chart-series="charts.quality.series" chart-colours="['#FF4081']"></canvas>
+						<div layout="row">
+							<div flex>
+								<!-- Bar -->
+								<canvas ng-if="detail.chartType=='bar'" class="chart chart-bar" chart-data="charts.productivity.data[$index]" chart-labels="charts.productivity.labels[$index]"  chart-series="charts.productivity.series"></canvas>
+								<!-- Line -->
+								<canvas ng-if="detail.chartType=='line'" class="chart chart-line" chart-data="charts.productivity.data[$index]" chart-labels="charts.productivity.labels[$index]"  chart-series="charts.productivity.series"></canvas>
+								
+								<h3 class="md-subhead center-text">Productivity</h3>					
+							</div>
+							<div flex>					
+								<!-- Bar -->
+								<canvas ng-if="detail.chartType=='bar'" class="chart chart-bar" chart-data="charts.quality.data[$index]" chart-labels="charts.quality.labels[$index]" chart-series="charts.quality.series" chart-colours="['#FF4081']"></canvas>
+								<!-- Line -->
+								<canvas ng-if="detail.chartType=='line'" class="chart chart-line" chart-data="charts.quality.data[$index]" chart-labels="charts.quality.labels[$index]"  chart-series="charts.quality.series" chart-colours="['#FF4081']"></canvas>
+
+								<h3 class="md-subhead center-text">Quality</h3>					
+							</div>
 						</div>
 						<!-- <div flex="25">			
 							<canvas id="pie" class="chart chart-pie" chart-data="charts[$index].position_head_count" chart-labels="charts[$index].positions" chart-legend="true"></canvas>
