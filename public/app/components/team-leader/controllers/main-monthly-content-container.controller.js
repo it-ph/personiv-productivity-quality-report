@@ -126,53 +126,48 @@ teamLeaderModule
 		};
 
 		$scope.init = function(refresh, query){
-			/**
-			 *
-			 * Object for charts
-			*/
-			$scope.charts = {};
-			$scope.charts.productivity = {};
-			$scope.charts.productivity.data = [];
-			$scope.charts.productivity.series = ['Productivity'];
-			$scope.charts.productivity.labels = [];
-
-			$scope.charts.quality = {};
-			$scope.charts.quality.data = [];
-			$scope.charts.quality.series = ['Productivity'];
-			$scope.charts.quality.labels = [];
-
 			Report.departmentMonthly(query)
 				.success(function(data){
+					var createCharts = function(data){
+						angular.forEach(data, function(project, projectKey){
+							project.chartType = 'bar';
+
+							project.charts = {};
+
+							project.charts.productivity = {};
+							project.charts.productivity.data = [[]];
+							project.charts.productivity.series = ['Productivity'];
+							project.charts.productivity.labels = [];
+							
+							project.charts.quality = {};
+							project.charts.quality.data = [[]];
+							project.charts.quality.series = ['Quality'];
+							project.charts.quality.labels = [];
+
+							
+							angular.forEach(project.members, function(member, memberKey){
+								project.charts.productivity.labels.push(member.full_name);
+								project.charts.quality.labels.push(member.full_name);
+								angular.forEach(member.performances, function(performance){
+									project.charts.productivity.data[0].push(performance.result.productivity);
+									project.charts.quality.data[0].push(performance.result.quality);
+								});
+							});
+						});
+					}
+
 					if(query){
 						$scope.haveResults = data ? true: false;
 						$scope.report.results = data;
 						$scope.report.showCurrent = false;
+
+						createCharts(data);
 					}
 					else{
 						$scope.haveCurrent = data ? true: false;
 						$scope.report.current = data;
 						$scope.report.showCurrent = true;
-						angular.forEach(data, function(project, projectKey){
-							project.chartType = 'bar';
-							$scope.charts.productivity.data.push([]);
-							$scope.charts.productivity.labels.push([]);
-							$scope.charts.productivity.data[projectKey].push([]);
-							
-							$scope.charts.quality.data.push([]);
-							$scope.charts.quality.labels.push([]);
-							$scope.charts.quality.data[projectKey].push([]);
-
-							
-							angular.forEach(project.members, function(member, memberKey){
-								$scope.charts.productivity.labels[projectKey].push(member.full_name);
-								$scope.charts.quality.labels[projectKey].push(member.full_name);
-								angular.forEach(member.performances, function(performance){
-									$scope.charts.productivity.data[projectKey][0].push(performance.result.productivity);
-									$scope.charts.quality.data[projectKey][0].push(performance.result.quality);
-								});
-							});
-						});
-						// console.log($scope.charts);
+						createCharts(data);
 					}
 
 					if(refresh)

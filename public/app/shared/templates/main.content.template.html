@@ -16,17 +16,17 @@
 							<div layout="row">
 								<div flex>
 									<!-- Bar -->
-									<canvas ng-if="details.chartType=='bar'" class="chart chart-bar" chart-data="charts.productivity.data[$index]" chart-labels="charts.productivity.labels[$index]"  chart-series="charts.productivity.series"></canvas>
+									<canvas ng-if="details.chartType=='bar'" class="chart chart-bar" chart-data="details.charts.productivity.data" chart-labels="details.charts.productivity.labels"  chart-series="details.charts.productivity.series"></canvas>
 									<!-- Line -->
-									<canvas ng-if="details.chartType=='line'" class="chart chart-line" chart-data="charts.productivity.data[$index]" chart-labels="charts.productivity.labels[$index]"  chart-series="charts.productivity.series"></canvas>
+									<canvas ng-if="details.chartType=='line'" class="chart chart-line" chart-data="details.charts.productivity.data" chart-labels="details.charts.productivity.labels"  chart-series="details.charts.productivity.series"></canvas>
 									
 									<h3 class="md-subhead center-text">Productivity</h3>					
 								</div>
 								<div flex>					
 									<!-- Bar -->
-									<canvas ng-if="details.chartType=='bar'" class="chart chart-bar" chart-data="charts.quality.data[$index]" chart-labels="charts.quality.labels[$index]" chart-series="charts.quality.series" chart-colours="['#FF4081']"></canvas>
+									<canvas ng-if="details.chartType=='bar'" class="chart chart-bar" chart-data="details.charts.quality.data" chart-labels="details.charts.quality.labels" chart-series="details.charts.quality.series" chart-colours="['#FF4081']"></canvas>
 									<!-- Line -->
-									<canvas ng-if="details.chartType=='line'" class="chart chart-line" chart-data="charts.quality.data[$index]" chart-labels="charts.quality.labels[$index]"  chart-series="charts.quality.series" chart-colours="['#FF4081']"></canvas>
+									<canvas ng-if="details.chartType=='line'" class="chart chart-line" chart-data="details.charts.quality.data" chart-labels="details.charts.quality.labels"  chart-series="details.charts.quality.series" chart-colours="['#FF4081']"></canvas>
 
 									<h3 class="md-subhead center-text">Quality</h3>					
 								</div>
@@ -275,17 +275,17 @@
 							<div layout="row">
 								<div flex>
 									<!-- Bar -->
-									<canvas ng-if="details.chartType=='bar'" class="chart chart-bar" chart-data="charts.productivity.data[$index]" chart-labels="charts.productivity.labels[$index]"  chart-series="charts.productivity.series"></canvas>
+									<canvas ng-if="details.chartType=='bar'" class="chart chart-bar" chart-data="details.charts.productivity.data" chart-labels="details.charts.productivity.labels"  chart-series="details.charts.productivity.series"></canvas>
 									<!-- Line -->
-									<canvas ng-if="details.chartType=='line'" class="chart chart-line" chart-data="charts.productivity.data[$index]" chart-labels="charts.productivity.labels[$index]"  chart-series="charts.productivity.series"></canvas>
+									<canvas ng-if="details.chartType=='line'" class="chart chart-line" chart-data="details.charts.productivity.data" chart-labels="details.charts.productivity.labels"  chart-series="details.charts.productivity.series"></canvas>
 									
 									<h3 class="md-subhead center-text">Productivity</h3>					
 								</div>
 								<div flex>					
 									<!-- Bar -->
-									<canvas ng-if="details.chartType=='bar'" class="chart chart-bar" chart-data="charts.quality.data[$index]" chart-labels="charts.quality.labels[$index]" chart-series="charts.quality.series" chart-colours="['#FF4081']"></canvas>
+									<canvas ng-if="details.chartType=='bar'" class="chart chart-bar" chart-data="details.charts.quality.data" chart-labels="details.charts.quality.labels" chart-series="details.charts.quality.series" chart-colours="['#FF4081']"></canvas>
 									<!-- Line -->
-									<canvas ng-if="details.chartType=='line'" class="chart chart-line" chart-data="charts.quality.data[$index]" chart-labels="charts.quality.labels[$index]"  chart-series="charts.quality.series" chart-colours="['#FF4081']"></canvas>
+									<canvas ng-if="details.chartType=='line'" class="chart chart-line" chart-data="details.charts.quality.data" chart-labels="details.charts.quality.labels"  chart-series="details.charts.quality.series" chart-colours="['#FF4081']"></canvas>
 
 									<h3 class="md-subhead center-text">Quality</h3>					
 								</div>
