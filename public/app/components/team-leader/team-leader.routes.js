@@ -60,6 +60,37 @@ teamLeaderModule
 					},
 				}
 			})
+			.state('main.create-member', {
+				url:'member/create',
+				views: {
+					'content-container': {
+						templateUrl: '/app/components/admin/views/content-container.view.html',
+						controller: 'createMemberContentContainerController',
+					},
+					'toolbar@main.create-member': {
+						templateUrl: '/app/components/team-leader/templates/toolbar.template.html',
+					},
+					'content@main.create-member':{
+						templateUrl: '/app/components/team-leader/templates/content/create-member-content.template.html',
+					},
+				}
+			})
+			.state('main.edit-member', {
+				url:'member/{memberID}/edit',
+				params: {memberID:null},
+				views: {
+					'content-container': {
+						templateUrl: '/app/components/admin/views/content-container.view.html',
+						controller: 'editMemberContentContainerController',
+					},
+					'toolbar@main.edit-member': {
+						templateUrl: '/app/components/team-leader/templates/toolbar.template.html',
+					},
+					'content@main.edit-member':{
+						templateUrl: '/app/components/team-leader/templates/content/create-member-content.template.html',
+					},
+				}
+			})
 			.state('main.report', {
 				url:'report',
 				views: {

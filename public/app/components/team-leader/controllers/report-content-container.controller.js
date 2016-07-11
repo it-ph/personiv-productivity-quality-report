@@ -1,7 +1,7 @@
 teamLeaderModule
-	.controller('reportContentContainerController', ['$scope', '$state', '$mdDialog', '$mdToast', 'Preloader', 'Member', 'Project', 'Position', 'Performance', 'User', 'Programme', function($scope, $state, $mdDialog, $mdToast, Preloader, Member, Project, Position, Performance, User, Programme){		
+	.controller('reportContentContainerController', ['$scope', '$filter', '$state', '$mdDialog', '$mdToast', 'Preloader', 'Member', 'Project', 'Position', 'Performance', 'User', 'Programme', 'Experience', function($scope, $filter, $state, $mdDialog, $mdToast, Preloader, Member, Project, Position, Performance, User, Programme, Experience){		
 		var user = Preloader.getUser();
-		var departmentID = null;
+		// var departmentID = null;
 		var busy = false;
 		$scope.form = {};
 
@@ -40,6 +40,8 @@ teamLeaderModule
 			Performance.getMondays($scope.details)
 				.success(function(data){
 					$scope.mondays = data;
+					$scope.show = true;
+					return;
 				})
 				.error(function(){
 					Preloader.error();
@@ -59,53 +61,54 @@ teamLeaderModule
 				});
 		};
 
-		if(!user){
-			User.index()
-				.success(function(data){
-					$scope.user = data;
-					departmentID = data.department_id;
-					Member.updateTenure(data.id)
-						.success(function(){					
-							Member.teamLeader(data.id)
-								.success(function(data){
-									$scope.members = data;
-								});
-						})
-					Project.department(departmentID)
-						.success(function(data){
-							$scope.projects = data;
-						})
-				});
-		}
-		else{		
-			departmentID = user.department_id;
-			Member.teamLeader(user.id)
-				.success(function(data){
-					$scope.members = data;
-				});
-			Project.department(user.department_id)
-				.success(function(data){
-					$scope.projects = data;
-				})
-		}
+		// if(!user){
+		// 	User.index()
+		// 		.success(function(data){
+		// 			$scope.user = data;
+		// 			departmentID = data.department_id;
+		// 			Member.updateTenure(data.id)
+		// 				.success(function(){					
+		// 					Member.teamLeader(data.id)
+		// 						.success(function(data){
+		// 							$scope.members = data;
+		// 						});
+		// 				})
+		// 			Project.department(departmentID)
+		// 				.success(function(data){
+		// 					$scope.projects = data;
+		// 				})
+		// 		});
+		// }
+		// else{		
+		// 	departmentID = user.department_id;
+		// 	Member.teamLeader(user.id)
+		// 		.success(function(data){
+		// 			$scope.members = data;
+		// 		});
+		// 	Project.department(user.department_id)
+		// 		.success(function(data){
+		// 			$scope.projects = data;
+		// 		})
+		// }
 
-		$scope.showPositions = function(id){
-			Position.project(id)
+		$scope.showPositions = function(projectID){
+			Position.project(projectID)
 				.success(function(data){
 					$scope.positions = data;
 				});
+
+			Experience.members(projectID)
+				.success(function(data){
+					angular.forEach(data, function(item){
+						item.date_started = new Date(item.date_started);
+						item.first_letter = item.member.full_name.charAt(0).toUpperCase();
+					});
+
+					$scope.members = data;
+					$scope.resetMembers();
+				});
 		};
 
-		Programme.index()
-			.success(function(data){
-				$scope.work_hours = data;
-			})
-
-		// $scope.hours = [
-		// 	{'value': 7.5},
-		// 	{'value': 8.3},
-		// 	{'value': 9.1},
-		// ];
 		/**
 		 * Object for toolbar
 		 *
@@ -175,7 +178,7 @@ teamLeaderModule
 					busy = true;
 					var count = 0;
 					angular.forEach($scope.members, function(item){
-						item.department_id = departmentID;
+						// item.department_id = departmentID;
 						item.date_start = $scope.details.date_start;
 						item.date_end = $scope.details.date_end;
 						item.project_id = $scope.details.project_id;
@@ -236,4 +239,43 @@ teamLeaderModule
 				$scope.checkLimit(key);
 			});
 		}
+
+		$scope.init = function(){
+			Member.updateTenure()
+				.then(function(){
+					return;					
+				})
+				// .then(function(){
+				// 	Member.index()
+				// 		.success(function(data){
+				// 			$scope.members = data;
+				// 			return;
+				// 		})
+				// 		.error(function(){
+				// 			Preloader.error();
+				// 		});
+				// })
+				.then(function(){
+					Project.index()
+						.success(function(data){
+							$scope.projects = data;
+							return;
+						})
+						.error(function(){
+							Preloader.error();
+						})
+				})
+				.then(function(){		
+					Programme.index()
+						.success(function(data){
+							$scope.work_hours = data;
+							return;
+						})
+				})
+				.then(function(){
+					$scope.getMondays();
+				}, function(){
+					Preloader.error();
+				})
+		}();
 	}]);

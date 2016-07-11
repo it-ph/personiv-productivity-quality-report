@@ -296,9 +296,9 @@ class PerformanceController extends Controller
             if($request->input($i.'.include'))
             {
                 $this->validate($request, [
-                    $i.'.id' => 'required|numeric',
+                    $i.'.member.id' => 'required|numeric',
                     $i.'.position_id' => 'required|numeric',
-                    $i.'.department_id' => 'required|numeric',
+                    // $i.'.department_id' => 'required|numeric',
                     $i.'.project_id' => 'required|numeric',
                     $i.'.output' => 'required|numeric',
                     $i.'.date_start' => 'required|date',
@@ -311,11 +311,11 @@ class PerformanceController extends Controller
                 // check if a report is already created
                 if(!$create_report)
                 {
-                    $admin = User::where('email', 'sherryl.sanchez@personiv.com')->first();
+                    $admin = User::where('role', 'admin')->first();
                     $report = new Report;
 
                     $report->user_id = $request->user()->id;
-                    $report->department_id = $request->input($i.'.department_id');
+                    $report->department_id = $request->user()->department_id;
                     $report->project_id = $request->input($i.'.project_id');
                     $report->daily_work_hours = $request->input($i.'.daily_work_hours');
                     $report->date_start = $request->input($i.'.date_start');
@@ -363,9 +363,9 @@ class PerformanceController extends Controller
                 $performance = new Performance;
 
                 $performance->report_id = $report->id;
-                $performance->member_id = $request->input($i.'.id');
+                $performance->member_id = $request->input($i.'.member.id');
                 $performance->position_id = $request->input($i.'.position_id');
-                $performance->department_id = $request->input($i.'.department_id');
+                $performance->department_id = $request->user()->department_id;
                 $performance->project_id = $request->input($i.'.project_id');
                 $performance->output = $request->input($i.'.output');
                 $performance->date_start = $request->input($i.'.date_start');
@@ -443,7 +443,7 @@ class PerformanceController extends Controller
                 $this->validate($request, [
                     $i.'.id' => 'required|numeric',
                     $i.'.position_id' => 'required|numeric',
-                    $i.'.department_id' => 'required|numeric',
+                    // $i.'.department_id' => 'required|numeric',
                     $i.'.project_id' => 'required|numeric',
                     $i.'.output' => 'required|numeric',
                     $i.'.date_start' => 'required|date',

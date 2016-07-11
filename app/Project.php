@@ -44,4 +44,9 @@ class Project extends Model
     {
         return $this->hasMany('App\Position');
     }
+
+    public function experiences()
+    {
+        return $this->hasMany('App\Experience');
+    }
 }

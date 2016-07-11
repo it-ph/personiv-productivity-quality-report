@@ -5,28 +5,32 @@ body {
   font-family: 'Roboto', sans-serif;
   overflow: hidden; }
 
-::-webkit-scrollbar {
-  width: 6px; }
-
+/* ::-webkit-scrollbar {
+    width: 6px;
+}
+ 
 ::-webkit-scrollbar-track {
-  /*background: rgba(0,0,0,0.1); */
-  border-radius: 10px;
-  /*border:1px gray solid;*/ }
-
+    background: rgba(0,0,0,0.1);
+    border-radius: 10px;
+    border:1px gray solid;
+}
+ 
 ::-webkit-scrollbar-thumb {
-  border-radius: 10px;
-  background: rgba(0, 0, 0, 0.3);
-  /*&:not(:active){
+    border-radius: 10px;
+    background: rgba(0,0,0,0.3);
+    &:hover{
+        background: rgba(0,0,0,0.3);
+        border:1px solid rgba(0,0,0,0.3);
+    }
+    &:active{
+        background: rgba(0,0,0,0.5);
+        border:1px solid rgba(0,0,0,0.5);
+    }
+    &:not(:active){
         background: none;
         border:0px solid rgba(0,0,0,0.5);
-    }   */ }
-  ::-webkit-scrollbar-thumb:hover {
-    background: rgba(0, 0, 0, 0.3);
-    border: 1px solid rgba(0, 0, 0, 0.3); }
-  ::-webkit-scrollbar-thumb:active {
-    background: rgba(0, 0, 0, 0.5);
-    border: 1px solid rgba(0, 0, 0, 0.5); }
-
+    }
+} */
 a:hover {
   text-decoration: none;
   color: #212121; }
@@ -190,13 +194,14 @@ md-content.purple-bg {
   background: transparent;
   box-shadow: none; }
 
-.md-datepicker-calendar {
-  background: white; }
+/*.md-datepicker-calendar{
+	background: white;
+}
 
-.md-calendar-day-header {
-  background: #2196F3;
-  color: white; }
-
+.md-calendar-day-header{
+	background: $primary500;
+	color: white;
+}*/
 .datepicker.dropdown-menu {
   width: 250px;
   height: 250px; }
@@ -211,11 +216,7 @@ md-content.purple-bg {
     height: 65px; }
 
 .pattern {
-  position: absolute;
-  font-size: 12px;
-  color: #F44336;
-  line-height: 24px;
-  transition: all 0.3s cubic-bezier(0.55, 0, 0.55, 0.2); }
+  color: #F44336 !important; }
 
 .wide-form {
   width: 450px;
@@ -267,12 +268,12 @@ md-content.purple-bg {
 .round {
   border-radius: 50%; }
 
-.hint {
+.hint, .pattern {
   /* Position the hint */
   position: absolute;
   left: 2px;
   right: auto;
-  bottom: 7px;
+  bottom: -10px;
   /* Copy styles from ng-messages */
   font-size: 12px;
   line-height: 14px;
@@ -280,11 +281,11 @@ md-content.purple-bg {
   /* Set our own color */
   color: grey; }
 
-.hint.ng-hide, .hint.ng-enter, .hint.ng-leave.ng-leave-active {
+.hint.ng-hide, .ng-hide.pattern, .hint.ng-enter, .ng-enter.pattern, .hint.ng-leave.ng-leave-active, .ng-leave.ng-leave-active.pattern {
   bottom: 26px;
   opacity: 0; }
 
-.hint.ng-leave, .hint.ng-enter.ng-enter-active {
+.hint.ng-leave, .ng-leave.pattern, .hint.ng-enter.ng-enter-active, .ng-enter.ng-enter-active.pattern {
   bottom: 7px;
   opacity: 1; }
 
@@ -328,6 +329,11 @@ md-toolbar.md-warn > md-tabs.md-default-theme, md-tabs > md-tabs-wrapper > md-ta
 
 .hide-overflow {
   overflow: hidden; }
+
+.validation-messages {
+  font-size: 12px;
+  color: #F44336;
+  margin: 10px 0 0 25px; }
 
 /* transition duration */
 .transition, .fade-transition, .main-view {

@@ -178,14 +178,14 @@ md-content.purple-bg{
 	box-shadow: none;
 }
 
-.md-datepicker-calendar{
+/*.md-datepicker-calendar{
 	background: white;
 }
 
 .md-calendar-day-header{
 	background: $primary500;
 	color: white;
-}
+}*/
 
 .datepicker.dropdown-menu {
   width: 250px;
@@ -208,11 +208,8 @@ md-content.purple-bg{
 }
 
 .pattern{
-	position: absolute;
-	font-size: 12px;
-	color: $red500;
-	line-height: 24px;
-	transition: all 0.3s cubic-bezier(0.55, 0, 0.55, 0.2);
+	@extend .hint;
+	color: $red500 !important;
 }
 
 .wide-form{
@@ -290,11 +287,11 @@ md-content.purple-bg{
 
 
 .hint {
-    /* Position the hint */
+     /* Position the hint */
     position: absolute;
     left: 2px;
     right: auto;
-    bottom: 7px;
+    bottom: -10px;
     /* Copy styles from ng-messages */
     font-size: 12px;
     line-height: 14px;
@@ -362,4 +359,10 @@ md-toolbar.md-warn > md-tabs.md-default-theme, md-tabs > md-tabs-wrapper > md-ta
 
 .hide-overflow{
 	overflow: hidden;
+}
+
+.validation-messages{
+	font-size: 12px;
+    color: $red500;
+    margin: 10px 0 0 25px;
 }

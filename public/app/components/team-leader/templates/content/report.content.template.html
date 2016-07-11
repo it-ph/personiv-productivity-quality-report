@@ -1,4 +1,4 @@
-<div class="fade-transition">
+<div class="fade-transition" ng-if="show">
 	<div flex flex-gt-sm="70" layout-padding layout-margin>
 		<form name="form.createReportForm" novalidate>
 			<!-- Report Details -->
@@ -90,7 +90,7 @@
 				<md-subheader class="md-no-sticky md-accent">
 					<span>Members</span>
 				</md-subheader>
-				<md-card ng-repeat="member in members | filter:toolbar.userInput">
+				<md-card ng-repeat="member in members | filter:details.project_id | filter:toolbar.userInput">
 					<md-card-content>
 						<md-list layout="row" layout-align="space-between center">
 							<md-list-item class="md-2-line" layout="row">
@@ -98,8 +98,8 @@
 									<span class="weight-200 white-text">{{ member.first_letter }}</span>
 								</h2>
 								<div class="md-list-item-text" layout="column" flex>
-									<h3>{{ member.full_name }}</h3>
-									<h4>Date Hired: {{ member.date_hired }}</h4>
+									<h3>{{ member.member.full_name }}</h3>
+									<h4>Date Started: {{ member.date_started | date: 'EEEE, MMMM d, yyyy'}}</h4>
 									<p>{{ member.experience }} 
 										<span class="accent-text" ng-if="member.limit == 0">(Work hours per week reached.)</span>
 									</p>
@@ -110,7 +110,7 @@
 							</md-checkbox>
 						</md-list>
 						<div ng-if="member.include" class="fade-transition">
-							<div ng-if="member.limit > 0">
+							<div ng-if="member.limit > 0" layout="column">
 								<!-- Position -->
 								<md-input-container flex>
 									<label>Position</label>

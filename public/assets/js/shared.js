@@ -32,62 +32,174 @@ sharedModule
 			})
 	}]);
 sharedModule
-	.service('Preloader', ['$mdDialog', function($mdDialog){
-		var dataHolder = null;
-		var user = null;
-		var departmentID = null;
-		var notification = {};
-		return {
-			/* Starts the preloader */
-			preload: function(){
-				return $mdDialog.show({
-					templateUrl: '/app/shared/templates/preloader.html',
-				    parent: angular.element(document.body),
+	.controller('changePasswordDialogController', ['$scope', '$mdDialog', 'User', 'Preloader', function($scope, $mdDialog, User, Preloader){
+		$scope.password = {};
+
+		$scope.cancel = function(){
+			$mdDialog.cancel();
+		}
+
+		$scope.checkPassword = function(){
+			User.checkPassword($scope.password)
+				.success(function(data){
+					$scope.match = data;
+					$scope.show = true;
 				});
-			},
-			/* Stops the preloader */
-			stop: function(data){
-				$mdDialog.hide(data);
-			},
-			/* Shows error message if AJAX failed */
-			error: function(){
-				return $mdDialog.show(
-			    	$mdDialog.alert()
-				        .parent(angular.element($('body')))
-				        .clickOutsideToClose(true)
-				        .title('Oops! Something went wrong!')
-				        .content('An error occured. Please contact administrator for assistance.')
-				        .ariaLabel('Error Message')
-				        .ok('Got it!')
-				);
-			},
-			/* Send temporary data for retrival */
-			set: function(data){
-				dataHolder = data;
-			},
-			/* Retrieves data */
-			get: function(){
-				return dataHolder;
-			},
-			setUser: function(data){
-				user = data;
-			},
-			getUser: function(){
-				return user;
-			},
-			setDepartment: function(id){
-				departmentID = id;
-			},
-			getDepartment: function(){
-				return departmentID;
-			},
-			setNotification: function(data){
-				notification = data;
-			},
-			getNotification: function(){
-				return notification;
-			},
+		}
+
+		$scope.submit = function(){
+			$scope.showErrors = true;
+			if($scope.changePasswordForm.$invalid){
+				angular.forEach($scope.changePasswordForm.$error, function(field){
+					angular.forEach(field, function(errorField){
+						errorField.$setTouched();
+					});
+				});
+			}
+			else if($scope.password.old == $scope.password.new || $scope.password.new != $scope.password.confirm)
+			{
+				return;
+			}
+			else {
+				Preloader.preload();
+
+				User.changePassword($scope.password)
+					.success(function(){
+						Preloader.stop();
+					})
+					.error(function(){
+						Preloader.error();
+					});
+			}
+		}
+	}]);
+sharedModule
+	.controller('homePageController', ['$scope', 'Department', function($scope, Department){
+		$scope.show = function(){
+			angular.element($('.main-view').removeClass('hidden-custom'));
 		};
+
+		Department.index()
+			.success(function(data){
+				$scope.departments = data;
+			});
+	}]);
+sharedModule
+	.controller('mainViewController', ['$scope', '$state', '$mdSidenav', '$mdToast', '$mdDialog', 'User', 'Preloader', 'Notification', 'WalkThrough', function($scope, $state, $mdSidenav, $mdToast, $mdDialog, User, Preloader, Notification, WalkThrough){
+		$scope.changePassword = function()
+		{
+			$mdDialog.show({
+		      controller: 'changePasswordDialogController',
+		      templateUrl: '/app/shared/templates/dialogs/change-password-dialog.template.html',
+		      parent: angular.element(document.body),
+		    })
+		    .then(function(){
+		    	$mdToast.show(
+		    		$mdToast.simple()
+				        .content('Password changed.')
+				        .position('bottom right')
+				        .hideDelay(3000)
+		    	);
+		    });
+		}
+
+		// $scope.startTour = function(){
+		// 	$scope.leftSidenavTour = 0;
+		// }
+		/**
+		 * Fetch authenticated user information
+		 *
+		*/
+		User.index()
+			.success(function(data){
+				$scope.user = data;
+				Preloader.setUser(data);
+				/**
+				 * Pusher
+				 *
+				*/
+				var pusher = new Pusher('23a55307c335e49bc68a', {
+			    	encrypted: true
+			    });
+				if($scope.user.role == 'admin'){
+				    
+				    var channel = pusher.subscribe('notifications');
+				    
+				    channel.bind('App\\Events\\ReportSubmittedBroadCast', function(data) {
+				    	Preloader.setNotification(data.data);
+				    	// pops out the toast
+				    	$mdToast.show({
+					    	controller: 'notificationToastController',
+					      	templateUrl: '/app/components/admin/templates/toasts/notification.toast.html',
+					      	parent : angular.element($('body')),
+					      	hideDelay: 6000,
+					      	position: 'bottom right'
+					    });
+				    	// updates the notification menu
+				    	Notification.unseen()
+				    		.success(function(data){
+				    			$scope.notifications = data;
+				    		});
+				    });
+				}
+				else if ($scope.user.role == 'team-leader'){
+					WalkThrough.show($scope.user.id)
+						.success(function(data){
+							$scope.leftSidenavTour = data ? -1 : 0;
+						});
+
+					$scope.toolbarTour = function(){
+						$scope.toolbarTour = 0;
+					}
+					var channel = pusher.subscribe('approvals.' + $scope.user.id);
+				    
+				    channel.bind('App\\Events\\ApprovalNotificationBroadCast', function(data) {
+				    	Preloader.setNotification(data.data);
+				    	// pops out the toast
+				    	$mdToast.show({
+					    	controller: 'notificationToastController',
+					      	templateUrl: '/app/components/team-leader/templates/toasts/notification.toast.html',
+					      	parent : angular.element($('body')),
+					      	hideDelay: 6000,
+					      	position: 'bottom right'
+					    });
+				    	// updates the notification menu
+				    	Notification.unseen()
+				    		.success(function(data){
+				    			$scope.notifications = data;
+				    		});
+				    });
+				}
+			});
+
+		Notification.unseen()
+    		.success(function(data){
+    			$scope.notifications = data;
+    		});
+
+		$scope.viewNotification = function(idx){
+			Notification.seen($scope.notifications[idx].id)
+				.success(function(){
+					if($scope.notifications[idx].state == 'main.weekly-report'){
+						$state.go('main.weekly-report', {'departmentID':$scope.notifications[idx].department_id});
+					}
+					else{
+						$state.go('main.approvals');
+					}
+						$scope.notifications.splice(idx, 1);
+				})
+				.error(function(){
+					Preloader.error();
+				});
+		}
+		/**
+		 * Toggles Left Sidenav
+		 *
+		*/
+		$scope.toggleSidenav = function(menuId) {
+		    $mdSidenav(menuId).toggle();
+		};
+
 	}]);
 sharedModule
 	.factory('Approval', ['$http', function($http){
@@ -163,6 +275,30 @@ sharedModule
 		}
 	}])
 sharedModule
+	.factory('Experience', ['$http', function($http){
+		var urlBase = '/experience';
+		return {
+			index: function(){
+				return $http.get(urlBase);
+			},
+			show: function(id){
+				return $http.get(urlBase + '/' + id);
+			},
+			store: function(data){
+				return $http.post(urlBase, data);
+			},
+			update: function(id, data){
+				return $http.put(urlBase + '/' + id, data);
+			},
+			delete: function(id){
+				return $http.delete(urlBase + '/' + id);
+			},
+			members: function(id){
+				return $http.get(urlBase + '-members/' + id);
+			},
+		}
+	}])
+sharedModule
 	.factory('Member', ['$http', function($http){
 		var urlBase = 'member';
 
@@ -188,11 +324,17 @@ sharedModule
 			search: function(data){
 				return $http.post(urlBase + '-search', data);
 			},
-			updateTenure: function(id){
-				return $http.put(urlBase + '-update-tenure/' + id);
+			updateTenure: function(){
+				return $http.put(urlBase + '-update-tenure');
 			},
 			department: function(id){
 				return $http.get(urlBase +'-department/' + id);
+			},
+			checkDuplicate: function(data){
+				return $http.post(urlBase + '-check-duplicate', data);
+			},
+			project: function(id){
+				return $http.get(urlBase + '-project/' + id);
 			},
 		}
 	}])
@@ -540,173 +682,61 @@ sharedModule
 		};
 	}])
 sharedModule
-	.controller('changePasswordDialogController', ['$scope', '$mdDialog', 'User', 'Preloader', function($scope, $mdDialog, User, Preloader){
-		$scope.password = {};
-
-		$scope.cancel = function(){
-			$mdDialog.cancel();
-		}
-
-		$scope.checkPassword = function(){
-			User.checkPassword($scope.password)
-				.success(function(data){
-					$scope.match = data;
-					$scope.show = true;
+	.service('Preloader', ['$mdDialog', function($mdDialog){
+		var dataHolder = null;
+		var user = null;
+		var departmentID = null;
+		var notification = {};
+		return {
+			/* Starts the preloader */
+			preload: function(){
+				return $mdDialog.show({
+					templateUrl: '/app/shared/templates/preloader.html',
+				    parent: angular.element(document.body),
 				});
-		}
-
-		$scope.submit = function(){
-			$scope.showErrors = true;
-			if($scope.changePasswordForm.$invalid){
-				angular.forEach($scope.changePasswordForm.$error, function(field){
-					angular.forEach(field, function(errorField){
-						errorField.$setTouched();
-					});
-				});
-			}
-			else if($scope.password.old == $scope.password.new || $scope.password.new != $scope.password.confirm)
-			{
-				return;
-			}
-			else {
-				Preloader.preload();
-
-				User.changePassword($scope.password)
-					.success(function(){
-						Preloader.stop();
-					})
-					.error(function(){
-						Preloader.error();
-					});
-			}
-		}
-	}]);
-sharedModule
-	.controller('homePageController', ['$scope', 'Department', function($scope, Department){
-		$scope.show = function(){
-			angular.element($('.main-view').removeClass('hidden-custom'));
+			},
+			/* Stops the preloader */
+			stop: function(data){
+				$mdDialog.hide(data);
+			},
+			/* Shows error message if AJAX failed */
+			error: function(){
+				return $mdDialog.show(
+			    	$mdDialog.alert()
+				        .parent(angular.element($('body')))
+				        .clickOutsideToClose(true)
+				        .title('Oops! Something went wrong!')
+				        .content('An error occured. Please contact administrator for assistance.')
+				        .ariaLabel('Error Message')
+				        .ok('Got it!')
+				);
+			},
+			/* Send temporary data for retrival */
+			set: function(data){
+				dataHolder = data;
+			},
+			/* Retrieves data */
+			get: function(){
+				return dataHolder;
+			},
+			setUser: function(data){
+				user = data;
+			},
+			getUser: function(){
+				return user;
+			},
+			setDepartment: function(id){
+				departmentID = id;
+			},
+			getDepartment: function(){
+				return departmentID;
+			},
+			setNotification: function(data){
+				notification = data;
+			},
+			getNotification: function(){
+				return notification;
+			},
 		};
-
-		Department.index()
-			.success(function(data){
-				$scope.departments = data;
-			});
-	}]);
-sharedModule
-	.controller('mainViewController', ['$scope', '$state', '$mdSidenav', '$mdToast', '$mdDialog', 'User', 'Preloader', 'Notification', 'WalkThrough', function($scope, $state, $mdSidenav, $mdToast, $mdDialog, User, Preloader, Notification, WalkThrough){
-		$scope.changePassword = function()
-		{
-			$mdDialog.show({
-		      controller: 'changePasswordDialogController',
-		      templateUrl: '/app/shared/templates/dialogs/change-password-dialog.template.html',
-		      parent: angular.element(document.body),
-		    })
-		    .then(function(){
-		    	$mdToast.show(
-		    		$mdToast.simple()
-				        .content('Password changed.')
-				        .position('bottom right')
-				        .hideDelay(3000)
-		    	);
-		    });
-		}
-
-		// $scope.startTour = function(){
-		// 	$scope.leftSidenavTour = 0;
-		// }
-		/**
-		 * Fetch authenticated user information
-		 *
-		*/
-		User.index()
-			.success(function(data){
-				$scope.user = data;
-				Preloader.setUser(data);
-				/**
-				 * Pusher
-				 *
-				*/
-				var pusher = new Pusher('23a55307c335e49bc68a', {
-			    	encrypted: true
-			    });
-				if($scope.user.role == 'admin'){
-				    
-				    var channel = pusher.subscribe('notifications');
-				    
-				    channel.bind('App\\Events\\ReportSubmittedBroadCast', function(data) {
-				    	Preloader.setNotification(data.data);
-				    	// pops out the toast
-				    	$mdToast.show({
-					    	controller: 'notificationToastController',
-					      	templateUrl: '/app/components/admin/templates/toasts/notification.toast.html',
-					      	parent : angular.element($('body')),
-					      	hideDelay: 6000,
-					      	position: 'bottom right'
-					    });
-				    	// updates the notification menu
-				    	Notification.unseen()
-				    		.success(function(data){
-				    			$scope.notifications = data;
-				    		});
-				    });
-				}
-				else if ($scope.user.role == 'team-leader'){
-					WalkThrough.show($scope.user.id)
-						.success(function(data){
-							$scope.leftSidenavTour = data ? -1 : 0;
-						});
-
-					$scope.toolbarTour = function(){
-						$scope.toolbarTour = 0;
-					}
-					var channel = pusher.subscribe('approvals.' + $scope.user.id);
-				    
-				    channel.bind('App\\Events\\ApprovalNotificationBroadCast', function(data) {
-				    	Preloader.setNotification(data.data);
-				    	// pops out the toast
-				    	$mdToast.show({
-					    	controller: 'notificationToastController',
-					      	templateUrl: '/app/components/team-leader/templates/toasts/notification.toast.html',
-					      	parent : angular.element($('body')),
-					      	hideDelay: 6000,
-					      	position: 'bottom right'
-					    });
-				    	// updates the notification menu
-				    	Notification.unseen()
-				    		.success(function(data){
-				    			$scope.notifications = data;
-				    		});
-				    });
-				}
-			});
-
-		Notification.unseen()
-    		.success(function(data){
-    			$scope.notifications = data;
-    		});
-
-		$scope.viewNotification = function(idx){
-			Notification.seen($scope.notifications[idx].id)
-				.success(function(){
-					if($scope.notifications[idx].state == 'main.weekly-report'){
-						$state.go('main.weekly-report', {'departmentID':$scope.notifications[idx].department_id});
-					}
-					else{
-						$state.go('main.approvals');
-					}
-						$scope.notifications.splice(idx, 1);
-				})
-				.error(function(){
-					Preloader.error();
-				});
-		}
-		/**
-		 * Toggles Left Sidenav
-		 *
-		*/
-		$scope.toggleSidenav = function(menuId) {
-		    $mdSidenav(menuId).toggle();
-		};
-
 	}]);
 //# sourceMappingURL=shared.js.map

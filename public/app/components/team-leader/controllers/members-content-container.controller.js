@@ -1,5 +1,5 @@
 teamLeaderModule
-	.controller('membersContentContainerController', ['$scope', '$mdDialog', 'Preloader', 'Member', 'User', function($scope, $mdDialog, Preloader, Member, User){
+	.controller('membersContentContainerController', ['$scope', '$state', '$mdDialog', 'Preloader', 'Member', 'User', function($scope, $state, $mdDialog, Preloader, Member, User){
 		/**
 		 * Object for toolbar
 		 *
@@ -40,14 +40,15 @@ teamLeaderModule
 		$scope.fab.label = 'Member';
 
 		$scope.fab.action = function(){
-			$mdDialog.show({
-	    		controller: 'addMemberDialogController',
-		      	templateUrl: '/app/components/team-leader/templates/dialogs/add-member.dialog.template.html',
-		      	parent: angular.element(document.body),
-		    })
-		    .then(function(){
-		    	$scope.subheader.refresh();
-		    })
+			$state.go('main.create-member');
+			// $mdDialog.show({
+	  //   		controller: 'addMemberDialogController',
+		 //      	templateUrl: '/app/components/team-leader/templates/dialogs/add-member.dialog.template.html',
+		 //      	parent: angular.element(document.body),
+		 //    })
+		 //    .then(function(){
+		 //    	$scope.subheader.refresh();
+		 //    })
 		};
 		/**
 		 * Object for member
@@ -65,6 +66,10 @@ teamLeaderModule
 					{
 						Member.teamLeader(data.id)
 							.success(function(data){
+								angular.forEach(data, function(item){
+									item.first_letter = item.full_name.charAt(0).toUpperCase();
+								});
+
 								$scope.member.all = data;
 								$scope.member.all.show = true;
 								$scope.option = true;
@@ -73,6 +78,10 @@ teamLeaderModule
 					else{
 						Member.department(data.department_id)
 							.success(function(data){
+								angular.forEach(data, function(item){
+									item.first_letter = item.full_name[0].toUpperCase();
+								});
+
 								$scope.member.all = data;
 								$scope.member.all.show = true;
 								$scope.option = false;
@@ -142,15 +151,16 @@ teamLeaderModule
 		};
 
 		$scope.editMember = function(id){
-			Preloader.set(id);
-			$mdDialog.show({
-	    		controller: 'editMemberDialogController',
-		      	templateUrl: '/app/components/team-leader/templates/dialogs/edit-member.dialog.template.html',
-		      	parent: angular.element(document.body),
-		    })
-		    .then(function(){
-		    	$scope.subheader.refresh();
-		    })
+			$state.go('main.edit-member', {'memberID':id});
+			// Preloader.set(id);
+			// $mdDialog.show({
+	  //   		controller: 'editMemberDialogController',
+		 //      	templateUrl: '/app/components/team-leader/templates/dialogs/edit-member.dialog.template.html',
+		 //      	parent: angular.element(document.body),
+		 //    })
+		 //    .then(function(){
+		 //    	$scope.subheader.refresh();
+		 //    })
 		}
 
 		$scope.deleteMember = function(id){

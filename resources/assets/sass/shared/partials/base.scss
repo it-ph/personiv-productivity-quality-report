@@ -3,14 +3,14 @@ body{
 	overflow: hidden;
 }
 
-::-webkit-scrollbar {
+/* ::-webkit-scrollbar {
     width: 6px;
 }
  
 ::-webkit-scrollbar-track {
-    /*background: rgba(0,0,0,0.1); */
+    background: rgba(0,0,0,0.1);
     border-radius: 10px;
-    /*border:1px gray solid;*/
+    border:1px gray solid;
 }
  
 ::-webkit-scrollbar-thumb {
@@ -24,11 +24,11 @@ body{
         background: rgba(0,0,0,0.5);
         border:1px solid rgba(0,0,0,0.5);
     }
-    /*&:not(:active){
+    &:not(:active){
         background: none;
         border:0px solid rgba(0,0,0,0.5);
-    }   */
-}
+    }
+} */
 
 td, th{
     @extend .center-text;

@@ -3,34 +3,18 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Project;
-use DB;
+use App\Experience;
 use Auth;
+use DB;
+use Carbon\Carbon;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
-class ProjectController extends Controller
+class ExperienceController extends Controller
 {
-    public function search(Request $request)
+    public function members($project_id)
     {
-        return DB::table('projects')
-            ->select('*', DB::raw('UPPER(LEFT(name, 1)) as first_letter'), DB::raw('DATE_FORMAT(created_at, "%h:%i %p, %b. %d, %Y") as created_at'))
-            ->where('name', 'like', '%'. $request->userInput .'%')
-            ->whereNull('deleted_at')
-            ->groupBy('id')
-            ->get();
-    }
-
-    public function department($department_id)
-    {
-        return DB::table('projects')
-            ->select(
-                '*',
-                DB::raw('UPPER(LEFT(name,1)) as first_letter'),
-                DB::raw('DATE_FORMAT(created_at, "%h:%i %p, %b. %d, %Y") as created_at')
-            )
-            ->where('department_id', $department_id)
-            ->get();
+        return Experience::with('member')->where('project_id', $project_id)->get();
     }
     /**
      * Display a listing of the resource.
@@ -39,7 +23,7 @@ class ProjectController extends Controller
      */
     public function index()
     {
-        return Project::where('department_id', Auth::user()->department_id)->get();
+        //
     }
 
     /**
@@ -60,17 +44,28 @@ class ProjectController extends Controller
      */
     public function store(Request $request)
     {
-        $this->validate($request, [
-            'name' => 'required|string',
-            'department_id' => 'required|numeric',
-        ]);
+        $experiences = Experience::where('member_id', $request->input('0.member_id'))->delete();
 
-        $project = new Project;
+        for ($i=0; $i < count($request->all()); $i++) { 
+            $this->validate($request, [
+                $i.'.member_id' => 'required|numeric',
+                // $i.'.id' => 'required|numeric',
+                $i.'.date_started' => 'required',
+            ]);
 
-        $project->name = $request->name;
-        $project->department_id = $request->department_id;
+            if($request->input($i.'.project')){            
+                $experience = new Experience;
 
-        $project->save();
+                $experience->member_id = $request->input($i.'.member_id');
+                $experience->project_id = $request->input($i.'.project.id');
+                $experience->date_started = Carbon::parse($request->input($i.'.date_started'));
+
+                $tenure = date_diff(Carbon::today(), date_create($request->input($i.'.date_started')))->format("%m");
+                $experience->experience = $tenure < 3 ? 'Beginner' : (($tenure > 3 && $tenure < 6) ? 'Moderately Experienced' : 'Experienced');
+
+                $experience->save();
+            }
+        }
     }
 
     /**
@@ -81,7 +76,7 @@ class ProjectController extends Controller
      */
     public function show($id)
     {
-        return Project::wherE('id', $id)->first();
+        //
     }
 
     /**

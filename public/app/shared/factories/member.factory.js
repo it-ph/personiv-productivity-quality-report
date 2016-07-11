@@ -24,11 +24,17 @@ sharedModule
 			search: function(data){
 				return $http.post(urlBase + '-search', data);
 			},
-			updateTenure: function(id){
-				return $http.put(urlBase + '-update-tenure/' + id);
+			updateTenure: function(){
+				return $http.put(urlBase + '-update-tenure');
 			},
 			department: function(id){
 				return $http.get(urlBase +'-department/' + id);
+			},
+			checkDuplicate: function(data){
+				return $http.post(urlBase + '-check-duplicate', data);
+			},
+			project: function(id){
+				return $http.get(urlBase + '-project/' + id);
 			},
 		}
 	}])

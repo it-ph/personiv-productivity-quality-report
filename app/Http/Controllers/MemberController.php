@@ -12,6 +12,13 @@ use Auth;
 
 class MemberController extends Controller
 {
+    public function checkDuplicate(Request $request)
+    {
+        $duplicate = $request->id ? Member::whereNotIn('id', [$request->id])->where('full_name', $request->full_name)->where('team_leader_id', Auth::user()->id)->first() : Member::where('full_name', $request->full_name)->where('team_leader_id', Auth::user()->id)->first();
+
+        return response()->json($duplicate ? true : false);
+    }
+
     public function department($department_id)
     {
         return DB::table('members')
@@ -26,14 +33,16 @@ class MemberController extends Controller
             ->orderBy('members.full_name')
             ->get();
     }
-    public function updateTenure($team_leader_id)
+    public function updateTenure()
     {
-        $members = Member::where('team_leader_id', $team_leader_id)->get();
+        $members = Member::with('experiences')->where('team_leader_id', Auth::user()->id)->get();
 
-        foreach ($members as $key => $value) {
-            $tenure = date_diff(Carbon::today(), date_create($value->date_hired))->format("%m");
-            $value->experience = $tenure < 3 ? 'Beginner' : (($tenure > 3 && $tenure < 6) ? 'Moderately Experienced' : 'Experienced');
-            $value->save();
+        foreach ($members as $member_key => $member_value) {
+            foreach($member_value->experiences as $experience_key => $experience_value){            
+                $tenure = date_diff(Carbon::today(), date_create($experience_value->date_started))->format("%m");
+                $experience_value->experience = $tenure < 3 ? 'Beginner' : (($tenure > 3 && $tenure < 6) ? 'Moderately Experienced' : 'Experienced');
+                $experience_value->save();
+            }
         }
     }
     public function search(Request $request)
@@ -55,16 +64,17 @@ class MemberController extends Controller
     }
     public function teamLeader($team_leader_id)
     {
-        return DB::table('members')
-            ->select(
-                'members.*',
-                DB::raw('UPPER(LEFT(members.full_name, 1)) as first_letter'),
-                DB::raw('DATE_FORMAT(date_hired, "%b. %d, %Y") as date_hired')
-            )
-            ->where('members.team_leader_id', $team_leader_id)
-            ->whereNull('deleted_at')
-            ->orderBy('members.full_name')
-            ->get();
+        return Member::with(['experiences' => function($query){ $query->with('project'); }])->where('team_leader_id', $team_leader_id)->get();
+        // return DB::table('members')
+        //     ->select(
+        //         'members.*',
+        //         DB::raw('UPPER(LEFT(members.full_name, 1)) as first_letter'),
+        //         DB::raw('DATE_FORMAT(date_hired, "%b. %d, %Y") as date_hired')
+        //     )
+        //     ->where('members.team_leader_id', $team_leader_id)
+        //     ->whereNull('deleted_at')
+        //     ->orderBy('members.full_name')
+        //     ->get();
     }
     /**
      * Display a listing of the resource.
@@ -73,7 +83,7 @@ class MemberController extends Controller
      */
     public function index()
     {   
-        return Member::where('team_leader_id', Auth::user()->id)->get();   
+        return Member::with('experiences')->where('team_leader_id', Auth::user()->id)->get();   
     }
 
     /**
@@ -96,21 +106,28 @@ class MemberController extends Controller
     {
         $this->validate($request, [
             'full_name' => 'required|string',
-            'date_hired' => 'required|date',
-            'team_leader_id' => 'required|numeric',
         ]);
+
+        $duplicate = Member::where('full_name', $request->full_name)->where('team_leader_id', Auth::user()->id)->first();
+
+        if($duplicate)
+        {
+            return response()->json(true);
+        }
 
         $member = new Member;
 
         $member->full_name = $request->full_name;
-        $member->date_hired = $request->date_hired;
-        $member->team_leader_id = $request->team_leader_id;
+        // $member->date_hired = $request->date_hired;
+        $member->team_leader_id = Auth::user()->id;
 
         // get the difference of months from date hired to present
-        $tenure = date_diff(Carbon::today(), date_create($request->date_hired))->format("%m");
-        $member->experience = $tenure < 3 ? 'Beginner' : (($tenure > 3 && $tenure < 6) ? 'Moderately Experienced' : 'Experienced');
+        // $tenure = date_diff(Carbon::today(), date_create($request->date_hired))->format("%m");
+        // $member->experience = $tenure < 3 ? 'Beginner' : (($tenure > 3 && $tenure < 6) ? 'Moderately Experienced' : 'Experienced');
 
         $member->save();
+
+        return $member->id;
     }
 
     /**
@@ -121,7 +138,7 @@ class MemberController extends Controller
      */
     public function show($id)
     {
-        return Member::where('id', $id)->first();
+        return Member::with(['experiences' => function($query){ $query->with('project');}])->where('id', $id)->first();
     }
 
     /**
@@ -146,21 +163,30 @@ class MemberController extends Controller
     {
         $this->validate($request, [
             'full_name' => 'required|string',
-            'date_hired' => 'required|date',
-            'team_leader_id' => 'required|numeric',
+            // 'date_hired' => 'required|date',
+            // 'team_leader_id' => 'required|numeric',
         ]);
+
+        $duplicate = Member::whereNotIn('id', [$id])->where('full_name', $request->full_name)->where('team_leader_id', Auth::user()->id)->first();
+
+        if($duplicate)
+        {
+            return response()->json(true);
+        }
 
         $member = Member::where('id', $id)->first();
 
         $member->full_name = $request->full_name;
-        $member->date_hired = $request->date_hired;
-        $member->team_leader_id = $request->team_leader_id;
+        // $member->date_hired = $request->date_hired;
+        // $member->team_leader_id = $request->team_leader_id;
 
         // get the difference of months from date hired to present
-        $tenure = date_diff(Carbon::today(), date_create($request->date_hired))->format("%m");
-        $member->experience = $tenure < 3 ? 'Beginner' : (($tenure > 3 && $tenure < 6) ? 'Moderately Experienced' : 'Experienced');
+        // $tenure = date_diff(Carbon::today(), date_create($request->date_hired))->format("%m");
+        // $member->experience = $tenure < 3 ? 'Beginner' : (($tenure > 3 && $tenure < 6) ? 'Moderately Experienced' : 'Experienced');
 
         $member->save();
+
+        return $member->id;
     }
 
     /**

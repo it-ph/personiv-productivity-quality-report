@@ -49,6 +49,7 @@ Route::group(['middleware' => 'auth'], function () {
 	Route::resource('approval', 'ApprovalController');
 	Route::resource('performance-approval', 'PerformanceApprovalController');
 	Route::resource('walk-through', 'WalkThroughController');
+	Route::resource('experience', 'ExperienceController');
 
 	// Route resource paginate
 	Route::get('member-paginate/{teamLeaderID}', 'MemberController@paginateTeamLeader');
@@ -86,7 +87,7 @@ Route::group(['middleware' => 'auth'], function () {
 	Route::put('notification-seen/{notificationID}', 'NotificationController@seen');
 	Route::get('target-productivity/{positionID}', 'TargetController@productivity');
 	Route::get('target-quality/{positionID}', 'TargetController@quality');
-	Route::put('member-update-tenure/{teamLeaderID}', 'MemberController@updateTenure');
+	Route::put('member-update-tenure', 'MemberController@updateTenure');
 	Route::post('performance-check-limit/{memberID}', 'PerformanceController@checkLimit');
 	Route::post('performance-check-limit-edit/{memberID}', 'PerformanceController@checkLimitEdit');
 	Route::get('performance-report/{reportID}', 'PerformanceController@report');
@@ -121,4 +122,6 @@ Route::group(['middleware' => 'auth'], function () {
 	Route::get('report-test', 'ReportController@test');
 	Route::post('report-department-monthly', 'ReportController@departmentMonthly');
 	Route::get('position-department/{departmentID}', 'PositionController@department');
+	Route::post('member-check-duplicate', 'MemberController@checkDuplicate');
+	Route::get('experience-members/{projectID}', 'ExperienceController@members');
 });

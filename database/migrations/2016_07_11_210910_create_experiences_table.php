@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateMembersTable extends Migration
+class CreateExperiencesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -12,14 +12,13 @@ class CreateMembersTable extends Migration
      */
     public function up()
     {
-        Schema::create('members', function (Blueprint $table) {
+        Schema::create('experiences', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('full_name');
-            // $table->date('date_hired');
-            // $table->string('experience');
-            $table->integer('team_leader_id');
+            $table->integer('member_id')->unsigned();
+            $table->integer('project_id')->unsigned();
+            $table->dateTime('date_started');
+            $table->string('experience');
             $table->timestamps();
-            $table->softDeletes();
         });
     }
 
@@ -30,6 +29,6 @@ class CreateMembersTable extends Migration
      */
     public function down()
     {
-        Schema::drop('members');
+        Schema::drop('experiences');
     }
 }
