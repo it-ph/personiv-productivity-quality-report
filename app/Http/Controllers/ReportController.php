@@ -57,7 +57,7 @@ class ReportController extends Controller
             // execute only if report has been fetch
             if(!$report)
             {
-                return;
+                return $projects;
             }
             // fetch the members 
             $members = Performance::where('project_id', $project_value->id)->where('daily_work_hours', 'like', $report->daily_work_hours. '%')->whereBetween('date_start', [$this->date_start,$this->date_end])->groupBy('member_id')->with('member')->get();
