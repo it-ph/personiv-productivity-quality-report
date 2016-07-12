@@ -865,28 +865,8 @@ adminModule
 			// start preloader
 			Preloader.preload();
 			// clear department
-			$scope.setting.all = {};
-			$scope.setting.page = 2;
-			Department.index()
-				.success(function(data){
-					$scope.setting.all = data;
-					$scope.setting.all.show = true;
-					Preloader.stop();
-				})
-				.error(function(){
-					Preloader.stop();
-				});
+			$scope.init(true);
 		};
-		/**
-		 * Object for setting
-		 *
-		*/
-		$scope.setting = {};
-		Department.index()
-			.success(function(data){
-				$scope.setting.all = data;
-				$scope.setting.all.show = true;
-			});
 
 		/**
 		 * Status of search bar.
@@ -949,6 +929,31 @@ adminModule
 		    	$scope.subheader.refresh();
 		    })
 		};
+
+		$scope.init = function(refresh){
+			/**
+			 * Object for setting
+			 *
+			*/
+			$scope.setting = {};
+			Department.index()
+				.success(function(data){
+					angular.forEach(data, function(item){
+						item.first_letter = item.name.charAt(0).toUpperCase();
+						item.created_at = new Date(item.created_at);
+					});
+
+					$scope.setting.all = data;
+					$scope.setting.all.show = true;
+
+					if(refresh){
+						Preloader.stop();
+						Preloader.stop();
+					}
+				});
+		}
+
+		$scope.init();
 	}]);
 adminModule
 	.controller('editReportContentContainerController', ['$scope', '$mdDialog', '$state', '$mdToast', '$stateParams', 'Preloader', 'Performance', 'Position', 'Project', function($scope, $mdDialog, $state, $mdToast, $stateParams, Preloader, Performance, Position, Project){
@@ -1399,27 +1404,8 @@ adminModule
 
 		$scope.subheader.refresh = function(){
 			Preloader.preload();
-			$scope.position = {};
-			$scope.position.show = false;		
-			Position.project(project_id)
-				.success(function(data){
-					Preloader.stop();
-					$scope.position.all = data;
-					$scope.position.show = true;
-				})
-				.error(function(){
-					Preloader.error();
-				});
+			$scope.init(true);
 		}
-
-		Position.project(project_id)
-			.success(function(data){
-				$scope.position.all = data;
-				$scope.position.show = true;
-			})
-			.error(function(){
-				Preloader.error();
-			});
 
 		/**
 		 * Object for content view
@@ -1488,13 +1474,37 @@ adminModule
 			Preloader.set(id);
 			$mdDialog.show({
 		    	controller: 'editPositionDialogController',
-		      	templateUrl: '/app/components/admin/templates/dialogs/edit-position.dialog.template.html',
+		      	templateUrl: '/app/components/admin/templates/dialogs/add-position.dialog.template.html',
 		      	parent: angular.element(document.body),
 		    })
 		    .then(function(){
 		    	$scope.subheader.refresh();
 		    });
 		}
+
+		$scope.init = function(refresh){
+			$scope.position = {};
+			Position.project(project_id)
+				.success(function(data){
+					angular.forEach(data, function(item){
+						item.first_letter = item.name.charAt(0).toUpperCase();
+						item.created_at = new Date(item.created_at);
+					});
+
+					$scope.position.all = data;
+					$scope.position.show = true;
+
+					if(refresh){
+						Preloader.stop();
+						Preloader.stop();
+					}
+				})
+				.error(function(){
+					Preloader.error();
+				});
+		}
+
+		$scope.init();
 	}])
 adminModule
 	.controller('projectsContentContainerController', ['$scope', '$state', '$stateParams', '$mdDialog', 'Department', 'Preloader', 'Project', function($scope, $state, $stateParams, $mdDialog, Department, Preloader, Project){
@@ -1503,7 +1513,6 @@ adminModule
 		 *
 		*/
 		var department_id = $stateParams.departmentID;
-		$scope.project = {};
 
 		$scope.toolbar = {};
 		$scope.toolbar.showBack = true;
@@ -1526,27 +1535,9 @@ adminModule
 
 		$scope.subheader.refresh = function(){
 			Preloader.preload();
-			$scope.project = {};
-			$scope.project.show = false;		
-			Project.department(department_id)
-				.success(function(data){
-					$scope.project.all = data;
-					$scope.project.show = true;
-					Preloader.stop();
-				})
-				.error(function(){
-					Preloader.error();
-				});
+			$scope.init(true);
 		}
 
-		Project.department(department_id)
-			.success(function(data){
-				$scope.project.all = data;
-				$scope.project.show = true;
-			})
-			.error(function(){
-				Preloader.error();
-			});
 		/**
 		 * Object for content view
 		 *
@@ -1619,6 +1610,30 @@ adminModule
 		      	clickOutsideToClose: true,
 		    });
 		};
+
+		$scope.init = function(refresh){
+			$scope.project = {};
+			Project.department(department_id)
+				.success(function(data){
+					angular.forEach(data, function(item){
+						item.first_letter = item.name.charAt(0).toUpperCase();
+						item.created_at = new Date(item.created_at);
+					});
+
+					$scope.project.all = data;
+					$scope.project.show = true;
+
+					if(refresh){
+						Preloader.stop();
+						Preloader.stop();
+					}
+				})
+				.error(function(){
+					Preloader.error();
+				});
+		}
+
+		$scope.init()
 	}])
 adminModule
 	.controller('teamLeaderContentContainerController', ['$scope', '$mdDialog', 'Preloader', 'User', function($scope, $mdDialog, Preloader, User){
@@ -1640,29 +1655,20 @@ adminModule
 		$scope.subheader.refresh = function(){
 			// start preloader
 			Preloader.preload();
+			$scope.init(true);
 			// clear user
-			$scope.setting.all = [];
-			$scope.setting.page = 2;
-			User.teamLeader()
-				.success(function(data){
-					$scope.setting.all = data;
-					$scope.setting.all.show = true;
-					Preloader.stop();
-				})
-				.error(function(){
-					Preloader.stop();
-				});
+			// $scope.setting.all = [];
+			// $scope.setting.page = 2;
+			// User.teamLeader()
+			// 	.success(function(data){
+			// 		$scope.setting.all = data;
+			// 		$scope.setting.all.show = true;
+			// 		Preloader.stop();
+			// 	})
+			// 	.error(function(){
+			// 		Preloader.stop();
+			// 	});
 		};
-		/**
-		 * Object for setting
-		 *
-		*/
-		$scope.setting = {};
-		User.teamLeader()
-			.success(function(data){
-				$scope.setting.all = data;
-				$scope.setting.all.show = true;
-			});
 
 		/**
 		 * Status of search bar.
@@ -1731,6 +1737,31 @@ adminModule
 		    	$scope.subheader.refresh();
 		    })
 		};
+
+		$scope.init = function(refresh){
+			/**
+			 * Object for setting
+			 *
+			*/
+			$scope.setting = {};
+			User.teamLeader()
+				.success(function(data){
+					angular.forEach(data, function(item){
+						item.first_letter = item.first_name.charAt(0).toUpperCase();
+						item.created_at = new Date(item.created_at);
+					});
+
+					$scope.setting.all = data;
+					$scope.setting.all.show = true;
+
+					if(refresh){
+						Preloader.stop();
+						Preloader.stop();
+					}
+				});
+		}
+
+		$scope.init();
 	}]);
 adminModule
 	.controller('workHoursContentContainerController', ['$scope', '$mdDialog', 'Programme', 'Preloader', function($scope, $mdDialog, Programme, Preloader){
@@ -1752,28 +1783,13 @@ adminModule
 		$scope.subheader.refresh = function(){
 			// start preloader
 			Preloader.preload();
-			// clear user
-			$scope.setting.all = [];
-			Programme.index()
-				.success(function(data){
-					$scope.setting.all = data;
-					$scope.setting.all.show = true;
-					Preloader.stop();
-				})
-				.error(function(){
-					Preloader.stop();
-				});
+			$scope.init(true);
 		};
+
 		/**
 		 * Object for setting
 		 *
 		*/
-		$scope.setting = {};
-		Programme.index()
-			.success(function(data){
-				$scope.setting.all = data;
-				$scope.setting.all.show = true;
-			});
 
 		/**
 		 * Status of search bar.
@@ -1864,6 +1880,27 @@ adminModule
 		    	return;
 		    });
 		}
+
+		$scope.init = function(refresh){		
+			$scope.setting = {};
+			Programme.index()
+				.success(function(data){
+					angular.forEach(data, function(item){
+						item.first_letter = item.label.charAt(0).toUpperCase();
+						item.created_at = new Date(item.created_at);
+					});
+
+					$scope.setting.all = data;
+					$scope.setting.all.show = true;
+
+					if(refresh){
+						Preloader.stop();
+						Preloader.stop();
+					}
+				});
+		}
+
+		$scope.init();
 	}]);
 adminModule
 	.controller('addDepartmentDialogController', ['$scope', '$mdDialog', 'Preloader', 'Department', function($scope, $mdDialog, Preloader, Department){
@@ -1914,52 +1951,23 @@ adminModule
 
 		$scope.experiences = [
 			{
-				'name': 'Beginner',
-				'duration': 'less than 3 months',
-			},
-			{
-				'name': 'Moderately Experienced',
-				'duration': '3 to 6 months',
-			},
-			{
-				'name': 'Experienced',
-				'duration': '6 months and beyond',
-			},
-		];
-
-		$scope.productivity = [
-			{
-				'type': 'Productivity',
 				'experience': 'Beginner',
+				// 'duration': 'less than 3 months',
 			},
 			{
-				'type': 'Productivity',
 				'experience': 'Moderately Experienced',
+				// 'duration': '3 to 6 months',
 			},
 			{
-				'type': 'Productivity',
 				'experience': 'Experienced',
-			},
-		];
-
-		$scope.quality = [
-			{
-				'type': 'Quality',
-				'experience': 'Beginner',
-			},
-			{
-				'type': 'Quality',
-				'experience': 'Moderately Experienced',
-			},
-			{
-				'type': 'Quality',
-				'experience': 'Experienced',
+				// 'duration': '6 months and beyond',
 			},
 		];
 
 		Project.show(projectID)
 			.success(function(data){
 				$scope.project = data;
+				$scope.label = data.name;
 			});
 
 		$scope.cancel = function(){
@@ -1985,33 +1993,22 @@ adminModule
 					busy = true;
 					Position.store($scope.position)
 						.success(function(data){
-							angular.forEach($scope.productivity, function(item){
+							angular.forEach($scope.experiences, function(item){
 								item.position_id = data.id;
 								item.department_id = departmentID;
 								item.project_id = projectID;
 							});
 
-							angular.forEach($scope.quality, function(item){
-								item.position_id = data.id;
-								item.department_id = departmentID;
-								item.project_id = projectID;
-							});
-
-							Target.store($scope.productivity)
+							Target.store($scope.experiences)
 								.success(function(){
-									Target.store($scope.quality)
-										.success(function(){
-											// Stops Preloader
-											Preloader.stop();
-										})
-										.error(function(data){
-											Preloader.error();
-										});
+									// Stops Preloader
+									Preloader.stop();
+									busy = false;
 								})
 								.error(function(){
 									Preloader.error();
+									busy = false;
 								});
-							busy = false;
 						})
 						.error(function(){
 							Preloader.error();
@@ -2413,6 +2410,9 @@ adminModule
 		Position.show(positionID)
 			.success(function(data){
 				$scope.position = data;
+				$scope.label = data.project.name;
+
+				$scope.experiences = data.targets;
 			})
 			.error(function(){
 				Preloader.error();
@@ -2421,33 +2421,33 @@ adminModule
 
 		$scope.experiences = [
 			{
-				'name': 'Beginner',
+				'experience': 'Beginner',
 				'duration': 'less than 3 months',
 			},
 			{
-				'name': 'Moderately Experienced',
+				'experience': 'Moderately Experienced',
 				'duration': '3 to 6 months',
 			},
 			{
-				'name': 'Experienced',
+				'experience': 'Experienced',
 				'duration': '6 months and beyond',
 			},
 		];
 
-		Target.productivity(positionID)
-			.success(function(data){
-				$scope.productivity = data;
-			});
+		// Target.productivity(positionID)
+		// 	.success(function(data){
+		// 		$scope.productivity = data;
+		// 	});
 
-		Target.quality(positionID)
-			.success(function(data){
-				$scope.quality = data;
-			});
+		// Target.quality(positionID)
+		// 	.success(function(data){
+		// 		$scope.quality = data;
+		// 	});
 
-		Project.show(projectID)
-			.success(function(data){
-				$scope.project = data;
-			});
+		// Project.show(projectID)
+		// 	.success(function(data){
+		// 		$scope.project = data;
+		// 	});
 
 		$scope.cancel = function(){
 			$mdDialog.cancel();
@@ -2455,8 +2455,8 @@ adminModule
 
 		$scope.submit = function(){
 			$scope.showErrors = true;
-			if($scope.editPositionForm.$invalid){
-				angular.forEach($scope.editPositionForm.$error, function(field){
+			if($scope.addPositionForm.$invalid){
+				angular.forEach($scope.addPositionForm.$error, function(field){
 					angular.forEach(field, function(errorField){
 						errorField.$setTouched();
 					});
@@ -2472,16 +2472,10 @@ adminModule
 					busy = true;
 					Position.update(positionID, $scope.position)
 						.success(function(data){
-							Target.update(positionID, $scope.productivity)
+							Target.update(positionID, $scope.experiences)
 								.success(function(){
-									Target.update(positionID, $scope.quality)
-										.success(function(){
-											// Stops Preloader
-											Preloader.stop();
-										})
-										.error(function(data){
-											Preloader.error();
-										});
+									// Stops Preloader
+									Preloader.stop();
 								})
 								.error(function(){
 									Preloader.error();

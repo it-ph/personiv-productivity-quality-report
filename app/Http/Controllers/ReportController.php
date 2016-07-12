@@ -2839,7 +2839,7 @@ class ReportController extends Controller
     }
     public function paginateDepartment($departmentID)
     {
-        $report = Report::where('department_id', $departmentID)->orderBy('date_start', 'desc')->paginate(4);
+        $report = Report::with(['performances' => function($query){ $query->with('member', 'position', 'project', 'result'); }])->where('department_id', $departmentID)->orderBy('date_start', 'desc')->paginate(4);
         $report_array = array();
 
         // will fetch every performance and results for the specific report

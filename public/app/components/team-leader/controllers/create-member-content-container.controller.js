@@ -24,6 +24,10 @@ teamLeaderModule
 		$scope.toolbar = {};
 		$scope.toolbar.parentState = 'Members';
 		$scope.toolbar.childState = 'Create';
+		$scope.toolbar.showBack = true;
+		$scope.toolbar.back = function(){
+			$state.go('main.members');
+		}
 
 		/**
 		 * Object for content view

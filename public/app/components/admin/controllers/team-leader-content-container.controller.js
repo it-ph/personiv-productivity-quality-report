@@ -18,29 +18,20 @@ adminModule
 		$scope.subheader.refresh = function(){
 			// start preloader
 			Preloader.preload();
+			$scope.init(true);
 			// clear user
-			$scope.setting.all = [];
-			$scope.setting.page = 2;
-			User.teamLeader()
-				.success(function(data){
-					$scope.setting.all = data;
-					$scope.setting.all.show = true;
-					Preloader.stop();
-				})
-				.error(function(){
-					Preloader.stop();
-				});
+			// $scope.setting.all = [];
+			// $scope.setting.page = 2;
+			// User.teamLeader()
+			// 	.success(function(data){
+			// 		$scope.setting.all = data;
+			// 		$scope.setting.all.show = true;
+			// 		Preloader.stop();
+			// 	})
+			// 	.error(function(){
+			// 		Preloader.stop();
+			// 	});
 		};
-		/**
-		 * Object for setting
-		 *
-		*/
-		$scope.setting = {};
-		User.teamLeader()
-			.success(function(data){
-				$scope.setting.all = data;
-				$scope.setting.all.show = true;
-			});
 
 		/**
 		 * Status of search bar.
@@ -109,4 +100,29 @@ adminModule
 		    	$scope.subheader.refresh();
 		    })
 		};
+
+		$scope.init = function(refresh){
+			/**
+			 * Object for setting
+			 *
+			*/
+			$scope.setting = {};
+			User.teamLeader()
+				.success(function(data){
+					angular.forEach(data, function(item){
+						item.first_letter = item.first_name.charAt(0).toUpperCase();
+						item.created_at = new Date(item.created_at);
+					});
+
+					$scope.setting.all = data;
+					$scope.setting.all.show = true;
+
+					if(refresh){
+						Preloader.stop();
+						Preloader.stop();
+					}
+				});
+		}
+
+		$scope.init();
 	}]);

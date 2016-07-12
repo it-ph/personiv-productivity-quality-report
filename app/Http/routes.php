@@ -118,7 +118,7 @@ Route::group(['middleware' => 'auth'], function () {
 	Route::post('approval-approve-delete', 'ApprovalController@approveDelete');
 	Route::post('approval-decline-delete', 'ApprovalController@declineDelete');
 	Route::post('user-search', 'UserController@search');
-	Route::get('member-department/{departmentID}', 'MemberController@department');
+	Route::get('member-department', 'MemberController@department');
 	Route::get('report-test', 'ReportController@test');
 	Route::post('report-department-monthly', 'ReportController@departmentMonthly');
 	Route::get('position-department/{departmentID}', 'PositionController@department');

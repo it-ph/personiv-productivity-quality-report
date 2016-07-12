@@ -19,28 +19,8 @@ adminModule
 			// start preloader
 			Preloader.preload();
 			// clear department
-			$scope.setting.all = {};
-			$scope.setting.page = 2;
-			Department.index()
-				.success(function(data){
-					$scope.setting.all = data;
-					$scope.setting.all.show = true;
-					Preloader.stop();
-				})
-				.error(function(){
-					Preloader.stop();
-				});
+			$scope.init(true);
 		};
-		/**
-		 * Object for setting
-		 *
-		*/
-		$scope.setting = {};
-		Department.index()
-			.success(function(data){
-				$scope.setting.all = data;
-				$scope.setting.all.show = true;
-			});
 
 		/**
 		 * Status of search bar.
@@ -103,4 +83,29 @@ adminModule
 		    	$scope.subheader.refresh();
 		    })
 		};
+
+		$scope.init = function(refresh){
+			/**
+			 * Object for setting
+			 *
+			*/
+			$scope.setting = {};
+			Department.index()
+				.success(function(data){
+					angular.forEach(data, function(item){
+						item.first_letter = item.name.charAt(0).toUpperCase();
+						item.created_at = new Date(item.created_at);
+					});
+
+					$scope.setting.all = data;
+					$scope.setting.all.show = true;
+
+					if(refresh){
+						Preloader.stop();
+						Preloader.stop();
+					}
+				});
+		}
+
+		$scope.init();
 	}]);

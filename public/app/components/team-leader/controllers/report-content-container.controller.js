@@ -240,6 +240,16 @@ teamLeaderModule
 			});
 		}
 
+		$scope.checkBalance = function(data){
+			var index = $scope.members.indexOf(data);
+			$scope.members[index].balance = $scope.members[index].limit - $scope.members[index].hours_worked;
+			$scope.members[index].balance = $scope.members[index].balance ? $scope.members[index].balance.toFixed(2) : 0;
+		}
+
+		// $scope.checkProgramme = function(idx){
+		// 	$scope.details.programme_id = $scope.work_hours[idx].id;
+		// }
+
 		$scope.init = function(){
 			Member.updateTenure()
 				.then(function(){

@@ -27,11 +27,13 @@ class ProgrammeController extends Controller
      */
     public function index()
     {
-        return DB::table('programmes')
-            ->select('*', DB::raw('UPPER(LEFT(label, 1)) as first_letter'), DB::raw('DATE_FORMAT(created_at, "%b. %d, %Y") as created_at_formatted'))
-            ->whereNull('deleted_at')
-            ->orderBy('created_at')
-            ->get();
+        // return DB::table('programmes')
+        //     ->select('*', DB::raw('UPPER(LEFT(label, 1)) as first_letter'), DB::raw('DATE_FORMAT(created_at, "%b. %d, %Y") as created_at_formatted'))
+        //     ->whereNull('deleted_at')
+        //     ->orderBy('created_at')
+        //     ->get();
+
+        return Programme::all();
     }
 
     /**

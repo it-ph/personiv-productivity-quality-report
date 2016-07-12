@@ -44,4 +44,9 @@ class PerformanceHistory extends Model
     {
     	return $this->belongsTo('App\Result');
     }
+
+    public function programme()
+    {
+        return $this->belongsTo('App\Programme');
+    }
 }

@@ -33,27 +33,8 @@ adminModule
 
 		$scope.subheader.refresh = function(){
 			Preloader.preload();
-			$scope.position = {};
-			$scope.position.show = false;		
-			Position.project(project_id)
-				.success(function(data){
-					Preloader.stop();
-					$scope.position.all = data;
-					$scope.position.show = true;
-				})
-				.error(function(){
-					Preloader.error();
-				});
+			$scope.init(true);
 		}
-
-		Position.project(project_id)
-			.success(function(data){
-				$scope.position.all = data;
-				$scope.position.show = true;
-			})
-			.error(function(){
-				Preloader.error();
-			});
 
 		/**
 		 * Object for content view
@@ -122,11 +103,35 @@ adminModule
 			Preloader.set(id);
 			$mdDialog.show({
 		    	controller: 'editPositionDialogController',
-		      	templateUrl: '/app/components/admin/templates/dialogs/edit-position.dialog.template.html',
+		      	templateUrl: '/app/components/admin/templates/dialogs/add-position.dialog.template.html',
 		      	parent: angular.element(document.body),
 		    })
 		    .then(function(){
 		    	$scope.subheader.refresh();
 		    });
 		}
+
+		$scope.init = function(refresh){
+			$scope.position = {};
+			Position.project(project_id)
+				.success(function(data){
+					angular.forEach(data, function(item){
+						item.first_letter = item.name.charAt(0).toUpperCase();
+						item.created_at = new Date(item.created_at);
+					});
+
+					$scope.position.all = data;
+					$scope.position.show = true;
+
+					if(refresh){
+						Preloader.stop();
+						Preloader.stop();
+					}
+				})
+				.error(function(){
+					Preloader.error();
+				});
+		}
+
+		$scope.init();
 	}])

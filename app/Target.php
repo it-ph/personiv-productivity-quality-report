@@ -20,4 +20,9 @@ class Target extends Model
     {
     	return $this->belongsTo('App\Department');
     }
+
+    public function performances()
+    {
+        return $this->hasMany('App\Performance');
+    }
 }

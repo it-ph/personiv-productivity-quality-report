@@ -2,7 +2,7 @@
 	<form name="addPositionForm" novalidate>
 		<md-toolbar>
 			<div class="md-toolbar-tools">
-				<h2>New {{ project.name }} Position</h2>
+				<h2>{{ label }} Position</h2>
 				<span flex></span>
 				<md-button class="md-icon-button" ng-click="cancel()">
 					<md-icon class="mdi mdi-close" aria-label="cancel"></md-icon>
@@ -22,13 +22,13 @@
 			
 			<div ng-repeat="experience in experiences" flex layout="column">
 				<md-subheader class="md-no-sticky md-accent" flex>
-					<p>{{ experience.name }} <span>({{ experience.duration }})</span></p>
+					<p>{{ experience.experience }}</p>
 				</md-subheader>
 				<div layout="row" layout-wrap flex>
 					<!-- Productivity -->
 					<md-input-container flex flex-sm="100" flex-md="100" flex-gt-lg>
-						<label>{{ productivity[$index].type }}</label>
-						<input type="number" name="Productivity{{$index}}" required ng-model="productivity[$index].value" min="0">
+						<label>Productivity</label>
+						<input type="number" name="Productivity{{$index}}" required ng-model="experience.productivity" min="0">
 						<div ng-messages="addPositionForm['Productivity' + $index].$error" ng-if="addPositionForm.Productivity.$touched && showErrors">
 							<div ng-messages-include="/app/shared/templates/validation-message.html"></div>
 						</div>
@@ -36,8 +36,8 @@
 
 					<!-- Quality -->
 					<md-input-container flex flex-sm="100" flex-md="100" flex-gt-lg>
-						<label>{{ quality[$index].type }}</label>
-						<input type="number" name="Quality{{$index}}" required ng-model="quality[$index].value" min="0" max="100">
+						<label>Quality</label>
+						<input type="number" name="Quality{{$index}}" required ng-model="experience.quality" min="1" max="100">
 						<div class="hint" ng-if="!showErrors">Percentage Value (1-100)</div>
 						<div ng-messages="addPositionForm['Quality' + $index].$error" ng-if="addPositionForm['Quality' + $index].$touched && showErrors">
 							<div ng-messages-include="/app/shared/templates/validation-message.html"></div>

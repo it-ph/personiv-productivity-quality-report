@@ -13,6 +13,10 @@ teamLeaderModule
 		*/
 		$scope.toolbar = {};
 		$scope.toolbar.parentState = 'Edit';
+		$scope.toolbar.showBack = true;
+		$scope.toolbar.back = function(){
+			$state.go('main.members');
+		}
 
 		/**
 		 * Object for content view

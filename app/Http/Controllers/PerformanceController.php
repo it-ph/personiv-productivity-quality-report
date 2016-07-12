@@ -360,6 +360,8 @@ class PerformanceController extends Controller
                     $create_report = true;
                 }
 
+                $target = Target::where('position_id', $request->input($i.'.position_id'))->where('experience', $request->input($i.'.experience'))->where('active', true)->first();
+
                 $performance = new Performance;
 
                 $performance->report_id = $report->id;
@@ -367,6 +369,7 @@ class PerformanceController extends Controller
                 $performance->position_id = $request->input($i.'.position_id');
                 $performance->department_id = $request->user()->department_id;
                 $performance->project_id = $request->input($i.'.project_id');
+                $performance->target_id = $target->id;
                 $performance->output = $request->input($i.'.output');
                 $performance->date_start = $request->input($i.'.date_start');
                 $performance->date_end = $request->input($i.'.date_end');
@@ -376,31 +379,29 @@ class PerformanceController extends Controller
                 // Round((Output / Hours Worked) * Daily Work Hours)
                 // store the rounded value
                 $performance->average_output = round($request->input($i.'.output') / $request->input($i.'.hours_worked') * $request->input($i.'.daily_work_hours'), 2);
-                // save performance to database
-                $performance->save();
-
-                // fetch target
-                $target = Target::where('type', 'Productivity')->where('position_id', $request->input($i.'.position_id'))->where('experience', $request->input($i.'.experience'))->where('created_at', '<=', $request->input($i.'.date_end'))->orderBy('created_at', 'desc')->first();
-
-                if(!$target)
-                {
-                     $target = Target::where('type', 'Productivity')->where('position_id', $request->input($i.'.position_id'))->where('experience', $request->input($i.'.experience'))->where('active', true)->first();
-                }
-
-                $result = new Result;
-                $result->report_id = $report->id;
                 // average output / target output * 100 to convert to percentage
-                $result->productivity = round($performance->average_output / $target->value * 100, 1);
+                $performance->productivity = round($performance->average_output / $target->productivity * 100, 1);
                 // 1 - output w/error / output * 100 to convert to percentage
-                $result->quality = round((1 - $performance->output_error / $performance->output) * 100, 1);
-                // $result->type = "weekly";
-                $result->performance_id = $performance->id;
-
-                $result->save();
-
-                $performance->result_id = $result->id;
+                $performance->quality = round((1 - $performance->output_error / $performance->output) * 100, 1);
+                // $performance->type = "weekly";
                 $performance->save();
+                // fetch target
+                // $productivity = Target::where('type', 'Productivity')->where('position_id', $request->input($i.'.position_id'))->where('experience', $request->input($i.'.experience'))->where('created_at', '<=', $request->input($i.'.date_end'))->orderBy('created_at', 'desc')->first();
 
+                // if(!$productivity)
+                // {
+                //      $productivity = Target::where('type', 'Productivity')->where('position_id', $request->input($i.'.position_id'))->where('experience', $request->input($i.'.experience'))->where('active', true)->first();
+                // }
+
+                // $quality = Target::where('type', 'Quality')->where('position_id', $request->input($i.'.position_id'))->where('experience', $request->input($i.'.experience'))->where('created_at', '<=', $request->input($i.'.date_end'))->orderBy('created_at', 'desc')->first();
+
+                // if(!$quality)
+                // {
+                //      $quality = Target::where('type', 'Quality')->where('position_id', $request->input($i.'.position_id'))->where('experience', $request->input($i.'.experience'))->where('active', true)->first();
+                // }
+
+                // $performance->productivity_id = $productivity->id;
+                // $performance->quality_id = $quality->id;
             }
         }
 
@@ -453,7 +454,9 @@ class PerformanceController extends Controller
                     $i.'.output_error' => 'required|numeric',
                 ]);
 
-                $performance = Performance::where('id', $request->input($i.'.performance_id'))->first();
+                $target = Target::where('position_id', $request->input($i.'.position_id'))->where('experience', $request->input($i.'.experience'))->where('active', true)->first();
+
+                $performance = Performance::where('id', $request->input($i.'.id'))->first();
 
                 $performance->position_id = $request->input($i.'.position_id');
                 $performance->project_id = $request->input($i.'.project_id');
@@ -466,29 +469,34 @@ class PerformanceController extends Controller
                 // Round((Output / Hours Worked) * Daily Work Hours)
                 // store the rounded value
                 $performance->average_output = $request->input($i.'.output') / $request->input($i.'.hours_worked') * $request->input($i.'.daily_work_hours');
-
+                // average output / target output * 100 to convert to percentage
+                $performance->productivity = round($performance->average_output / $target->productivity * 100);
+                // 1 - output w/error / output * 100 to convert to percentage
+                $performance->quality = round((1 - $performance->output_error / $performance->output) * 100);
+                // $performance->type = "weekly";
+                $performance->performance_id = $request->input($i.'.performance_id');
                 // save performance to database
                 $performance->save();
 
                 // fetch target
-                $target = Target::where('type', 'Productivity')->where('position_id', $request->input($i.'.position_id'))->where('experience', $request->input($i.'.experience'))->where('created_at', '<=', $request->input($i.'.date_end'))->orderBy('created_at', 'desc')->first();
+                // $productivity = Target::where('type', 'Productivity')->where('position_id', $request->input($i.'.position_id'))->where('experience', $request->input($i.'.experience'))->where('created_at', '<=', $request->input($i.'.date_end'))->orderBy('created_at', 'desc')->first();
 
-                if(!$target)
-                {
-                    $target = Target::where('type', 'Productivity')->where('position_id', $request->input($i.'.position_id'))->where('experience', $request->input($i.'.experience'))->where('active', true)->first();
-                }
+                // if(!$productivity)
+                // {
+                //     $productivity = Target::where('type', 'Productivity')->where('position_id', $request->input($i.'.position_id'))->where('experience', $request->input($i.'.experience'))->where('active', true)->first();
+                // }
 
-                $result = Result::where('id', $request->input($i.'.result_id'))->first();
-                
-                $result->report_id = $id;
-                // average output / target output * 100 to convert to percentage
-                $result->productivity = round($performance->average_output / $target->value * 100);
-                // 1 - output w/error / output * 100 to convert to percentage
-                $result->quality = round((1 - $performance->output_error / $performance->output) * 100);
-                // $result->type = "weekly";
-                $result->performance_id = $request->input($i.'.performance_id');
+                // // fetch target
+                // $quality = Target::where('type', 'Quality')->where('position_id', $request->input($i.'.position_id'))->where('experience', $request->input($i.'.experience'))->where('created_at', '<=', $request->input($i.'.date_end'))->orderBy('created_at', 'desc')->first();
 
-                $result->save();
+                // if(!$quality)
+                // {
+                //     $quality = Target::where('type', 'Quality')->where('position_id', $request->input($i.'.position_id'))->where('experience', $request->input($i.'.experience'))->where('active', true)->first();
+                // }
+
+                // $performance->productivity_id = $productivity->id;
+                // $performance->quality_id = $quality->id;
+
             }
         }
     }

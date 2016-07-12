@@ -47,16 +47,18 @@ class UserController extends Controller
     // fetch all team leaders
     public function teamLeader()
     {
-        return DB::table('users')
-            ->join('departments', 'departments.id', '=', 'users.department_id')
-            ->select(
-                'users.*',
-                DB::raw('UPPER(LEFT(users.first_name, 1)) as first_letter'),
-                DB::raw('DATE_FORMAT(users.created_at, "%h:%i %p, %b. %d, %Y") as created_at'),
-                'departments.name as department_name'
-            )
-            ->whereIn('role', ['team-leader', 'manager'])
-            ->get();
+        // return DB::table('users')
+        //     ->join('departments', 'departments.id', '=', 'users.department_id')
+        //     ->select(
+        //         'users.*',
+        //         DB::raw('UPPER(LEFT(users.first_name, 1)) as first_letter'),
+        //         DB::raw('DATE_FORMAT(users.created_at, "%h:%i %p, %b. %d, %Y") as created_at'),
+        //         'departments.name as department_name'
+        //     )
+        //     ->whereIn('role', ['team-leader', 'manager'])
+        //     ->get();
+
+        return User::with('department')->whereIn('role', ['team-leader', 'manager'])->get();
     }
     /**
      * Display a listing of the resource.

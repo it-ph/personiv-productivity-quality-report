@@ -169,8 +169,9 @@ class TargetController extends Controller
         for ($i=0; $i < count($request->all()); $i++) { 
             
             $this->validate($request, [
-                $i.'.value' => 'required|numeric',
-                $i.'.type' => 'required|string',
+                $i.'.productivity' => 'required|numeric',
+                $i.'.quality' => 'required|numeric',
+                // $i.'.type' => 'required|string',
                 $i.'.experience' => 'required|string',
                 $i.'.position_id' => 'required|numeric',
                 $i.'.project_id' => 'required|numeric',
@@ -179,8 +180,9 @@ class TargetController extends Controller
 
             $target = new Target;
 
-            $target->value = $request->input($i.'.value');
-            $target->type = $request->input($i.'.type');
+            $target->productivity = $request->input($i.'.productivity');
+            $target->quality = $request->input($i.'.quality');
+            // $target->type = $request->input($i.'.type');
             $target->experience = $request->input($i.'.experience');
             $target->position_id = $request->input($i.'.position_id');
             $target->project_id = $request->input($i.'.project_id');
@@ -225,8 +227,10 @@ class TargetController extends Controller
         for ($i=0; $i < count($request->all()); $i++) { 
             
             $this->validate($request, [
-                $i.'.value' => 'required|numeric',
-                $i.'.type' => 'required|string',
+                // $i.'.value' => 'required|numeric',
+                $i.'.productivity' => 'required|numeric',
+                $i.'.quality' => 'required|numeric',
+                // $i.'.type' => 'required|string',
                 $i.'.experience' => 'required|string',
                 $i.'.position_id' => 'required|numeric',
                 $i.'.project_id' => 'required|numeric',
@@ -239,8 +243,10 @@ class TargetController extends Controller
 
             $new_target = new Target;
 
-            $new_target->value = $request->input($i.'.value');
-            $new_target->type = $request->input($i.'.type');
+            // $new_target->value = $request->input($i.'.value');
+            $new_target->productivity = $request->input($i.'.productivity');
+            $new_target->quality = $request->input($i.'.quality');
+            // $new_target->type = $request->input($i.'.type');
             $new_target->experience = $request->input($i.'.experience');
             $new_target->position_id = $request->input($i.'.position_id');
             $new_target->project_id = $request->input($i.'.project_id');
