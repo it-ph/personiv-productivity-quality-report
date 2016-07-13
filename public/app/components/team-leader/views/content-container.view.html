@@ -2,8 +2,8 @@
 	<!-- Toolbar -->
 	<div ui-view="toolbar" layout="row" flex class="md-toolbar-tools"></div>
 </md-toolbar>
-<md-content layout="row" flex class="hide-overflow">
-	<div layout="column" flex class="hide-overflow">
+<div layout="row" flex>
+	<div layout="column" flex class="overflow-y-hidden">
 		<!-- Toogle on scroll Toolbar -->
 		<md-toolbar class="white-toolbar" md-scroll-shrink>
 			<!-- Subheader for Assets -->
@@ -19,4 +19,4 @@
 		<md-icon class="mdi {{ fab.icon }}" aria-label="{{ fab.label }}"></md-icon>
 		<md-tooltip>{{ fab.label }}</md-tooltip>
 	</md-button>
-</md-content>
+</div>

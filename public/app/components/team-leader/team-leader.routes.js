@@ -49,7 +49,7 @@ teamLeaderModule
 				url:'members',
 				views: {
 					'content-container': {
-						templateUrl: '/app/components/admin/views/content-container.view.html',
+						templateUrl: '/app/components/team-leader/views/content-container.view.html',
 						controller: 'membersContentContainerController',
 					},
 					'toolbar@main.members': {
@@ -64,7 +64,7 @@ teamLeaderModule
 				url:'member/create',
 				views: {
 					'content-container': {
-						templateUrl: '/app/components/admin/views/content-container.view.html',
+						templateUrl: '/app/components/team-leader/views/content-container.view.html',
 						controller: 'createMemberContentContainerController',
 					},
 					'toolbar@main.create-member': {
@@ -80,7 +80,7 @@ teamLeaderModule
 				params: {memberID:null},
 				views: {
 					'content-container': {
-						templateUrl: '/app/components/admin/views/content-container.view.html',
+						templateUrl: '/app/components/team-leader/views/content-container.view.html',
 						controller: 'editMemberContentContainerController',
 					},
 					'toolbar@main.edit-member': {
@@ -95,7 +95,7 @@ teamLeaderModule
 				url:'report',
 				views: {
 					'content-container': {
-						templateUrl: '/app/components/admin/views/content-container.view.html',
+						templateUrl: '/app/components/team-leader/views/content-container.view.html',
 						controller: 'reportContentContainerController',
 					},
 					'toolbar@main.report': {
@@ -104,6 +104,9 @@ teamLeaderModule
 					'content@main.report':{
 						templateUrl: '/app/components/team-leader/templates/content/report.content.template.html',
 					},
+					'right-sidenav@main.report':{
+						templateUrl: '/app/components/team-leader/templates/sidenavs/report-right.sidenav.html',
+					}
 				},
 				onEnter: ['$state', 'User', function($state, User){
 					User.index()
@@ -119,7 +122,7 @@ teamLeaderModule
 				params: {'reportID':null},
 				views: {
 					'content-container': {
-						templateUrl: '/app/components/admin/views/content-container.view.html',
+						templateUrl: '/app/components/team-leader/views/content-container.view.html',
 						controller: 'editReportContentContainerController',
 					},
 					'toolbar@main.edit-report': {
@@ -142,7 +145,7 @@ teamLeaderModule
 				url:'approvals',
 				views: {
 					'content-container': {
-						templateUrl: '/app/components/admin/views/content-container.view.html',
+						templateUrl: '/app/components/team-leader/views/content-container.view.html',
 						controller: 'approvalsContentContainerController',
 					},
 					'toolbar@main.approvals': {

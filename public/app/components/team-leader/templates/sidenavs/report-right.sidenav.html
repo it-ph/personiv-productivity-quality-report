@@ -1,0 +1,21 @@
+<md-toolbar class="white-toolbar"> 
+	<div class="md-toolbar-tools">
+		<h2 class="primary-text">Targets</h2>
+	</div>
+</md-toolbar>
+<md-content layout="column" layout-padding>
+	<md-divider></md-divider>
+	<div ng-repeat="position in project.positions">
+		<md-subheader class="md-no-sticky md-primary">{{position.name}}</md-subheader>
+		<md-list>
+			<md-list-item class="md-3-line" ng-repeat="target in position.targets">
+				<div class="md-list-item-text">
+					<h3>{{ target.experience}}</h3>
+					<h4>Target: {{ target.productivity }}</h4>
+					<p>Quality: {{ target.quality }}%</p>
+				</div>
+			</md-list-item>
+		</md-list>
+		<md-divider></md-divider>
+	</div>
+</md-content>

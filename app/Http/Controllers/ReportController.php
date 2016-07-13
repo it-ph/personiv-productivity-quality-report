@@ -2748,7 +2748,8 @@ class ReportController extends Controller
     }
     public function paginateDetails()
     {
-        return Report::orderBy('created_at', 'desc')->paginate(4);
+        // return Auth::user();
+        return Report::with(['performances' => function($query){ $query->with(['member' => function($query){ $query->with('experiences');}])->with('position'); }])->with(['project' => function($query){ $query->with('positions', 'targets'); }])->where('department_id', Auth::user()->department_id)->orderBy('date_start', 'desc')->paginate(10);   
     }
     public function paginate()
     {

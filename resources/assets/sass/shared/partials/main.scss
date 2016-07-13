@@ -361,6 +361,10 @@ md-toolbar.md-warn > md-tabs.md-default-theme, md-tabs > md-tabs-wrapper > md-ta
 	overflow: hidden;
 }
 
+.overflow-y-hidden{
+	overflow-y: hidden;
+}
+
 .validation-messages{
 	font-size: 12px;
     color: $red500;

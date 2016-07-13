@@ -107,6 +107,11 @@ teamLeaderModule
 					$scope.members = data;
 					$scope.resetMembers();
 				});
+
+			Project.show(projectID)
+				.success(function(data){
+					$scope.project = data;
+				});
 		};
 
 		/**
@@ -147,6 +152,9 @@ teamLeaderModule
 		 * Object for content view
 		 *
 		*/
+		$scope.rightSidenav = {};
+		$scope.rightSidenav.show = true;
+
 		$scope.fab = {};
 
 		$scope.fab.icon = 'mdi-check';

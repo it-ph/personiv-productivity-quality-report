@@ -383,6 +383,25 @@ class PerformanceController extends Controller
                 $performance->productivity = round($performance->average_output / $target->productivity * 100, 1);
                 // 1 - output w/error / output * 100 to convert to percentage
                 $performance->quality = round((1 - $performance->output_error / $performance->output) * 100, 1);
+
+                // Quadrant
+                if($performance->productivity < $target->productivity && $performance->quality >= $target->quality)
+                {
+                    $performance->quadrant = 'Quadrant 1'; 
+                }
+                else if($performance->productivity >= $target->productivity && $performance->quality >= $target->quality)
+                {
+                    $performance->quadrant = 'Quadrant 2'; 
+                }
+                else if($performance->productivity >= $target->productivity && $performance->quality < $target->quality)
+                {
+                    $performance->quadrant = 'Quadrant 3'; 
+                }
+                else if($performance->productivity < $target->productivity && $performance->quality < $target->quality)
+                {
+                    $performance->quadrant = 'Quadrant 4'; 
+                }
+
                 // $performance->type = "weekly";
                 $performance->save();
                 // fetch target
@@ -473,8 +492,26 @@ class PerformanceController extends Controller
                 $performance->productivity = round($performance->average_output / $target->productivity * 100);
                 // 1 - output w/error / output * 100 to convert to percentage
                 $performance->quality = round((1 - $performance->output_error / $performance->output) * 100);
+                
+                if($performance->productivity < $target->productivity && $performance->quality >= $target->quality)
+                {
+                    $performance->quadrant = 'Quadrant 1'; 
+                }
+                else if($performance->productivity >= $target->productivity && $performance->quality >= $target->quality)
+                {
+                    $performance->quadrant = 'Quadrant 2'; 
+                }
+                else if($performance->productivity >= $target->productivity && $performance->quality < $target->quality)
+                {
+                    $performance->quadrant = 'Quadrant 3'; 
+                }
+                else if($performance->productivity < $target->productivity && $performance->quality < $target->quality)
+                {
+                    $performance->quadrant = 'Quadrant 4'; 
+                }
+
                 // $performance->type = "weekly";
-                $performance->performance_id = $request->input($i.'.performance_id');
+                // $performance->performance_id = $request->input($i.'.performance_id');
                 // save performance to database
                 $performance->save();
 
