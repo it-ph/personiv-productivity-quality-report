@@ -360,7 +360,7 @@ class PerformanceController extends Controller
                     $create_report = true;
                 }
 
-                $target = Target::where('position_id', $request->input($i.'.position_id'))->where('experience', $request->input($i.'.experience'))->where('active', true)->first();
+                $target = Target::where('position_id', $request->input($i.'.position_id'))->where('experience', $request->input($i.'.experience'))->first();
 
                 $performance = new Performance;
 
@@ -409,14 +409,14 @@ class PerformanceController extends Controller
 
                 // if(!$productivity)
                 // {
-                //      $productivity = Target::where('type', 'Productivity')->where('position_id', $request->input($i.'.position_id'))->where('experience', $request->input($i.'.experience'))->where('active', true)->first();
+                //      $productivity = Target::where('type', 'Productivity')->where('position_id', $request->input($i.'.position_id'))->where('experience', $request->input($i.'.experience'))->first();
                 // }
 
                 // $quality = Target::where('type', 'Quality')->where('position_id', $request->input($i.'.position_id'))->where('experience', $request->input($i.'.experience'))->where('created_at', '<=', $request->input($i.'.date_end'))->orderBy('created_at', 'desc')->first();
 
                 // if(!$quality)
                 // {
-                //      $quality = Target::where('type', 'Quality')->where('position_id', $request->input($i.'.position_id'))->where('experience', $request->input($i.'.experience'))->where('active', true)->first();
+                //      $quality = Target::where('type', 'Quality')->where('position_id', $request->input($i.'.position_id'))->where('experience', $request->input($i.'.experience'))->first();
                 // }
 
                 // $performance->productivity_id = $productivity->id;
@@ -473,7 +473,7 @@ class PerformanceController extends Controller
                     $i.'.output_error' => 'required|numeric',
                 ]);
 
-                $target = Target::where('position_id', $request->input($i.'.position_id'))->where('experience', $request->input($i.'.experience'))->where('active', true)->first();
+                $target = Target::where('position_id', $request->input($i.'.position_id'))->where('experience', $request->input($i.'.experience'))->first();
 
                 $performance = Performance::where('id', $request->input($i.'.id'))->first();
 
@@ -520,7 +520,7 @@ class PerformanceController extends Controller
 
                 // if(!$productivity)
                 // {
-                //     $productivity = Target::where('type', 'Productivity')->where('position_id', $request->input($i.'.position_id'))->where('experience', $request->input($i.'.experience'))->where('active', true)->first();
+                //     $productivity = Target::where('type', 'Productivity')->where('position_id', $request->input($i.'.position_id'))->where('experience', $request->input($i.'.experience'))->first();
                 // }
 
                 // // fetch target
@@ -528,7 +528,7 @@ class PerformanceController extends Controller
 
                 // if(!$quality)
                 // {
-                //     $quality = Target::where('type', 'Quality')->where('position_id', $request->input($i.'.position_id'))->where('experience', $request->input($i.'.experience'))->where('active', true)->first();
+                //     $quality = Target::where('type', 'Quality')->where('position_id', $request->input($i.'.position_id'))->where('experience', $request->input($i.'.experience'))->first();
                 // }
 
                 // $performance->productivity_id = $productivity->id;

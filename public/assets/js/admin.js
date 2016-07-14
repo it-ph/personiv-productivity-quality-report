@@ -2293,6 +2293,7 @@ adminModule
 		Programme.index()
 			.success(function(data){
 				$scope.work_hours = data;
+				$scope.getMondays();
 			})
 
 		// $scope.hours = [7.5, 8.3, 9.1];

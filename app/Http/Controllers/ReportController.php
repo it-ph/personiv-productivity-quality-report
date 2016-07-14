@@ -17,6 +17,7 @@ use App\Project;
 use App\Target;
 use App\Position;
 use App\Member;
+use App\Experience;
 
 class ReportController extends Controller
 {
@@ -2247,214 +2248,29 @@ class ReportController extends Controller
 
     public function downloadWeeklyDepartment($department_id, $date_start, $date_end, $daily_work_hours)
     {
-        global $report, $report_array, $position_array, $quality_array, $beginner_array, $moderately_experienced_array, $experienced_array;
-
-        $report_array = array();
-        $position_array = array();
-        $quality_array = array();
-
-        $beginner_array = array();
-        $moderately_experienced_array = array();
-        $experienced_array = array();
-
-        $beginner_temp = array();
-        $moderately_experienced_temp = array();
-        $experienced_temp = array();
-        $quality_temp = array();
-
-        $date_start = date_create($date_start)->format("Y-m-d");
-        $date_end = date_create($date_end)->format("Y-m-d");
-
-        $report = DB::table('reports')
-            ->join('projects', 'projects.id', '=', 'reports.project_id')
-            ->join('departments', 'departments.id', '=', 'reports.department_id')
-            ->select(
-                '*',
-                'reports.id as report_id',
-                'projects.id as project_id', 
-                'projects.name as project_name', 
-                'departments.name as department_name'
-            )
-            ->whereNull('reports.deleted_at')
-            ->where('reports.department_id', $department_id)
-            ->where('reports.daily_work_hours', 'like', $daily_work_hours. '%')
-            ->where('reports.date_start', 'like', $date_start .'%')
-            ->whereBetween('reports.date_end', [$date_start, $date_end])
-            ->groupBy('reports.id')
-            ->get();
-
-        if(!count($report))
-        {
-            return 'No records found.';
-        }
-
-        // will fetch every performance and results for the specific report
-        foreach ($report as $key => $value) {
-            $reports = DB::table('reports')
-                ->join('performances', 'performances.report_id', '=', 'reports.id')
-                ->join('results', 'results.performance_id', '=', 'performances.id')
-                ->join('positions', 'positions.id', '=', 'performances.position_id')
-                ->join('projects', 'projects.id', '=', 'reports.project_id')
-                ->join('members', 'members.id', '=', 'performances.member_id')
-                ->select(
-                    'members.*',
-                    'performances.*',
-                    DB::raw('DATE_FORMAT(performances.date_start, "%b. %d, %Y") as date_start'),
-                    DB::raw('DATE_FORMAT(performances.date_end, "%b. %d, %Y") as date_end'),
-                    'results.*',
-                    'projects.*',
-                    'projects.name as project',
-                    'positions.name as position'
-                )
-                ->whereNull('reports.deleted_at')
-                ->where('performances.report_id', $value->report_id)
-                ->where('results.report_id', $value->report_id)
-                ->groupBy('performances.id')
-                ->orderBy('positions.name')
-                ->orderBy('members.full_name')
-                ->get();
-
-            foreach ($reports as $report_key => $report_value) {
-
-                if($report_value->productivity < 100 && $report_value->quality >= 100)
-                {
-                    $report_value->quadrant = 'Quadrant 1';
-                }
-                else if($report_value->productivity >= 100 && $report_value->quality >= 100)
-                {
-                    $report_value->quadrant = 'Quadrant 2';
-                }
-                else if ($report_value->productivity >= 100 && $report_value->quality < 100)
-                {
-                    $report_value->quadrant = 'Quadrant 3';
-                }
-                else{
-                    $report_value->quadrant = 'Quadrant 4';
-                }
-            }
-
-            // push each results to custom array
-            array_push($report_array, $reports);
-
-
-            $positions = DB::table('positions')
-                ->where('project_id', $value->project_id)
-                ->get();
-
-            // push each results to custom array
-            array_push($position_array, $positions);
-
-            foreach ($positions as $key => $value) {
-                $beginner = DB::table('targets')
-                    ->where('type', 'Productivity')
-                    ->where('position_id', $value->id)
-                    ->where('experience', 'Beginner')
-                    ->where('created_at', '<=', $date_end)
-                    ->orderBy('created_at', 'desc')
-                    ->first();
-
-                if(!$beginner)
-                {
-                    $beginner = DB::table('targets')
-                        ->where('type', 'Productivity')
-                        ->where('position_id', $value->id)
-                        ->where('experience', 'Beginner')
-                        // ->where('created_at', '<=', $date_end)
-                        ->where('active', true)
-                        ->first();                    
-                }
-
-                $moderately_experienced = DB::table('targets')
-                    ->where('type', 'Productivity')
-                    ->where('position_id', $value->id)
-                    ->where('experience', 'Moderately Experienced')
-                    ->where('created_at', '<=', $date_end)
-                    ->orderBy('created_at', 'desc')
-                    ->first();
-
-                if(!$moderately_experienced)
-                {
-                    $moderately_experienced = DB::table('targets')
-                        ->where('type', 'Productivity')
-                        ->where('position_id', $value->id)
-                        ->where('experience', 'Moderately Experienced')
-                        // ->where('created_at', '<=', $date_end)
-                        ->where('active', true)
-                        ->first();                    
-                }
-
-                $experienced = DB::table('targets')
-                    ->where('type', 'Productivity')
-                    ->where('position_id', $value->id)
-                    ->where('experience', 'Experienced')
-                    ->where('created_at', '<=', $date_end)
-                    ->orderBy('created_at', 'desc')
-                    ->first();
-
-                if(!$experienced)
-                {
-                    $experienced = DB::table('targets')
-                        ->where('type', 'Productivity')
-                        ->where('position_id', $value->id)
-                        ->where('experience', 'Experienced')
-                        // ->where('created_at', '<=', $date_end)
-                        ->where('active', true)
-                        ->first();
-                }
-
-                $quality = DB::table('targets')
-                    ->where('type', 'Quality')
-                    ->where('position_id', $value->id)
-                    ->where('created_at', '<=', $date_end)
-                    ->orderBy('created_at', 'desc')
-                    ->first();
-
-                if(!$quality)
-                {
-                    $quality = DB::table('targets')
-                        ->where('type', 'Quality')
-                        ->where('position_id', $value->id)
-                        // ->where('created_at', '<=', $date_end)
-                        ->where('active', true)
-                        ->first();                    
-                }            
-
-                array_push($beginner_temp, $beginner);
-                array_push($moderately_experienced_temp, $moderately_experienced);
-                array_push($experienced_temp, $experienced);
-                array_push($quality_temp, $quality);
-            }
-
-
-
-            // push in for per report
-            array_push($beginner_array, $beginner_temp);
-            array_push($moderately_experienced_array, $moderately_experienced_temp);
-            array_push($experienced_array, $experienced_temp);
-            array_push($quality_array, $quality_temp);
-
-            // reset the temp
-            $beginner_temp = array();
-            $moderately_experienced_temp = array();
-            $experienced_temp = array();
-            $quality_temp = array();
-        }
+        $this->reports = Report::with(['performances' => function($query){ $query->with('member')->with('position'); }])->with(['project' => function($query){ $query->with('positions'); }])->where('department_id', $department_id)->where('date_start', Carbon::parse($date_start))->where('date_end', Carbon::parse($date_end))->where('daily_work_hours', 'like', $daily_work_hours.'%')->orderBy('date_start', 'desc')->get();   
         
-        Excel::create('PQR Department Weekly Summary'. $date_start . ' to ' . $date_end, function($excel) {
-            global $report;
+        foreach ($this->reports as $report_key => $report) {
+            foreach ($report->performances as $performance_key => $performance) {
+                $performance->experience = Experience::where('member_id', $performance->member_id)->where('project_id', $performance->project_id)->first()->experience;
+            }
 
-            foreach ($report as $key => $value) {
-                global $index;
-                $index = $key;
-                $excel->sheet($value->project_name, function($sheet) {
-                    global $report_array, $index, $quality_array, $position_array, $beginner_array, $moderately_experienced_array, $experienced_array;
+            $report->project->beginner = [];
+            $report->project->moderately_experienced = [];
+            $report->project->experienced = [];
+            $report->project->quality = [];
+
+            foreach ($report->project->positions as $position_key => $position) {
+                $beginner_productivity = Target::where('position_id', $position->id)->where('experience', 'Beginner')->first()->productivity;
+            }
+        }
+
+        Excel::create('PQR Department Weekly Summary'. Carbon::parse($date_start)->toFormattedDateString() . ' to ' . Carbon::parse($date_end)->toFormattedDateString(), function($excel)
+        {
+            foreach ($this->reports as $report_key => $report_value) {
+                $excel->sheet($report_value->project->name, function($sheet) {
                     $sheet->loadView('excel.weekly')
-                        ->with('data', $report_array[$index])
-                        ->with('positions', $position_array[$index])
-                        ->with('beginner', $beginner_array[$index])
-                        ->with('moderately_experienced', $moderately_experienced_array[$index])
-                        ->with('experienced', $experienced_array[$index])
-                        ->with('quality', $quality_array[$index]);
+                        ->with('report', $report_value);
                 });
             }
 
@@ -2617,7 +2433,7 @@ class ReportController extends Controller
 
         })->download('xlsx');
     }
-    public function searchDepartment(Request $request, $id)
+    public function searchDepartment(Request $request)
     {
         $report_array = array();
 
@@ -2684,72 +2500,20 @@ class ReportController extends Controller
 
     public function search(Request $request)
     {
-        $report_array = array();
-
-        $reports = DB::table('reports')
-            ->join('performances', 'performances.report_id', '=', 'reports.id')
-            ->join('results', 'results.performance_id', '=', 'performances.id')
-            ->join('positions', 'positions.id', '=', 'performances.position_id')
-            ->join('projects', 'projects.id', '=', 'reports.project_id')
-            ->join('members', 'members.id', '=', 'performances.member_id')
-            ->select(
-                'members.*',
-                'reports.id as report_id',
-                'performances.*',
-                DB::raw('DATE_FORMAT(performances.date_start, "%b. %d, %Y") as date_start'),
-                DB::raw('DATE_FORMAT(performances.date_end, "%b. %d, %Y") as date_end'),
-                'results.*',
-                'projects.*',
-                'projects.name as project',
-                'positions.name as position'
-            )
-            ->whereNull('reports.deleted_at')
-            ->whereNull('performances.deleted_at')
-            ->where('reports.date_start', 'like', '%'. $request->userInput .'%')
-            ->orWhere('reports.date_end', 'like', '%'. $request->userInput .'%')
-            ->orWhere('projects.name', 'like', '%'. $request->userInput .'%')
-            ->groupBy('reports.id')
-            ->orderBy('reports.date_start', 'desc')
-            ->get();
-
-
-
-        foreach ($reports as $key => $value) {
-            $query = DB::table('reports')
-                ->join('performances', 'performances.report_id', '=', 'reports.id')
-                ->join('results', 'results.performance_id', '=', 'performances.id')
-                ->join('positions', 'positions.id', '=', 'performances.position_id')
-                ->join('projects', 'projects.id', '=', 'reports.project_id')
-                ->join('members', 'members.id', '=', 'performances.member_id')
-                ->select(
-                    'reports.id as report_id',
-                    'members.*',
-                    'performances.*',
-                    DB::raw('DATE_FORMAT(performances.date_start, "%b. %d, %Y") as date_start'),
-                    DB::raw('DATE_FORMAT(performances.date_end, "%b. %d, %Y") as date_end'),
-                    'results.*',
-                    'projects.*',
-                    'projects.name as project',
-                    'positions.name as position'
-                )
-                ->whereNull('reports.deleted_at')
-                ->whereNull('performances.deleted_at')
-                ->where('performances.report_id', $value->report_id)
-                ->where('results.report_id', $value->report_id)
-                ->groupBy('performances.id')
-                ->orderBy('positions.name')
-                ->orderBy('members.full_name')
-                ->get();
-
-            array_push($report_array, $query);
-        }
-
-        return response()->json($report_array);
+        return Report::with(['performances' => function($query){ $query->with(['member' => function($query){ $query->with('experiences');}])->with('position'); }])->with(['project' => function($query){ $query->with(['positions' => function($query){ $query->with('targets'); }]); }])->where('department_id', Auth::user()->department_id)->where('date_start', Carbon::parse($request->date_start))->where('date_end', Carbon::parse($request->date_end))->orderBy('date_start', 'desc')->get();
     }
     public function paginateDetails()
     {
         // return Auth::user();
-        return Report::with(['performances' => function($query){ $query->with(['member' => function($query){ $query->with('experiences');}])->with('position'); }])->with(['project' => function($query){ $query->with('positions', 'targets'); }])->where('department_id', Auth::user()->department_id)->orderBy('date_start', 'desc')->paginate(10);   
+        $reports = Report::with(['performances' => function($query){ $query->with(['member' => function($query){ $query->with('experiences');}])->with('position'); }])->with(['project' => function($query){ $query->with(['positions' => function($query){ $query->with('targets'); }]); }])->where('department_id', Auth::user()->department_id)->orderBy('date_start', 'desc')->paginate(10);   
+        
+        // foreach ($reports as $report_key => $report) {
+        //     foreach ($report->project->positions as $position_key => $position) {
+        //         $previous_targets = Target::onlyTrashed()->where('position_id', $position->id)->where('created_at', '<', $report->date_start)->orderBy('created_at', 'desc')->get();
+        //         $position->targets = count($previous_targets) ? $previous_targets : Target::where('position_id', $position->id)->get();
+        //     }
+        // }
+        return $reports;
     }
     public function paginate()
     {

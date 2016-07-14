@@ -76,8 +76,14 @@
 			<div ng-messages-include="/app/shared/templates/validation-message-date.html"></div>
 		</div>
 	</md-input-container>
-	
-	<md-button class="md-accent md-raised" ng-click="clearFilter()">
-		Clear
-	</md-button>
+	<div layout="row" layout-align="end center">
+		<md-button class="md-fab md-primary" ng-click="searchUserInput()">
+			<md-icon class="mdi mdi-magnify"></md-icon>
+			<md-tooltip>Search</md-tooltip>
+		</md-button>
+		<md-button class="md-fab md-accent" ng-click="clearFilter()">
+			<md-icon class="mdi mdi-filter-remove"></md-icon>
+			<md-tooltip>Clear</md-tooltip>
+		</md-button>
+	</div>
 </md-content>

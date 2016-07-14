@@ -83,7 +83,7 @@ class ProjectController extends Controller
      */
     public function show($id)
     {
-        return Project::with(['positions' => function($query){ $query->with(['targets' => function($query){ $query->where('active', true); }]); }])->where('id', $id)->first();
+        return Project::with(['positions' => function($query){ $query->with('targets'); }])->where('id', $id)->first();
     }
 
     /**

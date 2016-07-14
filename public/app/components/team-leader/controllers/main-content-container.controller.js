@@ -30,21 +30,7 @@ teamLeaderModule
 		$scope.rightSidenav.queryMember = function(query){
 			var results = query ? $filter('filter')($scope.rightSidenav.items, query) : $scope.rightSidenav.items;
 			return results;
-		}
-
-		Member.index()
-			.success(function(data){
-				angular.forEach(data, function(item){
-					var member = {};
-					member.full_name = item.full_name;
-					$scope.rightSidenav.items.push(member);
-				});
-			})
-
-		Position.index()
-			.success(function(data){
-				$scope.positions = data;
-			});	
+		}	
 
 		$scope.months = [
 			{'value': '01', 'month': 'January'},
@@ -128,142 +114,13 @@ teamLeaderModule
 			$scope.filterDate.date_end = ''
 		}
 		
-		// User.index()
-		// 	.success(function(data){
-		// 		user = data;
-		// 		Project.department(user.department_id)
-		// 			.success(function(data){
-		// 				$scope.projects = data;
-		// 			});
-		// 		// fetch the details of the pagination 
-		// 		Report.paginateDepartmentDetails(user.department_id)
-		// 			.success(function(data){
-		// 				$scope.report.details = data;
-		// 				$scope.report.busy = true;
-		// 				angular.forEach(data.data, function(item, key){
-		// 					// fetch the targets
-		// 					Target.project(item.id)
-		// 						.success(function(data){
-		// 							$scope.report.targets.splice(key, 0, data)
-		// 						});
-		// 					Performance.topPerformers(item.id)
-		// 						.success(function(data){
-		// 							$scope.report.topPerformers.splice(key, 0, data)
-		// 						});
-		// 				});
-		// 				// fetch the custom paginated data
-		// 				Report.paginateDepartment(user.department_id)
-		// 					.success(function(data){
-		// 						$scope.report.paginated = data;
-		// 						$scope.report.show = true;
-		// 						$scope.report.busy = false;
-		// 						// set up the charts
-		// 						// reports cycle
-		// 						angular.forEach($scope.report.paginated, function(parentItem, parentKey){
-		// 							parentItem.chartType = 'bar';
-									
-		// 							parentItem.charts = {};
-									
-		// 							parentItem.charts.productivity = {};
-		// 							parentItem.charts.productivity.data = [[]];
-		// 							parentItem.charts.productivity.series = ['Productivity'];
-		// 							parentItem.charts.productivity.labels = [];
-									
-		// 							parentItem.charts.quality = {};
-		// 							parentItem.charts.quality.data = [[]];
-		// 							parentItem.charts.quality.series = ['Quality'];
-		// 							parentItem.charts.quality.labels = [];
-
-		// 							angular.forEach(parentItem, function(item, key){
-		// 								parentItem.charts.productivity.data[0].push(item.productivity);
-		// 								parentItem.charts.quality.data[0].push(item.quality);
-		// 								parentItem.charts.productivity.labels.push(item.full_name);
-		// 								parentItem.charts.quality.labels.push(item.full_name);
-		// 							});
-		// 						});
-		// 						$scope.report.paginateLoad = function(){
-		// 							// kills the function if ajax is busy or pagination reaches last page
-		// 							if($scope.report.busy || ($scope.report.page > $scope.report.details.last_page)){
-		// 								return;
-		// 							}
-		// 							/**
-		// 							 * Executes pagination call
-		// 							 *
-		// 							*/
-		// 							// sets to true to disable pagination call if still busy.
-		// 							$scope.report.busy = true;
-		// 							Report.paginateDepartmentDetails(user.department_id, $scope.report.page)
-		// 								.success(function(data){
-		// 									// iterate over each data then splice it to the data array
-		// 									angular.forEach(data.data, function(item, key){
-		// 										$scope.report.details.data.push(item);
-		// 										// fetch the targets
-		// 										Target.project(item.id)
-		// 											.success(function(data){
-		// 												$scope.report.targets.splice(key, 0, data)
-		// 											});
-		// 										Performance.topPerformers(item.id)
-		// 											.success(function(data){
-		// 												$scope.report.topPerformers.splice(key, 0, data)
-		// 											});
-		// 									});
-		// 								});
-
-		// 							// Calls the next page of pagination.
-		// 							Report.paginateDepartment(user.department_id, $scope.report.page)
-		// 								.success(function(data){
-		// 									// increment the page to set up next page for next AJAX Call
-		// 									$scope.report.page++;
-
-		// 									// iterate over each data then splice it to the data array
-		// 									angular.forEach(data, function(item, key){
-		// 										$scope.report.paginated.push(item);
-		// 									});
-		// 									// set up the charts
-		// 									// reports cycle
-		// 									angular.forEach(data, function(parentItem, parentKey){
-		// 										parentItem.chartType = 'bar';
-									
-		// 										parentItem.charts = {};
-
-		// 										parentItem.charts.productivity = {};
-		// 										parentItem.charts.productivity.data = [[]];
-		// 										parentItem.charts.productivity.series = ['Productivity'];
-		// 										parentItem.charts.productivity.labels = [];
-												
-		// 										parentItem.charts.quality = {};
-		// 										parentItem.charts.quality.data = [[]];
-		// 										parentItem.charts.quality.series = ['Quality'];
-		// 										parentItem.charts.quality.labels = [];
-
-		// 										angular.forEach(parentItem, function(item, key){
-		// 											parentItem.charts.productivity.data[0].push(item.productivity);
-		// 											parentItem.charts.quality.data[0].push(item.quality);
-		// 											parentItem.charts.productivity.labels.push(item.full_name);
-		// 											parentItem.charts.quality.labels.push(item.full_name);
-		// 										});
-		// 									});
-		// 									// Enables again the pagination call for next call.
-		// 									$scope.report.busy = false;
-		// 									console.log($scope.report.paginated);
-		// 								});
-		// 						}
-		// 					})
-		// 					.error(function(){
-		// 						Preloader.error();
-		// 					});
-		// 			})
-		// 			.error(function(data){
-		// 				Preloader.error();
-		// 			});
-		// 	});
-		
 		/**
 		 * Object for toolbar
 		 *
 		*/
 		$scope.toolbar = {};
 		$scope.toolbar.childState = 'Weekly Report';
+		$scope.toolbar.hideSearchIcon = true;
 		/**
 		 * Object for subheader
 		 *
@@ -278,68 +135,6 @@ teamLeaderModule
 			Preloader.preload();
 			$scope.init(true);
 
-			// // clear report
-			// $scope.report.paginated = [];
-			// $scope.report.targets = [];
-			// $scope.report.topPerformers = [];
-			// $scope.report.page = 2
-
-			// $scope.report.busy = true;
-			// Report.paginateDepartmentDetails(user.department_id)
-			// 	.success(function(data){
-			// 		data.chartType = 'bar';
-			// 		$scope.report.details = data;
-			// 		angular.forEach(data.data, function(item, key){
-			// 			// fetch the targets
-			// 			Target.project(item.id)
-			// 				.success(function(data){
-			// 					$scope.report.targets.splice(key, 0, data)
-			// 				});
-			// 			Performance.topPerformers(item.id)
-			// 				.success(function(data){
-			// 					$scope.report.topPerformers.splice(key, 0, data)
-			// 				});
-			// 		});
-			// 		// fetch the custom paginated data
-			// 		Report.paginateDepartment(user.department_id)
-			// 			.success(function(data){
-			// 				$scope.report.paginated = data;
-			// 				$scope.report.show = true;
-
-			// 				// set up the charts
-			// 				// reports cycle
-			// 				angular.forEach($scope.report.paginated, function(parentItem, parentKey){
-			// 					parentItem.chartType = 'bar';
-			// 					// performance cycle 
-			// 					parentItem.charts = {};
-									
-			// 					parentItem.charts.productivity = {};
-			// 					parentItem.charts.productivity.data = [[]];
-			// 					parentItem.charts.productivity.series = ['Productivity'];
-			// 					parentItem.charts.productivity.labels = [];
-								
-			// 					parentItem.charts.quality = {};
-			// 					parentItem.charts.quality.data = [[]];
-			// 					parentItem.charts.quality.series = ['Quality'];
-			// 					parentItem.charts.quality.labels = [];
-
-			// 					angular.forEach(parentItem, function(item, key){
-			// 						parentItem.charts.productivity.data[0].push(item.productivity);
-			// 						parentItem.charts.quality.data[0].push(item.quality);
-			// 						parentItem.charts.productivity.labels.push(item.full_name);
-			// 						parentItem.charts.quality.labels.push(item.full_name);
-			// 					});
-			// 				})
-			// 				$scope.report.busy = false;
-			// 				Preloader.stop();
-			// 			})
-			// 			.error(function(){
-			// 				Preloader.error();
-			// 			});
-			// 	})
-			// 	.error(function(){
-			// 		Preloader.error();
-			// 	});
 		};
 
 		$scope.subheader.download = function(){
@@ -376,43 +171,14 @@ teamLeaderModule
 		
 		$scope.searchUserInput = function(){
 			$scope.report.show = false;
-			$scope.report.targets = [];
-			$scope.report.topPerformers = [];
 			Preloader.preload();
-			Report.searchDepartment(user.department_id, $scope.toolbar)
+			Report.search($scope.filterDate)
 				.success(function(data){
 					$scope.report.results = data;
-					angular.forEach(data, function(item, key){
-						
-						Target.project(item[0].id)
-							.success(function(data){
-								$scope.report.targets.splice(key, 0, data)
-							});
-						Performance.topPerformers(item[0].report_id)
-							.success(function(data){
-								$scope.report.topPerformers.splice(key, 0, data)
-							});
+					angular.forEach(data, function(item){
+						pushItem(item);
 					});
-					angular.forEach($scope.report.results, function(parentItem, parentKey){
-						parentItem.chartType = 'bar';
-						parentItem.charts = {};
-						parentItem.charts.productivity = {};
-						parentItem.charts.productivity.data = [[]];
-						parentItem.charts.productivity.series = ['Productivity'];
-						parentItem.charts.productivity.labels = [];
-						
-						parentItem.charts.quality = {};
-						parentItem.charts.quality.data = [[]];
-						parentItem.charts.quality.series = ['Quality'];
-						parentItem.charts.quality.labels = [];
-
-						angular.forEach(parentItem, function(item, key){
-							parentItem.charts.productivity.data[0].push(item.productivity);
-							parentItem.charts.quality.data[0].push(item.quality);
-							parentItem.charts.productivity.labels.push(item.full_name);
-							parentItem.charts.quality.labels.push(item.full_name);
-						});
-					})
+					
 					Preloader.stop();
 				})
 				.error(function(data){
@@ -466,27 +232,84 @@ teamLeaderModule
 			    });
 		}
 
-		var pushItem = function(data){
-			data.date_start = new Date(data.date_start);
-			data.date_end = new Date(data.date_end);
+		var pushItem = function(report){
+			report.date_start = new Date(report.date_start);
+			report.date_end = new Date(report.date_end);
 
-			angular.forEach(data.performances, function(performance){
+			angular.forEach(report.performances, function(performance){
 				var filter = $filter('filter')(performance.member.experiences, {project_id:performance.project_id});
 				performance.experience = filter[0].experience;
 			});
 
-			return data;
+			// Targets
+			report.project.beginner = [];
+			report.project.moderately_experienced = [];
+			report.project.experienced = [];
+			report.project.quality = [];
+
+			angular.forEach(report.project.positions, function(position){
+				var beginner_productivity = $filter('filter')(position.targets, {experience:'Beginner'}, true);
+				var moderately_experienced_productivity = $filter('filter')(position.targets, {experience:'Moderately Experienced'}, true);
+				var experienced_productivity = $filter('filter')(position.targets, {experience:'Experienced'}, true);
+				var quality = $filter('filter')(position.targets, {experience:'Experienced'}, true);
+
+				report.project.beginner.push(beginner_productivity[0].productivity);
+				report.project.moderately_experienced.push(moderately_experienced_productivity[0].productivity);
+				report.project.experienced.push(experienced_productivity[0].productivity);
+				report.project.quality.push(quality[0].quality);
+			}) 
+
+			// Charts
+			report.chartType = 'bar';
+			report.charts = {};
+									
+			report.charts.productivity = {};
+			report.charts.productivity.data = [[]];
+			report.charts.productivity.series = ['Productivity'];
+			report.charts.productivity.labels = [];
+			
+			report.charts.quality = {};
+			report.charts.quality.data = [[]];
+			report.charts.quality.series = ['Quality'];
+			report.charts.quality.labels = [];
+
+			angular.forEach(report.performances, function(performance, key){
+				report.charts.productivity.data[0].push(performance.productivity);
+				report.charts.quality.data[0].push(performance.quality);
+				report.charts.productivity.labels.push(performance.member.full_name);
+				report.charts.quality.labels.push(performance.member.full_name);
+			});
+
+			return report;
 		}
 
 		$scope.init = function(refresh){
+			Member.index()
+			.success(function(data){
+				angular.forEach(data, function(item){
+					var member = {};
+					member.full_name = item.full_name;
+					$scope.rightSidenav.items.push(member);
+				});
+			})
+
+			Position.index()
+				.success(function(data){
+					$scope.positions = data;
+				});
+
+			Project.index()
+				.success(function(data){
+					$scope.projects = data;
+				});
+
+			$scope.getMondays();
 			/**
 			 * Object for report
 			 *
 			*/
 			$scope.report = {};
 			$scope.report.paginated = [];
-			$scope.report.targets = [];
-			$scope.report.topPerformers = [];
 			// 2 is default so the next page to be loaded will be page 2 
 			$scope.report.page = 2;
 

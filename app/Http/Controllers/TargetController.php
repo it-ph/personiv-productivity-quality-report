@@ -237,9 +237,9 @@ class TargetController extends Controller
                 $i.'.department_id' => 'required|numeric',
             ]);
 
-            $target = Target::where('id', $request->input($i.'.id'))->first();
-            $target->active = false;
-            $target->save();
+            $target = Target::where('id', $request->input($i.'.id'))->delete();
+            // $target->active = false;
+            // $target->save();
 
             $new_target = new Target;
 
@@ -251,7 +251,7 @@ class TargetController extends Controller
             $new_target->position_id = $request->input($i.'.position_id');
             $new_target->project_id = $request->input($i.'.project_id');
             $new_target->department_id = $request->input($i.'.department_id');
-            $new_target->active = true;
+            // $new_target->active = true;
 
             $new_target->save();
         }

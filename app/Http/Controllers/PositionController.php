@@ -84,7 +84,7 @@ class PositionController extends Controller
      */
     public function show($id)
     {
-        return Position::with(['targets' => function($query){ $query->where('active', true); }])->with('project')->where('id', $id)->first();
+        return Position::with('targets')->with('project')->where('id', $id)->first();
     }
 
     /**
