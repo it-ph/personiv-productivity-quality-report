@@ -248,6 +248,16 @@ teamLeaderModule
 			report.project.quality = [];
 
 			angular.forEach(report.project.positions, function(position){
+				angular.forEach(position.targets, function(target){
+					var index = 0;
+					if(target.deleted_at && new Date(target.created_at) < report.date_start){
+						position.targets.splice(index, 0, target);
+					}
+					else if(!target.deleted_at){
+						position.targets.splice(index, 0, target);
+					}
+				})
+
 				var beginner_productivity = $filter('filter')(position.targets, {experience:'Beginner'}, true);
 				var moderately_experienced_productivity = $filter('filter')(position.targets, {experience:'Moderately Experienced'}, true);
 				var experienced_productivity = $filter('filter')(position.targets, {experience:'Experienced'}, true);
