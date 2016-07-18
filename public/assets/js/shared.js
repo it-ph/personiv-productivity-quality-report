@@ -467,6 +467,9 @@ sharedModule
 			department: function(id){
 				return $http.get(urlBase + '-department/' + id);
 			},
+			unique: function(){
+				return $http.get(urlBase + '-unique/');
+			},
 		}
 	}])
 sharedModule

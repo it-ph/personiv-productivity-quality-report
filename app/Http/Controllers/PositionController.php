@@ -11,6 +11,11 @@ use Auth;
 
 class PositionController extends Controller
 {
+    public function unique()
+    {
+        return Position::where('department_id', Auth::user()->department_id)->groupBy('name')->get();
+    }
+
     public function department($id)
     {
         return Position::where('department_id', $id)->groupBy('name')->get();

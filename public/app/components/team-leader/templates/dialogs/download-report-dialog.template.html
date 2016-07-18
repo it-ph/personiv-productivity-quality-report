@@ -99,18 +99,32 @@
 						</div>
 					</md-input-container>
 				</div>
-				<!-- Daily Work Hours -->
-				<md-input-container flex>
-					<label>Daily Work Hours</label>
-					<md-select name="WorkHours" required ng-model="details.daily_work_hours">
-						<md-option ng-repeat="hour in work_hours" value="{{ hour.daily_work_hours }}">
-							{{ hour.label }} - {{ hour.daily_work_hours }} hour(s)
-						</md-option>
-					</md-select>
-					<div ng-messages="downloadReportForm.WorkHours.$error" ng-if="downloadReportForm.WorkHours.$touched">
-						<div ng-messages-include="/app/shared/templates/validation-message-report.html"></div>
-					</div>
-				</md-input-container>
+				<div layout="row">				
+					<!-- Daily Work Hours -->
+					<md-input-container flex>
+						<label>Daily Work Hours</label>
+						<md-select name="WorkHours" required ng-model="details.daily_work_hours">
+							<md-option ng-repeat="hour in work_hours" value="{{ hour.daily_work_hours }}">
+								{{ hour.label }} - {{ hour.daily_work_hours }} hour(s)
+							</md-option>
+						</md-select>
+						<div ng-messages="downloadReportForm.WorkHours.$error" ng-if="downloadReportForm.WorkHours.$touched">
+							<div ng-messages-include="/app/shared/templates/validation-message-report.html"></div>
+						</div>
+					</md-input-container>
+					<!-- Position -->
+					<md-input-container flex>
+						<label>Position</label>
+						<md-select name="Position" required ng-model="details.position">
+							<md-option ng-repeat="position in positions" value="{{ position.name }}">
+								{{ position.name }}
+							</md-option>
+						</md-select>
+						<div ng-messages="downloadReportForm.Position.$error" ng-if="downloadReportForm.Position.$touched">
+							<div ng-messages-include="/app/shared/templates/validation-message-report.html"></div>
+						</div>
+					</md-input-container>
+				</div>
 			</div>
 		</md-dialog-content>
 	</form>

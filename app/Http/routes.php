@@ -95,7 +95,7 @@ Route::group(['middleware' => 'auth'], function () {
 	Route::get('report-download-summary/{date_start}/to/{date_end}/daily-work-hours/{daily_work_hours}', 'ReportController@downloadSummary');
 	Route::get('report-download-weekly-department/{departmentID}/date_start/{date_start}/to/{date_end}/daily-work-hours/{daily_work_hours}', 'ReportController@downloadWeeklyDepartment');
 	Route::get('report-download-monthly-summary/{month}/year/{year}/daily-work-hours/{daily_work_hours}', 'ReportController@downloadMonthlySummary');
-	Route::get('report-download-monthly-department/{departmentID}/month/{month}/year/{year}/daily-work-hours/{daily_work_hours}', 'ReportController@downloadMonthlyDepartment');
+	Route::get('report-download-monthly-department/{departmentID}/month/{month}/year/{year}/daily-work-hours/{daily_work_hours}/position/{position}', 'ReportController@downloadMonthlyDepartment');
 
 	Route::get('report-monthly', 'ReportController@monthly');
 	Route::post('report-search-monthly', 'ReportController@searchMonthly');
@@ -124,4 +124,5 @@ Route::group(['middleware' => 'auth'], function () {
 	Route::get('position-department/{departmentID}', 'PositionController@department');
 	Route::post('member-check-duplicate', 'MemberController@checkDuplicate');
 	Route::get('experience-members/{projectID}', 'ExperienceController@members');
+	Route::get('position-unique', 'PositionController@unique');
 });
