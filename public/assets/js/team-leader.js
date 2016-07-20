@@ -1342,6 +1342,7 @@ teamLeaderModule
 		*/
 		$scope.toolbar = {};
 		$scope.toolbar.childState = 'Dashboard';
+		$scope.toolbar.hideSearchIcon = true;
 		/**
 		 * Object for subheader
 		 *
@@ -1399,6 +1400,55 @@ teamLeaderModule
 			$scope.searchBar = false;
 		};
 
+		$scope.changePosition = function(data, index, current){
+			Report.departmentMonthlyPosition(data)
+				.success(function(data){
+					// var createCharts = function(data){
+					// 	angular.forEach(data, function(project, projectKey){
+							data.chartType = 'bar';
+
+							data.charts = {};
+
+							data.charts.productivity = {};
+							data.charts.productivity.data = [[]];
+							data.charts.productivity.series = ['Productivity'];
+							data.charts.productivity.labels = [];
+							
+							data.charts.quality = {};
+							data.charts.quality.data = [[]];
+							data.charts.quality.series = ['Quality'];
+							data.charts.quality.labels = [];
+
+							
+							angular.forEach(data.members, function(member, memberKey){
+								data.charts.productivity.labels.push(member.member.full_name);
+								data.charts.quality.labels.push(member.member.full_name);
+								// angular.forEach(member.performances, function(performance){
+									data.charts.productivity.data[0].push(member.monthly_productivity);
+									data.charts.quality.data[0].push(member.monthly_quality);
+								// });
+							});
+
+
+						// });
+					// }
+
+					// if(query){
+					// 	$scope.haveResults = data ? true: false;
+					// 	$scope.report.results = data;
+					// 	$scope.report.showCurrent = false;
+
+					// 	createCharts(data);
+					// }
+					// else{
+						// $scope.haveCurrent = data ? true: false;
+						$scope.report.current.splice(index, 1, data);
+						// $scope.report.showCurrent = true;
+						// createCharts(data);
+					// }
+				})
+		}
+
 		$scope.init = function(refresh, query){
 			Report.departmentMonthly(query)
 				.success(function(data){
@@ -1420,12 +1470,12 @@ teamLeaderModule
 
 							
 							angular.forEach(project.members, function(member, memberKey){
-								project.charts.productivity.labels.push(member.full_name);
-								project.charts.quality.labels.push(member.full_name);
-								angular.forEach(member.performances, function(performance){
-									project.charts.productivity.data[0].push(performance.result.productivity);
-									project.charts.quality.data[0].push(performance.result.quality);
-								});
+								project.charts.productivity.labels.push(member.member.full_name);
+								project.charts.quality.labels.push(member.member.full_name);
+								// angular.forEach(member.performances, function(performance){
+									project.charts.productivity.data[0].push(member.monthly_productivity);
+									project.charts.quality.data[0].push(member.monthly_quality);
+								// });
 							});
 						});
 					}

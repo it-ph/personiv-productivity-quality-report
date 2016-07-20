@@ -1,5 +1,5 @@
 <!-- Search reports -->
-<div class="fade-transition" layout="column" flex ng-if="report.results && !report.show">
+<div class="fade-transition" flex ng-if="report.results && !report.show">
 	<div layout="row" layout-padding flex ng-repeat="report in report.results | filter: projects[filterData.project].name | filter:filterDate.date_start | filter:filterDate.date_end | filter: toolbar.userInput">
 		<div flex>
 			<div class="panel panel-default">

@@ -45,5 +45,8 @@ sharedModule
 			departmentMonthly: function(data){
 				return $http.post(urlBase + '-department-monthly', data);
 			},
+			departmentMonthlyPosition: function(data){
+				return $http.post(urlBase + '-department-monthly-position', data);
+			},
 		}
 	}])
