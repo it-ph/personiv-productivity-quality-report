@@ -99,16 +99,28 @@
 						</div>
 					</md-input-container>
 				</div>
+				<!-- Daily Work Hours -->
+				<md-input-container flex>
+					<label>Daily Work Hours</label>
+					<md-select name="WorkHours" required ng-model="details.daily_work_hours">
+						<md-option ng-repeat="hour in work_hours" value="{{ hour.daily_work_hours }}">
+							{{ hour.label }} - {{ hour.daily_work_hours }} hour(s)
+						</md-option>
+					</md-select>
+					<div ng-messages="downloadReportForm.WorkHours.$error" ng-if="downloadReportForm.WorkHours.$touched">
+						<div ng-messages-include="/app/shared/templates/validation-message-report.html"></div>
+					</div>
+				</md-input-container>
 				<div layout="row">				
-					<!-- Daily Work Hours -->
+					<!-- Project -->
 					<md-input-container flex>
-						<label>Daily Work Hours</label>
-						<md-select name="WorkHours" required ng-model="details.daily_work_hours">
-							<md-option ng-repeat="hour in work_hours" value="{{ hour.daily_work_hours }}">
-								{{ hour.label }} - {{ hour.daily_work_hours }} hour(s)
+						<label>Project</label>
+						<md-select name="Project" required ng-model="details.project" ng-change="getPositions()">
+							<md-option ng-repeat="project in projects" value="{{ project.id }}">
+								{{ project.name }}
 							</md-option>
 						</md-select>
-						<div ng-messages="downloadReportForm.WorkHours.$error" ng-if="downloadReportForm.WorkHours.$touched">
+						<div ng-messages="downloadReportForm.Project.$error" ng-if="downloadReportForm.Project.$touched">
 							<div ng-messages-include="/app/shared/templates/validation-message-report.html"></div>
 						</div>
 					</md-input-container>
@@ -116,7 +128,7 @@
 					<md-input-container flex>
 						<label>Position</label>
 						<md-select name="Position" required ng-model="details.position">
-							<md-option ng-repeat="position in positions" value="{{ position.name }}">
+							<md-option ng-repeat="position in positions" value="{{ position.id }}">
 								{{ position.name }}
 							</md-option>
 						</md-select>

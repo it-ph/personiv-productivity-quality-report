@@ -100,11 +100,14 @@ class ReportController extends Controller
         $this->date_end = ($request->month && $request->year) ? new Carbon('last Monday of '. $request->month .' '. $request->year) : new Carbon('last Monday of this month'); // last Monday of the month
 
         $this->projects = Project::with('positions')->where('department_id', Auth::user()->department_id)->get();
-
         foreach ($this->projects as $project_key => $project) {
-            $first_report = Report::where('project_id', $project->id)->whereBetween('date_start', [$this->date_start, $this->date_end])->orderBy('date_start')->first();
-            if($first_report){
-                $project->reports = Report::with('project')->where('project_id', $project->id)->whereBetween('date_start', [$this->date_start, $this->date_end])->where('daily_work_hours', 'like', $first_report->daily_work_hours.'%')->get();   
+            // if(!$request->daily_work_hours){
+                $first_report = !$request->daily_work_hours ? Report::where('project_id', $project->id)->whereBetween('date_start', [$this->date_start, $this->date_end])->orderBy('date_start')->first() : null;
+            // }
+            // if($first_report){
+            $daily_work_hours = $first_report ? $first_report->daily_work_hours : $request->daily_work_hours;
+            // }
+                $project->reports = Report::with('project')->where('project_id', $project->id)->whereBetween('date_start', [$this->date_start, $this->date_end])->where('daily_work_hours', 'like', $daily_work_hours.'%')->get();   
                 $project->members = Experience::with('member')->where('project_id', $project->id)->get();
 
                 foreach ($project->members as $member_key => $member) {
@@ -139,35 +142,35 @@ class ReportController extends Controller
                             if($project->reports[$i]->members[$member_key]->performance){                            
                                 if($project->reports[$i]->members[$member_key]->performance->position_id == $project->position->id){
                                     $target = $project->reports[$i]->members[$member_key]->performance->target;
+                                    $member->average_output = $member->total_output / $member->total_hours_worked * $daily_work_hours;
+                                    $member->monthly_productivity = round($member->average_output / $target->productivity * 100);
+                                    $member->monthly_quality = round((1 - $member->total_output_error / $member->total_output) * 100);
+
+                                    if($member->monthly_productivity < $target->productivity && $member->monthly_quality >= $target->quality)
+                                    {
+                                        $member->quadrant = 'Quadrant 1'; 
+                                    }
+                                    else if($member->monthly_productivity >= $target->productivity && $member->monthly_quality >= $target->quality)
+                                    {
+                                        $member->quadrant = 'Quadrant 2'; 
+                                    }
+                                    else if($member->monthly_productivity >= $target->productivity && $member->monthly_quality < $target->quality)
+                                    {
+                                        $member->quadrant = 'Quadrant 3'; 
+                                    }
+                                    else if($member->monthly_productivity < $target->productivity && $member->monthly_quality < $target->quality)
+                                    {
+                                        $member->quadrant = 'Quadrant 4'; 
+                                    }
                                 }
                             }
-                        }
-                        $member->average_output = $member->total_output / $member->total_hours_worked * $first_report->daily_work_hours;
-                        $member->monthly_productivity = round($member->average_output / $target->productivity * 100);
-                        $member->monthly_quality = round((1 - $member->total_output_error / $member->total_output) * 100);
-
-                        if($member->monthly_productivity < $target->productivity && $member->monthly_quality >= $target->quality)
-                        {
-                            $member->quadrant = 'Quadrant 1'; 
-                        }
-                        else if($member->monthly_productivity >= $target->productivity && $member->monthly_quality >= $target->quality)
-                        {
-                            $member->quadrant = 'Quadrant 2'; 
-                        }
-                        else if($member->monthly_productivity >= $target->productivity && $member->monthly_quality < $target->quality)
-                        {
-                            $member->quadrant = 'Quadrant 3'; 
-                        }
-                        else if($member->monthly_productivity < $target->productivity && $member->monthly_quality < $target->quality)
-                        {
-                            $member->quadrant = 'Quadrant 4'; 
                         }
                     }
                 }
 
                 $project->date_cover_start = $this->date_start->toFormattedDateString();
                 $project->date_cover_end = $this->date_end->toFormattedDateString();
-            }   
+            // }   
         }
 
         return $this->projects;
@@ -1561,7 +1564,7 @@ class ReportController extends Controller
 
     }
 
-    public function downloadMonthlyDepartment($department_id, $month, $year, $daily_work_hours, $position)
+    public function downloadMonthlyDepartment($department_id, $month, $year, $daily_work_hours, $project, $position)
     {
         $months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
         $this->date_start = new Carbon('last day of last month '. $months[(int)$month-1] .' '. $year);
@@ -1570,10 +1573,10 @@ class ReportController extends Controller
 
         $this->position = $position;
 
-        $this->projects = Project::where('department_id', Auth::user()->department_id)->get();
+        $project = Project::where('id', $project)->first();
 
-        foreach ($this->projects as $project_key => $project) {
-            $project->reports = Report::with(['project' => function($query){ $query->with(['positions' => function($query){ $query->where('name', $this->position); }]); }])->where('project_id', $project->id)->whereBetween('date_start', [$this->date_start, $this->date_end])->where('daily_work_hours', 'like', $daily_work_hours.'%')->orderBy('date_start')->get();   
+        // foreach ($this->projects as $project_key => $project) {
+            $project->reports = Report::with(['project' => function($query){ $query->with(['positions' => function($query){ $query->where('id', $this->position); }]); }])->where('project_id', $project->id)->whereBetween('date_start', [$this->date_start, $this->date_end])->where('daily_work_hours', 'like', $daily_work_hours.'%')->orderBy('date_start')->get();   
             $project->members = Experience::with('member')->where('project_id', $project->id)->get();
 
             foreach ($project->members as $member_key => $member) {
@@ -1598,9 +1601,11 @@ class ReportController extends Controller
 
                 foreach ($report->members as $member_key => $member) {
                     $member->performance = Performance::with('position')->with(['target' => function($query){ $query->withTrashed(); }])->where('member_id', $member->member_id)->where('report_id', $report->id)->where('position_id', $report->project->positions[0]->id)->first();
-                    $project->members[$member_key]->total_output += $member->performance->output;
-                    $project->members[$member_key]->total_output_error += $member->performance->output_error;
-                    $project->members[$member_key]->total_hours_worked += $member->performance->hours_worked;
+                    if($member->performance){
+                        $project->members[$member_key]->total_output += $member->performance->output;
+                        $project->members[$member_key]->total_output_error += $member->performance->output_error;
+                        $project->members[$member_key]->total_hours_worked += $member->performance->hours_worked;
+                    }
                 }
 
                 foreach ($report->project->positions as $position_key => $position) {
@@ -1630,45 +1635,80 @@ class ReportController extends Controller
                 $report->date_end = Carbon::parse($report->date_end)->toFormattedDateString();
             }
 
+            // if(count($project->reports)){            
+            //     foreach ($project->members as $member_key => $member) {
+            //         $target = $project->reports[0]->members[$member_key]->performance->target;
+            //         $member->average_output = $member->total_output / $member->total_hours_worked * $daily_work_hours;
+            //         $member->monthly_productivity = round($member->average_output / $target->productivity * 100);
+            //         $member->monthly_quality = round((1 - $member->total_output_error / $member->total_output) * 100);
+
+            //         if($member->monthly_productivity < $target->productivity && $member->monthly_quality >= $target->quality)
+            //         {
+            //             $member->quadrant = 'Quadrant 1'; 
+            //         }
+            //         else if($member->monthly_productivity >= $target->productivity && $member->monthly_quality >= $target->quality)
+            //         {
+            //             $member->quadrant = 'Quadrant 2'; 
+            //         }
+            //         else if($member->monthly_productivity >= $target->productivity && $member->monthly_quality < $target->quality)
+            //         {
+            //             $member->quadrant = 'Quadrant 3'; 
+            //         }
+            //         else if($member->monthly_productivity < $target->productivity && $member->monthly_quality < $target->quality)
+            //         {
+            //             $member->quadrant = 'Quadrant 4'; 
+            //         }
+            //     }
+            // }
             if(count($project->reports)){            
                 foreach ($project->members as $member_key => $member) {
-                    $target = $project->reports[0]->members[$member_key]->performance->target;
-                    $member->average_output = $member->total_output / $member->total_hours_worked * $daily_work_hours;
-                    $member->monthly_productivity = round($member->average_output / $target->productivity * 100);
-                    $member->monthly_quality = round((1 - $member->total_output_error / $member->total_output) * 100);
+                    for ($i=0; $i < count($project->reports); $i++) { 
+                        if($project->reports[$i]->members[$member_key]->performance){                            
+                            if($project->reports[$i]->members[$member_key]->performance->position_id == $project->position->id){
+                                $target = $project->reports[$i]->members[$member_key]->performance->target;
+                                $member->average_output = $member->total_output / $member->total_hours_worked * $daily_work_hours;
+                                $member->monthly_productivity = round($member->average_output / $target->productivity * 100);
+                                $member->monthly_quality = round((1 - $member->total_output_error / $member->total_output) * 100);
 
-                    if($member->monthly_productivity < $target->productivity && $member->monthly_quality >= $target->quality)
-                    {
-                        $member->quadrant = 'Quadrant 1'; 
-                    }
-                    else if($member->monthly_productivity >= $target->productivity && $member->monthly_quality >= $target->quality)
-                    {
-                        $member->quadrant = 'Quadrant 2'; 
-                    }
-                    else if($member->monthly_productivity >= $target->productivity && $member->monthly_quality < $target->quality)
-                    {
-                        $member->quadrant = 'Quadrant 3'; 
-                    }
-                    else if($member->monthly_productivity < $target->productivity && $member->monthly_quality < $target->quality)
-                    {
-                        $member->quadrant = 'Quadrant 4'; 
+                                if($member->monthly_productivity < $target->productivity && $member->monthly_quality >= $target->quality)
+                                {
+                                    $member->quadrant = 'Quadrant 1'; 
+                                }
+                                else if($member->monthly_productivity >= $target->productivity && $member->monthly_quality >= $target->quality)
+                                {
+                                    $member->quadrant = 'Quadrant 2'; 
+                                }
+                                else if($member->monthly_productivity >= $target->productivity && $member->monthly_quality < $target->quality)
+                                {
+                                    $member->quadrant = 'Quadrant 3'; 
+                                }
+                                else if($member->monthly_productivity < $target->productivity && $member->monthly_quality < $target->quality)
+                                {
+                                    $member->quadrant = 'Quadrant 4'; 
+                                }
+                            }
+                        }
+                        else{
+                            $project->reports[$i]->members[$member_key]->performance = new Performance;
+                            $project->reports[$i]->members[$member_key]->performance->productivity = 0;
+                            $project->reports[$i]->members[$member_key]->performance->quality = 0;
+                        }
                     }
                 }
             }
-        }
+        // }
 
-        // return $this->projects;
+
+        $this->project = $project;
+        // return $this->project;
 
         Excel::create('PQR '. $department->name .' Monthly Report '. $months[(int)$month-1] .' '. $year, function($excel){
-            foreach ($this->projects as $project_key => $project) {
-                    $this->project = $project;
-                    $excel->sheet($project->name, function($sheet) {
-                        if(count($this->project->reports)){
-                            $sheet->loadView('excel.monthly')
-                                ->with('project', $this->project);
-                        }
-                    });
-            }
+            $excel->sheet($this->project->name, function($sheet) {
+                if(count($this->project->reports)){
+                    $sheet->loadView('excel.monthly')
+                        ->with('project', $this->project);
+                }
+            });
         })->download('xls');
     }
     public function downloadSummary($date_start, $date_end, $daily_work_hours)

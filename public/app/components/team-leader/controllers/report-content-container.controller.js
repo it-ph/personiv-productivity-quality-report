@@ -231,7 +231,7 @@ teamLeaderModule
 		$scope.checkLimit = function(idx){
 			// gets the number of days worked in a day then multiply it to the daily work hours to get weekly limit
 			$scope.details.weekly_hours = ((new Date($scope.details.date_end) - new Date($scope.details.date_start)) / (1000*60*60*24) + 1) * $scope.details.daily_work_hours;
-			Performance.checkLimit($scope.members[idx].id, $scope.details)
+			Performance.checkLimit($scope.members[idx].member.id, $scope.details)
 				.success(function(data){
 					$scope.members[idx].limit = data;
 				})

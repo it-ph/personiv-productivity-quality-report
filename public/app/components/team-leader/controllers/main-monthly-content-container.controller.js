@@ -168,7 +168,12 @@ teamLeaderModule
 					// }
 					// else{
 						// $scope.haveCurrent = data ? true: false;
-						$scope.report.current.splice(index, 1, data);
+						if(current){
+							$scope.report.current.splice(index, 1, data);
+						}
+						else{
+							$scope.report.results.splice(index, 1, data);
+						}
 						// $scope.report.showCurrent = true;
 						// createCharts(data);
 					// }

@@ -91,7 +91,7 @@
 							
 							<md-input-container>
 								<label>Position</label>
-								<md-select ng-model="detail.position.id" ng-change="changePosition(detail, $index)">
+								<md-select ng-model="detail.position.id" ng-change="changePosition(detail, $index, true)">
 									<md-option ng-repeat="position in detail.positions" ng-value="position.id">
 										{{position.name}}
 									</md-option>
@@ -185,7 +185,7 @@
 
 <div class="fade-transition" layout="column" flex ng-if="report.results && !report.showCurrent">
 	<div layout-padding flex ng-repeat="detail in report.results | filter: projects[filterData.project].name | filter: toolbar.userInput">
-		<div flex>
+		<div flex ng-if="detail.reports.length">
 			<div class="panel panel-default">
 				<div class="panel-heading">
 					<h3 class="panel-title primary-text">{{detail.date_cover_start}} to {{detail.date_cover_end}}</h3>
@@ -216,9 +216,6 @@
 								</div>
 							</div>
 						</div>
-						<!-- <div flex="25">			
-							<canvas id="pie" class="chart chart-pie" chart-data="charts[$index].position_head_count" chart-labels="charts[$index].positions" chart-legend="true"></canvas>
-						</div> -->
 						<div flex layout="column" layout-align="end end">
 							<table class="table">
 								<tr>
@@ -276,6 +273,15 @@
 					<div layout="row" layout-align="space-between center">
 						<div flex>
 							<p class="md-subhead">Program Head Count: <strong>{{detail.members.length}}</strong></p>
+							
+							<md-input-container>
+								<label>Position</label>
+								<md-select ng-model="detail.position.id" ng-change="changePosition(detail, $index, false)">
+									<md-option ng-repeat="position in detail.positions" ng-value="position.id">
+										{{position.name}}
+									</md-option>
+								</md-select>
+							</md-input-container>
 							<!-- <p class="md-body-1">Daliy Work Hours: <strong>{{detail.members[0].performances[0].daily_work_hours | number:1}}</strong></p> -->
 						</div>
 						<md-switch class="md-primary" ng-model="detail.showCharts" aria-label="detail.showCharts">
@@ -342,10 +348,10 @@
 								</th>
 							</tr>
 							<tr ng-repeat="item in detail.members | filter:rightSidenav.selectedItem | filter: rightSidenav.searchText | orderBy:sortType:sortReverse" ng-click="view(item)">
-								<td>{{item.full_name}}</td>
+								<td>{{item.member.full_name}}</td>
 								<td>{{item.experience}}</td>
-								<td>{{item.productivity_average}}%</td>
-								<td>{{item.quality_average}}%</td>
+								<td>{{item.monthly_productivity}}%</td>
+								<td>{{item.monthly_quality}}%</td>
 								<td>{{item.quadrant}} 
 									<md-tooltip ng-if="item.quadrant == 'Quadrant 1'">Producitivity is not met, but Quality is met.</md-tooltip>
 									<md-tooltip ng-if="item.quadrant == 'Quadrant 2'">Producitivity and quality are both met.</md-tooltip>

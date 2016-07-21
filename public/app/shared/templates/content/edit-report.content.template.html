@@ -19,7 +19,7 @@
 							</h2>
 							<div class="md-list-item-text" layout="column" flex>
 								<h3>{{ details.project_name }}</h3>
-								<h4>{{ details.date_start | date:'MMM. d, yyyy' }} to {{ details.date_end | date:'MMM. d, yyyy'}}</h4>
+								<h4>{{ details.date_start | date:'EEEE, MMM. d, yyyy' }} to {{ details.date_end | date:'EEEE, MMM. d, yyyy'}}</h4>
 								<p>Daily Work Hours: {{ details.daily_work_hours }}</p>
 							</div>
 						</md-list-item>
@@ -32,11 +32,11 @@
 					<md-list layout="row" layout-align="space-between center">
 						<md-list-item class="md-2-line" layout="row">
 							<h2 class="md-avatar md-headline purple-bg" layout="row" layout-align="center center">
-								<span class="weight-200 white-text">{{ performance.first_letter }}</span>
+								<span class="weight-200 white-text">{{ performance.member.full_name.charAt(0).toUpperCase() }}</span>
 							</h2>
 							<div class="md-list-item-text" layout="column" flex>
-								<h3>{{ performance.full_name }}</h3>
-								<h4>Date Hired: {{ performance.date_hired | date:'MMM. d, yyyy'}}</h4>
+								<h3>{{ performance.member.full_name }}</h3>
+								<h4>Date Started: {{ performance.date_started | date:'MMM. d, yyyy'}}</h4>
 								<p>{{ performance.experience }}</p>
 							</div>
 						</md-list-item>
@@ -44,7 +44,7 @@
 							<span>Edit</span>
 						</md-checkbox>
 					</md-list>
-					<div ng-if="performance.include" class="fade-transition">
+					<div ng-if="performance.include" class="fade-transition" layout="column">
 						<!-- Position -->
 						<md-input-container flex>
 							<label>Position</label>
@@ -61,7 +61,7 @@
 							<!-- Total Total Hours Worked -->
 							<md-input-container flex>
 								<label>Total Hours Worked</label>
-								<input name="HoursWorked{{$index}}" type="number" min="0.1" max="{{ performance.limit }}" step="0.5" required ng-model="performance.hours_worked">
+								<input name="HoursWorked{{$index}}" type="number" min="0.1" max="{{ performance.limit + performance.current_hours_worked }}" step="0.5" required ng-model="performance.hours_worked">
 								<div ng-messages="form.editReportForm['HoursWorked' + $index].$error" ng-if="form.editReportForm['HoursWorked' + $index].$touched">
 									<div ng-messages-include="/app/shared/templates/validation-message.html"></div>
 								</div>

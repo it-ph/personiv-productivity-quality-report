@@ -658,7 +658,7 @@ teamLeaderModule
 
 	}]);
 teamLeaderModule
-	.controller('editReportContentContainerController', ['$scope', '$mdDialog', '$state', '$mdToast', '$stateParams', 'Preloader', 'Performance', 'Position', 'Project', 'Approval', function($scope, $mdDialog, $state, $mdToast, $stateParams, Preloader, Performance, Position, Project, Approval){
+	.controller('editReportContentContainerController', ['$scope', '$filter', '$mdDialog', '$state', '$mdToast', '$stateParams', 'Preloader', 'Performance', 'Position', 'Project', 'Approval', function($scope, $filter, $mdDialog, $state, $mdToast, $stateParams, Preloader, Performance, Position, Project, Approval){
 		var reportID = $stateParams.reportID;
 		var busy = false;
 		$scope.form = {};
@@ -678,7 +678,7 @@ teamLeaderModule
 		$scope.toolbar.childState = 'Edit Report';
 		$scope.toolbar.showBack = true;
 		$scope.toolbar.back = function(){
-			$state.go('main');
+			$state.go('main.weekly-report');
 		}
 		/**
 		 * Object for subheader
@@ -689,13 +689,21 @@ teamLeaderModule
 
 		Performance.report(reportID)
 			.success(function(data){
+				angular.forEach(data, function(performance){
+					var experience = $filter('filter')(performance.member.experiences, {project_id: performance.project_id}, true);
+					performance.date_started = new Date(experience[0].date_started);
+				});
+
 				$scope.performances = data;
 				
 				$scope.details.date_start = new Date(data[0].date_start);
 				$scope.details.date_end = new Date(data[0].date_end);
-				$scope.details.project_name = data[0].project_name;
+				$scope.details.project_name = data[0].project.name;
 				$scope.details.daily_work_hours = data[0].daily_work_hours;
-				$scope.details.first_letter = data[0].first_letter;
+				$scope.details.first_letter = data[0].project.name.charAt(0).toUpperCase();
+				$scope.details.weekly_hours = (($scope.details.date_end - $scope.details.date_start) / (1000*60*60*24) + 1) * $scope.details.daily_work_hours;
+				$scope.details.date_start = $scope.details.date_start.toDateString();
+				$scope.details.date_end = $scope.details.date_end.toDateString();
 
 				Position.project(data[0].project_id)
 					.success(function(data){
@@ -717,7 +725,7 @@ teamLeaderModule
 
 		$scope.checkLimit = function(idx){
 			// gets the number of days worked in a day then multiply it to the daily work hours to get weekly limit
-			$scope.details.weekly_hours = (($scope.details.date_end - $scope.details.date_start) / (1000*60*60*24) + 1) * $scope.details.daily_work_hours;
+			$scope.details.current_hours_worked = $scope.performances[idx].hours_worked;
 			Performance.checkLimitEdit($scope.performances[idx].member_id, $scope.details)
 				.success(function(data){
 					$scope.performances[idx].limit = data;
@@ -1442,7 +1450,12 @@ teamLeaderModule
 					// }
 					// else{
 						// $scope.haveCurrent = data ? true: false;
-						$scope.report.current.splice(index, 1, data);
+						if(current){
+							$scope.report.current.splice(index, 1, data);
+						}
+						else{
+							$scope.report.results.splice(index, 1, data);
+						}
 						// $scope.report.showCurrent = true;
 						// createCharts(data);
 					// }
@@ -1974,7 +1987,7 @@ teamLeaderModule
 		$scope.checkLimit = function(idx){
 			// gets the number of days worked in a day then multiply it to the daily work hours to get weekly limit
 			$scope.details.weekly_hours = ((new Date($scope.details.date_end) - new Date($scope.details.date_start)) / (1000*60*60*24) + 1) * $scope.details.daily_work_hours;
-			Performance.checkLimit($scope.members[idx].id, $scope.details)
+			Performance.checkLimit($scope.members[idx].member.id, $scope.details)
 				.success(function(data){
 					$scope.members[idx].limit = data;
 				})
@@ -2154,7 +2167,7 @@ teamLeaderModule
 		}
 	}]);
 teamLeaderModule
-	.controller('downloadReportDialogController', ['$scope', '$mdDialog', '$filter', 'Preloader', 'Report', 'Performance', 'Programme', 'Position', function($scope, $mdDialog, $filter, Preloader, Report, Performance, Programme, Position){
+	.controller('downloadReportDialogController', ['$scope', '$mdDialog', '$filter', 'Preloader', 'Report', 'Performance', 'Programme', 'Project', 'Position', function($scope, $mdDialog, $filter, Preloader, Report, Performance, Programme, Project, Position){
 		$scope.details = {};
 		$scope.details.type = 'Weekly';
 
@@ -2260,7 +2273,7 @@ teamLeaderModule
 					win.focus();
 				}
 				else if($scope.details.type=='Monthly'){
-					var win = window.open('/report-download-monthly-department/' + user.department_id + '/month/' + $scope.details.month + '/year/' + $scope.details.year + '/daily-work-hours/' + $scope.details.daily_work_hours + '/position/' + $scope.details.position, '_blank');
+					var win = window.open('/report-download-monthly-department/' + user.department_id + '/month/' + $scope.details.month + '/year/' + $scope.details.year + '/daily-work-hours/' + $scope.details.daily_work_hours + '/project/' + $scope.details.project + '/position/' + $scope.details.position, '_blank');
 					win.focus();	
 				}
 
@@ -2268,7 +2281,12 @@ teamLeaderModule
 			}
 		}
 
-		$scope.init = function(){		
+		$scope.init = function(){
+			Project.index()
+				.success(function(data){
+					$scope.projects = data;
+				})
+
 			Programme.index()
 				.success(function(data){
 					$scope.work_hours = data;
@@ -2277,15 +2295,14 @@ teamLeaderModule
 				.error(function(){
 					Preloader.error();
 				})
-
-			Position.unique()
-				.success(function(data){
-					$scope.positions = data;
-				})
-				.error(function(){
-					Preloader.error();
-				})			
 		}();
+
+		$scope.getPositions = function(){
+			Project.show($scope.details.project)
+				.success(function(data){
+					$scope.positions = data.positions;
+				})
+		}
 
 	}]);
 teamLeaderModule

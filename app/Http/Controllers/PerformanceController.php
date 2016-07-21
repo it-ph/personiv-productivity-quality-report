@@ -164,49 +164,51 @@ class PerformanceController extends Controller
     }
     public function report($reportID)
     {
-        return DB::table('performances')
-            ->join('members', 'members.id', '=', 'performances.member_id')
-            ->join('projects', 'projects.id', '=', 'performances.project_id')
-            ->select(
-                '*',
-                'performances.id as performance_id',
-                'projects.name as project_name',
-                DB::raw('TRUNCATE(performances.daily_work_hours, 1) as daily_work_hours'),
-                DB::raw('UPPER(LEFT(members.full_name, 1)) as first_letter'),
-                DB::raw('UPPER(LEFT(projects.name, 1)) as first_letter'),
-                'performances.id as performance_id',
-                'members.id as member_id'
-            )
-            ->whereNull('performances.deleted_at')
-            ->where('performances.report_id', $reportID)
-            ->get();
+        return Performance::with(['member' => function($query){ $query->with('experiences'); }])->with('project')->where('report_id', $reportID)->get();
+
+        // return DB::table('performances')
+        //     ->join('members', 'members.id', '=', 'performances.member_id')
+        //     ->join('projects', 'projects.id', '=', 'performances.project_id')
+        //     ->select(
+        //         '*',
+        //         'performances.id as performance_id',
+        //         'projects.name as project_name',
+        //         DB::raw('TRUNCATE(performances.daily_work_hours, 1) as daily_work_hours'),
+        //         DB::raw('UPPER(LEFT(members.full_name, 1)) as first_letter'),
+        //         DB::raw('UPPER(LEFT(projects.name, 1)) as first_letter'),
+        //         'performances.id as performance_id',
+        //         'members.id as member_id'
+        //     )
+        //     ->whereNull('performances.deleted_at')
+        //     ->where('performances.report_id', $reportID)
+        //     ->get();
     }
     public function checkLimitEdit(Request $request, $memberID)
     {
-        $date_start = $request->date_start;
-        $date_end = $request->date_end;
+        $date_start = Carbon::parse($request->date_start);
+        $date_end = Carbon::parse($request->date_end);
 
         // fetch all records with the same report details
-        $performance = Performance::where('date_start', $date_start)->whereBetween('date_end', [$date_start, $date_end])->where('daily_work_hours', 'like', $request->daily_work_hours.'%')->where('member_id', $memberID)->get();
+        $performance = Performance::where('date_start', $date_start)->whereBetween('date_end', [$date_start, $date_end])->where('daily_work_hours', 'like', $request->daily_work_hours.'%')->where('member_id', $memberID)->orderBy('created_at', 'desc')->get();
         
-        if($performance->count() == 1)
-        {
-            return $request->weekly_hours;
-        }
+        // if($performance->count() == 1)
+        // {
+        //     return $request->weekly_hours;
+        // }
 
         $hours_worked = 0;
 
         // iterate every record to check the total of hours worked by the employee
         foreach ($performance as $key => $value) {
             $hours_worked += $value->hours_worked;
-            
+            // if already limit
             if($request->weekly_hours == round($hours_worked,1))
             {
-                return Performance::where('id', $value->id)->first()->hours_worked;
+                return $request->current_hours_worked;
             }
         }
 
-        $limit = $request->weekly_hours - $hours_worked;
+        $limit = $request->weekly_hours - $hours_worked + $request->current_hours_worked;
 
         return round($limit,1);
     }

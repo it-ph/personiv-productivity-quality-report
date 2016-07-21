@@ -25,7 +25,7 @@ sharedModule
 				return $http.get(urlBase + '-department/' + id);
 			},
 			unique: function(){
-				return $http.get(urlBase + '-unique/');
+				return $http.get(urlBase + '-unique');
 			},
 		}
 	}])
