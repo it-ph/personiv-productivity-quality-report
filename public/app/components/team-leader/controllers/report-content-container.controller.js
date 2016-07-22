@@ -228,7 +228,10 @@ teamLeaderModule
 			}
 		};
 
-		$scope.checkLimit = function(idx){
+		$scope.checkLimit = function(data){
+			console.log(data);
+			var idx = $scope.members.indexOf(data);
+			console.log(idx);
 			// gets the number of days worked in a day then multiply it to the daily work hours to get weekly limit
 			$scope.details.weekly_hours = ((new Date($scope.details.date_end) - new Date($scope.details.date_start)) / (1000*60*60*24) + 1) * $scope.details.daily_work_hours;
 			Performance.checkLimit($scope.members[idx].member.id, $scope.details)
@@ -244,7 +247,7 @@ teamLeaderModule
 			// $scope.checkLimit();
 			angular.forEach($scope.members, function(item, key){
 				item.hours_worked = null;
-				$scope.checkLimit(key);
+				$scope.checkLimit(item);
 			});
 		}
 

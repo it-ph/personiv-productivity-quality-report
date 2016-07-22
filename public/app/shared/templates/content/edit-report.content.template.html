@@ -20,14 +20,14 @@
 							<div class="md-list-item-text" layout="column" flex>
 								<h3>{{ details.project_name }}</h3>
 								<h4>{{ details.date_start | date:'EEEE, MMM. d, yyyy' }} to {{ details.date_end | date:'EEEE, MMM. d, yyyy'}}</h4>
-								<p>Daily Work Hours: {{ details.daily_work_hours }}</p>
+								<p>Daily Work Hours: {{ details.daily_work_hours }}hour(s) - {{details.weekly_hours}} weekly work hour(s)</p>
 							</div>
 						</md-list-item>
 					</md-list>
 					<md-input></md-input>
 				</md-card-content>		
 			</md-card>
-			<md-card class="fade-transition" ng-repeat="performance in performances">
+			<md-card class="fade-transition" ng-repeat="performance in performances | filter: toolbar.searchText">
 				<md-card-content>
 					<md-list layout="row" layout-align="space-between center">
 						<md-list-item class="md-2-line" layout="row">
@@ -40,7 +40,7 @@
 								<p>{{ performance.experience }}</p>
 							</div>
 						</md-list-item>
-						<md-checkbox ng-change="checkLimit($index)" ng-model="performance.include" class="md-primary">
+						<md-checkbox ng-change="checkLimit(performance)" ng-model="performance.include" class="md-primary">
 							<span>Edit</span>
 						</md-checkbox>
 					</md-list>
@@ -61,10 +61,14 @@
 							<!-- Total Total Hours Worked -->
 							<md-input-container flex>
 								<label>Total Hours Worked</label>
-								<input name="HoursWorked{{$index}}" type="number" min="0.1" max="{{ performance.limit + performance.current_hours_worked }}" step="0.5" required ng-model="performance.hours_worked">
+								<input name="HoursWorked{{$index}}" type="number" min="0.1" max="{{ performance.limit + performance.current_hours_worked }}" step="0.5" required ng-model="performance.hours_worked" ng-blur="checkBalance(performance)">
 								<div ng-messages="form.editReportForm['HoursWorked' + $index].$error" ng-if="form.editReportForm['HoursWorked' + $index].$touched">
-									<div ng-messages-include="/app/shared/templates/validation-message.html"></div>
+									<!-- <div ng-messages-include="/app/shared/templates/validation-message.html"></div> -->
+									<div ng-message="required">Total hours worked is required.</div>
+									<div ng-message="min">Total hours worked must not be less than 0</div>
+									<div ng-message="max">Total hours worked cannot be more than {{ performance.limit }}.</div>
 								</div>
+								<div class="hint" ng-if="performance.balance">{{ performance.member.full_name }} still needs to render {{performance.balance}} hour(s)</div>
 							</md-input-container>
 							<!-- Total Output -->
 							<md-input-container flex>

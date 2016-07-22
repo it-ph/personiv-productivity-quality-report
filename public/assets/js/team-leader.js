@@ -680,6 +680,24 @@ teamLeaderModule
 		$scope.toolbar.back = function(){
 			$state.go('main.weekly-report');
 		}
+
+		/**
+		 * Reveals the search bar.
+		 *
+		*/
+		$scope.showSearchBar = function(){
+			$scope.searchBar = true;
+		};
+
+		/**
+		 * Hides the search bar.
+		 *
+		*/
+		$scope.hideSearchBar = function(){
+			$scope.toolbar.userInput = '';
+			$scope.searchBar = false;
+		};
+
 		/**
 		 * Object for subheader
 		 *
@@ -692,6 +710,7 @@ teamLeaderModule
 				angular.forEach(data, function(performance){
 					var experience = $filter('filter')(performance.member.experiences, {project_id: performance.project_id}, true);
 					performance.date_started = new Date(experience[0].date_started);
+					performance.experience = experience[0].experience;
 				});
 
 				$scope.performances = data;
@@ -723,7 +742,8 @@ teamLeaderModule
 				});
 		};
 
-		$scope.checkLimit = function(idx){
+		$scope.checkLimit = function(data){
+			var idx = $scope.performances.indexOf(data);
 			// gets the number of days worked in a day then multiply it to the daily work hours to get weekly limit
 			$scope.details.current_hours_worked = $scope.performances[idx].hours_worked;
 			Performance.checkLimitEdit($scope.performances[idx].member_id, $scope.details)
@@ -738,8 +758,14 @@ teamLeaderModule
 		$scope.resetMembers = function(){
 			angular.forEach($scope.performances, function(item, key){
 				item.hours_worked = null;
-				$scope.checkLimit(key);
+				$scope.checkLimit(item);
 			});
+		}
+
+		$scope.checkBalance = function(data){
+			var index = $scope.performances.indexOf(data);
+			$scope.performances[index].balance = $scope.performances[index].limit - $scope.performances[index].hours_worked;
+			$scope.performances[index].balance = $scope.performances[index].balance ? $scope.performances[index].balance.toFixed(2) : 0;
 		}
 
 		/**
@@ -1984,7 +2010,10 @@ teamLeaderModule
 			}
 		};
 
-		$scope.checkLimit = function(idx){
+		$scope.checkLimit = function(data){
+			console.log(data);
+			var idx = $scope.members.indexOf(data);
+			console.log(idx);
 			// gets the number of days worked in a day then multiply it to the daily work hours to get weekly limit
 			$scope.details.weekly_hours = ((new Date($scope.details.date_end) - new Date($scope.details.date_start)) / (1000*60*60*24) + 1) * $scope.details.daily_work_hours;
 			Performance.checkLimit($scope.members[idx].member.id, $scope.details)
@@ -2000,7 +2029,7 @@ teamLeaderModule
 			// $scope.checkLimit();
 			angular.forEach($scope.members, function(item, key){
 				item.hours_worked = null;
-				$scope.checkLimit(key);
+				$scope.checkLimit(item);
 			});
 		}
 
