@@ -68,7 +68,7 @@ class DepartmentController extends Controller
      */
     public function show($id)
     {
-        return Department::with('projects')->where('id', $id)->first();
+        return Department::with('projects', 'members')->where('id', $id)->first();
     }
 
     /**

@@ -17,7 +17,7 @@ class CreateMembersTable extends Migration
             $table->string('full_name');
             // $table->date('date_hired');
             // $table->string('experience');
-            $table->integer('team_leader_id');
+            $table->integer('department_id');
             $table->timestamps();
             $table->softDeletes();
         });

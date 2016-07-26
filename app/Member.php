@@ -15,9 +15,9 @@ class Member extends Model
         return $this->hasMany('App\Experience');
     }
 
-    public function team_leader()
+    public function department()
     {
-    	return $this->belongsTo('App\User', 'team_leader_id');
+    	return $this->belongsTo('App\Department');
     }
 
     public function performances()

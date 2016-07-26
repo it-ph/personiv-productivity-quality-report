@@ -45,36 +45,36 @@
 									<td>{{detail.beginner_total_man_hours | number: 1}}</td>
 									<td>{{detail.beginner_total_average_output | number: 1}}</td>
 								</tr>
-								<tr ng-repeat="item in detail.beginner">
+								<!-- <tr ng-repeat="item in detail.beginner">
 									<td>{{item.position}}</td>
 									<td>{{item.total_output | number: 1}}</td>
 									<td>{{item.total_man_hours | number: 1}}</td>
 									<td>{{item.total_average_output | number: 1}}</td>
-								</tr>
+								</tr> -->
 								<tr>
 									<th>Moderately Experienced</th>
 									<td>{{detail.moderately_experienced_total_output | number: 1}}</td>
 									<td>{{detail.moderately_experienced_total_man_hours | number: 1}}</td>
 									<td>{{detail.moderately_experienced_total_average_output | number: 1}}</td>
 								</tr>
-								<tr ng-repeat="item in detail.moderately_experienced">
+								<!-- <tr ng-repeat="item in detail.moderately_experienced">
 									<td>{{item.position}}</td>
 									<td>{{item.total_output | number: 1}}</td>
 									<td>{{item.total_man_hours | number: 1}}</td>
 									<td>{{item.total_average_output | number: 1}}</td>
-								</tr>
+								</tr> -->
 								<tr>
 									<th>Experienced</th>
 									<td>{{detail.experienced_total_output | number: 1}}</td>
 									<td>{{detail.experienced_total_man_hours | number: 1}}</td>
 									<td>{{detail.experienced_total_average_output | number: 1}}</td>
 								</tr>
-								<tr ng-repeat="item in detail.experienced">
+								<!-- <tr ng-repeat="item in detail.experienced">
 									<td>{{item.position}}</td>
 									<td>{{item.total_output | number: 1}}</td>
 									<td>{{item.total_man_hours | number: 1}}</td>
 									<td>{{item.total_average_output | number: 1}}</td>
-								</tr>
+								</tr> -->
 								<tr>
 									<th>Grand Total</th>
 									<th>{{detail.overall_total_output | number: 1}}</th>
@@ -183,7 +183,7 @@
 </div>
 
 
-<div class="fade-transition" layout="column" flex ng-if="report.results && !report.showCurrent">
+<div class="fade-transition" flex ng-if="report.results && !report.showCurrent">
 	<div layout-padding flex ng-repeat="detail in report.results | filter: projects[filterData.project].name | filter: toolbar.userInput">
 		<div flex ng-if="detail.reports.length">
 			<div class="panel panel-default">
@@ -230,36 +230,36 @@
 									<td>{{detail.beginner_total_man_hours | number: 1}}</td>
 									<td>{{detail.beginner_total_average_output | number: 1}}</td>
 								</tr>
-								<tr ng-repeat="item in detail.beginner">
+								<!-- <tr ng-repeat="item in detail.beginner">
 									<td>{{item.position}}</td>
 									<td>{{item.total_output | number: 1}}</td>
 									<td>{{item.total_man_hours | number: 1}}</td>
 									<td>{{item.total_average_output | number: 1}}</td>
-								</tr>
+								</tr> -->
 								<tr>
 									<th>Moderately Experienced</th>
 									<td>{{detail.moderately_experienced_total_output | number: 1}}</td>
 									<td>{{detail.moderately_experienced_total_man_hours | number: 1}}</td>
 									<td>{{detail.moderately_experienced_total_average_output | number: 1}}</td>
 								</tr>
-								<tr ng-repeat="item in detail.moderately_experienced">
+								<!-- <tr ng-repeat="item in detail.moderately_experienced">
 									<td>{{item.position}}</td>
 									<td>{{item.total_output | number: 1}}</td>
 									<td>{{item.total_man_hours | number: 1}}</td>
 									<td>{{item.total_average_output | number: 1}}</td>
-								</tr>
+								</tr> -->
 								<tr>
 									<th>Experienced</th>
 									<td>{{detail.experienced_total_output | number: 1}}</td>
 									<td>{{detail.experienced_total_man_hours | number: 1}}</td>
 									<td>{{detail.experienced_total_average_output | number: 1}}</td>
 								</tr>
-								<tr ng-repeat="item in detail.experienced">
+								<!-- <tr ng-repeat="item in detail.experienced">
 									<td>{{item.position}}</td>
 									<td>{{item.total_output | number: 1}}</td>
 									<td>{{item.total_man_hours | number: 1}}</td>
 									<td>{{item.total_average_output | number: 1}}</td>
-								</tr>
+								</tr> -->
 								<tr>
 									<th>Grand Total</th>
 									<th>{{detail.overall_total_output | number: 1}}</th>

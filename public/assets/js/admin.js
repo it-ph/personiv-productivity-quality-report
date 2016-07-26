@@ -523,137 +523,6 @@ adminModule
 			$scope.filterDate.date_end = '';
 			$scope.filterData.position = '';
 		}
-
-		/**
-		 * Object for report
-		 *
-		*/
-		$scope.report = {};
-		$scope.report.paginated = [];
-		$scope.report.targets = [];
-		$scope.report.topPerformers = [];
-		// 2 is default so the next page to be loaded will be page 2 
-		$scope.report.page = 2;
-
-		// fetch the details of the pagination 
-		Report.paginateDepartmentDetails(departmentID)
-			.success(function(data){
-				$scope.report.details = data;
-				$scope.report.busy = true;
-				angular.forEach(data.data, function(item, key){
-					// fetch the targets
-					Target.project(item.id)
-						.success(function(data){
-							$scope.report.targets.splice(key, 0, data)
-						});
-					Performance.topPerformers(item.id)
-						.success(function(data){
-							$scope.report.topPerformers.splice(key, 0, data)
-						});
-				});
-				// fetch the custom paginated data
-				Report.paginateDepartment(departmentID)
-					.success(function(data){
-						$scope.report.paginated = data;
-						$scope.report.show = true;
-						$scope.report.busy = false;
-						// set up the charts
-						// reports cycle
-						angular.forEach($scope.report.paginated, function(parentItem, parentKey){
-							parentItem.chartType = 'bar';
-									
-							parentItem.charts = {};
-							
-							parentItem.charts.productivity = {};
-							parentItem.charts.productivity.data = [[]];
-							parentItem.charts.productivity.series = ['Productivity'];
-							parentItem.charts.productivity.labels = [];
-							
-							parentItem.charts.quality = {};
-							parentItem.charts.quality.data = [[]];
-							parentItem.charts.quality.series = ['Quality'];
-							parentItem.charts.quality.labels = [];
-
-							angular.forEach(parentItem, function(item, key){
-								parentItem.charts.productivity.data[0].push(item.productivity);
-								parentItem.charts.quality.data[0].push(item.quality);
-								parentItem.charts.productivity.labels.push(item.full_name);
-								parentItem.charts.quality.labels.push(item.full_name);
-							});
-						});
-						$scope.report.paginateLoad = function(){
-							// kills the function if ajax is busy or pagination reaches last page
-							if($scope.report.busy || ($scope.report.page > $scope.report.details.last_page)){
-								return;
-							}
-							/**
-							 * Executes pagination call
-							 *
-							*/
-							// sets to true to disable pagination call if still busy.
-							$scope.report.busy = true;
-							Report.paginateDepartmentDetails(departmentID, $scope.report.page)
-								.success(function(data){
-									// iterate over each data then splice it to the data array
-									angular.forEach(data.data, function(item, key){
-										$scope.report.details.data.push(item);
-										// fetch the targets
-										Target.project(item.id)
-											.success(function(data){
-												$scope.report.targets.splice(key, 0, data)
-											});
-										Performance.topPerformers(item.id)
-											.success(function(data){
-												$scope.report.topPerformers.splice(key, 0, data)
-											});
-									});
-								});
-							// Calls the next page of pagination.
-							Report.paginateDepartment(departmentID, $scope.report.page)
-								.success(function(data){
-									// increment the page to set up next page for next AJAX Call
-									$scope.report.page++;
-
-									// iterate over each data then splice it to the data array
-									angular.forEach(data, function(item, key){
-										$scope.report.paginated.push(item);
-									});
-									// set up the charts
-									// reports cycle
-									angular.forEach(data, function(parentItem, parentKey){
-										parentItem.chartType = 'bar';
-									
-										parentItem.charts = {};
-
-										parentItem.charts.productivity = {};
-										parentItem.charts.productivity.data = [[]];
-										parentItem.charts.productivity.series = ['Productivity'];
-										parentItem.charts.productivity.labels = [];
-										
-										parentItem.charts.quality = {};
-										parentItem.charts.quality.data = [[]];
-										parentItem.charts.quality.series = ['Quality'];
-										parentItem.charts.quality.labels = [];
-
-										angular.forEach(parentItem, function(item, key){
-											parentItem.charts.productivity.data[0].push(item.productivity);
-											parentItem.charts.quality.data[0].push(item.quality);
-											parentItem.charts.productivity.labels.push(item.full_name);
-											parentItem.charts.quality.labels.push(item.full_name);
-										});
-									});
-									// Enables again the pagination call for next call.
-									$scope.report.busy = false;
-								});
-						}
-					})
-					.error(function(){
-						Preloader.error();
-					});
-			})
-			.error(function(data){
-				Preloader.error();
-			});
 		
 		/**
 		 * Object for toolbar
@@ -661,10 +530,8 @@ adminModule
 		*/
 		$scope.toolbar = {};
 		$scope.toolbar.parentState = 'Weekly Report';
-		Department.show(departmentID)
-			.success(function(data){
-				$scope.toolbar.childState = data.name;
-			});
+		$scope.toolbar.hideSearchIcon = true;
+
 		/**
 		 * Object for subheader
 		 *
@@ -675,130 +542,19 @@ adminModule
 		/* Refreshes the list */
 		$scope.subheader.refresh = function(){
 			$scope.report.show = false;
-			$scope.subheader.project = '';
-			// start preloader
-			Preloader.preload();
-			// clear report
-			$scope.report.paginated = [];
-			$scope.report.targets = [];
-			$scope.report.page = 2;
-
-			$scope.report.busy = true;
-			Report.paginateDepartmentDetails(departmentID)
-				.success(function(data){
-					$scope.report.details = data;
-					angular.forEach(data.data, function(item, key){
-						// fetch the targets
-						Target.project(item.id)
-							.success(function(data){
-								$scope.report.targets.splice(key, 0, data)
-							});
-						Performance.topPerformers(item.id)
-							.success(function(data){
-								$scope.report.topPerformers.splice(key, 0, data)
-							});
-					});
-					// fetch the custom paginated data
-					Report.paginateDepartment(departmentID)
-						.success(function(data){
-							$scope.report.paginated = data;
-							$scope.report.show = true;
-							// set up the charts
-							// reports cycle
-							angular.forEach($scope.report.paginated, function(parentItem, parentKey){
-								parentItem.chartType = 'bar';
-
-								parentItem.charts.productivity = {};
-								parentItem.charts.productivity.data = [[]];
-								parentItem.charts.productivity.series = ['Productivity'];
-								parentItem.charts.productivity.labels = [];
-								
-								parentItem.charts.quality = {};
-								parentItem.charts.quality.data = [[]];
-								parentItem.charts.quality.series = ['Quality'];
-								parentItem.charts.quality.labels = [];
-
-								angular.forEach(parentItem, function(item, key){
-									parentItem.charts.productivity.data[0].push(item.productivity);
-									parentItem.charts.quality.data[0].push(item.quality);
-									parentItem.charts.productivity.labels.push(item.full_name);
-									parentItem.charts.quality.labels.push(item.full_name);
-								});
-							})
-							$scope.report.busy = false;
-							Preloader.stop();
-						})
-						.error(function(){
-							Preloader.error();
-						});
-				})
-				.error(function(){
-					Preloader.error();
-				});
+			$scope.init(true);
 		};
-
-		/**
-		 * Status of search bar.
-		 *
-		*/
-		$scope.searchBar = false;
-
-		/**
-		 * Reveals the search bar.
-		 *
-		*/
-		$scope.showSearchBar = function(){
-			$scope.searchBar = true;
-		};
-
-		/**
-		 * Hides the search bar.
-		 *
-		*/
-		$scope.hideSearchBar = function(){
-			$scope.toolbar.userInput = '';
-			$scope.searchBar = false;
-		};
-		
 		
 		$scope.searchUserInput = function(){
 			$scope.report.show = false;
-			$scope.report.targets = [];
-			$scope.report.topPerformers = [];
 			Preloader.preload();
-			Report.searchDepartment(departmentID, $scope.toolbar)
+			Report.searchDepartment(departmentID, $scope.filterDate)
 				.success(function(data){
 					$scope.report.results = data;
-					angular.forEach(data, function(item, key){
-						Target.project(item[0].id)
-							.success(function(data){
-								$scope.report.targets.splice(key, 0, data)
-							});
-						Performance.topPerformers(item[0].report_id)
-							.success(function(data){
-								$scope.report.topPerformers.splice(key, 0, data)
-							});
+					angular.forEach(data, function(item){
+						pushItem(item);
 					});
-					angular.forEach($scope.report.results, function(parentItem, parentKey){
-						parentItem.chartType = 'bar';
-						parentItem.charts = {};
-						parentItem.charts.productivity = {};
-						parentItem.charts.productivity.data = [[]];
-						parentItem.charts.productivity.series = ['Productivity'];
-						parentItem.charts.productivity.labels = [];
-						
-						parentItem.charts.quality = {};
-						parentItem.charts.quality.data = [[]];
-						parentItem.charts.quality.series = ['Quality'];
-						parentItem.charts.quality.labels = [];
-
-						angular.forEach(parentItem, function(item, key){
-							parentItem.charts.productivity.data[0].push(item.productivity);
-							parentItem.charts.quality.data[0].push(item.quality);
-							parentItem.charts.productivity.labels.push(item.full_name);
-							parentItem.charts.quality.labels.push(item.full_name);
-						});
-					});
+					
 					Preloader.stop();
 				})
 				.error(function(data){
@@ -843,6 +599,164 @@ adminModule
 		    	return;
 		    });
 		}
+
+		var pushItem = function(report){
+			report.date_start = new Date(report.date_start);
+			report.date_end = new Date(report.date_end);
+
+			angular.forEach(report.performances, function(performance){
+				var filter = $filter('filter')(performance.member.experiences, {project_id:performance.project_id});
+				performance.experience = filter[0].experience;
+			});
+
+			// Targets
+			report.project.beginner = [];
+			report.project.moderately_experienced = [];
+			report.project.experienced = [];
+			report.project.quality = [];
+
+			angular.forEach(report.project.positions, function(position){
+				angular.forEach(position.targets, function(target){
+					var index = 0;
+					if(target.deleted_at && new Date(target.created_at) < report.date_start){
+						position.targets.splice(index, 0, target);
+					}
+					else if(!target.deleted_at){
+						position.targets.splice(index, 0, target);
+					}
+				})
+
+				var beginner_productivity = $filter('filter')(position.targets, {experience:'Beginner'}, true);
+				var moderately_experienced_productivity = $filter('filter')(position.targets, {experience:'Moderately Experienced'}, true);
+				var experienced_productivity = $filter('filter')(position.targets, {experience:'Experienced'}, true);
+				var quality = $filter('filter')(position.targets, {experience:'Experienced'}, true);
+
+				report.project.beginner.push(beginner_productivity[0].productivity);
+				report.project.moderately_experienced.push(moderately_experienced_productivity[0].productivity);
+				report.project.experienced.push(experienced_productivity[0].productivity);
+				report.project.quality.push(quality[0].quality);
+			}) 
+
+			// Charts
+			report.chartType = 'bar';
+			report.charts = {};
+									
+			report.charts.productivity = {};
+			report.charts.productivity.data = [[]];
+			report.charts.productivity.series = ['Productivity'];
+			report.charts.productivity.labels = [];
+			
+			report.charts.quality = {};
+			report.charts.quality.data = [[]];
+			report.charts.quality.series = ['Quality'];
+			report.charts.quality.labels = [];
+
+			angular.forEach(report.performances, function(performance, key){
+				report.charts.productivity.data[0].push(performance.productivity);
+				report.charts.quality.data[0].push(performance.quality);
+				report.charts.productivity.labels.push(performance.member.full_name);
+				report.charts.quality.labels.push(performance.member.full_name);
+			});
+
+			return report;
+		}
+
+		$scope.init = function(refresh){
+			Department.show(departmentID)
+				.success(function(data){
+					$scope.toolbar.childState = data.name;
+					$scope.projects = data.projects;
+					angular.forEach(data.members, function(item){
+						var member = {};
+						member.full_name = item.full_name;
+						$scope.rightSidenav.items.push(member);
+					});
+				});
+
+			// Member.index()
+			// 	.success(function(data){
+			// 		angular.forEach(data, function(item){
+			// 			var member = {};
+			// 			member.full_name = item.full_name;
+			// 			$scope.rightSidenav.items.push(member);
+			// 		});
+			// 	})
+
+			Position.department(departmentID)
+				.success(function(data){
+					$scope.positions = data;
+				});
+
+			// Project.index()
+			// 	.success(function(data){
+			// 		$scope.projects = data;
+			// 	});
+
+			$scope.getMondays();
+			/**
+			 * Object for report
+			 *
+			*/
+			$scope.report = {};
+			$scope.report.paginated = [];
+			// 2 is default so the next page to be loaded will be page 2 
+			$scope.report.page = 2;
+
+			Report.paginateDepartmentDetails(departmentID)
+				.success(function(data){
+					$scope.report.details = data;
+					$scope.report.paginated = data.data;
+					$scope.report.show = true;
+
+					if(data.data.length){
+						// iterate over each record and set the updated_at date and first letter
+						angular.forEach(data.data, function(data){
+							pushItem(data);
+						});
+					}
+
+					// 	$scope.fab.show = true;
+					// }
+
+					$scope.report.paginateLoad = function(){
+						// kills the function if ajax is busy or pagination reaches last page
+						if($scope.report.busy || ($scope.report.page > $scope.report.details.last_page)){
+							return;
+						}
+						/**
+						 * Executes pagination call
+						 *
+						*/
+						// sets to true to disable pagination call if still busy.
+						$scope.report.busy = true;
+
+						Report.paginateDepartmentDetails(departmentID, $scope.report.page)
+							.success(function(data){
+								// increment to call the next page for the next call
+								$scope.report.page++;
+								// iterate over the paginated data and push it to the original array
+								angular.forEach(data.data, function(data){
+									pushItem(data);
+									$scope.report.paginated.push(data);
+								});
+								// enables next call
+								$scope.report.busy = false;
+							})
+							.error(function(){
+								Preloader.error();
+							});
+				}
+				if(refresh){
+					Preloader.stop();
+					Preloader.stop();
+				}
+			})
+			.error(function(){
+				Preloader.error();
+			})
+		}
+
+		$scope.init();
 	}]);
 adminModule
 	.controller('departmentSettingsContentContainerController', ['$scope', '$state', '$mdDialog', 'Preloader', 'Department', function($scope, $state, $mdDialog, Preloader, Department){

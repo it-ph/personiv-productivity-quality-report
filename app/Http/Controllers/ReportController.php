@@ -2133,69 +2133,9 @@ class ReportController extends Controller
 
         })->download('xlsx');
     }
-    public function searchDepartment(Request $request)
+    public function searchDepartment(Request $request, $id)
     {
-        $report_array = array();
-
-        $reports = DB::table('reports')
-            ->join('performances', 'performances.report_id', '=', 'reports.id')
-            ->join('results', 'results.performance_id', '=', 'performances.id')
-            ->join('positions', 'positions.id', '=', 'performances.position_id')
-            ->join('projects', 'projects.id', '=', 'reports.project_id')
-            ->join('members', 'members.id', '=', 'performances.member_id')
-            ->select(
-                'members.*',
-                'reports.id as report_id',
-                'performances.*',
-                DB::raw('DATE_FORMAT(performances.date_start, "%b. %d, %Y") as date_start'),
-                DB::raw('DATE_FORMAT(performances.date_end, "%b. %d, %Y") as date_end'),
-                'results.*',
-                'projects.*',
-                'projects.name as project',
-                'positions.name as position'
-            )
-            ->whereNull('reports.deleted_at')
-            ->whereNull('performances.deleted_at')
-            ->where('reports.department_id', $id)
-            ->where('reports.date_start', 'like', '%'. $request->userInput .'%')
-            ->orWhere('reports.date_end', 'like', '%'. $request->userInput .'%')
-            ->orWhere('projects.name', 'like', '%'. $request->userInput .'%')
-            ->groupBy('reports.id')
-            ->orderBy('reports.date_start', 'desc')
-            ->get();
-
-        foreach ($reports as $key => $value) {
-            $query = DB::table('reports')
-                ->join('performances', 'performances.report_id', '=', 'reports.id')
-                ->join('results', 'results.performance_id', '=', 'performances.id')
-                ->join('positions', 'positions.id', '=', 'performances.position_id')
-                ->join('projects', 'projects.id', '=', 'reports.project_id')
-                ->join('members', 'members.id', '=', 'performances.member_id')
-                ->select(
-                    'reports.id as report_id',
-                    'members.*',
-                    'performances.*',
-                    DB::raw('DATE_FORMAT(performances.date_start, "%b. %d, %Y") as date_start_formatted'),
-                    DB::raw('DATE_FORMAT(performances.date_end, "%b. %d, %Y") as date_end_formatted'),
-                    'results.*',
-                    'projects.*',
-                    'projects.name as project',
-                    'positions.name as position'
-                )
-                ->whereNull('reports.deleted_at')
-                ->whereNull('performances.deleted_at')
-                ->where('performances.report_id', $value->report_id)
-                ->where('results.report_id', $value->report_id)
-                ->groupBy('performances.id')
-                ->orderBy('positions.name')
-                ->orderBy('members.full_name')
-                ->get();
-
-            if($query){
-                array_push($report_array, $query);
-            }
-        }
-        return response()->json($report_array);
+        return Report::with(['performances' => function($query){ $query->with(['member' => function($query){ $query->with('experiences');}])->with('position'); }])->with(['project' => function($query){ $query->with(['positions' => function($query){ $query->with(['targets' => function($query){ $query->withTrashed()->get(); }]);}]); }])->where('department_id', $id)->where('date_start', Carbon::parse($request->date_start))->where('date_end', Carbon::parse($request->date_end))->orderBy('date_start', 'desc')->get();
     }
 
     public function search(Request $request)
@@ -2291,7 +2231,7 @@ class ReportController extends Controller
 
     public function paginateDepartmentDetails($departmentID)
     {
-        return Report::where('department_id', $departmentID)->orderBy('date_start', 'desc')->paginate(4);
+        return Report::with(['performances' => function($query){ $query->with(['member' => function($query){ $query->with('experiences');}])->with('position'); }])->with(['project' => function($query){ $query->with(['positions' => function($query){ $query->with(['targets' => function($query){ $query->withTrashed()->get(); }]);}]); }])->where('department_id', $departmentID)->orderBy('date_start', 'desc')->paginate(10);
     }
     public function paginateDepartment($departmentID)
     {

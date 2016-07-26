@@ -46,8 +46,11 @@ class Department extends Model
 
     public function reports()
     {
-    	return $this->hasMany('App\Report');
+        return $this->hasMany('App\Report');
     }
 
-
+    public function members()
+    {
+    	return $this->hasMany('App\Member');
+    }
 }

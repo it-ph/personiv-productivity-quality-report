@@ -40,7 +40,7 @@
 			<md-icon class="mdi mdi-magnify grey" aria-label="Search"></md-icon>
 		</md-button>
 		<md-menu>
-			<md-button class="md-icon-button" ng-click="$mdOpenMenu($event)">
+			<md-button ng-click="$mdOpenMenu($event)">
 				<md-icon class="mdi mdi-bell" ng-class="notifications.length ? 'pink' : 'grey'" aria-label="Notifications"></md-icon>
 				<span class="badge" ng-if="notifications.length">{{ notifications.length }}</span>
 			</md-button>

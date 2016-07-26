@@ -56,8 +56,8 @@ Route::group(['middleware' => 'auth'], function () {
 	Route::get('notification-paginate', 'NotificationController@paginate');
 	Route::get('report-paginate', 'ReportController@paginate');
 	Route::get('report-paginate-details', 'ReportController@paginateDetails');
-	Route::get('report-paginate/{departmentID}', 'ReportController@paginateDepartment');
-	Route::get('report-paginate-details', 'ReportController@paginateDetails');
+	// Route::get('report-paginate', 'ReportController@paginateDepartment');
+	Route::get('report-paginate-details/{departmentID}', 'ReportController@paginateDepartmentDetails');
 	Route::get('approval-pending', 'ApprovalController@pending');
 	Route::get('approval-pending-user/{userID}', 'ApprovalController@pendingUser');
 	Route::get('performance-approval-approved', 'PerformanceApprovalController@approved');

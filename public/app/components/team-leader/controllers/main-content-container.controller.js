@@ -144,30 +144,6 @@ teamLeaderModule
 		      	parent: angular.element(document.body),
 		    });
 		}
-
-		/**
-		 * Status of search bar.
-		 *
-		*/
-		$scope.searchBar = false;
-
-		/**
-		 * Reveals the search bar.
-		 *
-		*/
-		$scope.showSearchBar = function(){
-			$scope.searchBar = true;
-		};
-
-		/**
-		 * Hides the search bar.
-		 *
-		*/
-		$scope.hideSearchBar = function(){
-			$scope.toolbar.userInput = '';
-			$scope.searchBar = false;
-		};
-		
 		
 		$scope.searchUserInput = function(){
 			$scope.report.show = false;

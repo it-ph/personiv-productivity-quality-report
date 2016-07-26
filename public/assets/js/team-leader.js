@@ -1071,30 +1071,6 @@ teamLeaderModule
 		      	parent: angular.element(document.body),
 		    });
 		}
-
-		/**
-		 * Status of search bar.
-		 *
-		*/
-		$scope.searchBar = false;
-
-		/**
-		 * Reveals the search bar.
-		 *
-		*/
-		$scope.showSearchBar = function(){
-			$scope.searchBar = true;
-		};
-
-		/**
-		 * Hides the search bar.
-		 *
-		*/
-		$scope.hideSearchBar = function(){
-			$scope.toolbar.userInput = '';
-			$scope.searchBar = false;
-		};
-		
 		
 		$scope.searchUserInput = function(){
 			$scope.report.show = false;
@@ -1453,6 +1429,18 @@ teamLeaderModule
 							data.charts.quality.series = ['Quality'];
 							data.charts.quality.labels = [];
 
+							data.beginner_total_output = 0;
+							data.beginner_total_man_hours = 0;
+							data.beginner_total_average_output = 0;
+
+							data.moderately_experienced_total_output = 0;
+							data.moderately_experienced_total_man_hours = 0;
+							data.moderately_experienced_total_average_output = 0;							
+							
+							data.experienced_total_output = 0;
+							data.experienced_total_man_hours = 0;
+							data.experienced_total_average_output = 0;
+
 							
 							angular.forEach(data.members, function(member, memberKey){
 								data.charts.productivity.labels.push(member.member.full_name);
@@ -1463,6 +1451,39 @@ teamLeaderModule
 								// });
 							});
 
+							angular.forEach(data.reports, function(report, reportKey){
+								var beginners = $filter('filter')(report.members, {'experience':'Beginner'}, true);
+								var moderately_experienced = $filter('filter')(report.members, {'experience':'Moderately Experienced'}, true);
+								var experienced = $filter('filter')(report.members, {'experience':'Experienced'}, true);
+
+								angular.forEach(beginners, function(beginner, beginnerKey){
+									if(beginner.performance){
+										data.beginner_total_output += beginner.performance.output;
+										data.beginner_total_man_hours += beginner.performance.hours_worked;
+										data.beginner_total_average_output += beginner.performance.average_output;
+									}
+								});
+
+								angular.forEach(moderately_experienced, function(moderately_experienced, moderatelyExperiencedKey){
+									if(moderately_experienced.performance){
+										data.moderately_experienced_total_output += moderately_experienced.performance.output;
+										data.moderately_experienced_total_man_hours += moderately_experienced.performance.hours_worked;
+										data.moderately_experienced_total_average_output += moderately_experienced.performance.average_output;
+									}
+								});
+
+								angular.forEach(experienced, function(experienced, experiencedKey){
+									if(experienced.performance){
+										data.experienced_total_output += experienced.performance.output;
+										data.experienced_total_man_hours += experienced.performance.hours_worked;
+										data.experienced_total_average_output += experienced.performance.average_output;
+									}
+								});
+							});
+
+							data.overall_total_output = data.beginner_total_output + data.moderately_experienced_total_output + data.experienced_total_output;
+							data.overall_total_man_hours = data.beginner_total_man_hours + data.moderately_experienced_total_man_hours + data.experienced_total_man_hours;
+							data.overall_total_average_output = data.beginner_total_average_output + data.moderately_experienced_total_average_output + data.experienced_total_average_output;
 
 						// });
 					// }
@@ -1507,7 +1528,18 @@ teamLeaderModule
 							project.charts.quality.series = ['Quality'];
 							project.charts.quality.labels = [];
 
+							project.beginner_total_output = 0;
+							project.beginner_total_man_hours = 0;
+							project.beginner_total_average_output = 0;
+
+							project.moderately_experienced_total_output = 0;
+							project.moderately_experienced_total_man_hours = 0;
+							project.moderately_experienced_total_average_output = 0;							
 							
+							project.experienced_total_output = 0;
+							project.experienced_total_man_hours = 0;
+							project.experienced_total_average_output = 0;
+
 							angular.forEach(project.members, function(member, memberKey){
 								project.charts.productivity.labels.push(member.member.full_name);
 								project.charts.quality.labels.push(member.member.full_name);
@@ -1516,6 +1548,41 @@ teamLeaderModule
 									project.charts.quality.data[0].push(member.monthly_quality);
 								// });
 							});
+
+							angular.forEach(project.reports, function(report, reportKey){
+								var beginners = $filter('filter')(report.members, {'experience':'Beginner'}, true);
+								var moderately_experienced = $filter('filter')(report.members, {'experience':'Moderately Experienced'}, true);
+								var experienced = $filter('filter')(report.members, {'experience':'Experienced'}, true);
+
+								angular.forEach(beginners, function(beginner, beginnerKey){
+									if(beginner.performance){
+										project.beginner_total_output += beginner.performance.output;
+										project.beginner_total_man_hours += beginner.performance.hours_worked;
+										project.beginner_total_average_output += beginner.performance.average_output;
+									}
+								});
+
+								angular.forEach(moderately_experienced, function(moderately_experienced, moderatelyExperiencedKey){
+									if(moderately_experienced.performance){
+										project.moderately_experienced_total_output += moderately_experienced.performance.output;
+										project.moderately_experienced_total_man_hours += moderately_experienced.performance.hours_worked;
+										project.moderately_experienced_total_average_output += moderately_experienced.performance.average_output;
+									}
+								});
+
+								angular.forEach(experienced, function(experienced, experiencedKey){
+									if(experienced.performance){
+										project.experienced_total_output += experienced.performance.output;
+										project.experienced_total_man_hours += experienced.performance.hours_worked;
+										project.experienced_total_average_output += experienced.performance.average_output;
+									}
+								});
+							});
+
+							project.overall_total_output = project.beginner_total_output + project.moderately_experienced_total_output + project.experienced_total_output;
+							project.overall_total_man_hours = project.beginner_total_man_hours + project.moderately_experienced_total_man_hours + project.experienced_total_man_hours;
+							project.overall_total_average_output = project.beginner_total_average_output + project.moderately_experienced_total_average_output + project.experienced_total_average_output;
+
 						});
 					}
 
