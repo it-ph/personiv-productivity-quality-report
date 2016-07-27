@@ -162,7 +162,7 @@
 									</a>
 								</th>
 							</tr>
-							<tr ng-repeat="item in detail.members | filter:rightSidenav.selectedItem | filter: rightSidenav.searchText | orderBy:sortType:sortReverse" ng-click="view(item)">
+							<tr ng-repeat="item in detail.members | filter:rightSidenav.selectedItem | filter: rightSidenav.searchText | orderBy:sortType:sortReverse" ng-click="view(item, detail.date_cover_start, detail.date_cover_end)">
 								<td>{{item.member.full_name}}</td>
 								<td>{{item.experience}}</td>
 								<td>{{item.monthly_productivity}}%</td>
@@ -347,7 +347,7 @@
 									</a>
 								</th>
 							</tr>
-							<tr ng-repeat="item in detail.members | filter:rightSidenav.selectedItem | filter: rightSidenav.searchText | orderBy:sortType:sortReverse" ng-click="view(item)">
+							<tr ng-repeat="item in detail.members | filter:rightSidenav.selectedItem | filter: rightSidenav.searchText | orderBy:sortType:sortReverse" ng-click="view(item, detail.date_cover_start, detail.date_cover_end)">
 								<td>{{item.member.full_name}}</td>
 								<td>{{item.experience}}</td>
 								<td>{{item.monthly_productivity}}%</td>

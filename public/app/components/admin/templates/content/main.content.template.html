@@ -41,19 +41,16 @@
 			</md-button>
 		</form>
 	</div>
-	<div layout="row" layout-padding flex ng-repeat="detail in reports" ng-if="detail.length">
+	<div layout="row" layout-padding flex ng-repeat="detail in reports" ng-if="detail.first_report">
 		<div flex>
 			<div class="panel panel-default">
 				<div class="panel-heading">
-					<h3 class="panel-title primary-text">{{detail[0].date_cover_start}} to {{detail[0].date_cover_end}}</h3>
+					<h3 class="panel-title primary-text">{{detail.date_start | date: 'MMMM dd, yyyy'}} to {{detail.date_end | date: 'MMMM dd, yyyy'}}</h3>
 				</div>
 				<div class="panel-body" layout="column" flex>
 					<div layout="row" layout-align="center center" flex>
 						<div flex="45">					
 							<canvas id="bar" class="chart chart-bar" chart-data="charts[$index].data" chart-labels="charts[$index].labels" chart-legend="true" chart-series="chart.series"></canvas>
-						</div>
-						<div flex="25">			
-							<canvas id="pie" class="chart chart-pie" chart-data="charts[$index].position_head_count" chart-labels="charts[$index].positions" chart-legend="true"></canvas> 
 						</div>
 						<div flex layout="column" layout-align="end end">
 							<table class="table">
@@ -112,8 +109,8 @@
 							</md-button> -->
 						</div>					
 					</div>
-					<h3 class="md-headline primary-text">{{detail[0].name}}</h2>
-						<p class="md-subhead">Program Head Count: <strong>{{detail[0].program_head_count}}</strong></p>
+					<h3 class="md-headline primary-text">{{detail.name}}</h2>
+						<p class="md-subhead">Program Head Count: <strong>{{detail.members.length}}</strong></p>
 						<!-- <p class="md-body-1">Daliy Work Hours: <strong>{{detail[0].daily_work_hours | number:1}}</strong></p> -->
 					<div layout="row" flex>	
 						<table class="table">
@@ -186,7 +183,7 @@
 										</md-tooltip>
 									</a>
 								</th>
-								<th>
+								<!-- <th>
 									<a href="#" class="main-text" ng-click="sortType = 'quadrant' ; sortReverse = !sortReverse">
 										<span>Quadrant</span>
 										<md-icon ng-show="sortType == 'quadrant' && !sortReverse" class="mdi mdi-chevron-down grey"></md-icon>
@@ -196,10 +193,10 @@
 											<span ng-show="!sortReverse">Descending</span>
 										</md-tooltip>
 									</a>
-								</th>
+								</th> -->
 							</tr>
-							<tr ng-repeat="item in detail | orderBy:sortType:sortReverse" ng-click="test(item)">
-								<td>{{item.full_name}}</td>
+							<tr ng-repeat="item in detail.members | orderBy:sortType:sortReverse" ng-click="test(item)">
+								<td>{{item.member.full_name}}</td>
 								<!-- <td>{{item.position}}</td> -->
 								<td>{{item.experience}}</td>
 								<!-- <td ng-repeat="item in item.results">
@@ -218,15 +215,15 @@
 										</tr>
 									</table>
 								</td> -->
-								<td>{{item.productivity_average}}%</td>
-								<td>{{item.quality_average}}%</td>
-								<td>
+								<td>{{item.average_productivity}}%</td>
+								<td>{{item.average_quality}}%</td>
+								<!-- <td>
 									{{item.quadrant}}
 									<md-tooltip ng-if="item.quadrant == 'Quadrant 1'">Producitivity is not met, but Quality is met.</md-tooltip>
 									<md-tooltip ng-if="item.quadrant == 'Quadrant 2'">Producitivity and quality are both met.</md-tooltip>
 									<md-tooltip ng-if="item.quadrant == 'Quadrant 3'">Producitivity is met, but Quality is not met.</md-tooltip>
 									<md-tooltip ng-if="item.quadrant == 'Quadrant 4'">Producitivity and quality are both not met.</md-tooltip>
-								</td>
+								</td> -->
 							</tr>
 						</table>
 					</div>

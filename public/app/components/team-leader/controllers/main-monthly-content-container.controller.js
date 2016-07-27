@@ -326,7 +326,9 @@ teamLeaderModule
 				});
 		}
 
-		$scope.view = function(data){
+		$scope.view = function(data, dateStart, dateEnd){
+			data.date_start = dateStart;
+			data.date_end = dateEnd;
 			Preloader.set(data);
 			$mdDialog.show({
 		    	controller: 'performanceMonthlyViewDialogController',

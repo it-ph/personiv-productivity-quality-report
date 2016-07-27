@@ -146,28 +146,33 @@ adminModule
 
 		Report.monthly()
 			.success(function(data){
-				$scope.reports = data;
-				angular.forEach(data, function(report, reportIdx){
-					$scope.charts.push([{}]);
-					$scope.charts[reportIdx].data = [];
-					$scope.charts[reportIdx].data.push([]); // index 0 is productivity
-					$scope.charts[reportIdx].data.push([]); // index 1 is quality
-					$scope.charts[reportIdx].labels = [];
-					$scope.charts[reportIdx].positions = [];
-					if(report.length){
-						angular.forEach(report[0].positions, function(position, keyPostion){
-							$scope.charts[reportIdx].positions.push(position.name);
-						});
-						$scope.charts[reportIdx].position_head_count = report[0].position_head_count;
-					}
-
-					angular.forEach(report, function(member, memberIdx){
-						$scope.charts[reportIdx].labels.push(member.full_name);
-
-						$scope.charts[reportIdx].data[0].push(member.productivity_average);
-						$scope.charts[reportIdx].data[1].push(member.quality_average);
-					});
+				angular.forEach(data, function(report){
+					report.date_start = new Date(report.date_start);
 				});
+				
+				$scope.reports = data;
+
+				// angular.forEach(data, function(report, reportIdx){
+				// 	$scope.charts.push([{}]);
+				// 	$scope.charts[reportIdx].data = [];
+				// 	$scope.charts[reportIdx].data.push([]); // index 0 is productivity
+				// 	$scope.charts[reportIdx].data.push([]); // index 1 is quality
+				// 	$scope.charts[reportIdx].labels = [];
+				// 	$scope.charts[reportIdx].positions = [];
+				// 	if(report.length){
+				// 		angular.forEach(report[0].positions, function(position, keyPostion){
+				// 			$scope.charts[reportIdx].positions.push(position.name);
+				// 		});
+				// 		$scope.charts[reportIdx].position_head_count = report[0].position_head_count;
+				// 	}
+
+				// 	angular.forEach(report, function(member, memberIdx){
+				// 		$scope.charts[reportIdx].labels.push(member.full_name);
+
+				// 		$scope.charts[reportIdx].data[0].push(member.productivity_average);
+				// 		$scope.charts[reportIdx].data[1].push(member.quality_average);
+				// 	});
+				// });
 			})
 			.error(function(){
 				Preloader.error();

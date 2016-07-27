@@ -1610,7 +1610,9 @@ teamLeaderModule
 				});
 		}
 
-		$scope.view = function(data){
+		$scope.view = function(data, dateStart, dateEnd){
+			data.date_start = dateStart;
+			data.date_end = dateEnd;
 			Preloader.set(data);
 			$mdDialog.show({
 		    	controller: 'performanceMonthlyViewDialogController',
@@ -2449,9 +2451,18 @@ teamLeaderModule
 	.controller('performanceMonthlyViewDialogController', ['$scope', '$mdDialog', 'Performance', 'Preloader', function($scope, $mdDialog, Performance, Preloader){		
 		$scope.member = Preloader.get();
 
-		Performance.monthly($scope.member.performances[0])
+		Performance.monthly($scope.member)
 			.success(function(data){
-				$scope.performances = data;
+				$scope.member = data;
+
+				angular.forEach(data.positions, function(position){
+					angular.forEach(position.performances, function(performance){
+						performance.date_start = new Date(performance.date_start);
+						performance.date_end = new Date(performance.date_end);
+					})
+				});
+
+				$scope.positions = data.positions;
 			})
 			.error(function(){
 				Preloader.error();

@@ -65,62 +65,67 @@ class PerformanceController extends Controller
 
     public function monthly(Request $request)
     {   
-        $month = date_format(date_create($request->date_start), 'F');
-        $year = date_format(date_create($request->date_start), 'Y');
+        $date_start = Carbon::parse($request->date_start);
+        $date_end = Carbon::parse($request->date_end);
 
-        $this->date_start = new Carbon('first Monday of '. $month .' '. $year);
-        $this->date_end = new Carbon('last Monday of '. $month .' '. $year);
+        $member = DB::table('members')->where('id', $request->member_id)->first();
 
-        $performances = DB::table('performances')
-            ->join('members', 'members.id', '=', 'performances.member_id')
-            ->join('positions', 'positions.id', '=', 'performances.position_id')
-            ->join('projects', 'projects.id', '=', 'performances.project_id')
-            ->join('results', 'results.id', '=', 'performances.result_id')
-            ->select(
-                '*',
-                'positions.name as position',
-                'projects.name as project',
-                DB::raw('DATE_FORMAT(performances.date_start, "%b. %d") as date_start'),
-                DB::raw('DATE_FORMAT(performances.date_end, "%b. %d") as date_end')
-            )
-            ->whereNull('performances.deleted_at')
-            ->where('performances.member_id', $request->member_id)
-            ->where('performances.project_id', $request->project_id)
-            ->whereBetween('performances.date_start', [$this->date_start, $this->date_end])
-            ->where('performances.daily_work_hours', 'like', round($request->daily_work_hours,1).'%')
-            ->get();
+        $member->positions = DB::table('positions')->where('project_id', $request->project_id)->get();
 
-        foreach ($performances as $key => $value) {
-            $quality_target = DB::table('targets')
-                ->join('positions', 'positions.id', '=', 'targets.position_id')
-                ->join('members', 'members.experience', '=', 'targets.experience')
-                ->select('*')
-                ->where('targets.position_id', $value->position_id)
-                ->where('targets.experience', $value->experience)
-                ->where('targets.type', 'Quality')
-                ->where('targets.created_at', '<=', $value->date_end)
-                ->orderBy('targets.created_at', 'desc')
-                ->first();
+        $overall_monthly_productivity = 0;
+        $overall_monthly_quality = 0;
+        $overall_count = 0;
 
-            if(!$quality_target)
-            {
-                $quality_target = DB::table('targets')
-                    ->join('positions', 'positions.id', '=', 'targets.position_id')
-                    ->join('members', 'members.experience', '=', 'targets.experience')
-                    ->select('*')
-                    ->where('targets.position_id', $value->position_id)
-                    ->where('targets.experience', $value->experience)
-                    ->where('targets.type', 'Quality')
-                    // ->where('created_at', '<=', $value->date_end)
-                    ->where('targets.active', true)
-                    // ->orderBy('created_at', 'desc')
-                    ->first();
+        foreach ($member->positions as $position_key => $position) {
+            $position->performances = Performance::with('project', 'position', 'target')->with(['member' => function($query){ $query->with(['experiences' => function($query){ $query->with('project'); }]);}])->where('position_id', $position->id)->where('member_id', $request->member_id)->whereBetween('date_start', [$date_start, $date_end])->get();
+
+            if(count($position->performances)){
+                $position->total_hours_worked = 0;
+                $position->total_output = 0;
+                $position->total_output_error = 0;
+                $position->total_average_output = 0;
+                $position->monthly_productivity = 0;
+                $position->monthly_quality = 0;
+
+                foreach ($position->performances as $performance_key => $performance) {
+                    $position->total_hours_worked += $performance->hours_worked;
+                    $position->total_output += $performance->output;
+                    $position->total_output_error += $performance->output_error;
+                }
+
+                $position->total_average_output = $position->total_output / $position->total_hours_worked * $position->performances[0]->daily_work_hours;
+                $position->monthly_productivity = round($position->total_average_output / $position->performances[0]->target->productivity * 100);
+                $position->monthly_quality = round((1 - $position->total_output_error / $position->total_output) * 100);
+
+                if($position->monthly_productivity < $position->performances[0]->target->productivity && $position->monthly_quality >= $position->performances[0]->target->quality)
+                {
+                    $position->quadrant = 'Quadrant 1'; 
+                }
+                else if($position->monthly_productivity >= $position->performances[0]->target->productivity && $position->monthly_quality >= $position->performances[0]->target->quality)
+                {
+                    $position->quadrant = 'Quadrant 2'; 
+                }
+                else if($position->monthly_productivity >= $position->performances[0]->target->productivity && $position->monthly_quality < $position->performances[0]->target->quality)
+                {
+                    $position->quadrant = 'Quadrant 3'; 
+                }
+                else if($position->monthly_productivity < $position->performances[0]->target->productivity && $position->monthly_quality < $position->performances[0]->target->quality)
+                {
+                    $position->quadrant = 'Quadrant 4'; 
+                }
+
+                $overall_monthly_productivity += $position->monthly_productivity;
+                $overall_monthly_quality += $position->monthly_quality;
+                $overall_count++;
             }
-
-            $value->quota = (($value->productivity >= 100) && ($value->quality >= $quality_target->value)) ? 'Met' : 'Not met';
         }
 
-        return $performances;
+        if($overall_count){
+            $member->average_productivity = $overall_monthly_productivity / $overall_count;
+            $member->average_quality = $overall_monthly_quality / $overall_count;
+        }
+        
+        return response()->json($member);
     }
     public function topPerformers($report_id)
     {
