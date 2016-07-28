@@ -469,12 +469,12 @@ class PerformanceController extends Controller
             {
                 $this->validate($request, [
                     $i.'.id' => 'required|numeric',
-                    $i.'.position_id' => 'required|numeric',
+                    $i.'.position_id' => 'required',
                     // $i.'.department_id' => 'required|numeric',
-                    $i.'.project_id' => 'required|numeric',
+                    // $i.'.project_id' => 'required|numeric',
                     $i.'.output' => 'required|numeric',
-                    $i.'.date_start' => 'required|date',
-                    $i.'.date_end' => 'required|date',
+                    // $i.'.date_start' => 'required|date',
+                    // $i.'.date_end' => 'required|date',
                     $i.'.hours_worked' => 'required|numeric',
                     $i.'.daily_work_hours' => 'required|numeric',
                     $i.'.output_error' => 'required|numeric',
@@ -485,12 +485,12 @@ class PerformanceController extends Controller
                 $performance = Performance::where('id', $request->input($i.'.id'))->first();
 
                 $performance->position_id = $request->input($i.'.position_id');
-                $performance->project_id = $request->input($i.'.project_id');
+                // $performance->project_id = $request->input($i.'.project_id');
                 $performance->output = $request->input($i.'.output');
-                $performance->date_start = $request->input($i.'.date_start');
-                $performance->date_end = $request->input($i.'.date_end');
+                // $performance->date_start = $request->input($i.'.date_start');
+                // $performance->date_end = $request->input($i.'.date_end');
                 $performance->hours_worked = $request->input($i.'.hours_worked');
-                $performance->daily_work_hours = $request->input($i.'.daily_work_hours');
+                // $performance->daily_work_hours = $request->input($i.'.daily_work_hours');
                 $performance->output_error = $request->input($i.'.output_error');
                 // Round((Output / Hours Worked) * Daily Work Hours)
                 // store the rounded value
@@ -521,26 +521,6 @@ class PerformanceController extends Controller
                 // $performance->performance_id = $request->input($i.'.performance_id');
                 // save performance to database
                 $performance->save();
-
-                // fetch target
-                // $productivity = Target::where('type', 'Productivity')->where('position_id', $request->input($i.'.position_id'))->where('experience', $request->input($i.'.experience'))->where('created_at', '<=', $request->input($i.'.date_end'))->orderBy('created_at', 'desc')->first();
-
-                // if(!$productivity)
-                // {
-                //     $productivity = Target::where('type', 'Productivity')->where('position_id', $request->input($i.'.position_id'))->where('experience', $request->input($i.'.experience'))->first();
-                // }
-
-                // // fetch target
-                // $quality = Target::where('type', 'Quality')->where('position_id', $request->input($i.'.position_id'))->where('experience', $request->input($i.'.experience'))->where('created_at', '<=', $request->input($i.'.date_end'))->orderBy('created_at', 'desc')->first();
-
-                // if(!$quality)
-                // {
-                //     $quality = Target::where('type', 'Quality')->where('position_id', $request->input($i.'.position_id'))->where('experience', $request->input($i.'.experience'))->first();
-                // }
-
-                // $performance->productivity_id = $productivity->id;
-                // $performance->quality_id = $quality->id;
-
             }
         }
     }

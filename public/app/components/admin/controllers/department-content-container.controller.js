@@ -125,6 +125,7 @@ adminModule
 
 		/* Refreshes the list */
 		$scope.subheader.refresh = function(){
+			Preloader.preload();
 			$scope.report.show = false;
 			$scope.init(true);
 		};

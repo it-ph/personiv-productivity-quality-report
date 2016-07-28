@@ -1,35 +1,14 @@
 <div class="fade-transition" flex ng-if="report.current && report.showCurrent">
 	<div layout-padding flex ng-repeat="detail in report.current | filter: projects[filterData.project].name | filter: toolbar.userInput">
-		<div flex ng-if="detail.reports.length">
+		<div flex ng-if="detail.first_report">
 			<div class="panel panel-default">
 				<div class="panel-heading">
-					<h3 class="panel-title primary-text">{{detail.date_cover_start}} to {{detail.date_cover_end}}</h3>
+					<h3 class="panel-title primary-text">{{detail.date_start | date: 'MMMM dd, yyyy'}} to {{detail.date_end | date: 'MMMM dd, yyyy'}}</h3>
 				</div>
 				<div class="panel-body" layout="column" flex>
-					<div layout="row" layout-align="center center" flex ng-if="detail.showCharts">
-						<div layout="column" flex>
-							<md-radio-group ng-model="detail.chartType" layout="row">
-								<md-radio-button value="bar" class="md-primary">Bar</md-radio-button>
-								<md-radio-button value="line" class="md-primary">Line</md-radio-button>
-							</md-radio-group>
-							<div layout="row">
-								<div flex>
-									<!-- Bar -->
-									<canvas ng-if="detail.chartType=='bar'" class="chart chart-bar" chart-data="detail.charts.productivity.data" chart-labels="detail.charts.productivity.labels"  chart-series="detail.charts.productivity.series"></canvas>
-									<!-- Line -->
-									<canvas ng-if="detail.chartType=='line'" class="chart chart-line" chart-data="detail.charts.productivity.data" chart-labels="detail.charts.productivity.labels"  chart-series="detail.charts.productivity.series"></canvas>
-									
-									<h3 class="md-subhead center-text">Productivity</h3>					
-								</div>
-								<div flex>					
-									<!-- Bar -->
-									<canvas ng-if="detail.chartType=='bar'" class="chart chart-bar" chart-data="detail.charts.quality.data" chart-labels="detail.charts.quality.labels" chart-series="detail.charts.quality.series" chart-colours="['#FF4081']"></canvas>
-									<!-- Line -->
-									<canvas ng-if="detail.chartType=='line'" class="chart chart-line" chart-data="detail.charts.quality.data" chart-labels="detail.charts.quality.labels"  chart-series="detail.charts.quality.series" chart-colours="['#FF4081']"></canvas>
-
-									<h3 class="md-subhead center-text">Quality</h3>					
-								</div>
-							</div>
+					<div layout="row" layout-align="center center" flex>
+						<div flex="45">					
+							<canvas id="bar" class="chart chart-bar" chart-data="detail.chart.data" chart-labels="detail.chart.labels" chart-legend="true" chart-series="detail.chart.series"></canvas>
 						</div>
 						<div flex layout="column" layout-align="end end">
 							<table class="table">
@@ -42,67 +21,50 @@
 								<tr>
 									<th>Beginner</th>
 									<td>{{detail.beginner_total_output | number: 1}}</td>
-									<td>{{detail.beginner_total_man_hours | number: 1}}</td>
+									<td>{{detail.beginner_total_hours_worked | number: 1}}</td>
 									<td>{{detail.beginner_total_average_output | number: 1}}</td>
 								</tr>
-								<!-- <tr ng-repeat="item in detail.beginner">
-									<td>{{item.position}}</td>
-									<td>{{item.total_output | number: 1}}</td>
-									<td>{{item.total_man_hours | number: 1}}</td>
-									<td>{{item.total_average_output | number: 1}}</td>
-								</tr> -->
+								<tr ng-repeat="position in detail.positions" ng-if="position.beginner_total_hours_worked">
+									<td>{{position.name}}</td>
+									<td>{{position.beginner_total_output | number: 1}}</td>
+									<td>{{position.beginner_total_hours_worked | number: 1}}</td>
+									<td>{{position.beginner_total_average_output | number: 1}}</td>
+								</tr>
 								<tr>
 									<th>Moderately Experienced</th>
 									<td>{{detail.moderately_experienced_total_output | number: 1}}</td>
-									<td>{{detail.moderately_experienced_total_man_hours | number: 1}}</td>
+									<td>{{detail.moderately_experienced_total_hours_worked | number: 1}}</td>
 									<td>{{detail.moderately_experienced_total_average_output | number: 1}}</td>
 								</tr>
-								<!-- <tr ng-repeat="item in detail.moderately_experienced">
-									<td>{{item.position}}</td>
-									<td>{{item.total_output | number: 1}}</td>
-									<td>{{item.total_man_hours | number: 1}}</td>
-									<td>{{item.total_average_output | number: 1}}</td>
-								</tr> -->
+								<tr ng-repeat="position in detail.positions" ng-if="position.moderately_experienced_total_hours_worked">
+									<td>{{position.name}}</td>
+									<td>{{position.moderately_experienced_total_output | number: 1}}</td>
+									<td>{{position.moderately_experienced_total_hours_worked | number: 1}}</td>
+									<td>{{position.moderately_experienced_total_average_output | number: 1}}</td>
+								</tr>
 								<tr>
 									<th>Experienced</th>
 									<td>{{detail.experienced_total_output | number: 1}}</td>
-									<td>{{detail.experienced_total_man_hours | number: 1}}</td>
+									<td>{{detail.experienced_total_hours_worked | number: 1}}</td>
 									<td>{{detail.experienced_total_average_output | number: 1}}</td>
 								</tr>
-								<!-- <tr ng-repeat="item in detail.experienced">
-									<td>{{item.position}}</td>
-									<td>{{item.total_output | number: 1}}</td>
-									<td>{{item.total_man_hours | number: 1}}</td>
-									<td>{{item.total_average_output | number: 1}}</td>
-								</tr> -->
+								<tr ng-repeat="position in detail.positions" ng-if="position.experienced_total_hours_worked">
+									<td>{{position.name}}</td>
+									<td>{{position.experienced_total_output | number: 1}}</td>
+									<td>{{position.experienced_total_hours_worked | number: 1}}</td>
+									<td>{{position.experienced_total_average_output | number: 1}}</td>
+								</tr>
 								<tr>
 									<th>Grand Total</th>
-									<th>{{detail.overall_total_output | number: 1}}</th>
-									<th>{{detail.overall_total_man_hours | number: 1}}</th>
-									<th>{{detail.overall_total_average_output | number: 1}}</th>
+									<th>{{detail.total_output | number: 1}}</th>
+									<th>{{detail.total_hours_worked | number: 1}}</th>
+									<th>{{detail.total_average_output | number: 1}}</th>
 								</tr>
 							</table>
-						</div>
+						</div>					
 					</div>
 					<h3 class="md-headline primary-text">{{detail.name}}</h2>
-					<div layout="row" layout-align="space-between center">
-						<div flex>
-							<p class="md-subhead">Program Head Count: <strong>{{detail.members.length}}</strong></p>
-							
-							<md-input-container>
-								<label>Position</label>
-								<md-select ng-model="detail.position.id" ng-change="changePosition(detail, $index, true)">
-									<md-option ng-repeat="position in detail.positions" ng-value="position.id">
-										{{position.name}}
-									</md-option>
-								</md-select>
-							</md-input-container>
-							<!-- <p class="md-body-1">Daliy Work Hours: <strong>{{detail.members[0].performances[0].daily_work_hours | number:1}}</strong></p> -->
-						</div>
-						<md-switch class="md-primary" ng-model="detail.showCharts" aria-label="detail.showCharts">
-						    <span ng-if="!detail.showCharts">Show</span> <span ng-if="detail.showCharts">Hide</span> Charts
-						</md-switch>
-					</div>
+						<p class="md-subhead">Program Head Count: <strong>{{detail.members.length}}</strong></p>
 					<div layout="row" flex>	
 						<table class="table">
 							<tr>
@@ -150,29 +112,13 @@
 										</md-tooltip>
 									</a>
 								</th>
-								<th>
-									<a href="#" class="main-text" ng-click="sortType = 'quadrant' ; sortReverse = !sortReverse">
-										<span>Quadrant</span>
-										<md-icon ng-show="sortType == 'quadrant' && !sortReverse" class="mdi mdi-chevron-down grey"></md-icon>
-										<md-icon ng-show="sortType == 'quadrant' && sortReverse" class="mdi mdi-chevron-up grey"></md-icon>
-										<md-tooltip>
-											<span ng-show="sortReverse">Ascending</span>
-											<span ng-show="!sortReverse">Descending</span>
-										</md-tooltip>
-									</a>
-								</th>
+								
 							</tr>
-							<tr ng-repeat="item in detail.members | filter:rightSidenav.selectedItem | filter: rightSidenav.searchText | orderBy:sortType:sortReverse" ng-click="view(item, detail.date_cover_start, detail.date_cover_end)">
+							<tr ng-repeat="item in detail.members | orderBy:sortType:sortReverse" ng-click="view(item, detail.date_start, detail.date_end)">
 								<td>{{item.member.full_name}}</td>
 								<td>{{item.experience}}</td>
-								<td>{{item.monthly_productivity}}%</td>
-								<td>{{item.monthly_quality}}%</td>
-								<td>{{item.quadrant}} 
-									<md-tooltip ng-if="item.quadrant == 'Quadrant 1'">Producitivity is not met, but Quality is met.</md-tooltip>
-									<md-tooltip ng-if="item.quadrant == 'Quadrant 2'">Producitivity and quality are both met.</md-tooltip>
-									<md-tooltip ng-if="item.quadrant == 'Quadrant 3'">Producitivity is met, but Quality is not met.</md-tooltip>
-									<md-tooltip ng-if="item.quadrant == 'Quadrant 4'">Producitivity and quality are both not met.</md-tooltip>
-								</td>
+								<td><span ng-if="!item.average_productivity">0</span>{{item.average_productivity}}%</td>
+								<td><span ng-if="!item.average_quality">0</span>{{item.average_quality}}%</td>
 							</tr>
 						</table>
 					</div>
@@ -185,36 +131,15 @@
 
 <div class="fade-transition" flex ng-if="report.results && !report.showCurrent">
 	<div layout-padding flex ng-repeat="detail in report.results | filter: projects[filterData.project].name | filter: toolbar.userInput">
-		<div flex ng-if="detail.reports.length">
+		<div flex ng-if="detail.first_report">
 			<div class="panel panel-default">
 				<div class="panel-heading">
-					<h3 class="panel-title primary-text">{{detail.date_cover_start}} to {{detail.date_cover_end}}</h3>
+					<h3 class="panel-title primary-text">{{detail.date_start | date: 'MMMM dd, yyyy'}} to {{detail.date_end | date: 'MMMM dd, yyyy'}}</h3>
 				</div>
 				<div class="panel-body" layout="column" flex>
-					<div layout="row" layout-align="center center" flex ng-if="detail.showCharts">
-						<div layout="column" flex>
-							<md-radio-group ng-model="detail.chartType" layout="row">
-								<md-radio-button value="bar" class="md-primary">Bar</md-radio-button>
-								<md-radio-button value="line" class="md-primary">Line</md-radio-button>
-							</md-radio-group>
-							<div layout="row">
-								<div flex>
-									<!-- Bar -->
-									<canvas ng-if="detail.chartType=='bar'" class="chart chart-bar" chart-data="detail.charts.productivity.data" chart-labels="detail.charts.productivity.labels"  chart-series="detail.charts.productivity.series"></canvas>
-									<!-- Line -->
-									<canvas ng-if="detail.chartType=='line'" class="chart chart-line" chart-data="detail.charts.productivity.data" chart-labels="detail.charts.productivity.labels"  chart-series="detail.charts.productivity.series"></canvas>
-									
-									<h3 class="md-subhead center-text">Productivity</h3>					
-								</div>
-								<div flex>					
-									<!-- Bar -->
-									<canvas ng-if="detail.chartType=='bar'" class="chart chart-bar" chart-data="detail.charts.quality.data" chart-labels="detail.charts.quality.labels" chart-series="detail.charts.quality.series" chart-colours="['#FF4081']"></canvas>
-									<!-- Line -->
-									<canvas ng-if="detail.chartType=='line'" class="chart chart-line" chart-data="detail.charts.quality.data" chart-labels="detail.charts.quality.labels"  chart-series="detail.charts.quality.series" chart-colours="['#FF4081']"></canvas>
-
-									<h3 class="md-subhead center-text">Quality</h3>					
-								</div>
-							</div>
+					<div layout="row" layout-align="center center" flex>
+						<div flex="45">					
+							<canvas id="bar" class="chart chart-bar" chart-data="detail.chart.data" chart-labels="detail.chart.labels" chart-legend="true" chart-series="detail.chart.series"></canvas>
 						</div>
 						<div flex layout="column" layout-align="end end">
 							<table class="table">
@@ -227,67 +152,50 @@
 								<tr>
 									<th>Beginner</th>
 									<td>{{detail.beginner_total_output | number: 1}}</td>
-									<td>{{detail.beginner_total_man_hours | number: 1}}</td>
+									<td>{{detail.beginner_total_hours_worked | number: 1}}</td>
 									<td>{{detail.beginner_total_average_output | number: 1}}</td>
 								</tr>
-								<!-- <tr ng-repeat="item in detail.beginner">
-									<td>{{item.position}}</td>
-									<td>{{item.total_output | number: 1}}</td>
-									<td>{{item.total_man_hours | number: 1}}</td>
-									<td>{{item.total_average_output | number: 1}}</td>
-								</tr> -->
+								<tr ng-repeat="position in detail.positions" ng-if="position.beginner_total_hours_worked">
+									<td>{{position.name}}</td>
+									<td>{{position.beginner_total_output | number: 1}}</td>
+									<td>{{position.beginner_total_hours_worked | number: 1}}</td>
+									<td>{{position.beginner_total_average_output | number: 1}}</td>
+								</tr>
 								<tr>
 									<th>Moderately Experienced</th>
 									<td>{{detail.moderately_experienced_total_output | number: 1}}</td>
-									<td>{{detail.moderately_experienced_total_man_hours | number: 1}}</td>
+									<td>{{detail.moderately_experienced_total_hours_worked | number: 1}}</td>
 									<td>{{detail.moderately_experienced_total_average_output | number: 1}}</td>
 								</tr>
-								<!-- <tr ng-repeat="item in detail.moderately_experienced">
-									<td>{{item.position}}</td>
-									<td>{{item.total_output | number: 1}}</td>
-									<td>{{item.total_man_hours | number: 1}}</td>
-									<td>{{item.total_average_output | number: 1}}</td>
-								</tr> -->
+								<tr ng-repeat="position in detail.positions" ng-if="position.moderately_experienced_total_hours_worked">
+									<td>{{position.name}}</td>
+									<td>{{position.moderately_experienced_total_output | number: 1}}</td>
+									<td>{{position.moderately_experienced_total_hours_worked | number: 1}}</td>
+									<td>{{position.moderately_experienced_total_average_output | number: 1}}</td>
+								</tr>
 								<tr>
 									<th>Experienced</th>
 									<td>{{detail.experienced_total_output | number: 1}}</td>
-									<td>{{detail.experienced_total_man_hours | number: 1}}</td>
+									<td>{{detail.experienced_total_hours_worked | number: 1}}</td>
 									<td>{{detail.experienced_total_average_output | number: 1}}</td>
 								</tr>
-								<!-- <tr ng-repeat="item in detail.experienced">
-									<td>{{item.position}}</td>
-									<td>{{item.total_output | number: 1}}</td>
-									<td>{{item.total_man_hours | number: 1}}</td>
-									<td>{{item.total_average_output | number: 1}}</td>
-								</tr> -->
+								<tr ng-repeat="position in detail.positions" ng-if="position.experienced_total_hours_worked">
+									<td>{{position.name}}</td>
+									<td>{{position.experienced_total_output | number: 1}}</td>
+									<td>{{position.experienced_total_hours_worked | number: 1}}</td>
+									<td>{{position.experienced_total_average_output | number: 1}}</td>
+								</tr>
 								<tr>
 									<th>Grand Total</th>
-									<th>{{detail.overall_total_output | number: 1}}</th>
-									<th>{{detail.overall_total_man_hours | number: 1}}</th>
-									<th>{{detail.overall_total_average_output | number: 1}}</th>
+									<th>{{detail.total_output | number: 1}}</th>
+									<th>{{detail.total_hours_worked | number: 1}}</th>
+									<th>{{detail.total_average_output | number: 1}}</th>
 								</tr>
 							</table>
-						</div>
+						</div>					
 					</div>
 					<h3 class="md-headline primary-text">{{detail.name}}</h2>
-					<div layout="row" layout-align="space-between center">
-						<div flex>
-							<p class="md-subhead">Program Head Count: <strong>{{detail.members.length}}</strong></p>
-							
-							<md-input-container>
-								<label>Position</label>
-								<md-select ng-model="detail.position.id" ng-change="changePosition(detail, $index, false)">
-									<md-option ng-repeat="position in detail.positions" ng-value="position.id">
-										{{position.name}}
-									</md-option>
-								</md-select>
-							</md-input-container>
-							<!-- <p class="md-body-1">Daliy Work Hours: <strong>{{detail.members[0].performances[0].daily_work_hours | number:1}}</strong></p> -->
-						</div>
-						<md-switch class="md-primary" ng-model="detail.showCharts" aria-label="detail.showCharts">
-						    <span ng-if="!detail.showCharts">Show</span> <span ng-if="detail.showCharts">Hide</span> Charts
-						</md-switch>
-					</div>
+						<p class="md-subhead">Program Head Count: <strong>{{detail.members.length}}</strong></p>
 					<div layout="row" flex>	
 						<table class="table">
 							<tr>
@@ -335,29 +243,13 @@
 										</md-tooltip>
 									</a>
 								</th>
-								<th>
-									<a href="#" class="main-text" ng-click="sortType = 'quadrant' ; sortReverse = !sortReverse">
-										<span>Quadrant</span>
-										<md-icon ng-show="sortType == 'quadrant' && !sortReverse" class="mdi mdi-chevron-down grey"></md-icon>
-										<md-icon ng-show="sortType == 'quadrant' && sortReverse" class="mdi mdi-chevron-up grey"></md-icon>
-										<md-tooltip>
-											<span ng-show="sortReverse">Ascending</span>
-											<span ng-show="!sortReverse">Descending</span>
-										</md-tooltip>
-									</a>
-								</th>
+								
 							</tr>
-							<tr ng-repeat="item in detail.members | filter:rightSidenav.selectedItem | filter: rightSidenav.searchText | orderBy:sortType:sortReverse" ng-click="view(item, detail.date_cover_start, detail.date_cover_end)">
+							<tr ng-repeat="item in detail.members | orderBy:sortType:sortReverse" ng-click="view(item, detail.date_start, detail.date_end)">
 								<td>{{item.member.full_name}}</td>
 								<td>{{item.experience}}</td>
-								<td>{{item.monthly_productivity}}%</td>
-								<td>{{item.monthly_quality}}%</td>
-								<td>{{item.quadrant}} 
-									<md-tooltip ng-if="item.quadrant == 'Quadrant 1'">Producitivity is not met, but Quality is met.</md-tooltip>
-									<md-tooltip ng-if="item.quadrant == 'Quadrant 2'">Producitivity and quality are both met.</md-tooltip>
-									<md-tooltip ng-if="item.quadrant == 'Quadrant 3'">Producitivity is met, but Quality is not met.</md-tooltip>
-									<md-tooltip ng-if="item.quadrant == 'Quadrant 4'">Producitivity and quality are both not met.</md-tooltip>
-								</td>
+								<td><span ng-if="!item.average_productivity">0</span>{{item.average_productivity}}%</td>
+								<td><span ng-if="!item.average_quality">0</span>{{item.average_quality}}%</td>
 							</tr>
 						</table>
 					</div>

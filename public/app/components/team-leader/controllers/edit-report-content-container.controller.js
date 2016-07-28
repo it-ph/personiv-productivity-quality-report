@@ -4,10 +4,10 @@ teamLeaderModule
 		var busy = false;
 		$scope.form = {};
 
-		$scope.hours = [
-			{'value': 8.3},
-			{'value': 9.1},
-		];
+		// $scope.hours = [
+		// 	{'value': 8.3},
+		// 	{'value': 9.1},
+		// ];
 
 		$scope.details = {};
 

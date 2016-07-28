@@ -1,13 +1,13 @@
 adminModule
-	.controller('editReportContentContainerController', ['$scope', '$mdDialog', '$state', '$mdToast', '$stateParams', 'Preloader', 'Performance', 'Position', 'Project', function($scope, $mdDialog, $state, $mdToast, $stateParams, Preloader, Performance, Position, Project){
+	.controller('editReportContentContainerController', ['$scope', '$filter', '$mdDialog', '$state', '$mdToast', '$stateParams', 'Preloader', 'Performance', 'Position', 'Project', function($scope, $filter, $mdDialog, $state, $mdToast, $stateParams, Preloader, Performance, Position, Project){
 		var reportID = $stateParams.reportID;
 		var busy = false;
 		$scope.form = {};
 
-		$scope.hours = [
-			{'value': 8.3},
-			{'value': 9.1},
-		];
+		// $scope.hours = [
+		// 	{'value': 8.3},
+		// 	{'value': 9.1},
+		// ];
 
 		$scope.details = {};
 
@@ -30,14 +30,22 @@ adminModule
 
 		Performance.report(reportID)
 			.success(function(data){
+				angular.forEach(data, function(performance){
+					var experience = $filter('filter')(performance.member.experiences, {project_id: performance.project_id}, true);
+					performance.date_started = new Date(experience[0].date_started);
+					performance.experience = experience[0].experience;
+				});
+
 				$scope.performances = data;
 				
 				$scope.details.date_start = new Date(data[0].date_start);
 				$scope.details.date_end = new Date(data[0].date_end);
-				$scope.details.project_id = data[0].project_id;
-				$scope.details.project_name = data[0].project_name;
+				$scope.details.project_name = data[0].project.name;
 				$scope.details.daily_work_hours = data[0].daily_work_hours;
-				$scope.details.first_letter = data[0].first_letter;
+				$scope.details.first_letter = data[0].project.name.charAt(0).toUpperCase();
+				$scope.details.weekly_hours = (($scope.details.date_end - $scope.details.date_start) / (1000*60*60*24) + 1) * $scope.details.daily_work_hours;
+				$scope.details.date_start = $scope.details.date_start.toDateString();
+				$scope.details.date_end = $scope.details.date_end.toDateString();
 
 				Position.project(data[0].project_id)
 					.success(function(data){
@@ -57,9 +65,10 @@ adminModule
 				});
 		};
 
-		$scope.checkLimit = function(idx){
+		$scope.checkLimit = function(data){
+			var idx = $scope.performances.indexOf(data);
 			// gets the number of days worked in a day then multiply it to the daily work hours to get weekly limit
-			$scope.details.weekly_hours = (($scope.details.date_end - $scope.details.date_start) / (1000*60*60*24) + 1) * $scope.details.daily_work_hours;
+			$scope.details.current_hours_worked = $scope.performances[idx].hours_worked;
 			Performance.checkLimitEdit($scope.performances[idx].member_id, $scope.details)
 				.success(function(data){
 					$scope.performances[idx].limit = data;
@@ -74,6 +83,12 @@ adminModule
 				item.hours_worked = null;
 				$scope.checkLimit(key);
 			});
+		}
+
+		$scope.checkBalance = function(data){
+			var index = $scope.performances.indexOf(data);
+			$scope.performances[index].balance = $scope.performances[index].limit - $scope.performances[index].hours_worked;
+			$scope.performances[index].balance = $scope.performances[index].balance ? $scope.performances[index].balance.toFixed(2) : 0;
 		}
 
 		/**

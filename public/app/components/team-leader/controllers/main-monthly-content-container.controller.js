@@ -228,92 +228,36 @@ teamLeaderModule
 		$scope.init = function(refresh, query){
 			Report.departmentMonthly(query)
 				.success(function(data){
-					var createCharts = function(data){
-						angular.forEach(data, function(project, projectKey){
-							project.chartType = 'bar';
+					angular.forEach(data, function(project){
+						project.chart = {};
+						project.chart.series = ['Productivity', 'Quality'];
+						project.chart.data = [[],[]];
+						project.chart.labels = [];
 
-							project.charts = {};
-
-							project.charts.productivity = {};
-							project.charts.productivity.data = [[]];
-							project.charts.productivity.series = ['Productivity'];
-							project.charts.productivity.labels = [];
-							
-							project.charts.quality = {};
-							project.charts.quality.data = [[]];
-							project.charts.quality.series = ['Quality'];
-							project.charts.quality.labels = [];
-
-							project.beginner_total_output = 0;
-							project.beginner_total_man_hours = 0;
-							project.beginner_total_average_output = 0;
-
-							project.moderately_experienced_total_output = 0;
-							project.moderately_experienced_total_man_hours = 0;
-							project.moderately_experienced_total_average_output = 0;							
-							
-							project.experienced_total_output = 0;
-							project.experienced_total_man_hours = 0;
-							project.experienced_total_average_output = 0;
-
-							angular.forEach(project.members, function(member, memberKey){
-								project.charts.productivity.labels.push(member.member.full_name);
-								project.charts.quality.labels.push(member.member.full_name);
-								// angular.forEach(member.performances, function(performance){
-									project.charts.productivity.data[0].push(member.monthly_productivity);
-									project.charts.quality.data[0].push(member.monthly_quality);
-								// });
-							});
-
-							angular.forEach(project.reports, function(report, reportKey){
-								var beginners = $filter('filter')(report.members, {'experience':'Beginner'}, true);
-								var moderately_experienced = $filter('filter')(report.members, {'experience':'Moderately Experienced'}, true);
-								var experienced = $filter('filter')(report.members, {'experience':'Experienced'}, true);
-
-								angular.forEach(beginners, function(beginner, beginnerKey){
-									if(beginner.performance){
-										project.beginner_total_output += beginner.performance.output;
-										project.beginner_total_man_hours += beginner.performance.hours_worked;
-										project.beginner_total_average_output += beginner.performance.average_output;
-									}
-								});
-
-								angular.forEach(moderately_experienced, function(moderately_experienced, moderatelyExperiencedKey){
-									if(moderately_experienced.performance){
-										project.moderately_experienced_total_output += moderately_experienced.performance.output;
-										project.moderately_experienced_total_man_hours += moderately_experienced.performance.hours_worked;
-										project.moderately_experienced_total_average_output += moderately_experienced.performance.average_output;
-									}
-								});
-
-								angular.forEach(experienced, function(experienced, experiencedKey){
-									if(experienced.performance){
-										project.experienced_total_output += experienced.performance.output;
-										project.experienced_total_man_hours += experienced.performance.hours_worked;
-										project.experienced_total_average_output += experienced.performance.average_output;
-									}
-								});
-							});
-
-							project.overall_total_output = project.beginner_total_output + project.moderately_experienced_total_output + project.experienced_total_output;
-							project.overall_total_man_hours = project.beginner_total_man_hours + project.moderately_experienced_total_man_hours + project.experienced_total_man_hours;
-							project.overall_total_average_output = project.beginner_total_average_output + project.moderately_experienced_total_average_output + project.experienced_total_average_output;
-
+						project.date_start = new Date(project.date_start);
+						
+						angular.forEach(project.members, function(member){
+							if(member.average_productivity && member.average_productivity){
+								project.chart.data[0].push(member.average_productivity);
+								project.chart.data[1].push(member.average_quality);
+								project.chart.labels.push(member.member.full_name);
+							}
 						});
-					}
+					});
 
 					if(query){
 						$scope.haveResults = data ? true: false;
 						$scope.report.results = data;
 						$scope.report.showCurrent = false;
 
-						createCharts(data);
+						// createCharts(data);
 					}
 					else{
 						$scope.haveCurrent = data ? true: false;
 						$scope.report.current = data;
 						$scope.report.showCurrent = true;
-						createCharts(data);
+						// createCharts(data);
+						console.log($scope.report.current);
 					}
 
 					if(refresh)

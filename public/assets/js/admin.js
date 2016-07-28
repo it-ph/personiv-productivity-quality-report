@@ -541,6 +541,7 @@ adminModule
 
 		/* Refreshes the list */
 		$scope.subheader.refresh = function(){
+			Preloader.preload();
 			$scope.report.show = false;
 			$scope.init(true);
 		};
@@ -870,15 +871,15 @@ adminModule
 		$scope.init();
 	}]);
 adminModule
-	.controller('editReportContentContainerController', ['$scope', '$mdDialog', '$state', '$mdToast', '$stateParams', 'Preloader', 'Performance', 'Position', 'Project', function($scope, $mdDialog, $state, $mdToast, $stateParams, Preloader, Performance, Position, Project){
+	.controller('editReportContentContainerController', ['$scope', '$filter', '$mdDialog', '$state', '$mdToast', '$stateParams', 'Preloader', 'Performance', 'Position', 'Project', function($scope, $filter, $mdDialog, $state, $mdToast, $stateParams, Preloader, Performance, Position, Project){
 		var reportID = $stateParams.reportID;
 		var busy = false;
 		$scope.form = {};
 
-		$scope.hours = [
-			{'value': 8.3},
-			{'value': 9.1},
-		];
+		// $scope.hours = [
+		// 	{'value': 8.3},
+		// 	{'value': 9.1},
+		// ];
 
 		$scope.details = {};
 
@@ -901,14 +902,22 @@ adminModule
 
 		Performance.report(reportID)
 			.success(function(data){
+				angular.forEach(data, function(performance){
+					var experience = $filter('filter')(performance.member.experiences, {project_id: performance.project_id}, true);
+					performance.date_started = new Date(experience[0].date_started);
+					performance.experience = experience[0].experience;
+				});
+
 				$scope.performances = data;
 				
 				$scope.details.date_start = new Date(data[0].date_start);
 				$scope.details.date_end = new Date(data[0].date_end);
-				$scope.details.project_id = data[0].project_id;
-				$scope.details.project_name = data[0].project_name;
+				$scope.details.project_name = data[0].project.name;
 				$scope.details.daily_work_hours = data[0].daily_work_hours;
-				$scope.details.first_letter = data[0].first_letter;
+				$scope.details.first_letter = data[0].project.name.charAt(0).toUpperCase();
+				$scope.details.weekly_hours = (($scope.details.date_end - $scope.details.date_start) / (1000*60*60*24) + 1) * $scope.details.daily_work_hours;
+				$scope.details.date_start = $scope.details.date_start.toDateString();
+				$scope.details.date_end = $scope.details.date_end.toDateString();
 
 				Position.project(data[0].project_id)
 					.success(function(data){
@@ -928,9 +937,10 @@ adminModule
 				});
 		};
 
-		$scope.checkLimit = function(idx){
+		$scope.checkLimit = function(data){
+			var idx = $scope.performances.indexOf(data);
 			// gets the number of days worked in a day then multiply it to the daily work hours to get weekly limit
-			$scope.details.weekly_hours = (($scope.details.date_end - $scope.details.date_start) / (1000*60*60*24) + 1) * $scope.details.daily_work_hours;
+			$scope.details.current_hours_worked = $scope.performances[idx].hours_worked;
 			Performance.checkLimitEdit($scope.performances[idx].member_id, $scope.details)
 				.success(function(data){
 					$scope.performances[idx].limit = data;
@@ -945,6 +955,12 @@ adminModule
 				item.hours_worked = null;
 				$scope.checkLimit(key);
 			});
+		}
+
+		$scope.checkBalance = function(data){
+			var index = $scope.performances.indexOf(data);
+			$scope.performances[index].balance = $scope.performances[index].limit - $scope.performances[index].hours_worked;
+			$scope.performances[index].balance = $scope.performances[index].balance ? $scope.performances[index].balance.toFixed(2) : 0;
 		}
 
 		/**
@@ -1097,43 +1113,7 @@ adminModule
 		/* Refreshes the list */
 		$scope.subheader.refresh = function(){
 			Preloader.preload();
-			$scope.report = {};
-			$scope.reports = [];
-			$scope.charts = [];
-			$scope.chart = {};
-			$scope.chart.series = ['Productivity', 'Quality'];
-
-			Report.monthly()
-				.success(function(data){
-					$scope.reports = data;
-					
-					angular.forEach(data, function(report, reportIdx){
-						$scope.charts.push([{}]);
-						$scope.charts[reportIdx].data = [];
-						$scope.charts[reportIdx].data.push([]); // index 0 is productivity
-						$scope.charts[reportIdx].data.push([]); // index 1 is quality
-						$scope.charts[reportIdx].labels = [];
-						$scope.charts[reportIdx].positions = [];
-						if(report.length){
-							angular.forEach(report[0].positions, function(position, keyPostion){
-								$scope.charts[reportIdx].positions.push(position.name);
-							});
-							$scope.charts[reportIdx].position_head_count = report[0].position_head_count;
-						}
-
-						angular.forEach(report, function(member, memberIdx){
-							$scope.charts[reportIdx].labels.push(member.full_name);
-
-							$scope.charts[reportIdx].data[0].push(member.productivity_average);
-							$scope.charts[reportIdx].data[1].push(member.quality_average);
-						});
-					});
-
-					Preloader.stop();
-				})
-				.error(function(){
-					Preloader.error();
-				})
+			$scope.init(true);
 		};
 
 		$scope.subheader.download = function(){
@@ -1191,43 +1171,38 @@ adminModule
 
 		// $scope.rightSidenav.show = true;
 
-		$scope.charts = [];
-		$scope.chart = {};
-		$scope.chart.series = ['Productivity', 'Quality'];
+		$scope.init = function(refresh){
+			Report.monthly()
+				.success(function(data){
+					angular.forEach(data, function(report){
+						report.chart = {};
+						report.chart.series = ['Productivity', 'Quality'];
+						report.chart.data = [[],[]];
+						report.chart.labels = [];
 
-		Report.monthly()
-			.success(function(data){
-				angular.forEach(data, function(report){
-					report.date_start = new Date(report.date_start);
-				});
-				
-				$scope.reports = data;
+						report.date_start = new Date(report.date_start);
+						
+						angular.forEach(report.members, function(member){
+							if(member.average_productivity && member.average_productivity){
+								report.chart.data[0].push(member.average_productivity);
+								report.chart.data[1].push(member.average_quality);
+								report.chart.labels.push(member.member.full_name);
+							}
+						});
+					});
+					
+					$scope.reports = data;
 
-				// angular.forEach(data, function(report, reportIdx){
-				// 	$scope.charts.push([{}]);
-				// 	$scope.charts[reportIdx].data = [];
-				// 	$scope.charts[reportIdx].data.push([]); // index 0 is productivity
-				// 	$scope.charts[reportIdx].data.push([]); // index 1 is quality
-				// 	$scope.charts[reportIdx].labels = [];
-				// 	$scope.charts[reportIdx].positions = [];
-				// 	if(report.length){
-				// 		angular.forEach(report[0].positions, function(position, keyPostion){
-				// 			$scope.charts[reportIdx].positions.push(position.name);
-				// 		});
-				// 		$scope.charts[reportIdx].position_head_count = report[0].position_head_count;
-				// 	}
+					if(refresh){
+						Preloader.stop();
+						Preloader.stop();
+					}
+				})
+				.error(function(){
+					Preloader.error();
+				})
+		}
 
-				// 	angular.forEach(report, function(member, memberIdx){
-				// 		$scope.charts[reportIdx].labels.push(member.full_name);
-
-				// 		$scope.charts[reportIdx].data[0].push(member.productivity_average);
-				// 		$scope.charts[reportIdx].data[1].push(member.quality_average);
-				// 	});
-				// });
-			})
-			.error(function(){
-				Preloader.error();
-			})
 
 		$scope.form = {};
 
@@ -1240,6 +1215,7 @@ adminModule
 				});
 			}
 			else{
+
 				/* Starts Preloader */
 				Preloader.preload();
 				/**
@@ -1247,28 +1223,22 @@ adminModule
 				*/
 				Report.searchMonthly($scope.report)
 					.success(function(data){
-						$scope.reports = data;
-						angular.forEach(data, function(report, reportIdx){
-							$scope.charts.push([{}]);
-							$scope.charts[reportIdx].data = [];
-							$scope.charts[reportIdx].data.push([]); // index 0 is productivity
-							$scope.charts[reportIdx].data.push([]); // index 1 is quality
-							$scope.charts[reportIdx].labels = [];
-							$scope.charts[reportIdx].positions = [];
-							if(report.length){
-								angular.forEach(report[0].positions, function(position, keyPostion){
-									$scope.charts[reportIdx].positions.push(position.name);
-								});
-								$scope.charts[reportIdx].position_head_count = report[0].position_head_count;
-							}
+						angular.forEach(data, function(report){
+							report.chart = {};
+							report.chart.series = ['Productivity', 'Quality'];
+							report.chart.data = [[],[]];
+							report.chart.labels = [];
 
-							angular.forEach(report, function(member, memberIdx){
-								$scope.charts[reportIdx].labels.push(member.full_name);
-
-								$scope.charts[reportIdx].data[0].push(member.productivity_average);
-								$scope.charts[reportIdx].data[1].push(member.quality_average);
+							report.date_start = new Date(report.date_start);
+							
+							angular.forEach(report.members, function(member){
+								report.chart.data[0].push(member.average_productivity);
+								report.chart.data[1].push(member.average_quality);
+								report.chart.labels.push(member.member.full_name);
 							});
 						});
+						
+						$scope.reports = data;
 						Preloader.stop();
 					})
 					.error(function(){
@@ -1277,16 +1247,19 @@ adminModule
 			}
 		}
 
-		$scope.test = function(data){
+		$scope.view = function(data, dateStart, dateEnd){
+			data.date_start = dateStart;
+			data.date_end = dateEnd;
 			Preloader.set(data);
-
 			$mdDialog.show({
 		    	controller: 'performanceMonthlyViewDialogController',
-		    	templateUrl: '/app/components/admin/templates/dialogs/performance-monthly-view.dialog.template.html',
-		    	parent: angular.element(document.body),
-		      	clickOutsideToClose:true
+		      	templateUrl: '/app/components/admin/templates/dialogs/performance-monthly-view.dialog.template.html',
+		      	parent: angular.element(document.body),
+		      	clickOutsideToClose:true,
 		    });
 		}
+
+		$scope.init();
 	}]);
 adminModule
 	.controller('positionsContentContainerController', ['$scope', '$state', '$stateParams', '$mdDialog', 'Department', 'Preloader', 'Project', 'Position', function($scope, $state, $stateParams, $mdDialog, Department, Preloader, Project, Position){
@@ -2458,12 +2431,21 @@ adminModule
 		}
 	}]);
 adminModule
-	.controller('performanceMonthlyViewDialogController', ['$scope', '$mdDialog', 'Performance', 'Preloader', function($scope, $mdDialog, Performance, Preloader){
+	.controller('performanceMonthlyViewDialogController', ['$scope', '$mdDialog', 'Performance', 'Preloader', function($scope, $mdDialog, Performance, Preloader){		
 		$scope.member = Preloader.get();
 
 		Performance.monthly($scope.member)
 			.success(function(data){
-				$scope.performances = data;
+				$scope.member = data;
+
+				angular.forEach(data.positions, function(position){
+					angular.forEach(position.performances, function(performance){
+						performance.date_start = new Date(performance.date_start);
+						performance.date_end = new Date(performance.date_end);
+					})
+				});
+
+				$scope.positions = data.positions;
 			})
 			.error(function(){
 				Preloader.error();
