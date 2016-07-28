@@ -107,6 +107,11 @@ teamLeaderModule
 					$scope.members = data;
 					$scope.resetMembers();
 				});
+
+			Project.show(projectID)
+				.success(function(data){
+					$scope.project = data;
+				});
 		};
 
 		/**
@@ -147,6 +152,9 @@ teamLeaderModule
 		 * Object for content view
 		 *
 		*/
+		$scope.rightSidenav = {};
+		$scope.rightSidenav.show = true;
+
 		$scope.fab = {};
 
 		$scope.fab.icon = 'mdi-check';
@@ -220,10 +228,13 @@ teamLeaderModule
 			}
 		};
 
-		$scope.checkLimit = function(idx){
+		$scope.checkLimit = function(data){
+			console.log(data);
+			var idx = $scope.members.indexOf(data);
+			console.log(idx);
 			// gets the number of days worked in a day then multiply it to the daily work hours to get weekly limit
 			$scope.details.weekly_hours = ((new Date($scope.details.date_end) - new Date($scope.details.date_start)) / (1000*60*60*24) + 1) * $scope.details.daily_work_hours;
-			Performance.checkLimit($scope.members[idx].id, $scope.details)
+			Performance.checkLimit($scope.members[idx].member.id, $scope.details)
 				.success(function(data){
 					$scope.members[idx].limit = data;
 				})
@@ -236,9 +247,19 @@ teamLeaderModule
 			// $scope.checkLimit();
 			angular.forEach($scope.members, function(item, key){
 				item.hours_worked = null;
-				$scope.checkLimit(key);
+				$scope.checkLimit(item);
 			});
 		}
+
+		$scope.checkBalance = function(data){
+			var index = $scope.members.indexOf(data);
+			$scope.members[index].balance = $scope.members[index].limit - $scope.members[index].hours_worked;
+			$scope.members[index].balance = $scope.members[index].balance ? $scope.members[index].balance.toFixed(2) : 0;
+		}
+
+		// $scope.checkProgramme = function(idx){
+		// 	$scope.details.programme_id = $scope.work_hours[idx].id;
+		// }
 
 		$scope.init = function(){
 			Member.updateTenure()

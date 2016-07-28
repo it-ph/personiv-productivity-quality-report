@@ -1,33 +1,33 @@
 <!-- Search reports -->
-<div class="fade-transition" layout="column" flex ng-if="report.results && !report.show">
-	<div layout="row" layout-padding flex ng-repeat="details in report.results | filter: projects[filterData.project].name | filter:filterDate.date_start | filter:filterDate.date_end | filter: toolbar.userInput">
+<div class="fade-transition" flex ng-if="report.results && !report.show">
+	<div layout="row" layout-padding flex ng-repeat="report in report.results | filter: projects[filterData.project].name | filter:filterDate.date_start | filter:filterDate.date_end | filter: toolbar.userInput">
 		<div flex>
 			<div class="panel panel-default">
 				<div class="panel-heading">
-					<span class="primary-text md-title">{{ details[0].date_start_formatted }} to {{ details[0].date_end_formatted }}</span>
+					<span class="primary-text md-title">{{ report.date_start | date: 'MMMM dd, yyyy'}} to {{ report.date_end | date: 'MMMM dd, yyyy'}}</span>
 				</div>
 				<div class="panel-body" layout="column">
-					<div layout="row" flex ng-if="details.showCharts" class="fade-transition">
+					<div layout="row" flex ng-if="report.showCharts" class="fade-transition">
 						<div layout="column" flex="65">
-							<md-radio-group ng-model="details.chartType" layout="row">
+							<md-radio-group ng-model="report.chartType" layout="row">
 								<md-radio-button value="bar" class="md-primary">Bar</md-radio-button>
 								<md-radio-button value="line" class="md-primary">Line</md-radio-button>
 							</md-radio-group>
 							<div layout="row">
 								<div flex>
 									<!-- Bar -->
-									<canvas ng-if="details.chartType=='bar'" class="chart chart-bar" chart-data="details.charts.productivity.data" chart-labels="details.charts.productivity.labels"  chart-series="details.charts.productivity.series"></canvas>
+									<canvas ng-if="report.chartType=='bar'" class="chart chart-bar" chart-data="report.charts.productivity.data" chart-labels="report.charts.productivity.labels"  chart-series="report.charts.productivity.series"></canvas>
 									<!-- Line -->
-									<canvas ng-if="details.chartType=='line'" class="chart chart-line" chart-data="details.charts.productivity.data" chart-labels="details.charts.productivity.labels"  chart-series="details.charts.productivity.series"></canvas>
+									<canvas ng-if="report.chartType=='line'" class="chart chart-line" chart-data="report.charts.productivity.data" chart-labels="report.charts.productivity.labels"  chart-series="report.charts.productivity.series"></canvas>
 									
 									<h3 class="md-subhead center-text">Productivity</h3>					
 								</div>
 								<div flex>					
 									<!-- Bar -->
-									<canvas ng-if="details.chartType=='bar'" class="chart chart-bar" chart-data="details.charts.quality.data" chart-labels="details.charts.quality.labels" chart-series="details.charts.quality.series" chart-colours="['#FF4081']"></canvas>
+									<canvas ng-if="report.chartType=='bar'" class="chart chart-bar" chart-data="report.charts.quality.data" chart-labels="report.charts.quality.labels" chart-series="report.charts.quality.series" chart-colours="['#FF4081']"></canvas>
 									<!-- Line -->
-									<canvas ng-if="details.chartType=='line'" class="chart chart-line" chart-data="details.charts.quality.data" chart-labels="details.charts.quality.labels"  chart-series="details.charts.quality.series" chart-colours="['#FF4081']"></canvas>
-
+									<canvas ng-if="report.chartType=='line'" class="chart chart-line" chart-data="report.charts.quality.data" chart-labels="report.charts.quality.labels"  chart-series="report.charts.quality.series" chart-colours="['#FF4081']"></canvas>
+					
 									<h3 class="md-subhead center-text">Quality</h3>					
 								</div>
 							</div>
@@ -39,75 +39,57 @@
 								</tr>
 								<tr>
 									<th>Productivity</th>
-									<!-- ng-repeat positions -->
-									<th ng-repeat="position in report.targets[$index].positions">{{position.name}}</th>
+									<th ng-repeat="position in report.project.positions">{{position.name}}</th>
 								</tr>
 								<tr>
 									<td>Beginner (less than 3 months)</td>
-									<td ng-repeat="productivity in report.targets[$index].beginner_productivity">{{productivity}}</td>
+									<td ng-repeat="beginner in report.project.beginner">{{beginner}}</td>
 								</tr>
 								<tr>
 									<td>Moderately Experienced (3 to 6 months)</td>
-									<td ng-repeat="productivity in report.targets[$index].moderately_experienced_productivity">{{productivity}}</td>
+									<td ng-repeat="moderately_experience in report.project.moderately_experienced">{{moderately_experience}}</td>
 								</tr>
 								<tr>
 									<td>Experienced (6 months and beyond)</td>
-									<td ng-repeat="productivity in report.targets[$index].experienced_productivity">{{productivity}}</td>
+									<td ng-repeat="experience in report.project.experienced">{{experience}}</td>
 								</tr>
 								<tr>
 									<th>Quality</th>
-									<td ng-repeat="quality in report.targets[$index].experienced_quality track by $index">{{quality}}%</td>
-								</tr>
-							</table>
-							<table class="table">
-								<tr>
-									<th colspan="4">Top Performers</th>
-								</tr>
-								<tr>
-									<th>Name</th>
-									<th>Position</th>
-									<th>Productivity</th>
-									<th>Quality</th>
-								</tr>
-								<tr ng-repeat="performer in report.topPerformers[$index]">
-									<td>{{ performer.full_name }}</td>
-									<td>{{ performer.position }}</td>
-									<td>{{ performer.productivity | number:1}}%</td>
-									<td>{{ performer.quality | number:1}}%</td>
+									<td ng-repeat="quality in report.project.quality track by $index">{{quality}}%</td>
 								</tr>
 							</table>
 						</div>					
 					</div>
-					<h2 class="primary-text md-headline">{{ details[0].project }}</h2>
+					<h2 class="primary-text md-headline">{{ report.project.name }}</h2>
 					<div layout="row" layout-align="space-between center">
 						<!-- <h3 class="secondary-text md-subhead">Daily Work Hours: {{ details[0].daily_work_hours | number:1 }} hours</h3> -->
 						<div layout="row">
-							<md-switch class="md-primary" ng-model="details.showCharts" aria-label="details.showCharts">
-							    <span ng-if="!details.showCharts">Show</span> <span ng-if="details.showCharts">Hide</span> Charts
+							<md-switch class="md-primary" ng-model="report.showCharts" aria-label="report.showCharts">
+							    <span ng-if="!report.showCharts">Show</span> <span ng-if="report.showCharts">Hide</span> Charts
 							</md-switch>
 							<md-menu>
-						    	<md-button aria-label="Open menu" class="md-icon-button" ng-click="$mdOpenMenu($event)">
-							        <md-icon class="mdi mdi-dots-vertical grey"></md-icon>
+						    	<md-button aria-label="Open phone interactions menu" class="md-icon-button" ng-click="$mdOpenMenu($event)">
+							        <md-icon class="mdi mdi-dots-horizontal grey"></md-icon>
 							        <md-tooltip>Menu</md-tooltip>
 							    </md-button>
 							    <md-menu-content width="2">
 							        <md-menu-item ng-if="user.role!='manager'">
 							          	<!-- Edit -->
-										<md-button ng-click="editReport(report.details.data[$index].id)">
+										<md-button ng-click="editReport(report.id)">
 											<md-icon class="mdi mdi-pencil grey"></md-icon>
 											Edit
 										</md-button>
 							        </md-menu-item>
-							        <md-menu-item>
-										<!-- Download -->
-										<md-button href="/report-download/{{ report.details.data[$index].id }}" target="_blank">
-											<md-icon class="mdi mdi-download grey"></md-icon>
-											Download
-										</md-button>
-							        </md-menu-item>
+							        <!-- <md-menu-item>
+							        										Download
+							        										<md-button href="/report-download/{{ report.id }}" target="_blank">
+							        											<md-icon class="mdi mdi-download grey"></md-icon>
+							        											Download
+							        										</md-button>
+							        </md-menu-item> -->
 							        <md-menu-item ng-if="user.role!='manager'">
 										<!-- Delete -->
-										<md-button ng-click="deleteReport(report.details.data[$index].report_id)">
+										<md-button ng-click="deleteReport(report.id)">
 											<md-icon class="mdi mdi-delete grey"></md-icon>
 											Delete
 										</md-button>
@@ -221,9 +203,9 @@
 									</a>
 								</th>
 							</tr>
-							<tr ng-repeat="item in details | filter:rightSidenav.selectedItem | filter: rightSidenav.searchText | filter: filterData.position | filter: toolbar.userInput | orderBy:sortType:sortReverse" ng-class="{shaded:hover}" ng-mouseenter="hover = true" ng-mouseleave="hover = false">
-								<td>{{ item.full_name }}</td>
-								<td>{{ item.position }}</td>
+							<tr ng-repeat="item in report.performances | filter:rightSidenav.selectedItem | filter: rightSidenav.searchText | filter: filterData.position | filter: toolbar.userInput | orderBy:sortType:sortReverse" ng-class="{shaded:hover}" ng-mouseenter="hover = true" ng-mouseleave="hover = false">
+								<td>{{ item.member.full_name }}</td>
+								<td>{{ item.position.name }}</td>
 								<td>{{ item.experience }}</td>
 								<td>{{ item.hours_worked | number:1 }}</td>
 								<td>{{ item.output | number:1 }}</td>
@@ -251,42 +233,36 @@
 		</md-card-content>
 	</md-card>
 </div>
-
 <!-- Paginated Data -->
-<div class="fade-transition" ng-if="report.show" flex infinite-scroll='report.paginateLoad()' infinite-scroll-distance="2" infinite-scroll-disabled="report.busy" infinite-scroll-parent>
-	<div layout="row" layout-padding flex ng-repeat="details in report.paginated | filter: projects[filterData.project].name | filter:filterDate.date_start | filter:filterDate.date_end | filter: toolbar.userInput">
+<div class="fade-transition" ng-if="report.show" infinite-scroll='report.paginateLoad()' infinite-scroll-distance="2" infinite-scroll-disabled="report.busy" infinite-scroll-parent>
+	<div layout="row" layout-padding flex ng-repeat="report in report.paginated | filter: projects[filterData.project].name | filter:filterDate.date_start | filter:filterDate.date_end | filter: toolbar.userInput">
 		<div flex>
 			<div class="panel panel-default">
 				<div class="panel-heading">
-					<span class="primary-text md-title">{{ details[0].date_start_formatted }} to {{ details[0].date_end_formatted }}</span>
+					<span class="primary-text md-title">{{ report.date_start | date: 'MMMM dd, yyyy'}} to {{ report.date_end | date: 'MMMM dd, yyyy'}}</span>
 				</div>
 				<div class="panel-body" layout="column">
-					<div layout="row" flex ng-if="details.showCharts" class="fade-transition">
-						<!-- <div flex="65">						
-							Chart
-							<canvas id="bar-{{$index}}" class="chart chart-bar" chart-data="charts.data[$index]" chart-labels="charts.labels" chart-legend="true" chart-series="charts.series[$index]">
-							</canvas>
-						</div> -->
+					<div layout="row" flex ng-if="report.showCharts" class="fade-transition">
 						<div layout="column" flex="65">
-							<md-radio-group ng-model="details.chartType" layout="row">
+							<md-radio-group ng-model="report.chartType" layout="row">
 								<md-radio-button value="bar" class="md-primary">Bar</md-radio-button>
 								<md-radio-button value="line" class="md-primary">Line</md-radio-button>
 							</md-radio-group>
 							<div layout="row">
 								<div flex>
 									<!-- Bar -->
-									<canvas ng-if="details.chartType=='bar'" class="chart chart-bar" chart-data="details.charts.productivity.data" chart-labels="details.charts.productivity.labels"  chart-series="details.charts.productivity.series"></canvas>
+									<canvas ng-if="report.chartType=='bar'" class="chart chart-bar" chart-data="report.charts.productivity.data" chart-labels="report.charts.productivity.labels"  chart-series="report.charts.productivity.series"></canvas>
 									<!-- Line -->
-									<canvas ng-if="details.chartType=='line'" class="chart chart-line" chart-data="details.charts.productivity.data" chart-labels="details.charts.productivity.labels"  chart-series="details.charts.productivity.series"></canvas>
+									<canvas ng-if="report.chartType=='line'" class="chart chart-line" chart-data="report.charts.productivity.data" chart-labels="report.charts.productivity.labels"  chart-series="report.charts.productivity.series"></canvas>
 									
 									<h3 class="md-subhead center-text">Productivity</h3>					
 								</div>
 								<div flex>					
 									<!-- Bar -->
-									<canvas ng-if="details.chartType=='bar'" class="chart chart-bar" chart-data="details.charts.quality.data" chart-labels="details.charts.quality.labels" chart-series="details.charts.quality.series" chart-colours="['#FF4081']"></canvas>
+									<canvas ng-if="report.chartType=='bar'" class="chart chart-bar" chart-data="report.charts.quality.data" chart-labels="report.charts.quality.labels" chart-series="report.charts.quality.series" chart-colours="['#FF4081']"></canvas>
 									<!-- Line -->
-									<canvas ng-if="details.chartType=='line'" class="chart chart-line" chart-data="details.charts.quality.data" chart-labels="details.charts.quality.labels"  chart-series="details.charts.quality.series" chart-colours="['#FF4081']"></canvas>
-
+									<canvas ng-if="report.chartType=='line'" class="chart chart-line" chart-data="report.charts.quality.data" chart-labels="report.charts.quality.labels"  chart-series="report.charts.quality.series" chart-colours="['#FF4081']"></canvas>
+					
 									<h3 class="md-subhead center-text">Quality</h3>					
 								</div>
 							</div>
@@ -298,51 +274,33 @@
 								</tr>
 								<tr>
 									<th>Productivity</th>
-									<!-- ng-repeat positions -->
-									<th ng-repeat="position in report.targets[$index].positions">{{position.name}}</th>
+									<th ng-repeat="position in report.project.positions">{{position.name}}</th>
 								</tr>
 								<tr>
 									<td>Beginner (less than 3 months)</td>
-									<td ng-repeat="productivity in report.targets[$index].beginner_productivity">{{productivity}}</td>
+									<td ng-repeat="beginner in report.project.beginner">{{beginner}}</td>
 								</tr>
 								<tr>
 									<td>Moderately Experienced (3 to 6 months)</td>
-									<td ng-repeat="productivity in report.targets[$index].moderately_experienced_productivity">{{productivity}}</td>
+									<td ng-repeat="moderately_experience in report.project.moderately_experienced">{{moderately_experience}}</td>
 								</tr>
 								<tr>
 									<td>Experienced (6 months and beyond)</td>
-									<td ng-repeat="productivity in report.targets[$index].experienced_productivity">{{productivity}}</td>
+									<td ng-repeat="experience in report.project.experienced">{{experience}}</td>
 								</tr>
 								<tr>
 									<th>Quality</th>
-									<td ng-repeat="quality in report.targets[$index].experienced_quality track by $index">{{quality}}%</td>
-								</tr>
-							</table>
-							<table class="table">
-								<tr>
-									<th colspan="4">Top Performers</th>
-								</tr>
-								<tr>
-									<th>Name</th>
-									<th>Position</th>
-									<th>Productivity</th>
-									<th>Quality</th>
-								</tr>
-								<tr ng-repeat="performer in report.topPerformers[$index]">
-									<td>{{ performer.full_name }}</td>
-									<td>{{ performer.position }}</td>
-									<td>{{ performer.productivity | number:1}}%</td>
-									<td>{{ performer.quality | number:1}}%</td>
+									<td ng-repeat="quality in report.project.quality track by $index">{{quality}}%</td>
 								</tr>
 							</table>
 						</div>					
 					</div>
-					<h2 class="primary-text md-headline">{{ details[0].project }}</h2>
+					<h2 class="primary-text md-headline">{{ report.project.name }}</h2>
 					<div layout="row" layout-align="space-between center">
 						<!-- <h3 class="secondary-text md-subhead">Daily Work Hours: {{ details[0].daily_work_hours | number:1 }} hours</h3> -->
 						<div layout="row">
-							<md-switch class="md-primary" ng-model="details.showCharts" aria-label="details.showCharts">
-							    <span ng-if="!details.showCharts">Show</span> <span ng-if="details.showCharts">Hide</span> Charts
+							<md-switch class="md-primary" ng-model="report.showCharts" aria-label="report.showCharts">
+							    <span ng-if="!report.showCharts">Show</span> <span ng-if="report.showCharts">Hide</span> Charts
 							</md-switch>
 							<md-menu>
 						    	<md-button aria-label="Open phone interactions menu" class="md-icon-button" ng-click="$mdOpenMenu($event)">
@@ -352,21 +310,21 @@
 							    <md-menu-content width="2">
 							        <md-menu-item ng-if="user.role!='manager'">
 							          	<!-- Edit -->
-										<md-button ng-click="editReport(report.details.data[$index].id)">
+										<md-button ng-click="editReport(report.id)">
 											<md-icon class="mdi mdi-pencil grey"></md-icon>
 											Edit
 										</md-button>
 							        </md-menu-item>
-							        <md-menu-item>
-										<!-- Download -->
-										<md-button href="/report-download/{{ report.details.data[$index].id }}" target="_blank">
-											<md-icon class="mdi mdi-download grey"></md-icon>
-											Download
-										</md-button>
-							        </md-menu-item>
+							        <!-- <md-menu-item>
+							        										Download
+							        										<md-button href="/report-download/{{ report.id }}" target="_blank">
+							        											<md-icon class="mdi mdi-download grey"></md-icon>
+							        											Download
+							        										</md-button>
+							        </md-menu-item> -->
 							        <md-menu-item ng-if="user.role!='manager'">
 										<!-- Delete -->
-										<md-button ng-click="deleteReport(report.details.data[$index].id)">
+										<md-button ng-click="deleteReport(report.id)">
 											<md-icon class="mdi mdi-delete grey"></md-icon>
 											Delete
 										</md-button>
@@ -449,10 +407,6 @@
 										<span>Average Output</span>
 										<md-icon ng-show="sortType == 'average_output' && !sortReverse" class="mdi mdi-chevron-down grey"></md-icon>
 										<md-icon ng-show="sortType == 'average_output' && sortReverse" class="mdi mdi-chevron-up grey"></md-icon>
-										<!-- <md-tooltip>
-											<span ng-show="sortReverse">Ascending</span>
-											<span ng-show="!sortReverse">Descending</span>
-										</md-tooltip> -->
 									</a>
 									<md-tooltip>Output / Hours Worked * Shift Hours</md-tooltip>
 								</th>
@@ -461,10 +415,6 @@
 										<span>Productivity</span>
 										<md-icon ng-show="sortType == 'productivity' && !sortReverse" class="mdi mdi-chevron-down grey"></md-icon>
 										<md-icon ng-show="sortType == 'productivity' && sortReverse" class="mdi mdi-chevron-up grey"></md-icon>
-										<!-- <md-tooltip>
-											<span ng-show="sortReverse">Ascending</span>
-											<span ng-show="!sortReverse">Descending</span>
-										</md-tooltip> -->
 									</a>
 									<md-tooltip>Average Output / Target Output * Shift Hours</md-tooltip>
 								</th>
@@ -473,10 +423,6 @@
 										<span>Quality</span>
 										<md-icon ng-show="sortType == 'quality' && !sortReverse" class="mdi mdi-chevron-down grey"></md-icon>
 										<md-icon ng-show="sortType == 'quality' && sortReverse" class="mdi mdi-chevron-up grey"></md-icon>
-										<!-- <md-tooltip>
-											<span ng-show="sortReverse">Ascending</span>
-											<span ng-show="!sortReverse">Descending</span>
-										</md-tooltip> -->
 									</a>
 									<md-tooltip>1 - Output w/Error(s) / Output</md-tooltip>
 								</th>
@@ -492,9 +438,9 @@
 									</a>
 								</th>
 							</tr>
-							<tr ng-repeat="item in details | filter:rightSidenav.selectedItem | filter: rightSidenav.searchText | filter: filterData.position | filter: toolbar.userInput | orderBy:sortType:sortReverse" ng-class="{shaded:hover}" ng-mouseenter="hover = true" ng-mouseleave="hover = false">
-								<td>{{ item.full_name }}</td>
-								<td>{{ item.position }}</td>
+							<tr ng-repeat="item in report.performances | filter:rightSidenav.selectedItem | filter: rightSidenav.searchText | filter: filterData.position | filter: toolbar.userInput | orderBy:sortType:sortReverse" ng-class="{shaded:hover}" ng-mouseenter="hover = true" ng-mouseleave="hover = false">
+								<td>{{ item.member.full_name }}</td>
+								<td>{{ item.position.name }}</td>
 								<td>{{ item.experience }}</td>
 								<td>{{ item.hours_worked | number:1 }}</td>
 								<td>{{ item.output | number:1 }}</td>

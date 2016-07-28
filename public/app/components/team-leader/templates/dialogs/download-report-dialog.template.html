@@ -111,6 +111,32 @@
 						<div ng-messages-include="/app/shared/templates/validation-message-report.html"></div>
 					</div>
 				</md-input-container>
+				<div layout="row">				
+					<!-- Project -->
+					<md-input-container flex>
+						<label>Project</label>
+						<md-select name="Project" required ng-model="details.project" ng-change="getPositions()">
+							<md-option ng-repeat="project in projects" value="{{ project.id }}">
+								{{ project.name }}
+							</md-option>
+						</md-select>
+						<div ng-messages="downloadReportForm.Project.$error" ng-if="downloadReportForm.Project.$touched">
+							<div ng-messages-include="/app/shared/templates/validation-message-report.html"></div>
+						</div>
+					</md-input-container>
+					<!-- Position -->
+					<md-input-container flex>
+						<label>Position</label>
+						<md-select name="Position" required ng-model="details.position">
+							<md-option ng-repeat="position in positions" value="{{ position.id }}">
+								{{ position.name }}
+							</md-option>
+						</md-select>
+						<div ng-messages="downloadReportForm.Position.$error" ng-if="downloadReportForm.Position.$touched">
+							<div ng-messages-include="/app/shared/templates/validation-message-report.html"></div>
+						</div>
+					</md-input-container>
+				</div>
 			</div>
 		</md-dialog-content>
 	</form>

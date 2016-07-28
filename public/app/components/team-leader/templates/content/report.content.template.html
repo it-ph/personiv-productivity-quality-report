@@ -1,5 +1,5 @@
 <div class="fade-transition" ng-if="show">
-	<div flex flex-gt-sm="70" layout-padding layout-margin>
+	<div flex layout-margin>
 		<form name="form.createReportForm" novalidate>
 			<!-- Report Details -->
 			<md-card>
@@ -81,6 +81,7 @@
 							<div ng-messages="form.createReportForm.WorkHours.$error" ng-if="form.createReportForm.WorkHours.$touched">
 								<div ng-messages-include="/app/shared/templates/validation-message-report.html"></div>
 							</div>
+							<div class="hint" ng-if="details.weekly_hours">Maximum work hours can be rendered is {{details.weekly_hours}} hours</div>
 						</md-input-container>
 					</div>
 				</md-card-content>		
@@ -105,7 +106,7 @@
 									</p>
 								</div>
 							</md-list-item>
-							<md-checkbox ng-change="checkLimit($index)" ng-if="member.limit > 0" ng-model="member.include">
+							<md-checkbox ng-change="checkLimit(member)" ng-if="member.limit > 0" ng-model="member.include">
 								<md-tooltip>Mark to Include</md-tooltip>
 							</md-checkbox>
 						</md-list>
@@ -130,23 +131,31 @@
 										<input name="Output{{$index}}" type="number" min="0.1" required ng-model="member.output">
 										<div class="hint" ng-if="!showErrors">Output must not be less than one.</div>
 										<div ng-messages="form.createReportForm['Output' + $index].$error" ng-if="form.createReportForm['Output' + $index].$touched && showErrors">
-											<div ng-messages-include="/app/shared/templates/validation-message.html"></div>
+											<div ng-message="required">Total output is required.</div>
+											<div ng-message="min">Total Output must not be lower than one.</div>
 										</div>
 									</md-input-container>
-									<!-- Total Total Hours Worked -->
+									<!-- Total Hours Worked -->
 									<md-input-container flex>
 										<label>Total Hours Worked</label>
-										<input name="HoursWorked{{$index}}" type="number" min="0.1" max="{{ member.limit }}" step="0.5" required ng-model="member.hours_worked">
+										<input name="HoursWorked{{$index}}" type="number" min="0.1" max="{{ member.limit }}" step="0.5" required ng-model="member.hours_worked" ng-blur="checkBalance(member)">
 										<div ng-messages="form.createReportForm['HoursWorked' + $index].$error" ng-if="form.createReportForm['HoursWorked' + $index].$touched">
-											<div ng-messages-include="/app/shared/templates/validation-message.html"></div>
+											<!-- <div ng-messages-include="/app/shared/templates/validation-message.html"></div> -->
+											<div ng-message="required">Total hours worked is required.</div>
+											<div ng-message="min">Total hours worked must not be less than 0</div>
+											<div ng-message="max">Total hours worked cannot be more than {{ member.limit }}.</div>
 										</div>
+										<div class="hint" ng-if="member.balance">{{ member.member.full_name }} still needs to render {{member.balance}} hour(s)</div>
 									</md-input-container>
 									<!-- Total Output w/error -->
 									<md-input-container flex>
 										<label>Total Output w/Error</label>
 										<input name="OutputError{{$index}}" type="number" min="0" max="{{member.output}}" required ng-model="member.output_error">
 										<div ng-messages="form.createReportForm['OutputError' + $index].$error" ng-if="form.createReportForm['OutputError' + $index].$touched">
-											<div ng-messages-include="/app/shared/templates/validation-message-report.html"></div>
+											<!-- <div ng-messages-include="/app/shared/templates/validation-message-report.html"></div> -->
+											<div ng-message="required">Total output with error worked is required.</div>
+											<div ng-message="min">Total output with error must not be less than 0.</div>
+											<div ng-message="max">Total output with error cannot be more than total output.</div>
 										</div>
 									</md-input-container>
 								</div>

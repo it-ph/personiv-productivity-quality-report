@@ -10,52 +10,23 @@ adminModule
 
 		$scope.experiences = [
 			{
-				'name': 'Beginner',
-				'duration': 'less than 3 months',
-			},
-			{
-				'name': 'Moderately Experienced',
-				'duration': '3 to 6 months',
-			},
-			{
-				'name': 'Experienced',
-				'duration': '6 months and beyond',
-			},
-		];
-
-		$scope.productivity = [
-			{
-				'type': 'Productivity',
 				'experience': 'Beginner',
+				// 'duration': 'less than 3 months',
 			},
 			{
-				'type': 'Productivity',
 				'experience': 'Moderately Experienced',
+				// 'duration': '3 to 6 months',
 			},
 			{
-				'type': 'Productivity',
 				'experience': 'Experienced',
-			},
-		];
-
-		$scope.quality = [
-			{
-				'type': 'Quality',
-				'experience': 'Beginner',
-			},
-			{
-				'type': 'Quality',
-				'experience': 'Moderately Experienced',
-			},
-			{
-				'type': 'Quality',
-				'experience': 'Experienced',
+				// 'duration': '6 months and beyond',
 			},
 		];
 
 		Project.show(projectID)
 			.success(function(data){
 				$scope.project = data;
+				$scope.label = data.name;
 			});
 
 		$scope.cancel = function(){
@@ -81,33 +52,22 @@ adminModule
 					busy = true;
 					Position.store($scope.position)
 						.success(function(data){
-							angular.forEach($scope.productivity, function(item){
+							angular.forEach($scope.experiences, function(item){
 								item.position_id = data.id;
 								item.department_id = departmentID;
 								item.project_id = projectID;
 							});
 
-							angular.forEach($scope.quality, function(item){
-								item.position_id = data.id;
-								item.department_id = departmentID;
-								item.project_id = projectID;
-							});
-
-							Target.store($scope.productivity)
+							Target.store($scope.experiences)
 								.success(function(){
-									Target.store($scope.quality)
-										.success(function(){
-											// Stops Preloader
-											Preloader.stop();
-										})
-										.error(function(data){
-											Preloader.error();
-										});
+									// Stops Preloader
+									Preloader.stop();
+									busy = false;
 								})
 								.error(function(){
 									Preloader.error();
+									busy = false;
 								});
-							busy = false;
 						})
 						.error(function(){
 							Preloader.error();

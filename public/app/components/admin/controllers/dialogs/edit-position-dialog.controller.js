@@ -12,6 +12,9 @@ adminModule
 		Position.show(positionID)
 			.success(function(data){
 				$scope.position = data;
+				$scope.label = data.project.name;
+
+				$scope.experiences = data.targets;
 			})
 			.error(function(){
 				Preloader.error();
@@ -20,33 +23,33 @@ adminModule
 
 		$scope.experiences = [
 			{
-				'name': 'Beginner',
+				'experience': 'Beginner',
 				'duration': 'less than 3 months',
 			},
 			{
-				'name': 'Moderately Experienced',
+				'experience': 'Moderately Experienced',
 				'duration': '3 to 6 months',
 			},
 			{
-				'name': 'Experienced',
+				'experience': 'Experienced',
 				'duration': '6 months and beyond',
 			},
 		];
 
-		Target.productivity(positionID)
-			.success(function(data){
-				$scope.productivity = data;
-			});
+		// Target.productivity(positionID)
+		// 	.success(function(data){
+		// 		$scope.productivity = data;
+		// 	});
 
-		Target.quality(positionID)
-			.success(function(data){
-				$scope.quality = data;
-			});
+		// Target.quality(positionID)
+		// 	.success(function(data){
+		// 		$scope.quality = data;
+		// 	});
 
-		Project.show(projectID)
-			.success(function(data){
-				$scope.project = data;
-			});
+		// Project.show(projectID)
+		// 	.success(function(data){
+		// 		$scope.project = data;
+		// 	});
 
 		$scope.cancel = function(){
 			$mdDialog.cancel();
@@ -54,8 +57,8 @@ adminModule
 
 		$scope.submit = function(){
 			$scope.showErrors = true;
-			if($scope.editPositionForm.$invalid){
-				angular.forEach($scope.editPositionForm.$error, function(field){
+			if($scope.addPositionForm.$invalid){
+				angular.forEach($scope.addPositionForm.$error, function(field){
 					angular.forEach(field, function(errorField){
 						errorField.$setTouched();
 					});
@@ -71,16 +74,10 @@ adminModule
 					busy = true;
 					Position.update(positionID, $scope.position)
 						.success(function(data){
-							Target.update(positionID, $scope.productivity)
+							Target.update(positionID, $scope.experiences)
 								.success(function(){
-									Target.update(positionID, $scope.quality)
-										.success(function(){
-											// Stops Preloader
-											Preloader.stop();
-										})
-										.error(function(data){
-											Preloader.error();
-										});
+									// Stops Preloader
+									Preloader.stop();
 								})
 								.error(function(){
 									Preloader.error();

@@ -11,6 +11,11 @@ use Auth;
 
 class PositionController extends Controller
 {
+    public function unique()
+    {
+        return Position::where('department_id', Auth::user()->department_id)->groupBy('name')->get();
+    }
+
     public function department($id)
     {
         return Position::where('department_id', $id)->groupBy('name')->get();
@@ -27,7 +32,9 @@ class PositionController extends Controller
     // fetch positions by project
     public function project($id)
     {
-        return DB::table('positions')->select('*', DB::raw('UPPER(LEFT(name, 1)) as first_letter'), DB::raw('DATE_FORMAT(created_at, "%h:%i %p, %b. %d, %Y") as created_at'))->where('project_id', $id)->orderBy('name')->get();
+        // return DB::table('positions')->select('*', DB::raw('UPPER(LEFT(name, 1)) as first_letter'), DB::raw('DATE_FORMAT(created_at, "%h:%i %p, %b. %d, %Y") as created_at'))->where('project_id', $id)->orderBy('name')->get();
+
+        return Position::where('project_id', $id)->get();
     }
     /**
      * Display a listing of the resource.
@@ -82,7 +89,7 @@ class PositionController extends Controller
      */
     public function show($id)
     {
-        return Position::where('id', $id)->first();
+        return Position::with('targets')->with('project')->where('id', $id)->first();
     }
 
     /**

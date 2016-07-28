@@ -10,9 +10,11 @@
 						</h2>
 						<div class="md-list-item-text" layout="column" flex>
 							<h3>{{ member.full_name }}</h3>
-<!-- 							<h4>Date Hired: {{ member.date_hired }}</h4>
-							<p>{{ member.experience }}</p>
- -->						</div>
+							<!-- <h4>Date Hired: {{ member.date_hired }}</h4> -->
+							<p>
+								<span ng-repeat="experience in member.experiences">{{experience.project.name}}: {{experience.date_started | date: 'MMMM dd, yyyy'}} | </span>
+							</p>
+						</div>
 						<md-menu class="fade-transition hide" ng-class="{show:hover}" ng-if="option">
 					    	<md-button aria-label="Open menu" class="md-icon-button" ng-click="$mdOpenMenu($event)">
 						        <md-icon class="mdi mdi-dots-horizontal grey"></md-icon>
@@ -55,9 +57,11 @@
 						</h2>
 						<div class="md-list-item-text" layout="column" flex>
 							<h3>{{ member.full_name }}</h3>
-<!-- 							<h4>Date Hired: {{ member.date_hired }}</h4>
-							<p>{{ member.experience }}</p>
- -->						</div>
+							<!-- <h4>Date Hired: {{ member.date_hired }}</h4> -->
+							<p>
+								<span ng-repeat="experience in member.experiences">{{experience.project.name}}: {{experience.date_started | date: 'MMMM dd, yyyy'}} | </span>
+							</p>
+						</div>
 						<md-menu class="fade-transition hide" ng-class="{show:hover}" ng-if="option">
 					    	<md-button aria-label="Open menu" class="md-icon-button" ng-click="$mdOpenMenu($event)">
 						        <md-icon class="mdi mdi-dots-horizontal grey"></md-icon>

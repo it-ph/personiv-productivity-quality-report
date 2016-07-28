@@ -10,14 +10,14 @@
 	</md-toolbar>
 	<md-dialog-content layout="column" flex layout-padding layout-wrap>
 		<md-list layout="row" layout-wrap>
-			<md-list-item flex flex-gt-md="30" class="md-3-line" layout="row" ng-repeat="member in members">
+			<md-list-item flex flex-gt-md="30" class="md-2-line" layout="row" ng-repeat="member in members">
 				<h2 class="md-avatar md-headline purple-bg" layout="row" layout-align="center center">
-					<span class="weight-200 white-text">{{ member.first_letter }}</span>
+					<span class="weight-200 white-text">{{ member.full_name.charAt(0).toUpperCase() }}</span>
 				</h2>
 				<div class="md-list-item-text" layout="column" flex>
 					<h3>{{ member.full_name }}</h3>
-					<h4>{{ member.experience }}</h4>
-					<p>Date Hired: {{ member.date_hired }}</p>
+					<!-- <h4>{{ member.experience }}</h4>
+					<p>Date Hired: {{ member.date_hired }}</p> -->
 				</div>
 			</md-list-item>
 			<div layout-padding layout-wrap ng-if="!members.length && user" class="fade-transition">

@@ -1,5 +1,5 @@
 teamLeaderModule
-	.controller('downloadReportDialogController', ['$scope', '$mdDialog', '$filter', 'Preloader', 'Report', 'Performance', 'Programme', function($scope, $mdDialog, $filter, Preloader, Report, Performance, Programme){
+	.controller('downloadReportDialogController', ['$scope', '$mdDialog', '$filter', 'Preloader', 'Report', 'Performance', 'Programme', 'Project', 'Position', function($scope, $mdDialog, $filter, Preloader, Report, Performance, Programme, Project, Position){
 		$scope.details = {};
 		$scope.details.type = 'Weekly';
 
@@ -15,11 +15,6 @@ teamLeaderModule
 					Preloader.error();
 				});
 		}
-
-		Programme.index()
-			.success(function(data){
-				$scope.work_hours = data;
-			})
 
 		// $scope.hours = [7.5, 8.3, 9.1];
 
@@ -110,11 +105,35 @@ teamLeaderModule
 					win.focus();
 				}
 				else if($scope.details.type=='Monthly'){
-					var win = window.open('/report-download-monthly-department/' + user.department_id + '/month/' + $scope.details.month + '/year/' + $scope.details.year + '/daily-work-hours/' + $scope.details.daily_work_hours, '_blank');
+					var win = window.open('/report-download-monthly-department/' + user.department_id + '/month/' + $scope.details.month + '/year/' + $scope.details.year + '/daily-work-hours/' + $scope.details.daily_work_hours + '/project/' + $scope.details.project + '/position/' + $scope.details.position, '_blank');
 					win.focus();	
 				}
 
 				$mdDialog.hide();
 			}
 		}
+
+		$scope.init = function(){
+			Project.index()
+				.success(function(data){
+					$scope.projects = data;
+				})
+
+			Programme.index()
+				.success(function(data){
+					$scope.work_hours = data;
+					$scope.getMondays();
+				})
+				.error(function(){
+					Preloader.error();
+				})
+		}();
+
+		$scope.getPositions = function(){
+			Project.show($scope.details.project)
+				.success(function(data){
+					$scope.positions = data.positions;
+				})
+		}
+
 	}]);

@@ -23,14 +23,16 @@ class ProjectController extends Controller
 
     public function department($department_id)
     {
-        return DB::table('projects')
-            ->select(
-                '*',
-                DB::raw('UPPER(LEFT(name,1)) as first_letter'),
-                DB::raw('DATE_FORMAT(created_at, "%h:%i %p, %b. %d, %Y") as created_at')
-            )
-            ->where('department_id', $department_id)
-            ->get();
+        // return DB::table('projects')
+        //     ->select(
+        //         '*',
+        //         DB::raw('UPPER(LEFT(name,1)) as first_letter'),
+        //         DB::raw('DATE_FORMAT(created_at, "%h:%i %p, %b. %d, %Y") as created_at')
+        //     )
+        //     ->where('department_id', $department_id)
+        //     ->get();
+
+        return Project::where('department_id', $department_id)->get();
     }
     /**
      * Display a listing of the resource.
@@ -81,7 +83,7 @@ class ProjectController extends Controller
      */
     public function show($id)
     {
-        return Project::wherE('id', $id)->first();
+        return Project::with(['positions' => function($query){ $query->with('targets'); }])->where('id', $id)->first();
     }
 
     /**

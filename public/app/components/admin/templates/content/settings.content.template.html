@@ -9,8 +9,8 @@
 					</h2>
 					<div class="md-list-item-text" layout="column" flex>
 						<h3>{{ setting.name }} {{ setting.first_name }} {{ setting.last_name }} {{ setting.label }}</h3>
-						<h4>{{ setting.department_name }} <span class="md-caption secondary-text" ng-if="setting.role=='team-leader'">(Team Leader)</span> <span class="md-caption secondary-text" ng-if="setting.role=='manager'">(Manager)</span> {{ setting.daily_work_hours }} <span ng-if="setting.daily_work_hours">hours</span></h4>
-						<p>{{ setting.email }} {{ setting.created_at_formatted }}</p>
+						<h4>{{ setting.department.name }} <span class="md-caption secondary-text" ng-if="setting.role=='team-leader'">(Team Leader)</span> <span class="md-caption secondary-text" ng-if="setting.role=='manager'">(Manager)</span> {{ setting.daily_work_hours }} <span ng-if="setting.daily_work_hours">hours</span></h4>
+						<p>{{ setting.email }} <span ng-if="setting.email">/</span> {{ setting.created_at | date: 'EEEE, MMMM dd, yyyy' }}</p>
 					</div>
 				</md-list-item>
 			</md-list>
@@ -33,8 +33,8 @@
 						</h2>
 						<div class="md-list-item-text" layout="column" flex>
 							<h3>{{ setting.name }} {{ setting.first_name }} {{ setting.last_name }} {{ setting.label }}</h3>
-							<h4>{{ setting.department_name }} <span class="md-caption secondary-text" ng-if="setting.role=='team-leader'">(Team Leader)</span> <span class="md-caption secondary-text" ng-if="setting.role=='manager'">(Manager)</span> {{ setting.daily_work_hours }} <span ng-if="setting.daily_work_hours">hours</span></h4>
-							<p>{{ setting.email }} {{ setting.created_at_formatted }}</p>
+							<h4>{{ setting.department.name }} <span class="md-caption secondary-text" ng-if="setting.role=='team-leader'">(Team Leader)</span> <span class="md-caption secondary-text" ng-if="setting.role=='manager'">(Manager)</span> {{ setting.daily_work_hours }} <span ng-if="setting.daily_work_hours">hours</span></h4>
+							<p>{{ setting.email }} <span ng-if="setting.email">/</span> {{ setting.created_at | date: 'EEEE, MMMM dd, yyyy' }}</p>
 						</div>
 					</md-list-item>
 				</md-list>

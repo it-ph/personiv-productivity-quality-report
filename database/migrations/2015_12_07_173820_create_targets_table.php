@@ -14,14 +14,16 @@ class CreateTargetsTable extends Migration
     {
         Schema::create('targets', function (Blueprint $table) {
             $table->increments('id');
-            $table->float('value');
-            $table->string('type');
+            $table->float('productivity');
+            $table->float('quality');
+            // $table->string('type');
             $table->string('experience');
             $table->integer('position_id');
             $table->integer('project_id');
             $table->integer('department_id');
-            $table->boolean('active');
+            // $table->boolean('active');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

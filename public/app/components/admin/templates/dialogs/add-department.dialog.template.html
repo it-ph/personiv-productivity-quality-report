@@ -2,7 +2,7 @@
 	<form name="addDepartmentForm" novalidate>
 		<md-toolbar>
 			<div class="md-toolbar-tools">
-				<h2>New Department</h2>
+				<h2>Department</h2>
 				<span flex></span>
 				<md-button class="md-icon-button" ng-click="cancel()">
 					<md-icon class="mdi mdi-close" aria-label="cancel"></md-icon>
@@ -10,13 +10,15 @@
 			</div>
 		</md-toolbar>
 		<md-dialog-content layout="row" flex layout-padding layout-wrap>
-			<md-input-container flex>
-				<label>Department Name</label>
-				<input type="text" name="DepartmentName" required ng-model="department.name">
-				<div ng-messages="addDepartmentForm.DepartmentName.$error" ng-if="addDepartmentForm.DepartmentName.$touched">
-					<div ng-messages-include="/app/shared/templates/validation-message.html"></div>
-				</div>
-			</md-input-container>
+			<div layout="column" flex>			
+				<md-input-container flex>
+					<label>Department Name</label>
+					<input type="text" name="DepartmentName" required ng-model="department.name">
+					<div ng-messages="addDepartmentForm.DepartmentName.$error" ng-if="addDepartmentForm.DepartmentName.$touched">
+						<div ng-messages-include="/app/shared/templates/validation-message.html"></div>
+					</div>
+				</md-input-container>
+			</div>
 		</md-dialog-content>
 	</form>
 	<div layout="row" layout-align="end center">		

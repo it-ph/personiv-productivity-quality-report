@@ -19,11 +19,13 @@ class CreatePerformanceApprovalsTable extends Migration
             $table->integer('approval_id');
             $table->integer('performance_id');
             $table->integer('report_id');
-            $table->integer('result_id')->nullable();
+            // $table->integer('result_id')->nullable();
             $table->integer('member_id');
             $table->integer('position_id');
             $table->integer('department_id');
             $table->integer('project_id');
+            $table->integer('target_id');
+            // $table->integer('programme_id');
             $table->dateTime('date_start');
             $table->dateTime('date_end');
             $table->float('daily_work_hours');
@@ -31,6 +33,8 @@ class CreatePerformanceApprovalsTable extends Migration
             $table->float('hours_worked');
             $table->float('output_error');
             $table->float('average_output');
+            $table->float('productivity');
+            $table->float('quality');
             $table->timestamps();
             $table->softDeletes();
         });

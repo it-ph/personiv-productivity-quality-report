@@ -18,6 +18,7 @@ use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use App\User;
 use Auth;
+use Carbon\Carbon;
 
 class ApprovalController extends Controller
 {
@@ -145,7 +146,7 @@ class ApprovalController extends Controller
 
         $report->delete();
         $performances = Performance::where('report_id', $approval->report_id)->delete();
-        $results = Result::where('report_id', $approval->report_id)->delete();
+        // $results = Result::where('report_id', $approval->report_id)->delete();
 
         $notify = DB::table('notifications')
             ->join('approvals', 'approvals.id', '=', 'notifications.event_id')
@@ -321,6 +322,7 @@ class ApprovalController extends Controller
                 $performance_history->position_id = $old_performance->position_id;
                 $performance_history->department_id = $old_performance->department_id;
                 $performance_history->project_id = $old_performance->project_id;
+                $performance_history->target_id = $old_performance->target_id;
                 $performance_history->date_start = $old_performance->date_start;
                 $performance_history->date_end = $old_performance->date_end;
                 $performance_history->daily_work_hours = $old_performance->daily_work_hours;
@@ -328,18 +330,23 @@ class ApprovalController extends Controller
                 $performance_history->hours_worked = $old_performance->hours_worked;
                 $performance_history->output_error = $old_performance->output_error;
                 $performance_history->average_output = $old_performance->average_output;
+                $performance_history->productivity = $old_performance->productivity;
+                $performance_history->quality = $old_performance->quality;
+                $performance_history->quadrant = $old_performance->quadrant;
 
                 $performance_history->save();
 
-                $performance_approval_approved = PerformanceApproval::where('id', $request->input($i.'.performance_approval_id'))->first();
-                $performance_approval_approved->status = 'approved';
-                $performance_approval_approved->save();
+                $this->performance_approval_approved = PerformanceApproval::where('id', $request->input($i.'.performance_approval_id'))->first();
+                $this->performance_approval_approved->status = 'approved';
+                $this->performance_approval_approved->save();
 
                 // fetch the changes 
-                $performance_approval = DB::table('performance_approvals')
-                    ->join('members', 'members.id', '=', 'performance_approvals.member_id')
-                    ->where('performance_approvals.id', $request->input($i.'.performance_approval_id'))
-                    ->first();
+                // $performance_approval = DB::table('performance_approvals')
+                //     ->join('members', 'members.id', '=', 'performance_approvals.member_id')
+                //     ->where('performance_approvals.id', $request->input($i.'.performance_approval_id'))
+                //     ->first();
+
+                $performance_approval = PerformanceApproval::with(['member' => function($query){ $query->with(['experiences' => function($query){ $query->where('project_id', $this->performance_approval_approved->project_id); }]); }])->where('id', $request->input($i.'.performance_approval_id'))->first();
 
                 $performance = Performance::where('id', $request->input($i.'.performance_id'))->first();
                 // apply changes
@@ -349,23 +356,21 @@ class ApprovalController extends Controller
                 $performance->output_error = $performance_approval->output_error;
                 // Round((Output / Hours Worked) * Daily Work Hours)
                 $performance->average_output = round($performance_approval->output / $performance_approval->hours_worked * $performance_approval->daily_work_hours, 2);
-                // save performance to database
-                $performance->save();
-
+                
                 // fetch target
-                $target = Target::where('position_id', $performance_approval->position_id)->where('experience', $performance_approval->experience)->where('created_at', '<=', $request->input($i.'.date_end'))->orderBy('created_at', 'desc')->first();
+                $target = Target::where('position_id', $performance_approval->position_id)->where('experience', $performance_approval->member->experiences[0]->experience)->where('created_at', '<=', $request->input($i.'.date_end'))->orderBy('created_at', 'desc')->first();
                 if(!$target){
-                    $target = Target::where('position_id', $performance_approval->position_id)->where('experience', $performance_approval->experience)->where('active', true)->first();
+                    $target = Target::where('position_id', $performance_approval->position_id)->where('experience', $performance_approval->member->experiences[0]->experience)->first();
                 }
                 // recompute results
-                $result = Result::where('id', $performance_approval->result_id)->first();
+                // $result = Result::where('id', $performance_approval->result_id)->first();
                 
                 // average output / target output * 100 to convert to percentage
-                $result->productivity = round($performance_approval->average_output / $target->value * 100, 1);
+                $performance->productivity = round($performance_approval->average_output / $target->productivity * 100, 1);
                 // 1 - output w/error / output * 100 to convert to percentage
-                $result->quality = round((1 - $performance_approval->output_error / $performance_approval->output) * 100, 1);
+                $performance->quality = round((1 - $performance_approval->output_error / $performance_approval->output) * 100, 1);
 
-                $result->save();
+                $performance->save();
             }
         }
 
@@ -484,13 +489,13 @@ class ApprovalController extends Controller
             if($request->input($i.'.include'))
             {
                 $this->validate($request, [
-                    $i.'.performance_id' => 'required|numeric',
-                    $i.'.result_id' => 'required|numeric',
+                    $i.'.id' => 'required|numeric',
+                    // $i.'.result_id' => 'required|numeric',
                     $i.'.position_id' => 'required|numeric',
                     $i.'.department_id' => 'required|numeric',
                     $i.'.project_id' => 'required|numeric',
                     $i.'.output' => 'required|numeric',
-                    $i.'.experience' => 'required',
+                    // $i.'.experience' => 'required',
                     $i.'.date_start' => 'required|date',
                     $i.'.date_end' => 'required|date',
                     $i.'.hours_worked' => 'required|numeric',
@@ -549,29 +554,54 @@ class ApprovalController extends Controller
                     $create_notification = true;
                 }
 
+                $target = Target::where('position_id', $request->input($i.'.position_id'))->where('experience', $request->input($i.'.experience'))->first();
+
                 $performance_approval = new PerformanceApproval;
 
                 $performance_approval->approval_id = $approval->id;
                 $performance_approval->report_id = $reportID;
                 $performance_approval->message = $request->input($i.'.message');
-                $performance_approval->result_id = $request->input($i.'.result_id');
-                $performance_approval->performance_id = $request->input($i.'.performance_id');
+                // $performance_approval->result_id = $request->input($i.'.result_id');
+                $performance_approval->performance_id = $request->input($i.'.id');
                 $performance_approval->member_id = $request->input($i.'.member_id');
                 $performance_approval->position_id = $request->input($i.'.position_id');
                 $performance_approval->department_id = $request->input($i.'.department_id');
                 $performance_approval->project_id = $request->input($i.'.project_id');
-                $performance_approval->output = $request->input($i.'.output');
-                $performance_approval->date_start = $request->input($i.'.date_start');
-                $performance_approval->date_end = $request->input($i.'.date_end');
-                $performance_approval->hours_worked = $request->input($i.'.hours_worked');
+                $performance_approval->target_id = $target->id;
+                $performance_approval->date_start = Carbon::parse($request->input($i.'.date_start'));
+                $performance_approval->date_end = Carbon::parse($request->input($i.'.date_end'));
                 $performance_approval->daily_work_hours = $request->input($i.'.daily_work_hours');
+                $performance_approval->output = $request->input($i.'.output');
+                $performance_approval->hours_worked = $request->input($i.'.hours_worked');
                 $performance_approval->output_error = $request->input($i.'.output_error');
+
 
                 // Round((Output / Hours Worked) * Daily Work Hours)
                 // store the rounded value
                 $performance_approval->average_output = round($request->input($i.'.output') / $request->input($i.'.hours_worked') * $request->input($i.'.daily_work_hours'), 2);
+                // average output / target output * 100 to convert to percentage
+                $performance_approval->productivity = round($performance_approval->average_output / $target->productivity * 100, 1);
+                // 1 - output w/error / output * 100 to convert to percentage
+                $performance_approval->quality = round((1 - $performance_approval->output_error / $performance_approval->output) * 100, 1);
 
-                // save performance request to database
+                // Quadrant
+                if($performance_approval->productivity < $target->productivity && $performance_approval->quality >= $target->quality)
+                {
+                    $performance_approval->quadrant = 'Quadrant 1'; 
+                }
+                else if($performance_approval->productivity >= $target->productivity && $performance_approval->quality >= $target->quality)
+                {
+                    $performance_approval->quadrant = 'Quadrant 2'; 
+                }
+                else if($performance_approval->productivity >= $target->productivity && $performance_approval->quality < $target->quality)
+                {
+                    $performance_approval->quadrant = 'Quadrant 3'; 
+                }
+                else if($performance_approval->productivity < $target->productivity && $performance_approval->quality < $target->quality)
+                {
+                    $performance_approval->quadrant = 'Quadrant 4'; 
+                }
+                // save performance_approval request to database
                 $performance_approval->save();
 
             }

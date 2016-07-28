@@ -26,7 +26,9 @@ class DepartmentController extends Controller
      */
     public function index()
     {
-        return DB::table('departments')->select('*', DB::raw('UPPER(LEFT(name, 1)) as first_letter'), DB::raw('DATE_FORMAT(created_at, "%h:%i %p, %b. %d, %Y") as created_at'))->whereNull('deleted_at')->orderBy('name')->get();
+        // return DB::table('departments')->select('*', DB::raw('UPPER(LEFT(name, 1)) as first_letter'), DB::raw('DATE_FORMAT(created_at, "%h:%i %p, %b. %d, %Y") as created_at'))->whereNull('deleted_at')->orderBy('name')->get();
+
+        return Department::all();
     }
 
     /**
@@ -66,7 +68,7 @@ class DepartmentController extends Controller
      */
     public function show($id)
     {
-        return Department::where('id', $id)->first();
+        return Department::with('projects', 'members')->where('id', $id)->first();
     }
 
     /**

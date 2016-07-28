@@ -6,5 +6,6 @@ var sharedModule = angular.module('sharedModule', [
 	'infinite-scroll',
 	'chart.js',
 	'mgcrea.ngStrap',
-	'angular-tour'
+	'angular-tour',
+	'angularMoment'
 ]);

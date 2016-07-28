@@ -6,7 +6,8 @@ var sharedModule = angular.module('sharedModule', [
 	'infinite-scroll',
 	'chart.js',
 	'mgcrea.ngStrap',
-	'angular-tour'
+	'angular-tour',
+	'angularMoment'
 ]);
 sharedModule
 	.config(['$urlRouterProvider', '$stateProvider', '$mdThemingProvider', function($urlRouterProvider, $stateProvider, $mdThemingProvider){
@@ -327,8 +328,8 @@ sharedModule
 			updateTenure: function(){
 				return $http.put(urlBase + '-update-tenure');
 			},
-			department: function(id){
-				return $http.get(urlBase +'-department/' + id);
+			department: function(){
+				return $http.get(urlBase +'-department');
 			},
 			checkDuplicate: function(data){
 				return $http.post(urlBase + '-check-duplicate', data);
@@ -466,6 +467,9 @@ sharedModule
 			department: function(id){
 				return $http.get(urlBase + '-department/' + id);
 			},
+			unique: function(){
+				return $http.get(urlBase + '-unique');
+			},
 		}
 	}])
 sharedModule
@@ -563,6 +567,9 @@ sharedModule
 			},
 			departmentMonthly: function(data){
 				return $http.post(urlBase + '-department-monthly', data);
+			},
+			departmentMonthlyPosition: function(data){
+				return $http.post(urlBase + '-department-monthly-position', data);
 			},
 		}
 	}])

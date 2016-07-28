@@ -49,4 +49,14 @@ class Performance extends Model
     {
     	return $this->hasMany('App\PerformanceHistory');
     }
+
+    public function target()
+    {
+        return $this->belongsTo('App\Target');
+    }
+
+    public function programme()
+    {
+        return $this->belongsTo('App\Programme');
+    }
 }

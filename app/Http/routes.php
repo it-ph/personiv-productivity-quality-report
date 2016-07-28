@@ -56,7 +56,7 @@ Route::group(['middleware' => 'auth'], function () {
 	Route::get('notification-paginate', 'NotificationController@paginate');
 	Route::get('report-paginate', 'ReportController@paginate');
 	Route::get('report-paginate-details', 'ReportController@paginateDetails');
-	Route::get('report-paginate/{departmentID}', 'ReportController@paginateDepartment');
+	// Route::get('report-paginate', 'ReportController@paginateDepartment');
 	Route::get('report-paginate-details/{departmentID}', 'ReportController@paginateDepartmentDetails');
 	Route::get('approval-pending', 'ApprovalController@pending');
 	Route::get('approval-pending-user/{userID}', 'ApprovalController@pendingUser');
@@ -95,7 +95,8 @@ Route::group(['middleware' => 'auth'], function () {
 	Route::get('report-download-summary/{date_start}/to/{date_end}/daily-work-hours/{daily_work_hours}', 'ReportController@downloadSummary');
 	Route::get('report-download-weekly-department/{departmentID}/date_start/{date_start}/to/{date_end}/daily-work-hours/{daily_work_hours}', 'ReportController@downloadWeeklyDepartment');
 	Route::get('report-download-monthly-summary/{month}/year/{year}/daily-work-hours/{daily_work_hours}', 'ReportController@downloadMonthlySummary');
-	Route::get('report-download-monthly-department/{departmentID}/month/{month}/year/{year}/daily-work-hours/{daily_work_hours}', 'ReportController@downloadMonthlyDepartment');
+	Route::get('report-download-monthly-department/{departmentID}/month/{month}/year/{year}/daily-work-hours/{daily_work_hours}/project/{projectID}/position/{position}', 'ReportController@downloadMonthlyDepartment');
+	Route::post('report-department-monthly-position', 'ReportController@departmentMonthlyPosition');
 
 	Route::get('report-monthly', 'ReportController@monthly');
 	Route::post('report-search-monthly', 'ReportController@searchMonthly');
@@ -118,10 +119,11 @@ Route::group(['middleware' => 'auth'], function () {
 	Route::post('approval-approve-delete', 'ApprovalController@approveDelete');
 	Route::post('approval-decline-delete', 'ApprovalController@declineDelete');
 	Route::post('user-search', 'UserController@search');
-	Route::get('member-department/{departmentID}', 'MemberController@department');
+	Route::get('member-department', 'MemberController@department');
 	Route::get('report-test', 'ReportController@test');
 	Route::post('report-department-monthly', 'ReportController@departmentMonthly');
 	Route::get('position-department/{departmentID}', 'PositionController@department');
 	Route::post('member-check-duplicate', 'MemberController@checkDuplicate');
 	Route::get('experience-members/{projectID}', 'ExperienceController@members');
+	Route::get('position-unique', 'PositionController@unique');
 });

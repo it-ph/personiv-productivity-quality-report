@@ -50,5 +50,8 @@ class PerformanceApproval extends Model
     	return $this->belongsTo('App\Approval');
     }
 
-
+    public function programme()
+    {
+        return $this->belongsTo('App\Programme');
+    }
 }

@@ -10,7 +10,7 @@
 					<div class="md-list-item-text" layout="column" flex>
 						<h3>{{ setting.label }}</h3>
 						<h4>{{ setting.daily_work_hours }} hour(s)</h4>
-						<p>{{ setting.created_at_formatted }}</p>
+						<p>{{ setting.created_at | date: 'EEEE, MMMM dd, yyyy' }}</p>
 					</div>
 					<md-menu class="fade-transition hide" ng-class="{show:hover}">
 				    	<md-button aria-label="Open menu" class="md-icon-button" ng-click="$mdOpenMenu($event)">
@@ -55,7 +55,7 @@
 						<div class="md-list-item-text" layout="column" flex>
 							<h3>{{ setting.label }}</h3>
 							<h4>{{ setting.daily_work_hours }} hour(s)</h4>
-							<p>{{ setting.created_at_formatted }}</p>
+							<p>{{ setting.created_at | date: 'EEEE, MMMM dd, yyyy' }}</p>
 						</div>
 						<md-menu class="fade-transition hide" ng-class="{show:hover}">
 					    	<md-button aria-label="Open menu" class="md-icon-button" ng-click="$mdOpenMenu($event)">

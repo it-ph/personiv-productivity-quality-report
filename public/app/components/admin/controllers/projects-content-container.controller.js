@@ -5,7 +5,6 @@ adminModule
 		 *
 		*/
 		var department_id = $stateParams.departmentID;
-		$scope.project = {};
 
 		$scope.toolbar = {};
 		$scope.toolbar.showBack = true;
@@ -28,27 +27,9 @@ adminModule
 
 		$scope.subheader.refresh = function(){
 			Preloader.preload();
-			$scope.project = {};
-			$scope.project.show = false;		
-			Project.department(department_id)
-				.success(function(data){
-					$scope.project.all = data;
-					$scope.project.show = true;
-					Preloader.stop();
-				})
-				.error(function(){
-					Preloader.error();
-				});
+			$scope.init(true);
 		}
 
-		Project.department(department_id)
-			.success(function(data){
-				$scope.project.all = data;
-				$scope.project.show = true;
-			})
-			.error(function(){
-				Preloader.error();
-			});
 		/**
 		 * Object for content view
 		 *
@@ -121,4 +102,28 @@ adminModule
 		      	clickOutsideToClose: true,
 		    });
 		};
+
+		$scope.init = function(refresh){
+			$scope.project = {};
+			Project.department(department_id)
+				.success(function(data){
+					angular.forEach(data, function(item){
+						item.first_letter = item.name.charAt(0).toUpperCase();
+						item.created_at = new Date(item.created_at);
+					});
+
+					$scope.project.all = data;
+					$scope.project.show = true;
+
+					if(refresh){
+						Preloader.stop();
+						Preloader.stop();
+					}
+				})
+				.error(function(){
+					Preloader.error();
+				});
+		}
+
+		$scope.init()
 	}])

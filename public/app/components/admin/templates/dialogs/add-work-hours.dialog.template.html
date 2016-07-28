@@ -2,7 +2,7 @@
 	<form name="addProgrammeForm" novalidate>
 		<md-toolbar>
 			<div class="md-toolbar-tools">
-				<h2>New Work Hours</h2>
+				<h2>Work Hours</h2>
 				<span flex></span>
 				<md-button class="md-icon-button" ng-click="cancel()">
 					<md-icon class="mdi mdi-close" aria-label="cancel"></md-icon>
@@ -10,21 +10,23 @@
 			</div>
 		</md-toolbar>
 		<md-dialog-content layout="column" flex layout-padding layout-wrap>
-			<md-input-container flex>
-				<label>Label</label>
-				<input type="text" name="Label" required ng-model="programme.label">
-				<div ng-messages="addProgrammeForm.Label.$error" ng-if="addProgrammeForm.Label.$touched">
-					<div ng-messages-include="/app/shared/templates/validation-message.html"></div>
-				</div>
-			</md-input-container>
+			<div layout="column">			
+				<md-input-container flex>
+					<label>Label</label>
+					<input type="text" name="Label" required ng-model="programme.label">
+					<div ng-messages="addProgrammeForm.Label.$error" ng-if="addProgrammeForm.Label.$touched">
+						<div ng-messages-include="/app/shared/templates/validation-message.html"></div>
+					</div>
+				</md-input-container>
 
-			<md-input-container flex>
-				<label>Work Hours</label>
-				<input type="number" name="Value" required min="0" ng-model="programme.daily_work_hours">
-				<div ng-messages="addProgrammeForm.Value.$error" ng-if="addProgrammeForm.Value.$touched">
-					<div ng-messages-include="/app/shared/templates/validation-message.html"></div>
-				</div>
-			</md-input-container>
+				<md-input-container flex>
+					<label>Work Hours</label>
+					<input type="number" name="Value" required min="0" ng-model="programme.daily_work_hours">
+					<div ng-messages="addProgrammeForm.Value.$error" ng-if="addProgrammeForm.Value.$touched">
+						<div ng-messages-include="/app/shared/templates/validation-message.html"></div>
+					</div>
+				</md-input-container>
+			</div>
 		</md-dialog-content>
 	</form>
 	<div layout="row" layout-align="end center">		

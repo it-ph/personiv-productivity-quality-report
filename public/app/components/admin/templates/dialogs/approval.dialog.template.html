@@ -48,12 +48,14 @@
 						<th>Hours Worked</th>
 						<th>Output</th>
 						<th>Output w/Error(s)</th>
+						<th>Remarks</th>
 					</tr>
 					<tr ng-repeat="performanceApproval in details.request">
 						<td ng-class="performanceApproval.position != details.current[$index].position ? 'accent-text' : 'main-text'">{{performanceApproval.position}}</td>
 						<td ng-class="performanceApproval.hours_worked != details.current[$index].hours_worked ? 'accent-text' : 'main-text'">{{performanceApproval.hours_worked}}</td>
 						<td ng-class="performanceApproval.output != details.current[$index].output ? 'accent-text' : 'main-text'">{{performanceApproval.output}}</td>
 						<td ng-class="performanceApproval.output_error != details.current[$index].output_error ? 'accent-text' : 'main-text'">{{performanceApproval.output_error}}</td>
+						<td class="accent-text">{{performanceApproval.message}}</td>
 					</tr>
 				</table>
 			</div>

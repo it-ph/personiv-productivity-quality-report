@@ -3,7 +3,7 @@
 		<h2 class="primary-text">Filters</h2>
 	</div>
 </md-toolbar>
-<md-content layout-padding>
+<md-content layout="column" layout-padding>
 	<md-autocomplete md-selected-item="rightSidenav.selectedItem" md-search-text="rightSidenav.searchText" md-items="item in rightSidenav.queryMember(rightSidenav.searchText)" md-item-text="item.full_name" placeholder="Search members..">
 		<md-item-template>
 			<p>
@@ -15,8 +15,7 @@
 			<p>No results matching <span class="primary-text">"{{rightSidenav.searchText}}"</span> were found.</p>
 		</md-not-found>
 	</md-autocomplete>
-	<md-divider></md-divider>
-	<form name="form.filterSearchForm" novalidate>
+	<form layout="column" name="form.filterSearchForm" novalidate>
 		<!-- Month -->
 		<md-input-container>
 			<label>Month</label>
