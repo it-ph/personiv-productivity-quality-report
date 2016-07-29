@@ -48,7 +48,7 @@
 					<h3 class="panel-title primary-text">{{detail.date_start | date: 'MMMM dd, yyyy'}} to {{detail.date_end | date: 'MMMM dd, yyyy'}}</h3>
 				</div>
 				<div class="panel-body" layout="column" flex>
-					<div layout="row" layout-align="center center" flex>
+					<div layout="row" layout-align="center center" flex ng-if="detail.showCharts">
 						<div flex="45">					
 							<canvas id="bar" class="chart chart-bar" chart-data="detail.chart.data" chart-labels="detail.chart.labels" chart-legend="true" chart-series="detail.chart.series"></canvas>
 						</div>
@@ -111,6 +111,9 @@
 					</div>
 					<h3 class="md-headline primary-text">{{detail.name}}</h2>
 						<p class="md-subhead">Program Head Count: <strong>{{detail.members.length}}</strong></p>
+						<md-switch class="md-primary" ng-model="detail.showCharts" aria-label="detail.showCharts">
+						    <span ng-if="!detail.showCharts">Show</span> <span ng-if="detail.showCharts">Hide</span> Charts
+						</md-switch>
 						<!-- <p class="md-body-1">Daliy Work Hours: <strong>{{detail[0].daily_work_hours | number:1}}</strong></p> -->
 					<div layout="row" flex>	
 						<table class="table">
