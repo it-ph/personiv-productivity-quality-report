@@ -4,11 +4,12 @@
 	</div>
 </md-toolbar>
 <md-content layout="column" layout-padding>
+	<p class="secondary-text md-caption" ng-if="default && details.project_id">Some targets may not have been defined before the date started. Using default targets.</p>
 	<md-divider></md-divider>
 	<div ng-repeat="position in project.positions">
 		<md-subheader class="md-no-sticky md-primary">{{position.name}}</md-subheader>
 		<md-list>
-			<md-list-item class="md-3-line" ng-repeat="target in position.targets">
+			<md-list-item class="md-3-line" ng-repeat="target in position.targets track by $index">
 				<div class="md-list-item-text">
 					<h3>{{ target.experience}}</h3>
 					<h4>Target: {{ target.productivity }}</h4>

@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Report;
 use App\Performance;
-use App\Result;
+// use App\Result;
 use DB;
 use Carbon\Carbon;
 use Carbon\CarbonInterval;
@@ -140,7 +140,7 @@ class ReportController extends Controller
                     $overall_count = 0;
 
                     foreach ($member->positions as $position_key => $position) {
-                        $performances = Performance::with('project', 'position', 'target')->with(['member' => function($query){ $query->with(['experiences' => function($query){ $query->with('project'); }]);}])->where('daily_work_hours', 'like', $project->first_report->daily_work_hours .'%')->where('position_id', $position->id)->where('member_id', $member->member_id)->whereBetween('date_start', [$this->date_start, $this->date_end])->get();
+                        $performances = Performance::with('project', 'position')->with(['target' => function($query){ $query->withTrashed(); }])->with(['member' => function($query){ $query->with(['experiences' => function($query){ $query->with('project'); }]);}])->where('daily_work_hours', 'like', $project->first_report->daily_work_hours .'%')->where('position_id', $position->id)->where('member_id', $member->member_id)->whereBetween('date_start', [$this->date_start, $this->date_end])->get();
 
                         if(count($performances)){
                             $position->total_hours_worked = 0;
@@ -573,7 +573,7 @@ class ReportController extends Controller
                     $overall_count = 0;
 
                     foreach ($member->positions as $position_key => $position) {
-                        $performances = Performance::with('project', 'position', 'target')->with(['member' => function($query){ $query->with(['experiences' => function($query){ $query->with('project'); }]);}])->where('daily_work_hours', 'like', $project->first_report->daily_work_hours .'%')->where('position_id', $position->id)->where('member_id', $member->member_id)->whereBetween('date_start', [$this->date_start, $this->date_end])->get();
+                        $performances = Performance::with('project', 'position')->with(['target' => function($query){ $query->withTrashed(); }])->with(['member' => function($query){ $query->with(['experiences' => function($query){ $query->with('project'); }]);}])->where('daily_work_hours', 'like', $project->first_report->daily_work_hours .'%')->where('position_id', $position->id)->where('member_id', $member->member_id)->whereBetween('date_start', [$this->date_start, $this->date_end])->get();
 
                         if(count($performances)){
                             $position->total_hours_worked = 0;
@@ -709,7 +709,7 @@ class ReportController extends Controller
                     $overall_count = 0;
 
                     foreach ($member->positions as $position_key => $position) {
-                        $performances = Performance::with('project', 'position', 'target')->with(['member' => function($query){ $query->with(['experiences' => function($query){ $query->with('project'); }]);}])->where('daily_work_hours', 'like', $project->first_report->daily_work_hours .'%')->where('position_id', $position->id)->where('member_id', $member->member_id)->whereBetween('date_start', [$this->date_start, $this->date_end])->get();
+                        $performances = Performance::with('project', 'position')->with(['target' => function($query){ $query->withTrashed(); }])->with(['member' => function($query){ $query->with(['experiences' => function($query){ $query->with('project'); }]);}])->where('daily_work_hours', 'like', $project->first_report->daily_work_hours .'%')->where('position_id', $position->id)->where('member_id', $member->member_id)->whereBetween('date_start', [$this->date_start, $this->date_end])->get();
 
                         if(count($performances)){
                             $position->total_hours_worked = 0;
@@ -1516,16 +1516,16 @@ class ReportController extends Controller
     }
     public function searchDepartment(Request $request, $id)
     {
-        return Report::with(['performances' => function($query){ $query->with(['member' => function($query){ $query->with('experiences');}])->with('position'); }])->with(['project' => function($query){ $query->with(['positions' => function($query){ $query->with(['targets' => function($query){ $query->withTrashed()->get(); }]);}]); }])->where('department_id', $id)->where('date_start', Carbon::parse($request->date_start))->where('date_end', Carbon::parse($request->date_end))->orderBy('date_start', 'desc')->get();
+        return Report::with(['performances' => function($query){ $query->with(['member' => function($query){ $query->with('experiences');}])->with('position'); }])->with(['project' => function($query){ $query->with(['positions' => function($query){ $query->with(['targets' => function($query){ $query->withTrashed()->orderBy('created_at', 'desc'); }]);}]); }])->where('department_id', $id)->where('date_start', Carbon::parse($request->date_start))->where('date_end', Carbon::parse($request->date_end))->orderBy('date_start', 'desc')->get();
     }
 
     public function search(Request $request)
     {
-        return Report::with(['performances' => function($query){ $query->with(['member' => function($query){ $query->with('experiences');}])->with('position'); }])->with(['project' => function($query){ $query->with(['positions' => function($query){ $query->with(['targets' => function($query){ $query->withTrashed()->get(); }]);}]); }])->where('department_id', Auth::user()->department_id)->where('date_start', Carbon::parse($request->date_start))->where('date_end', Carbon::parse($request->date_end))->orderBy('date_start', 'desc')->get();
+        return Report::with(['performances' => function($query){ $query->with(['member' => function($query){ $query->with('experiences');}])->with('position'); }])->with(['project' => function($query){ $query->with(['positions' => function($query){ $query->with(['targets' => function($query){ $query->withTrashed()->orderBy('created_at', 'desc'); }]);}]); }])->where('department_id', Auth::user()->department_id)->where('date_start', Carbon::parse($request->date_start))->where('date_end', Carbon::parse($request->date_end))->orderBy('date_start', 'desc')->get();
     }
     public function paginateDetails()
     {
-        return Report::with(['performances' => function($query){ $query->with(['member' => function($query){ $query->with('experiences');}])->with('position'); }])->with(['project' => function($query){ $query->with(['positions' => function($query){ $query->with(['targets' => function($query){ $query->withTrashed()->get(); }]);}]); }])->where('department_id', Auth::user()->department_id)->orderBy('date_start', 'desc')->paginate(10);   
+        return Report::with(['performances' => function($query){ $query->with(['member' => function($query){ $query->with('experiences');}])->with('position'); }])->with(['project' => function($query){ $query->with(['positions' => function($query){ $query->with(['targets' => function($query){ $query->withTrashed()->orderBy('created_at', 'desc'); }]);}]); }])->where('department_id', Auth::user()->department_id)->orderBy('date_start', 'desc')->paginate(10);   
     }
     public function paginate()
     {
@@ -1612,7 +1612,7 @@ class ReportController extends Controller
 
     public function paginateDepartmentDetails($departmentID)
     {
-        return Report::with(['performances' => function($query){ $query->with(['member' => function($query){ $query->with('experiences');}])->with('position'); }])->with(['project' => function($query){ $query->with(['positions' => function($query){ $query->with(['targets' => function($query){ $query->withTrashed()->get(); }]);}]); }])->where('department_id', $departmentID)->orderBy('date_start', 'desc')->paginate(10);
+        return Report::with(['performances' => function($query){ $query->with(['member' => function($query){ $query->with('experiences');}])->with('position'); }])->with(['project' => function($query){ $query->with(['positions' => function($query){ $query->with(['targets' => function($query){ $query->withTrashed()->orderBy('created_at', 'desc'); }]);}]); }])->where('department_id', $departmentID)->orderBy('date_start', 'desc')->paginate(10);
     }
     public function paginateDepartment($departmentID)
     {
@@ -1773,7 +1773,7 @@ class ReportController extends Controller
         Report::where('id', $id)->delete();
 
         Performance::where('report_id', $id)->delete();
-        Result::where('report_id', $id)->delete();
+        // Result::where('report_id', $id)->delete();
         DB::table('approvals')->where('report_id')->delete();
         DB::table('performance_approvals')->where('report_id')->delete();
         DB::table('performance_histories')->where('report_id')->delete();

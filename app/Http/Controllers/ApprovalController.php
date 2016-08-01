@@ -358,10 +358,7 @@ class ApprovalController extends Controller
                 $performance->average_output = round($performance_approval->output / $performance_approval->hours_worked * $performance_approval->daily_work_hours, 2);
                 
                 // fetch target
-                $target = Target::where('position_id', $performance_approval->position_id)->where('experience', $performance_approval->member->experiences[0]->experience)->where('created_at', '<=', $request->input($i.'.date_end'))->orderBy('created_at', 'desc')->first();
-                if(!$target){
-                    $target = Target::where('position_id', $performance_approval->position_id)->where('experience', $performance_approval->member->experiences[0]->experience)->first();
-                }
+                $target = Target::withTrashed()->where('id', $performance_approval->target_id)->first();
                 // recompute results
                 // $result = Result::where('id', $performance_approval->result_id)->first();
                 
@@ -495,7 +492,7 @@ class ApprovalController extends Controller
                     $i.'.department_id' => 'required|numeric',
                     $i.'.project_id' => 'required|numeric',
                     $i.'.output' => 'required|numeric',
-                    // $i.'.experience' => 'required',
+                    $i.'.target_id' => 'required',
                     $i.'.date_start' => 'required|date',
                     $i.'.date_end' => 'required|date',
                     $i.'.hours_worked' => 'required|numeric',
@@ -554,7 +551,7 @@ class ApprovalController extends Controller
                     $create_notification = true;
                 }
 
-                $target = Target::where('position_id', $request->input($i.'.position_id'))->where('experience', $request->input($i.'.experience'))->first();
+                $target = Target::withTrashed()->where('id', $request->input($i.'.target_id'))->first();
 
                 $performance_approval = new PerformanceApproval;
 

@@ -115,7 +115,7 @@
 								<!-- Position -->
 								<md-input-container flex>
 									<label>Position</label>
-									<md-select name="Position{{$index}}" required ng-model="member.position_id">
+									<md-select name="Position{{$index}}" required ng-model="member.position_id" ng-change="getTarget(member)">
 										<md-option ng-repeat="position in positions" value="{{ position.id }}">
 											{{ position.name }}
 										</md-option>
