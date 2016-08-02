@@ -23,7 +23,7 @@ class ExperienceController extends Controller
      */
     public function index()
     {
-        //
+        return response()->json(Carbon::today());
     }
 
     /**
@@ -60,7 +60,7 @@ class ExperienceController extends Controller
                 $experience->project_id = $request->input($i.'.project.id');
                 $experience->date_started = Carbon::parse($request->input($i.'.date_started'));
 
-                $tenure = date_diff(Carbon::today(), date_create($request->input($i.'.date_started')))->format("%m");
+                $tenure = Carbon::today()->diffInMonths(Carbon::parse($request->input($i.'.date_started')));
                 $experience->experience = $tenure < 3 ? 'Beginner' : (($tenure > 3 && $tenure < 6) ? 'Moderately Experienced' : 'Experienced');
 
                 $experience->save();

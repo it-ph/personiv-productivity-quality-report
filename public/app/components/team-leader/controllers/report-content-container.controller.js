@@ -37,6 +37,7 @@ teamLeaderModule
 			$scope.details.date_end = null;
 			$scope.details.date_start = null;
 			$scope.details.weekend = [];
+			$scope.details.project_id = null;
 			Performance.getMondays($scope.details)
 				.success(function(data){
 					$scope.mondays = data;
@@ -49,7 +50,8 @@ teamLeaderModule
 
 		};
 
-		$scope.getWeekends = function(){	
+		$scope.getWeekends = function(){
+			$scope.details.project_id = null;	
 			$scope.details.date_end = null;	
 			$scope.details.weekend = [];
 			Performance.getWeekends($scope.details)
@@ -60,36 +62,6 @@ teamLeaderModule
 					Preloader.error();
 				});
 		};
-
-		// if(!user){
-		// 	User.index()
-		// 		.success(function(data){
-		// 			$scope.user = data;
-		// 			departmentID = data.department_id;
-		// 			Member.updateTenure(data.id)
-		// 				.success(function(){					
-		// 					Member.teamLeader(data.id)
-		// 						.success(function(data){
-		// 							$scope.members = data;
-		// 						});
-		// 				})
-		// 			Project.department(departmentID)
-		// 				.success(function(data){
-		// 					$scope.projects = data;
-		// 				})
-		// 		});
-		// }
-		// else{		
-		// 	departmentID = user.department_id;
-		// 	Member.teamLeader(user.id)
-		// 		.success(function(data){
-		// 			$scope.members = data;
-		// 		});
-		// 	Project.department(user.department_id)
-		// 		.success(function(data){
-		// 			$scope.projects = data;
-		// 		})
-		// }
 
 		$scope.showPositions = function(projectID){
 			Position.project(projectID)
@@ -111,6 +83,42 @@ teamLeaderModule
 			Project.show(projectID)
 				.success(function(data){
 					$scope.project = data;
+					angular.forEach(data.positions, function(position){
+						var targets = [];
+						var index = 0;
+						angular.forEach(position.targets, function(target){
+							var target_created_at = new Date(target.created_at).setHours(0,0,0,0);
+							if(!target.deleted_at && target_created_at <= new Date($scope.details.date_start)){
+								targets.splice(index, 0, target);
+								index++;
+							}
+							else if(target.deleted_at && target_created_at < new Date($scope.details.date_start)){
+								targets.splice(index, 0, target);
+								index++;
+							}
+						});
+
+						if(targets.length){
+							$scope.default = 'false';
+							var beginner_productivity = $filter('filter')(targets, {experience:'Beginner'}, true);
+							var moderately_experienced_productivity = $filter('filter')(targets, {experience:'Moderately Experienced'}, true);
+							var experienced_productivity = $filter('filter')(targets, {experience:'Experienced'}, true);
+							var quality = $filter('filter')(targets, {experience:'Experienced'}, true);
+						}
+						else{
+							$scope.default = 'true';
+							var beginner_productivity = $filter('filter')(position.targets, {experience:'Beginner', deleted_at:null}, true);
+							var moderately_experienced_productivity = $filter('filter')(position.targets, {experience:'Moderately Experienced', deleted_at:null}, true);
+							var experienced_productivity = $filter('filter')(position.targets, {experience:'Experienced', deleted_at:null}, true);
+							var quality = $filter('filter')(position.targets, {experience:'Experienced', deleted_at:null}, true);							
+						}
+
+						position.targets = [];
+						position.targets.push(beginner_productivity[0]);
+						position.targets.push(moderately_experienced_productivity[0]);
+						position.targets.push(experienced_productivity[0]);
+						
+					});
 				});
 		};
 
@@ -126,6 +134,12 @@ teamLeaderModule
 		*/
 		$scope.subheader = {};
 		$scope.subheader.state = 'report';
+
+		$scope.subheader.refresh = function(){
+			Preloader.preload();
+			$scope.init(true);
+		}
+
 		/**
 		 * Status of search bar.
 		 *
@@ -229,9 +243,9 @@ teamLeaderModule
 		};
 
 		$scope.checkLimit = function(data){
-			console.log(data);
+			// console.log(data);
 			var idx = $scope.members.indexOf(data);
-			console.log(idx);
+			// console.log(idx);
 			// gets the number of days worked in a day then multiply it to the daily work hours to get weekly limit
 			$scope.details.weekly_hours = ((new Date($scope.details.date_end) - new Date($scope.details.date_start)) / (1000*60*60*24) + 1) * $scope.details.daily_work_hours;
 			Performance.checkLimit($scope.members[idx].member.id, $scope.details)
@@ -261,21 +275,18 @@ teamLeaderModule
 		// 	$scope.details.programme_id = $scope.work_hours[idx].id;
 		// }
 
-		$scope.init = function(){
+		$scope.getTarget = function(member){
+			var index = $scope.members.indexOf(member);
+			var position = $filter('filter')($scope.project.positions, {id:member.position_id});
+			var target = $filter('filter')(position[0].targets, {experience:member.experience}, true);
+			$scope.members[index].target_id = target[0].id;
+		}
+
+		$scope.init = function(refresh){
 			Member.updateTenure()
 				.then(function(){
 					return;					
 				})
-				// .then(function(){
-				// 	Member.index()
-				// 		.success(function(data){
-				// 			$scope.members = data;
-				// 			return;
-				// 		})
-				// 		.error(function(){
-				// 			Preloader.error();
-				// 		});
-				// })
 				.then(function(){
 					Project.index()
 						.success(function(data){
@@ -295,8 +306,15 @@ teamLeaderModule
 				})
 				.then(function(){
 					$scope.getMondays();
+
+					if(refresh){
+						Preloader.stop();
+						Preloader.stop();
+					}
 				}, function(){
 					Preloader.error();
 				})
-		}();
+		};
+
+		$scope.init();
 	}]);

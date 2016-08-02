@@ -75,6 +75,7 @@ Route::group(['middleware' => 'auth'], function () {
 	Route::post('report-search-department/{departmentID}', 'ReportController@searchDepartment');
 	// Route::post('result-search', 'ResultController@search');
 	// Route::post('target-search', 'TargetController@search');
+	Route::post('user-check-email', 'UserController@checkEmail');
 
 	// Other Routes
 	Route::get('position-project/{projectID}', 'PositionController@project');

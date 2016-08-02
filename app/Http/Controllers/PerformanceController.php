@@ -77,7 +77,7 @@ class PerformanceController extends Controller
         $overall_count = 0;
 
         foreach ($member->positions as $position_key => $position) {
-            $position->performances = Performance::with('project', 'position', 'target')->with(['member' => function($query){ $query->with(['experiences' => function($query){ $query->with('project'); }]);}])->where('position_id', $position->id)->where('member_id', $request->member_id)->whereBetween('date_start', [$date_start, $date_end])->get();
+            $position->performances = Performance::with('project', 'position')->with(['target' => function($query){ $query->withTrashed(); }])->with(['member' => function($query){ $query->with(['experiences' => function($query){ $query->with('project'); }]);}])->where('position_id', $position->id)->where('member_id', $request->member_id)->whereBetween('date_start', [$date_start, $date_end])->get();
 
             if(count($position->performances)){
                 $position->total_hours_worked = 0;
@@ -307,6 +307,7 @@ class PerformanceController extends Controller
                     $i.'.position_id' => 'required|numeric',
                     // $i.'.department_id' => 'required|numeric',
                     $i.'.project_id' => 'required|numeric',
+                    $i.'.target_id' => 'required|numeric',
                     $i.'.output' => 'required|numeric',
                     $i.'.date_start' => 'required|date',
                     $i.'.date_end' => 'required|date',
@@ -367,7 +368,8 @@ class PerformanceController extends Controller
                     $create_report = true;
                 }
 
-                $target = Target::where('position_id', $request->input($i.'.position_id'))->where('experience', $request->input($i.'.experience'))->first();
+                // $target = Target::where('position_id', $request->input($i.'.position_id'))->where('experience', $request->input($i.'.experience'))->first();
+                $target = Target::withTrashed()->where('id', $request->input($i.'.target_id'))->first();
 
                 $performance = new Performance;
 
@@ -471,7 +473,7 @@ class PerformanceController extends Controller
                     $i.'.id' => 'required|numeric',
                     $i.'.position_id' => 'required',
                     // $i.'.department_id' => 'required|numeric',
-                    // $i.'.project_id' => 'required|numeric',
+                    $i.'.target_id' => 'required|numeric',
                     $i.'.output' => 'required|numeric',
                     // $i.'.date_start' => 'required|date',
                     // $i.'.date_end' => 'required|date',
@@ -480,7 +482,8 @@ class PerformanceController extends Controller
                     $i.'.output_error' => 'required|numeric',
                 ]);
 
-                $target = Target::where('position_id', $request->input($i.'.position_id'))->where('experience', $request->input($i.'.experience'))->first();
+                // $target = Target::where('position_id', $request->input($i.'.position_id'))->where('experience', $request->input($i.'.experience'))->first();
+                $target = Target::withTrashed()->where('id', $request->input($i.'.target_id'))->first();
 
                 $performance = Performance::where('id', $request->input($i.'.id'))->first();
 
