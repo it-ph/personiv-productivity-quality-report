@@ -134,6 +134,12 @@ teamLeaderModule
 		*/
 		$scope.subheader = {};
 		$scope.subheader.state = 'report';
+
+		$scope.subheader.refresh = function(){
+			Preloader.preload();
+			$scope.init(true);
+		}
+
 		/**
 		 * Status of search bar.
 		 *
@@ -276,7 +282,7 @@ teamLeaderModule
 			$scope.members[index].target_id = target[0].id;
 		}
 
-		$scope.init = function(){
+		$scope.init = function(refresh){
 			Member.updateTenure()
 				.then(function(){
 					return;					
@@ -300,8 +306,15 @@ teamLeaderModule
 				})
 				.then(function(){
 					$scope.getMondays();
+
+					if(refresh){
+						Preloader.stop();
+						Preloader.stop();
+					}
 				}, function(){
 					Preloader.error();
 				})
-		}();
+		};
+
+		$scope.init();
 	}]);

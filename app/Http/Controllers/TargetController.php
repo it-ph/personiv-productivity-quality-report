@@ -187,7 +187,7 @@ class TargetController extends Controller
             $target->position_id = $request->input($i.'.position_id');
             $target->project_id = $request->input($i.'.project_id');
             $target->department_id = $request->input($i.'.department_id');
-            $target->active = true;
+            // $target->active = true;
 
             $target->save();
         }

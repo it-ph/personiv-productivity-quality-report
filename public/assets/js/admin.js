@@ -2010,7 +2010,19 @@ adminModule
 			$mdDialog.cancel();
 		}
 
+		$scope.checkEmail = function(){
+			$scope.duplicate = false;
+			User.checkEmail($scope.user)
+				.success(function(data){
+					$scope.duplicate = data;
+				})
+				.error(function(){
+					Preloader.error();
+				})
+		}
+
 		$scope.submit = function(){
+			$scope.showErrors = true;
 			if($scope.addTeamLeaderForm.$invalid){
 				angular.forEach($scope.addTeamLeaderForm.$error, function(field){
 					angular.forEach(field, function(errorField){
@@ -2018,22 +2030,28 @@ adminModule
 					});
 				});
 			}
+			else if($scope.user.password != $scope.user.password_confirmation || $scope.duplicate)
+			{
+				return;
+			}
 			else{
 				/* Starts Preloader */
-				Preloader.preload();
+				// Preloader.preload();
 				/**
 				 * Stores Single Record
 				*/
-				if(!busy){
+				if(!busy && !$scope.duplicate){
 					busy = true;
 					User.store($scope.user)
-						.then(function(){
-							// Stops Preloader 
-							Preloader.stop();
+						.success(function(data){
+							if(!data){
+								Preloader.stop();
+								busy = false;
+							}
+						})
+						.error(function(){
 							busy = false;
-						}, function(){
 							Preloader.error();
-							busy = false;
 						});
 				}
 			}

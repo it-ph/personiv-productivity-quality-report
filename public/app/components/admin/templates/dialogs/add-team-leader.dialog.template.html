@@ -2,7 +2,7 @@
 	<form name="addTeamLeaderForm" novalidate>
 		<md-toolbar>
 			<div class="md-toolbar-tools">
-				<h2>New Team Leader</h2>
+				<h2>New User</h2>
 				<span flex></span>
 				<md-button class="md-icon-button" ng-click="cancel()">
 					<md-icon class="mdi mdi-close" aria-label="cancel"></md-icon>
@@ -14,17 +14,19 @@
 				<!-- First Name -->
 				<md-input-container flex flex-sm="100" flex-md="100" flex-gt-lg>
 					<label>First Name</label>
-					<input type="text" name="FirstName" required ng-model="user.first_name">
+					<input type="text" name="FirstName" required ng-model="user.first_name" ng-pattern="/^[a-zA-Z ]+$/">
 					<div ng-messages="addTeamLeaderForm.FirstName.$error" ng-if="addTeamLeaderForm.FirstName.$touched">
-						<div ng-messages-include="/app/shared/templates/validation-message.html"></div>
+						<div ng-message="required">First name is required.</div>
+                        <div ng-message="pattern">Characters and spaces only.</div>
 					</div>
 				</md-input-container>
 				<!-- Last Name -->
 				<md-input-container flex flex-sm="100" flex-md="100" flex-gt-lg>
 					<label>Last Name</label>
-					<input type="text" name="LastName" required ng-model="user.last_name">
+					<input type="text" name="LastName" required ng-model="user.last_name" ng-pattern="/^[a-zA-Z ]+$/">
 					<div ng-messages="addTeamLeaderForm.LastName.$error" ng-if="addTeamLeaderForm.LastName.$touched">
-						<div ng-messages-include="/app/shared/templates/validation-message.html"></div>
+						<div ng-message="required">Last name is required.</div>
+                        <div ng-message="pattern">Characters and spaces only.</div>
 					</div>
 				</md-input-container>
 			</div>
@@ -52,10 +54,11 @@
 				<!-- Email -->
 				<md-input-container flex>
 					<label>Email</label>
-					<input type="email" name="Email" ng-model="user.email" required>
+					<input type="email" name="Email" ng-model="user.email" required ng-blur="checkEmail()">
 					<div ng-messages="addTeamLeaderForm.Email.$error" ng-if="addTeamLeaderForm.Email.$touched">
-						<div ng-messages-include="/app/shared/templates/validation-message.html"></div>
+						<div ng-message="required">Email is required.</div>
 					</div>
+					<div class="pattern" ng-if="duplicate">Email is already in use.</div>
 				</md-input-container>
 			</div>
 			<div layout="row" layout-wrap flex>

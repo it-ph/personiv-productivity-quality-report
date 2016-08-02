@@ -844,31 +844,31 @@ teamLeaderModule
 							'name':'Dashboard',
 							'state':'main',
 							'icon':'mdi-view-dashboard',
-							'tip': 'Dashboard: tracks your team\'s monthly performance.',
+							// 'tip': 'Dashboard: tracks your team\'s monthly performance.',
 						},
 						{
 							'name':'Weekly Report',
 							'state':'main.weekly-report',
 							'icon':'mdi-view-carousel',
-							'tip': 'Dashboard: tracks your team\'s weekly performance, targets, and top performers.',
+							// 'tip': 'Dashboard: tracks your team\'s weekly performance, targets, and top performers.',
 						},
 						{
 							'name':'Approvals',
 							'state':'main.approvals',
 							'icon':'mdi-file-document-box',
-							'tip': 'Approvals: shows pending request for report changes.',
+							// 'tip': 'Approvals: shows pending request for report changes.',
 						},
 						{
 							'name':'Members',
 							'state': 'main.members',
 							'icon':'mdi-account-multiple',
-							'tip': 'Members: manage people in your team.',
+							// 'tip': 'Members: manage people in your team.',
 						},
 						{
 							'name':'Report',
 							'state': 'main.report',
 							'icon':'mdi-file-document',
-							'tip': 'Report: submit team\'s weekly reports',
+							// 'tip': 'Report: submit team\'s weekly reports',
 						},
 					];
 				}
@@ -927,25 +927,25 @@ teamLeaderModule
 	}]);
 teamLeaderModule
 	.controller('mainContentContainerController', ['$scope', '$filter', '$state', '$mdToast', '$mdDialog', 'Approval', 'Preloader', 'Member', 'Position', 'Report', 'Performance', 'Target', 'User', 'WalkThrough', 'Project', function($scope, $filter, $state, $mdToast, $mdDialog, Approval, Preloader, Member, Position, Report, Performance, Target, User, WalkThrough, Project){
-		var user = null;
-		$scope.tour = {};
-		$scope.tour.search = 'Need to find something? I\'ll help you find what you\'re looking for.';
-		$scope.tour.notification = 'You don\'t have to wait for the confirmation of your request. I\'ll notify you when something needs your attention.';
-		$scope.tour.refresh = 'Refreshes the current displayed data.'
-		$scope.subheaderTour = function(){
-			$scope.subheaderTour = 0;
-		}
-		$scope.stopTours = function(){
-			WalkThrough.show(user.id)
-				.success(function(data){
-					if(!data){			
-						WalkThrough.store(user)
-							.error(function(){
-								Preloader.error();
-							});
-					}
-				})
-		}
+		// var user = null;
+		// $scope.tour = {};
+		// $scope.tour.search = 'Need to find something? I\'ll help you find what you\'re looking for.';
+		// $scope.tour.notification = 'You don\'t have to wait for the confirmation of your request. I\'ll notify you when something needs your attention.';
+		// $scope.tour.refresh = 'Refreshes the current displayed data.'
+		// $scope.subheaderTour = function(){
+		// 	$scope.subheaderTour = 0;
+		// }
+		// $scope.stopTours = function(){
+		// 	WalkThrough.show(user.id)
+		// 		.success(function(data){
+		// 			if(!data){			
+		// 				WalkThrough.store(user)
+		// 					.error(function(){
+		// 						Preloader.error();
+		// 					});
+		// 			}
+		// 		})
+		// }
 
 		$scope.filterDate = {};
 		$scope.filterData = {};
@@ -1844,6 +1844,12 @@ teamLeaderModule
 		*/
 		$scope.subheader = {};
 		$scope.subheader.state = 'report';
+
+		$scope.subheader.refresh = function(){
+			Preloader.preload();
+			$scope.init(true);
+		}
+
 		/**
 		 * Status of search bar.
 		 *
@@ -1986,7 +1992,7 @@ teamLeaderModule
 			$scope.members[index].target_id = target[0].id;
 		}
 
-		$scope.init = function(){
+		$scope.init = function(refresh){
 			Member.updateTenure()
 				.then(function(){
 					return;					
@@ -2010,10 +2016,17 @@ teamLeaderModule
 				})
 				.then(function(){
 					$scope.getMondays();
+
+					if(refresh){
+						Preloader.stop();
+						Preloader.stop();
+					}
 				}, function(){
 					Preloader.error();
 				})
-		}();
+		};
+
+		$scope.init();
 	}]);
 teamLeaderModule
 	.controller('addMemberDialogController', ['$scope', '$mdDialog', 'Preloader', 'User', 'Member', function($scope, $mdDialog, Preloader, User, Member){

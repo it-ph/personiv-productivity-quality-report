@@ -42,7 +42,7 @@ class MemberController extends Controller
 
         foreach ($members as $member_key => $member_value) {
             foreach($member_value->experiences as $experience_key => $experience_value){            
-                $tenure = date_diff(Carbon::today(), date_create($experience_value->date_started))->format("%m");
+                $tenure = Carbon::today()->diffInMonths(Carbon::parse($experience_value->date_started));
                 $experience_value->experience = $tenure < 3 ? 'Beginner' : (($tenure > 3 && $tenure < 6) ? 'Moderately Experienced' : 'Experienced');
                 $experience_value->save();
             }

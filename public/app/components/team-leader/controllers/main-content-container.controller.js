@@ -1,24 +1,24 @@
 teamLeaderModule
 	.controller('mainContentContainerController', ['$scope', '$filter', '$state', '$mdToast', '$mdDialog', 'Approval', 'Preloader', 'Member', 'Position', 'Report', 'Performance', 'Target', 'User', 'WalkThrough', 'Project', function($scope, $filter, $state, $mdToast, $mdDialog, Approval, Preloader, Member, Position, Report, Performance, Target, User, WalkThrough, Project){
-		var user = null;
-		$scope.tour = {};
-		$scope.tour.search = 'Need to find something? I\'ll help you find what you\'re looking for.';
-		$scope.tour.notification = 'You don\'t have to wait for the confirmation of your request. I\'ll notify you when something needs your attention.';
-		$scope.tour.refresh = 'Refreshes the current displayed data.'
-		$scope.subheaderTour = function(){
-			$scope.subheaderTour = 0;
-		}
-		$scope.stopTours = function(){
-			WalkThrough.show(user.id)
-				.success(function(data){
-					if(!data){			
-						WalkThrough.store(user)
-							.error(function(){
-								Preloader.error();
-							});
-					}
-				})
-		}
+		// var user = null;
+		// $scope.tour = {};
+		// $scope.tour.search = 'Need to find something? I\'ll help you find what you\'re looking for.';
+		// $scope.tour.notification = 'You don\'t have to wait for the confirmation of your request. I\'ll notify you when something needs your attention.';
+		// $scope.tour.refresh = 'Refreshes the current displayed data.'
+		// $scope.subheaderTour = function(){
+		// 	$scope.subheaderTour = 0;
+		// }
+		// $scope.stopTours = function(){
+		// 	WalkThrough.show(user.id)
+		// 		.success(function(data){
+		// 			if(!data){			
+		// 				WalkThrough.store(user)
+		// 					.error(function(){
+		// 						Preloader.error();
+		// 					});
+		// 			}
+		// 		})
+		// }
 
 		$scope.filterDate = {};
 		$scope.filterData = {};
