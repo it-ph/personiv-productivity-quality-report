@@ -459,6 +459,7 @@ teamLeaderModule
 		$scope.toolbar.back = function(){
 			$state.go('main.members');
 		}
+		$scope.toolbar.hideSearchIcon = true;
 
 		/**
 		 * Object for content view
@@ -558,6 +559,7 @@ teamLeaderModule
 		$scope.toolbar.back = function(){
 			$state.go('main.members');
 		}
+		$scope.toolbar.hideSearchIcon = true;
 
 		/**
 		 * Object for content view

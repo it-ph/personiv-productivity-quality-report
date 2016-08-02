@@ -12,7 +12,7 @@
 					<!-- Full Name -->
 					<md-input-container flex>
 						<label>Full Name</label>
-						<input type="text" name="FullName" ng-model="member.full_name" ng-pattern="/^[a-zA-ZñÑ ]+$/" required ng-blur="checkDuplicate()">
+						<input type="text" name="FullName" ng-model="member.full_name" ng-pattern="/^[a-zA-ZñÑ,. ]+$/" required ng-blur="checkDuplicate()">
 						<div ng-messages="form.memberForm.FullName.$error" ng-if="form.memberForm.FullName.$touched">
 							<div ng-message="required">Full Name is required.</div>
 							<div ng-message="pattern">Alphabet characters only.</div>
