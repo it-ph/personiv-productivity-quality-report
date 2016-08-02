@@ -36,6 +36,7 @@ adminModule
 		*/
 		$scope.toolbar = {};
 		$scope.toolbar.childState = 'Dashboard';
+		$scope.toolbar.hideSearchIcon = true;
 		/**
 		 * Object for subheader
 		 *

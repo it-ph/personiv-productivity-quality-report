@@ -802,7 +802,7 @@ adminModule
 		 *
 		*/
 		$scope.hideSearchBar = function(){
-			$scope.toolbar.userInput = '';
+			$scope.toolbar.searchText = '';
 			$scope.searchBar = false;
 		};
 		
@@ -1103,6 +1103,7 @@ adminModule
 		*/
 		$scope.toolbar = {};
 		$scope.toolbar.childState = 'Dashboard';
+		$scope.toolbar.hideSearchIcon = true;
 		/**
 		 * Object for subheader
 		 *
@@ -1342,7 +1343,7 @@ adminModule
 		 *
 		*/
 		$scope.hideSearchBar = function(){
-			$scope.toolbar.userInput = '';
+			$scope.toolbar.searchText = '';
 			$scope.searchBar = false;
 		};
 		
@@ -1473,7 +1474,7 @@ adminModule
 		 *
 		*/
 		$scope.hideSearchBar = function(){
-			$scope.toolbar.userInput = '';
+			$scope.toolbar.searchText = '';
 			$scope.searchBar = false;
 		};
 		
@@ -1583,7 +1584,7 @@ adminModule
 		 *
 		*/
 		$scope.hideSearchBar = function(){
-			$scope.toolbar.userInput = '';
+			$scope.toolbar.searchText = '';
 			$scope.searchBar = false;
 		};
 		

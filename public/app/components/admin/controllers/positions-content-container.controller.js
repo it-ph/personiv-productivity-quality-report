@@ -77,7 +77,7 @@ adminModule
 		 *
 		*/
 		$scope.hideSearchBar = function(){
-			$scope.toolbar.userInput = '';
+			$scope.toolbar.searchText = '';
 			$scope.searchBar = false;
 		};
 		

@@ -35,6 +35,7 @@ class CreatePerformanceApprovalsTable extends Migration
             $table->float('average_output');
             $table->float('productivity');
             $table->float('quality');
+            $table->string('quadrant');
             $table->timestamps();
             $table->softDeletes();
         });

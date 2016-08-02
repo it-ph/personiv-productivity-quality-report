@@ -43,27 +43,29 @@ class MemberController extends Controller
         foreach ($members as $member_key => $member_value) {
             foreach($member_value->experiences as $experience_key => $experience_value){            
                 $tenure = Carbon::today()->diffInMonths(Carbon::parse($experience_value->date_started));
-                $experience_value->experience = $tenure < 3 ? 'Beginner' : (($tenure > 3 && $tenure < 6) ? 'Moderately Experienced' : 'Experienced');
+                $experience_value->experience = $tenure < 3 ? 'Beginner' : (($tenure >= 3 && $tenure < 6) ? 'Moderately Experienced' : 'Experienced');
                 $experience_value->save();
             }
         }
     }
     public function search(Request $request)
     {
-        return DB::table('members')
-            // ->join('positions', 'positions.id', '=', 'members.position_id')
-            ->select(
-                'members.*',
-                // 'positions.name as position',
-                DB::raw('UPPER(LEFT(members.full_name, 1)) as first_letter'),
-                DB::raw('DATE_FORMAT(date_hired, "%b. %d, %Y") as date_hired')
-            )
-            ->where('members.department_id', $request->user()->department_id)
-            ->where('members.full_name', 'like', '%'. $request->userInput .'%')
-            // ->orWhere('positions.name', 'like', '%'. $request->userInput .'%')
-            ->orWhere('members.experience', 'like', '%'. $request->userInput .'%')
-            // ->groupBy('members.id')
-            ->get();
+        // return DB::table('members')
+        //     // ->join('positions', 'positions.id', '=', 'members.position_id')
+        //     ->select(
+        //         'members.*',
+        //         // 'positions.name as position',
+        //         DB::raw('UPPER(LEFT(members.full_name, 1)) as first_letter'),
+        //         DB::raw('DATE_FORMAT(date_hired, "%b. %d, %Y") as date_hired')
+        //     )
+        //     ->where('members.department_id', $request->user()->department_id)
+        //     ->where('members.full_name', 'like', '%'. $request->userInput .'%')
+        //     // ->orWhere('positions.name', 'like', '%'. $request->userInput .'%')
+        //     ->orWhere('members.experience', 'like', '%'. $request->userInput .'%')
+        //     // ->groupBy('members.id')
+        //     ->get();
+
+        return Member::with(['experiences' => function($query){ $query->with('project');}])->where('department_id', Auth::user()->department_id)->where('full_name', 'like', '%' .$request->userInput. '%')->orderBy('full_name')->get();
     }
     public function teamLeader($team_leader_id)
     {

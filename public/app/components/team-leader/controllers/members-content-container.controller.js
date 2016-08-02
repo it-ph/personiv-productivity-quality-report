@@ -17,18 +17,7 @@ teamLeaderModule
 		$scope.subheader.refresh = function(){
 			// start preloader
 			Preloader.preload();
-			// clear member
-			$scope.member.all = {};
-			$scope.member.page = 2;
-			Member.teamLeader($scope.toolbar.team_leader_id)
-				.success(function(data){
-					$scope.member.all = data;
-					$scope.member.all.show = true;
-					Preloader.stop();
-				})
-				.error(function(){
-					Preloader.stop();
-				});
+			$scope.init(true);
 		};
 		/**
 		 * Object for content view
@@ -41,76 +30,7 @@ teamLeaderModule
 
 		$scope.fab.action = function(){
 			$state.go('main.create-member');
-			// $mdDialog.show({
-	  //   		controller: 'addMemberDialogController',
-		 //      	templateUrl: '/app/components/team-leader/templates/dialogs/add-member.dialog.template.html',
-		 //      	parent: angular.element(document.body),
-		 //    })
-		 //    .then(function(){
-		 //    	$scope.subheader.refresh();
-		 //    })
 		};
-		
-		/**
-		 * Object for member
-		 *
-		*/
-		// if(!$scope.user){
-		// 	// console.log('new')
-		// 	User.index()
-		// 		.success(function(data){
-		// 			$scope.toolbar.team_leader_id = data.id
-		// 			$scope.user = data;
-		// 			if(data.role=='team-leader')
-		// 			{
-		// 				Member.teamLeader(data.id)
-		// 					.success(function(data){
-		// 						angular.forEach(data, function(item){
-		// 							item.first_letter = item.full_name.charAt(0).toUpperCase();
-		// 						});
-
-		// 						$scope.member.all = data;
-		// 						$scope.member.all.show = true;
-		// 						$scope.option = true;
-		// 					});
-		// 			}
-		// 			else{
-		// 				Member.department(data.department_id)
-		// 					.success(function(data){
-		// 						angular.forEach(data, function(item){
-		// 							item.first_letter = item.full_name[0].toUpperCase();
-		// 						});
-
-		// 						$scope.member.all = data;
-		// 						$scope.member.all.show = true;
-		// 						$scope.option = false;
-		// 					});
-		// 			}
-		// 			$scope.fab.show = $scope.user.role == 'team-leader' ? true : false;
-		// 		});
-		// }
-		// else{
-		// 	// console.log('old');
-		// 	$scope.toolbar.team_leader_id = $scope.user.id
-		// 	$scope.fab.show = $scope.user.role == 'team-leader' ? true : false;
-		// 	if($scope.user.role=='team-leader')
-		// 	{
-		// 		Member.teamLeader($scope.user.id)
-		// 			.success(function(data){
-		// 				$scope.member.all = data;
-		// 				$scope.member.all.show = true;
-		// 				$scope.option = true;
-		// 			});
-		// 	}
-		// 	else{
-		// 		Member.department($scope.user.department_id)
-		// 			.success(function(data){
-		// 				$scope.member.all = data;
-		// 				$scope.member.all.show = true;
-		// 				$scope.option = false;
-		// 			});
-		// 	}
-		// }
 
 		/**
 		 * Status of search bar.

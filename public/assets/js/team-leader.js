@@ -844,31 +844,31 @@ teamLeaderModule
 							'name':'Dashboard',
 							'state':'main',
 							'icon':'mdi-view-dashboard',
-							'tip': 'Dashboard: tracks your team\'s monthly performance.',
+							// 'tip': 'Dashboard: tracks your team\'s monthly performance.',
 						},
 						{
 							'name':'Weekly Report',
 							'state':'main.weekly-report',
 							'icon':'mdi-view-carousel',
-							'tip': 'Dashboard: tracks your team\'s weekly performance, targets, and top performers.',
+							// 'tip': 'Dashboard: tracks your team\'s weekly performance, targets, and top performers.',
 						},
 						{
 							'name':'Approvals',
 							'state':'main.approvals',
 							'icon':'mdi-file-document-box',
-							'tip': 'Approvals: shows pending request for report changes.',
+							// 'tip': 'Approvals: shows pending request for report changes.',
 						},
 						{
 							'name':'Members',
 							'state': 'main.members',
 							'icon':'mdi-account-multiple',
-							'tip': 'Members: manage people in your team.',
+							// 'tip': 'Members: manage people in your team.',
 						},
 						{
 							'name':'Report',
 							'state': 'main.report',
 							'icon':'mdi-file-document',
-							'tip': 'Report: submit team\'s weekly reports',
+							// 'tip': 'Report: submit team\'s weekly reports',
 						},
 					];
 				}
@@ -879,19 +879,19 @@ teamLeaderModule
 							'name':'Dashboard',
 							'state':'main',
 							'icon':'mdi-view-dashboard',
-							'tip': 'Dashboard: tracks your team\'s monthly performance.',
+							// 'tip': 'Dashboard: tracks your team\'s monthly performance.',
 						},
 						{
 							'name':'Weekly Report',
 							'state':'main.weekly-report',
 							'icon':'mdi-view-carousel',
-							'tip': 'Dashboard: tracks your team\'s weekly performance, targets, and top performers.',
+							// 'tip': 'Dashboard: tracks your team\'s weekly performance, targets, and top performers.',
 						},
 						{
 							'name':'Members',
 							'state': 'main.members',
 							'icon':'mdi-account-multiple',
-							'tip': 'Members: manage people in your team.',
+							// 'tip': 'Members: manage people in your team.',
 						},
 					];
 				}
@@ -901,19 +901,19 @@ teamLeaderModule
 							'name':'Dashboard',
 							'state':'main',
 							'icon':'mdi-view-dashboard',
-							'tip': 'Dashboard: tracks your team\'s weekly performance, targets, and top performers.',
+							// 'tip': 'Dashboard: tracks your team\'s weekly performance, targets, and top performers.',
 						},
 						{
 							'name':'Approvals',
 							'state':'main.approvals',
 							'icon':'mdi-file-document-box',
-							'tip': 'Approvals: shows pending request for report changes.',
+							// 'tip': 'Approvals: shows pending request for report changes.',
 						},
 						{
 							'name':'Members',
 							'state': 'main.members',
 							'icon':'mdi-account-multiple',
-							'tip': 'Members: manage people in your team.',
+							// 'tip': 'Members: manage people in your team.',
 						},
 					];
 				}
@@ -927,25 +927,25 @@ teamLeaderModule
 	}]);
 teamLeaderModule
 	.controller('mainContentContainerController', ['$scope', '$filter', '$state', '$mdToast', '$mdDialog', 'Approval', 'Preloader', 'Member', 'Position', 'Report', 'Performance', 'Target', 'User', 'WalkThrough', 'Project', function($scope, $filter, $state, $mdToast, $mdDialog, Approval, Preloader, Member, Position, Report, Performance, Target, User, WalkThrough, Project){
-		var user = null;
-		$scope.tour = {};
-		$scope.tour.search = 'Need to find something? I\'ll help you find what you\'re looking for.';
-		$scope.tour.notification = 'You don\'t have to wait for the confirmation of your request. I\'ll notify you when something needs your attention.';
-		$scope.tour.refresh = 'Refreshes the current displayed data.'
-		$scope.subheaderTour = function(){
-			$scope.subheaderTour = 0;
-		}
-		$scope.stopTours = function(){
-			WalkThrough.show(user.id)
-				.success(function(data){
-					if(!data){			
-						WalkThrough.store(user)
-							.error(function(){
-								Preloader.error();
-							});
-					}
-				})
-		}
+		// var user = null;
+		// $scope.tour = {};
+		// $scope.tour.search = 'Need to find something? I\'ll help you find what you\'re looking for.';
+		// $scope.tour.notification = 'You don\'t have to wait for the confirmation of your request. I\'ll notify you when something needs your attention.';
+		// $scope.tour.refresh = 'Refreshes the current displayed data.'
+		// $scope.subheaderTour = function(){
+		// 	$scope.subheaderTour = 0;
+		// }
+		// $scope.stopTours = function(){
+		// 	WalkThrough.show(user.id)
+		// 		.success(function(data){
+		// 			if(!data){			
+		// 				WalkThrough.store(user)
+		// 					.error(function(){
+		// 						Preloader.error();
+		// 					});
+		// 			}
+		// 		})
+		// }
 
 		$scope.filterDate = {};
 		$scope.filterData = {};
@@ -1151,20 +1151,34 @@ teamLeaderModule
 			report.project.quality = [];
 
 			angular.forEach(report.project.positions, function(position){
+				var targets = [];
+				var index = 0;
 				angular.forEach(position.targets, function(target){
-					var index = 0;
-					if(target.deleted_at && new Date(target.created_at) < report.date_start){
-						position.targets.splice(index, 0, target);
+					var target_created_at = new Date(target.created_at).setHours(0,0,0,0);
+					if(!target.deleted_at && target_created_at <= new Date(report.date_start)){
+						targets.splice(index, 0, target);
+						index++;
 					}
-					else if(!target.deleted_at){
-						position.targets.splice(index, 0, target);
+					else if(target.deleted_at && target_created_at < report.date_start){
+						targets.splice(index, 0, target);
+						index++;
 					}
-				})
+				});
 
-				var beginner_productivity = $filter('filter')(position.targets, {experience:'Beginner'}, true);
-				var moderately_experienced_productivity = $filter('filter')(position.targets, {experience:'Moderately Experienced'}, true);
-				var experienced_productivity = $filter('filter')(position.targets, {experience:'Experienced'}, true);
-				var quality = $filter('filter')(position.targets, {experience:'Experienced'}, true);
+				// console.log(targets);
+
+				if(targets.length){
+					var beginner_productivity = $filter('filter')(targets, {experience:'Beginner'}, true);
+					var moderately_experienced_productivity = $filter('filter')(targets, {experience:'Moderately Experienced'}, true);
+					var experienced_productivity = $filter('filter')(targets, {experience:'Experienced'}, true);
+					var quality = $filter('filter')(targets, {experience:'Experienced'}, true);
+				}
+				else{
+					var beginner_productivity = $filter('filter')(position.targets, {experience:'Beginner', deleted_at:null}, true);
+					var moderately_experienced_productivity = $filter('filter')(position.targets, {experience:'Moderately Experienced', deleted_at:null}, true);
+					var experienced_productivity = $filter('filter')(position.targets, {experience:'Experienced', deleted_at:null}, true);
+					var quality = $filter('filter')(position.targets, {experience:'Experienced', deleted_at:null}, true);
+				}
 
 				report.project.beginner.push(beginner_productivity[0].productivity);
 				report.project.moderately_experienced.push(moderately_experienced_productivity[0].productivity);
@@ -1490,18 +1504,7 @@ teamLeaderModule
 		$scope.subheader.refresh = function(){
 			// start preloader
 			Preloader.preload();
-			// clear member
-			$scope.member.all = {};
-			$scope.member.page = 2;
-			Member.teamLeader($scope.toolbar.team_leader_id)
-				.success(function(data){
-					$scope.member.all = data;
-					$scope.member.all.show = true;
-					Preloader.stop();
-				})
-				.error(function(){
-					Preloader.stop();
-				});
+			$scope.init(true);
 		};
 		/**
 		 * Object for content view
@@ -1514,76 +1517,7 @@ teamLeaderModule
 
 		$scope.fab.action = function(){
 			$state.go('main.create-member');
-			// $mdDialog.show({
-	  //   		controller: 'addMemberDialogController',
-		 //      	templateUrl: '/app/components/team-leader/templates/dialogs/add-member.dialog.template.html',
-		 //      	parent: angular.element(document.body),
-		 //    })
-		 //    .then(function(){
-		 //    	$scope.subheader.refresh();
-		 //    })
 		};
-		
-		/**
-		 * Object for member
-		 *
-		*/
-		// if(!$scope.user){
-		// 	// console.log('new')
-		// 	User.index()
-		// 		.success(function(data){
-		// 			$scope.toolbar.team_leader_id = data.id
-		// 			$scope.user = data;
-		// 			if(data.role=='team-leader')
-		// 			{
-		// 				Member.teamLeader(data.id)
-		// 					.success(function(data){
-		// 						angular.forEach(data, function(item){
-		// 							item.first_letter = item.full_name.charAt(0).toUpperCase();
-		// 						});
-
-		// 						$scope.member.all = data;
-		// 						$scope.member.all.show = true;
-		// 						$scope.option = true;
-		// 					});
-		// 			}
-		// 			else{
-		// 				Member.department(data.department_id)
-		// 					.success(function(data){
-		// 						angular.forEach(data, function(item){
-		// 							item.first_letter = item.full_name[0].toUpperCase();
-		// 						});
-
-		// 						$scope.member.all = data;
-		// 						$scope.member.all.show = true;
-		// 						$scope.option = false;
-		// 					});
-		// 			}
-		// 			$scope.fab.show = $scope.user.role == 'team-leader' ? true : false;
-		// 		});
-		// }
-		// else{
-		// 	// console.log('old');
-		// 	$scope.toolbar.team_leader_id = $scope.user.id
-		// 	$scope.fab.show = $scope.user.role == 'team-leader' ? true : false;
-		// 	if($scope.user.role=='team-leader')
-		// 	{
-		// 		Member.teamLeader($scope.user.id)
-		// 			.success(function(data){
-		// 				$scope.member.all = data;
-		// 				$scope.member.all.show = true;
-		// 				$scope.option = true;
-		// 			});
-		// 	}
-		// 	else{
-		// 		Member.department($scope.user.department_id)
-		// 			.success(function(data){
-		// 				$scope.member.all = data;
-		// 				$scope.member.all.show = true;
-		// 				$scope.option = false;
-		// 			});
-		// 	}
-		// }
 
 		/**
 		 * Status of search bar.
@@ -1732,6 +1666,7 @@ teamLeaderModule
 			$scope.details.date_end = null;
 			$scope.details.date_start = null;
 			$scope.details.weekend = [];
+			$scope.details.project_id = null;
 			Performance.getMondays($scope.details)
 				.success(function(data){
 					$scope.mondays = data;
@@ -1744,7 +1679,8 @@ teamLeaderModule
 
 		};
 
-		$scope.getWeekends = function(){	
+		$scope.getWeekends = function(){
+			$scope.details.project_id = null;	
 			$scope.details.date_end = null;	
 			$scope.details.weekend = [];
 			Performance.getWeekends($scope.details)
@@ -1755,36 +1691,6 @@ teamLeaderModule
 					Preloader.error();
 				});
 		};
-
-		// if(!user){
-		// 	User.index()
-		// 		.success(function(data){
-		// 			$scope.user = data;
-		// 			departmentID = data.department_id;
-		// 			Member.updateTenure(data.id)
-		// 				.success(function(){					
-		// 					Member.teamLeader(data.id)
-		// 						.success(function(data){
-		// 							$scope.members = data;
-		// 						});
-		// 				})
-		// 			Project.department(departmentID)
-		// 				.success(function(data){
-		// 					$scope.projects = data;
-		// 				})
-		// 		});
-		// }
-		// else{		
-		// 	departmentID = user.department_id;
-		// 	Member.teamLeader(user.id)
-		// 		.success(function(data){
-		// 			$scope.members = data;
-		// 		});
-		// 	Project.department(user.department_id)
-		// 		.success(function(data){
-		// 			$scope.projects = data;
-		// 		})
-		// }
 
 		$scope.showPositions = function(projectID){
 			Position.project(projectID)
@@ -1806,6 +1712,42 @@ teamLeaderModule
 			Project.show(projectID)
 				.success(function(data){
 					$scope.project = data;
+					angular.forEach(data.positions, function(position){
+						var targets = [];
+						var index = 0;
+						angular.forEach(position.targets, function(target){
+							var target_created_at = new Date(target.created_at).setHours(0,0,0,0);
+							if(!target.deleted_at && target_created_at <= new Date($scope.details.date_start)){
+								targets.splice(index, 0, target);
+								index++;
+							}
+							else if(target.deleted_at && target_created_at < new Date($scope.details.date_start)){
+								targets.splice(index, 0, target);
+								index++;
+							}
+						});
+
+						if(targets.length){
+							$scope.default = 'false';
+							var beginner_productivity = $filter('filter')(targets, {experience:'Beginner'}, true);
+							var moderately_experienced_productivity = $filter('filter')(targets, {experience:'Moderately Experienced'}, true);
+							var experienced_productivity = $filter('filter')(targets, {experience:'Experienced'}, true);
+							var quality = $filter('filter')(targets, {experience:'Experienced'}, true);
+						}
+						else{
+							$scope.default = 'true';
+							var beginner_productivity = $filter('filter')(position.targets, {experience:'Beginner', deleted_at:null}, true);
+							var moderately_experienced_productivity = $filter('filter')(position.targets, {experience:'Moderately Experienced', deleted_at:null}, true);
+							var experienced_productivity = $filter('filter')(position.targets, {experience:'Experienced', deleted_at:null}, true);
+							var quality = $filter('filter')(position.targets, {experience:'Experienced', deleted_at:null}, true);							
+						}
+
+						position.targets = [];
+						position.targets.push(beginner_productivity[0]);
+						position.targets.push(moderately_experienced_productivity[0]);
+						position.targets.push(experienced_productivity[0]);
+						
+					});
 				});
 		};
 
@@ -1815,12 +1757,19 @@ teamLeaderModule
 		*/
 		$scope.toolbar = {};
 		$scope.toolbar.childState = 'Report';
+		$scope.toolbar.hideSearchIcon = true;
 		/**
 		 * Object for subheader
 		 *
 		*/
 		$scope.subheader = {};
 		$scope.subheader.state = 'report';
+
+		$scope.subheader.refresh = function(){
+			Preloader.preload();
+			$scope.init(true);
+		}
+
 		/**
 		 * Status of search bar.
 		 *
@@ -1924,9 +1873,9 @@ teamLeaderModule
 		};
 
 		$scope.checkLimit = function(data){
-			console.log(data);
+			// console.log(data);
 			var idx = $scope.members.indexOf(data);
-			console.log(idx);
+			// console.log(idx);
 			// gets the number of days worked in a day then multiply it to the daily work hours to get weekly limit
 			$scope.details.weekly_hours = ((new Date($scope.details.date_end) - new Date($scope.details.date_start)) / (1000*60*60*24) + 1) * $scope.details.daily_work_hours;
 			Performance.checkLimit($scope.members[idx].member.id, $scope.details)
@@ -1956,21 +1905,18 @@ teamLeaderModule
 		// 	$scope.details.programme_id = $scope.work_hours[idx].id;
 		// }
 
-		$scope.init = function(){
+		$scope.getTarget = function(member){
+			var index = $scope.members.indexOf(member);
+			var position = $filter('filter')($scope.project.positions, {id:member.position_id});
+			var target = $filter('filter')(position[0].targets, {experience:member.experience}, true);
+			$scope.members[index].target_id = target[0].id;
+		}
+
+		$scope.init = function(refresh){
 			Member.updateTenure()
 				.then(function(){
 					return;					
 				})
-				// .then(function(){
-				// 	Member.index()
-				// 		.success(function(data){
-				// 			$scope.members = data;
-				// 			return;
-				// 		})
-				// 		.error(function(){
-				// 			Preloader.error();
-				// 		});
-				// })
 				.then(function(){
 					Project.index()
 						.success(function(data){
@@ -1990,10 +1936,17 @@ teamLeaderModule
 				})
 				.then(function(){
 					$scope.getMondays();
+
+					if(refresh){
+						Preloader.stop();
+						Preloader.stop();
+					}
 				}, function(){
 					Preloader.error();
 				})
-		}();
+		};
+
+		$scope.init();
 	}]);
 teamLeaderModule
 	.controller('addMemberDialogController', ['$scope', '$mdDialog', 'Preloader', 'User', 'Member', function($scope, $mdDialog, Preloader, User, Member){

@@ -12,7 +12,7 @@
 							<h3>{{ member.full_name }}</h3>
 							<!-- <h4>Date Hired: {{ member.date_hired }}</h4> -->
 							<p>
-								<span ng-repeat="experience in member.experiences">{{experience.project.name}}: {{experience.date_started | date: 'MMMM dd, yyyy'}} | </span>
+								<span ng-repeat="experience in member.experiences">{{experience.project.name}}: {{experience.date_started | date: 'MMM. dd, yyyy'}} <span class="md-caption secondary-text">({{experience.experience}})</span> | </span>
 							</p>
 						</div>
 						<md-menu class="fade-transition hide" ng-class="{show:hover}" ng-if="option">
@@ -59,7 +59,7 @@
 							<h3>{{ member.full_name }}</h3>
 							<!-- <h4>Date Hired: {{ member.date_hired }}</h4> -->
 							<p>
-								<span ng-repeat="experience in member.experiences">{{experience.project.name}}: {{experience.date_started | date: 'MMMM dd, yyyy'}} | </span>
+								<span ng-repeat="experience in member.experiences">{{experience.project.name}}: {{experience.date_started | date: 'MMM. dd, yyyy'}} <span class="md-caption secondary-text">({{experience.experience}})</span> | </span>
 							</p>
 						</div>
 						<md-menu class="fade-transition hide" ng-class="{show:hover}" ng-if="option">

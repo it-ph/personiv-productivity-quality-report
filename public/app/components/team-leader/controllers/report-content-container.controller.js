@@ -128,6 +128,7 @@ teamLeaderModule
 		*/
 		$scope.toolbar = {};
 		$scope.toolbar.childState = 'Report';
+		$scope.toolbar.hideSearchIcon = true;
 		/**
 		 * Object for subheader
 		 *

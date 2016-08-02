@@ -47,19 +47,19 @@ teamLeaderModule
 							'name':'Dashboard',
 							'state':'main',
 							'icon':'mdi-view-dashboard',
-							'tip': 'Dashboard: tracks your team\'s monthly performance.',
+							// 'tip': 'Dashboard: tracks your team\'s monthly performance.',
 						},
 						{
 							'name':'Weekly Report',
 							'state':'main.weekly-report',
 							'icon':'mdi-view-carousel',
-							'tip': 'Dashboard: tracks your team\'s weekly performance, targets, and top performers.',
+							// 'tip': 'Dashboard: tracks your team\'s weekly performance, targets, and top performers.',
 						},
 						{
 							'name':'Members',
 							'state': 'main.members',
 							'icon':'mdi-account-multiple',
-							'tip': 'Members: manage people in your team.',
+							// 'tip': 'Members: manage people in your team.',
 						},
 					];
 				}
@@ -69,19 +69,19 @@ teamLeaderModule
 							'name':'Dashboard',
 							'state':'main',
 							'icon':'mdi-view-dashboard',
-							'tip': 'Dashboard: tracks your team\'s weekly performance, targets, and top performers.',
+							// 'tip': 'Dashboard: tracks your team\'s weekly performance, targets, and top performers.',
 						},
 						{
 							'name':'Approvals',
 							'state':'main.approvals',
 							'icon':'mdi-file-document-box',
-							'tip': 'Approvals: shows pending request for report changes.',
+							// 'tip': 'Approvals: shows pending request for report changes.',
 						},
 						{
 							'name':'Members',
 							'state': 'main.members',
 							'icon':'mdi-account-multiple',
-							'tip': 'Members: manage people in your team.',
+							// 'tip': 'Members: manage people in your team.',
 						},
 					];
 				}

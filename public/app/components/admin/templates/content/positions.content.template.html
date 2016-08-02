@@ -3,7 +3,7 @@
 	<div layout-margin layout-padding>
 		<md-card>
 			<md-list>
-				<md-list-item class="md-2-line" ng-click="edit(position.id)" layout="row" ng-repeat="position in position.results | filter:toolbar.userInput">
+				<md-list-item class="md-2-line" ng-click="edit(position.id)" layout="row" ng-repeat="position in position.results | filter:toolbar.searchText">
 					<h2 class="md-avatar md-headline purple-bg" layout="row" layout-align="center center">
 						<span class="weight-200 white-text">{{ position.first_letter }}</span>
 					</h2>
@@ -26,7 +26,7 @@
 		<div layout-margin layout-padding>
 			<md-card>
 				<md-list>
-					<md-list-item class="md-2-line" ng-click="edit(position.id)" layout="row" ng-repeat="position in position.all | filter:toolbar.userInput">
+					<md-list-item class="md-2-line" ng-click="edit(position.id)" layout="row" ng-repeat="position in position.all | filter:toolbar.searchText">
 						<h2 class="md-avatar md-headline purple-bg" layout="row" layout-align="center center">
 							<span class="weight-200 white-text">{{ position.first_letter }}</span>
 						</h2>

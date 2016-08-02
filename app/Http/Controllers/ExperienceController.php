@@ -61,7 +61,7 @@ class ExperienceController extends Controller
                 $experience->date_started = Carbon::parse($request->input($i.'.date_started'));
 
                 $tenure = Carbon::today()->diffInMonths(Carbon::parse($request->input($i.'.date_started')));
-                $experience->experience = $tenure < 3 ? 'Beginner' : (($tenure > 3 && $tenure < 6) ? 'Moderately Experienced' : 'Experienced');
+                $experience->experience = $tenure < 3 ? 'Beginner' : (($tenure >= 3 && $tenure < 6) ? 'Moderately Experienced' : 'Experienced');
 
                 $experience->save();
             }
