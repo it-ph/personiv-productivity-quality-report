@@ -11,6 +11,13 @@ use App\Http\Controllers\Controller;
 
 class ProjectController extends Controller
 {
+    public function checkDuplicate(Request $request)
+    {
+        $project = $request->id ? Project::whereNotIn('id', [$request->id])->where('name', $request->name)->where('department_id', $request->department_id)->first() : Project::where('name', $request->name)->where('department_id', $request->department_id)->first();
+
+        return response()->json($project ? true : false);
+    }
+
     public function search(Request $request)
     {
         return DB::table('projects')
@@ -66,6 +73,13 @@ class ProjectController extends Controller
             'name' => 'required|string',
             'department_id' => 'required|numeric',
         ]);
+
+        $duplicate = Project::where('name', $request->name)->where('department_id', $request->department_id)->first();
+
+        if($duplicate)
+        {
+            return response()->json(true);
+        }
 
         $project = new Project;
 

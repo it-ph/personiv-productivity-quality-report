@@ -27,5 +27,8 @@ sharedModule
 			unique: function(){
 				return $http.get(urlBase + '-unique');
 			},
+			checkDuplicate: function(data){
+				return $http.post(urlBase + '-check-duplicate', data);
+			},
 		}
 	}])

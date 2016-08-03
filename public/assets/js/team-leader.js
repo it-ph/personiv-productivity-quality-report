@@ -2170,7 +2170,7 @@ teamLeaderModule
 					win.focus();
 				}
 				else if($scope.details.type=='Monthly'){
-					var win = window.open('/report-download-monthly-department/' + user.department_id + '/month/' + $scope.details.month + '/year/' + $scope.details.year + '/daily-work-hours/' + $scope.details.daily_work_hours + '/project/' + $scope.details.project + '/position/' + $scope.details.position, '_blank');
+					var win = window.open('/report-download-monthly-department/' + user.department_id + '/month/' + $scope.details.month + '/year/' + $scope.details.year + '/daily-work-hours/' + $scope.details.daily_work_hours, '_blank');
 					win.focus();	
 				}
 

@@ -12,7 +12,7 @@
 		<md-dialog-content layout="column" flex layout-padding layout-wrap>
 			<md-radio-group ng-model="details.type" layout="row">
 			    <md-radio-button class="md-primary" value="Weekly">Weekly</md-radio-button>
-		      	<md-radio-button class="md-primary" value="Monthly">Monthly</md-radio-button>
+		      	<!-- <md-radio-button class="md-primary" value="Monthly">Monthly</md-radio-button> -->
 		    </md-radio-group>
 			<div ng-if="details.type=='Weekly'" layout="column">
 				<div layout="row" layout-align="center center">
@@ -111,8 +111,8 @@
 						<div ng-messages-include="/app/shared/templates/validation-message-report.html"></div>
 					</div>
 				</md-input-container>
-				<div layout="row">				
-					<!-- Project -->
+				<!-- <div layout="row">				
+					Project
 					<md-input-container flex>
 						<label>Project</label>
 						<md-select name="Project" required ng-model="details.project" ng-change="getPositions()">
@@ -124,7 +124,7 @@
 							<div ng-messages-include="/app/shared/templates/validation-message-report.html"></div>
 						</div>
 					</md-input-container>
-					<!-- Position -->
+					Position
 					<md-input-container flex>
 						<label>Position</label>
 						<md-select name="Position" required ng-model="details.position">
@@ -136,7 +136,7 @@
 							<div ng-messages-include="/app/shared/templates/validation-message-report.html"></div>
 						</div>
 					</md-input-container>
-				</div>
+				</div> -->
 			</div>
 		</md-dialog-content>
 	</form>

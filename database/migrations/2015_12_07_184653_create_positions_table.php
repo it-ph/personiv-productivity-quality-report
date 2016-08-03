@@ -18,6 +18,7 @@ class CreatePositionsTable extends Migration
             $table->integer('department_id');
             $table->integer('project_id');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

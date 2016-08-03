@@ -11,6 +11,15 @@ adminModule
 				$scope.department = data;
 			});
 
+
+		$scope.checkDuplicate = function(){
+			$scope.duplicate = false;
+			Project.checkDuplicate($scope.project)
+				.success(function(data){
+					$scope.duplicate = data;
+				});
+		}
+
 		$scope.cancel = function(){
 			$mdDialog.cancel();
 		}
@@ -25,16 +34,22 @@ adminModule
 			}
 			else{
 				/* Starts Preloader */
-				Preloader.preload();
+				// Preloader.preload();
 				/**
 				 * Stores Single Record
 				*/
 				if(!busy){
 					busy = true;
 					Project.store($scope.project)
-						.success(function(){
-							Preloader.stop();
-							busy = false;
+						.success(function(data){
+							if(data){
+								busy = false;
+								$scope.duplicate = data;
+							}
+							else{
+								Preloader.stop();
+								busy = false;
+							}
 						})
 						.error(function(){
 							Preloader.error();
