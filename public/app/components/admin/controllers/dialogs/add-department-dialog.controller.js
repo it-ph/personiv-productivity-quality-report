@@ -3,6 +3,14 @@ adminModule
 		$scope.department = {};
 		var busy = false;
 
+		$scope.checkDuplicate = function(){
+			$scope.duplicate = false;
+			Department.checkDuplicate($scope.department)
+				.success(function(data){
+					$scope.duplicate = data;
+				});
+		}
+
 		$scope.cancel = function(){
 			$mdDialog.cancel();
 		}
@@ -17,17 +25,23 @@ adminModule
 			}
 			else{
 				/* Starts Preloader */
-				Preloader.preload();
+				// Preloader.preload();
 				/**
 				 * Stores Single Record
 				*/
-				if(!busy){
+				if(!busy && !$scope.duplicate){
 					busy = true;
 					Department.store($scope.department)
-						.success(function(){
-							// Stops Preloader 
-							Preloader.stop();
-							busy = false;
+						.success(function(data){
+							if(data){
+								busy = false;
+								$scope.duplicate = data;
+							}
+							else{
+								// Stops Preloader 
+								Preloader.stop();
+								busy = false;
+							}
 						}, function(){
 							Preloader.error();
 						});

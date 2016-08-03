@@ -1802,6 +1802,14 @@ adminModule
 		$scope.department = {};
 		var busy = false;
 
+		$scope.checkDuplicate = function(){
+			$scope.duplicate = false;
+			Department.checkDuplicate($scope.department)
+				.success(function(data){
+					$scope.duplicate = data;
+				});
+		}
+
 		$scope.cancel = function(){
 			$mdDialog.cancel();
 		}
@@ -1816,17 +1824,23 @@ adminModule
 			}
 			else{
 				/* Starts Preloader */
-				Preloader.preload();
+				// Preloader.preload();
 				/**
 				 * Stores Single Record
 				*/
-				if(!busy){
+				if(!busy && !$scope.duplicate){
 					busy = true;
 					Department.store($scope.department)
-						.success(function(){
-							// Stops Preloader 
-							Preloader.stop();
-							busy = false;
+						.success(function(data){
+							if(data){
+								busy = false;
+								$scope.duplicate = data;
+							}
+							else{
+								// Stops Preloader 
+								Preloader.stop();
+								busy = false;
+							}
 						}, function(){
 							Preloader.error();
 						});
@@ -1865,6 +1879,14 @@ adminModule
 				$scope.label = data.name;
 			});
 
+		$scope.checkDuplicate = function(){
+			$scope.duplicate = false;
+			Position.checkDuplicate($scope.position)
+				.success(function(data){
+					$scope.duplicate = data;
+				});
+		}
+
 		$scope.cancel = function(){
 			$mdDialog.cancel();
 		}
@@ -1880,30 +1902,37 @@ adminModule
 			}
 			else{
 				/* Starts Preloader */
-				Preloader.preload();
+				// Preloader.preload();
 				/**
 				 * Stores Single Record
 				*/
-				if(!busy){
+				if(!busy && !$scope.duplicate){
 					busy = true;
 					Position.store($scope.position)
 						.success(function(data){
-							angular.forEach($scope.experiences, function(item){
-								item.position_id = data.id;
-								item.department_id = departmentID;
-								item.project_id = projectID;
-							});
-
-							Target.store($scope.experiences)
-								.success(function(){
-									// Stops Preloader
-									Preloader.stop();
-									busy = false;
-								})
-								.error(function(){
-									Preloader.error();
-									busy = false;
+							if(typeof(data) === "boolean")
+							{
+								busy = false;
+								$scope.duplicate = data;
+							}
+							else{
+								angular.forEach($scope.experiences, function(item){
+									item.position_id = data.id;
+									item.department_id = departmentID;
+									item.project_id = projectID;
 								});
+
+								Target.store($scope.experiences)
+									.success(function(){
+										// Stops Preloader
+										Preloader.stop();
+										busy = false;
+									})
+									.error(function(){
+										Preloader.error();
+										busy = false;
+									});
+							}
 						})
 						.error(function(){
 							Preloader.error();
@@ -1926,6 +1955,15 @@ adminModule
 				$scope.department = data;
 			});
 
+
+		$scope.checkDuplicate = function(){
+			$scope.duplicate = false;
+			Project.checkDuplicate($scope.project)
+				.success(function(data){
+					$scope.duplicate = data;
+				});
+		}
+
 		$scope.cancel = function(){
 			$mdDialog.cancel();
 		}
@@ -1940,16 +1978,22 @@ adminModule
 			}
 			else{
 				/* Starts Preloader */
-				Preloader.preload();
+				// Preloader.preload();
 				/**
 				 * Stores Single Record
 				*/
 				if(!busy){
 					busy = true;
 					Project.store($scope.project)
-						.success(function(){
-							Preloader.stop();
-							busy = false;
+						.success(function(data){
+							if(data){
+								busy = false;
+								$scope.duplicate = data;
+							}
+							else{
+								Preloader.stop();
+								busy = false;
+							}
 						})
 						.error(function(){
 							Preloader.error();
@@ -2363,6 +2407,14 @@ adminModule
 		// 		$scope.project = data;
 		// 	});
 
+		$scope.checkDuplicate = function(){
+			$scope.duplicate = false;
+			Position.checkDuplicate($scope.position)
+				.success(function(data){
+					$scope.duplicate = data;
+				});
+		}
+
 		$scope.cancel = function(){
 			$mdDialog.cancel();
 		}
@@ -2378,24 +2430,31 @@ adminModule
 			}
 			else{
 				/* Starts Preloader */
-				Preloader.preload();
+				// Preloader.preload();
 				/**
 				 * Stores Single Record
 				*/
-				if(!busy){
+				if(!busy && !$scope.duplicate){
 					busy = true;
 					Position.update(positionID, $scope.position)
 						.success(function(data){
-							Target.update(positionID, $scope.experiences)
-								.success(function(){
-									// Stops Preloader
-									Preloader.stop();
-								})
-								.error(function(){
-									Preloader.error();
-								});
+							if(typeof(data) === 'boolean'){
+								busy = false;
+								$scope.duplicate = data;
+							}
+							else{
+								Target.update(positionID, $scope.experiences)
+									.success(function(){
+										// Stops Preloader
+										busy = false;
+										Preloader.stop();
+									})
+									.error(function(){
+										busy = false;
+										Preloader.error();
+									});
 
-							busy = false;
+							}
 						})
 						.error(function(){
 							Preloader.error();

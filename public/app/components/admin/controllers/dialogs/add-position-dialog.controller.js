@@ -29,6 +29,14 @@ adminModule
 				$scope.label = data.name;
 			});
 
+		$scope.checkDuplicate = function(){
+			$scope.duplicate = false;
+			Position.checkDuplicate($scope.position)
+				.success(function(data){
+					$scope.duplicate = data;
+				});
+		}
+
 		$scope.cancel = function(){
 			$mdDialog.cancel();
 		}
@@ -44,30 +52,37 @@ adminModule
 			}
 			else{
 				/* Starts Preloader */
-				Preloader.preload();
+				// Preloader.preload();
 				/**
 				 * Stores Single Record
 				*/
-				if(!busy){
+				if(!busy && !$scope.duplicate){
 					busy = true;
 					Position.store($scope.position)
 						.success(function(data){
-							angular.forEach($scope.experiences, function(item){
-								item.position_id = data.id;
-								item.department_id = departmentID;
-								item.project_id = projectID;
-							});
-
-							Target.store($scope.experiences)
-								.success(function(){
-									// Stops Preloader
-									Preloader.stop();
-									busy = false;
-								})
-								.error(function(){
-									Preloader.error();
-									busy = false;
+							if(typeof(data) === "boolean")
+							{
+								busy = false;
+								$scope.duplicate = data;
+							}
+							else{
+								angular.forEach($scope.experiences, function(item){
+									item.position_id = data.id;
+									item.department_id = departmentID;
+									item.project_id = projectID;
 								});
+
+								Target.store($scope.experiences)
+									.success(function(){
+										// Stops Preloader
+										Preloader.stop();
+										busy = false;
+									})
+									.error(function(){
+										Preloader.error();
+										busy = false;
+									});
+							}
 						})
 						.error(function(){
 							Preloader.error();

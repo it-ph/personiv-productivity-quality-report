@@ -10,6 +10,13 @@ use App\Http\Controllers\Controller;
 
 class DepartmentController extends Controller
 {
+    public function checkDuplicate(Request $request)
+    {
+        $department = $request->id ? Department::whereNotIn('id', [$request->id])->where('name', $request->name)->first() : Department::where('name', $request->name)->first();
+
+        return response()->json($department ? true : false);
+    }
+
     public function search(Request $request)
     {
         return DB::table('departments')
@@ -52,6 +59,12 @@ class DepartmentController extends Controller
         $this->validate($request, [
             'name' => 'required|string',
         ]);
+
+        $duplicate = Department::where('name', $request->name)->first();
+
+        if($duplicate){
+            return response()->json(true);
+        }
 
         $department = new Department;
 

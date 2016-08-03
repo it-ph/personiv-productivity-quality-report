@@ -14,7 +14,7 @@ class ExperienceController extends Controller
 {
     public function members($project_id)
     {
-        return Experience::with('member')->where('project_id', $project_id)->get();
+        return Experience::with(['member' => function($query){ $query->withTrashed(); }])->where('project_id', $project_id)->get();
     }
     /**
      * Display a listing of the resource.

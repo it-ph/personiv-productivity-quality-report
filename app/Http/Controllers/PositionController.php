@@ -11,6 +11,12 @@ use Auth;
 
 class PositionController extends Controller
 {
+    public function checkDuplicate(Request $request)
+    {
+        $position = $request->id ? Position::whereNotIn('id', [$request->id])->where('name', $request->name)->where('department_id', $request->department_id)->where('project_id', $request->project_id)->first() : Position::where('name', $request->name)->where('department_id', $request->department_id)->where('project_id', $request->project_id)->first();
+    
+        return response()->json($position ? true : false);
+    }
     public function unique()
     {
         return Position::where('department_id', Auth::user()->department_id)->groupBy('name')->get();
@@ -70,6 +76,13 @@ class PositionController extends Controller
             'project_id' => 'required|numeric',
         ]);
 
+        $duplicate = Position::where('name', $request->name)->where('department_id', $request->department_id)->where('project_id', $request->project_id)->first();
+
+        if($duplicate)
+        {
+            return response()->json(true);
+        }
+
         $position = new Position;
 
         $position->name = $request->name;
@@ -117,6 +130,13 @@ class PositionController extends Controller
             // 'department_id' => 'required|numeric',
             // 'project_id' => 'required|numeric',
         ]);
+
+        $duplicate = Position::whereNotIn('id', [$request->id])->where('name', $request->name)->where('department_id', $request->department_id)->where('project_id', $request->project_id)->first();
+
+        if($duplicate)
+        {
+            return response()->json(true);
+        }
 
         $position = Position::where('id', $id)->first();
 

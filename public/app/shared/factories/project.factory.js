@@ -24,5 +24,8 @@ sharedModule
 			search: function(data){
 				return $http.post(urlBase + '-search', data);
 			},
+			checkDuplicate: function(data){
+				return $http.post(urlBase + '-check-duplicate', data);
+			},
 		}
 	}])

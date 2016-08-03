@@ -13,10 +13,11 @@
 			<div layout="row" flex>			
 				<md-input-container flex>
 					<label>Position</label>
-					<input type="text" name="Position" required ng-model="position.name">
+					<input type="text" name="Position" required ng-model="position.name" ng-blur="checkDuplicate()">
 					<div ng-messages="addPositionForm.Position.$error" ng-if="addPositionForm.Position.$touched">
 						<div ng-messages-include="/app/shared/templates/validation-message.html"></div>
 					</div>
+					<div class="pattern" ng-if="duplicate">Position already exists.</div>
 				</md-input-container>
 			</div>
 			
