@@ -273,6 +273,9 @@ sharedModule
 			delete: function(id){
 				return $http.delete(urlBase + '/' + id);
 			},
+			checkDuplicate: function(data){
+				return $http.post(urlBase + '-check-duplicate', data);
+			},
 		}
 	}])
 sharedModule
@@ -470,6 +473,9 @@ sharedModule
 			unique: function(){
 				return $http.get(urlBase + '-unique');
 			},
+			checkDuplicate: function(data){
+				return $http.post(urlBase + '-check-duplicate', data);
+			},
 		}
 	}])
 sharedModule
@@ -518,6 +524,9 @@ sharedModule
 			},
 			search: function(data){
 				return $http.post(urlBase + '-search', data);
+			},
+			checkDuplicate: function(data){
+				return $http.post(urlBase + '-check-duplicate', data);
 			},
 		}
 	}])
