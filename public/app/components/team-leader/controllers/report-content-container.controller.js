@@ -37,7 +37,7 @@ teamLeaderModule
 			$scope.details.date_end = null;
 			$scope.details.date_start = null;
 			$scope.details.weekend = [];
-			$scope.details.project_id = null;
+			// $scope.details.project_id = null;
 			Performance.getMondays($scope.details)
 				.success(function(data){
 					$scope.mondays = data;
@@ -51,7 +51,7 @@ teamLeaderModule
 		};
 
 		$scope.getWeekends = function(){
-			$scope.details.project_id = null;	
+			// $scope.details.project_id = null;	
 			$scope.details.date_end = null;	
 			$scope.details.weekend = [];
 			Performance.getWeekends($scope.details)
@@ -82,7 +82,7 @@ teamLeaderModule
 					});
 
 					$scope.members = data;
-					$scope.resetMembers();
+					// $scope.resetMembers();
 				});
 
 			Project.show(projectID)
@@ -262,6 +262,15 @@ teamLeaderModule
 			Performance.checkLimit($scope.members[idx].member.id, $scope.details)
 				.success(function(data){
 					$scope.members[idx].limit = data;
+					console.log($scope.members[idx].limit);
+					if($scope.reset){
+						$scope.count++;
+						// console.log($scope.count, $scope.members.length);
+						if($scope.count == $scope.members.length){
+							$scope.showMembers = true;
+							$scope.reset = false;
+						}
+					}
 				})
 				.error(function(){
 					$scope.members[idx].limit = $scope.details.weekly_hours;
@@ -269,6 +278,9 @@ teamLeaderModule
 		};
 
 		$scope.resetMembers = function(){
+			$scope.count = 0;
+			$scope.showMembers = false;
+			$scope.reset = true;
 			// $scope.checkLimit();
 			angular.forEach($scope.members, function(item, key){
 				item.hours_worked = null;

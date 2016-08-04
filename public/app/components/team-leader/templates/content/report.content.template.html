@@ -86,7 +86,8 @@
 					</div>
 				</md-card-content>		
 			</md-card>
-			<div ng-if="details.date_start && details.date_end && details.project_id && details.daily_work_hours" class="fade-transition">
+			<md-progress-circular md-mode='indeterminate' ng-if="details.date_start && details.date_end && details.project_id && details.daily_work_hours && !showMembers" md-diameter="96"></md-progress-circular>
+			<div ng-if="details.date_start && details.date_end && details.project_id && details.daily_work_hours && showMembers" class="fade-transition">
 				<!-- Members -->
 				<md-subheader class="md-no-sticky md-accent">
 					<span>Members</span>
@@ -100,8 +101,8 @@
 								</h2>
 								<div class="md-list-item-text" layout="column" flex>
 									<h3>{{ member.member.full_name }}</h3>
-									<h4>Date Started: {{ member.date_started | date: 'EEEE, MMMM d, yyyy'}}</h4>
-									<p>{{ member.experience }} 
+									<h4>Date Started: {{ member.date_started | date: 'MMMM d, yyyy'}}</h4>
+									<p>{{ member.experience }}
 										<span class="accent-text" ng-if="member.limit == 0">(Work hours per week reached.)</span>
 									</p>
 								</div>
