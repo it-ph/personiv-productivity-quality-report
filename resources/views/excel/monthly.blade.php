@@ -44,8 +44,8 @@
 @foreach($project->positions as $position)
 <table>
 	<tr>
-		<th>{{ $position->name }}</th>
-		<th align="center" colspan="2"></th>
+		<th align="center">{{ $position->name }}</th>
+		<th align="center"></th>
 		@foreach($project->weeks as $week)
 			<th colspan="2" align="center">{{ $week }}</th>
 		@endforeach
@@ -64,16 +64,21 @@
 		<th align="center">Monthly Quality</th>
 		<th align="center">Quadrant</th>
 	</tr>
-	@foreach($project->weeks as $week_key => $week)
-		@foreach($position->performances[$week_key] as $performance)
-			<tr>
-				<td align="center">{{ $performance->member->full_name }}</td>
-				<td align="center">{{ $performance->member->experiences[0]->experience }}</td>
-				
-				<td align="center">{{ round($performance->productivity,1) }}%</td>
-				<td align="center">{{ round($performance->quality,1) }}%</td>
-			</tr>
-		@endforeach
+	@foreach($position->members as $member)
+		<tr>
+			<td align="center">{{ $member->full_name }}</td>
+			<td align="center">{{ $member->experience->experience }}</td>
+			@foreach($project->weeks as $week_key => $week)
+				<td align="center">{{ round($member->performances[$week_key]->productivity,1) }}%</td>
+				<td align="center">{{ round($member->performances[$week_key]->quality,1) }}%</td>
+			@endforeach
+			<td align="center">{{ $member->total_output }}</td>
+			<td align="center">{{ $member->total_output_error }}</td>
+			<td align="center">{{ $member->total_hours_worked }}</td>
+			<td align="center">{{ $member->monthly_productivity }}%</td>
+			<td align="center">{{ $member->monthly_quality }}%</td>
+			<td align="center">{{ $member->quadrant }}</td>
+		</tr>
 	@endforeach
 </table>
 @endforeach
