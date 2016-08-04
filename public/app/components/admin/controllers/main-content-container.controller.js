@@ -42,6 +42,7 @@ adminModule
 		 *
 		*/
 		$scope.subheader = {};
+		$scope.subheader.show = true;
 		$scope.subheader.state = 'dashboard';
 
 		/* Refreshes the list */
