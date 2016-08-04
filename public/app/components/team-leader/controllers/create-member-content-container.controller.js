@@ -85,7 +85,9 @@ teamLeaderModule
 							if(memberID){
 								angular.forEach($scope.member_projects, function(item){
 									item.member_id = memberID;
-									item.date_started = item.date_started.toDateString();
+									if(item.project){
+										item.date_started = item.date_started.toDateString();
+									}
 								});
 
 								Experience.store($scope.member_projects)

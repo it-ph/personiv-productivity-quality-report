@@ -91,7 +91,7 @@
 				<md-subheader class="md-no-sticky md-accent">
 					<span>Members</span>
 				</md-subheader>
-				<md-card ng-repeat="member in members | filter:details.project_id | filter:toolbar.userInput" ng-if="!member.member.deleted_at">
+				<md-card ng-repeat="member in members | filter:details.project_id | filter:toolbar.searchText" ng-if="!member.member.deleted_at">
 					<md-card-content>
 						<md-list layout="row" layout-align="space-between center">
 							<md-list-item class="md-2-line" layout="row">

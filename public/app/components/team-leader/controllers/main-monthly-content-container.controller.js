@@ -74,6 +74,7 @@ teamLeaderModule
 		 *
 		*/
 		$scope.subheader = {};
+		$scope.subheader.show = true;
 		$scope.subheader.state = 'dashboard';
 		$scope.subheader.refresh = function(){
 			$scope.report = {};

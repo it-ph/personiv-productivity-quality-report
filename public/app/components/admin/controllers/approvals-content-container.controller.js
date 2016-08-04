@@ -5,6 +5,7 @@ adminModule
 		 *
 		*/
 		$scope.toolbar = {};
+		$scope.toolbar.hideSearchIcon = true;
 		$scope.toolbar.childState = 'Approvals';
 		/**
 		 * Object for subheader

@@ -12,6 +12,10 @@ use App\Http\Controllers\Controller;
 
 class ExperienceController extends Controller
 {
+    public function relation($project_id, $member_id)
+    {
+        return Experience::with('project')->where('project_id', $project_id)->where('member_id', $member_id)->first();
+    }
     public function members($project_id)
     {
         return Experience::with(['member' => function($query){ $query->withTrashed(); }])->where('project_id', $project_id)->get();
@@ -47,13 +51,13 @@ class ExperienceController extends Controller
         $experiences = Experience::where('member_id', $request->input('0.member_id'))->delete();
 
         for ($i=0; $i < count($request->all()); $i++) { 
-            $this->validate($request, [
-                $i.'.member_id' => 'required|numeric',
-                // $i.'.id' => 'required|numeric',
-                $i.'.date_started' => 'required',
-            ]);
-
             if($request->input($i.'.project')){            
+                $this->validate($request, [
+                    $i.'.member_id' => 'required|numeric',
+                    // $i.'.id' => 'required|numeric',
+                    $i.'.date_started' => 'required',
+                ]);
+
                 $experience = new Experience;
 
                 $experience->member_id = $request->input($i.'.member_id');

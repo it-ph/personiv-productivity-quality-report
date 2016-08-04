@@ -166,6 +166,7 @@ adminModule
 		 *
 		*/
 		$scope.toolbar = {};
+		$scope.toolbar.hideSearchIcon = true;
 		$scope.toolbar.childState = 'Approvals';
 		/**
 		 * Object for subheader
@@ -537,6 +538,7 @@ adminModule
 		 *
 		*/
 		$scope.subheader = {};
+		$scope.subheader.show = true;
 		$scope.subheader.state = 'department';
 
 		/* Refreshes the list */

@@ -9,23 +9,44 @@
 				<span ng-if="toolbar.childState">{{ toolbar.childState }}</span>
 			</span>
 		</div>
-		<!-- Search Bar -->
+		<!-- Search Bar
 		<div layout="row" ng-if="searchBar" flex layout-align="center center">
 			<md-button class="md-icon-button" ng-click="hideSearchBar()">
 				<md-icon class="mdi mdi-arrow-left grey" aria-label="Hide Search Bar"></md-icon>
 			</md-button>
-			<!-- Search Bar -->
+			Search Bar
 			<div layout="row" flex>
 				<md-input-container flex>
 					<label>Search</label>
 					<input type="text" ng-model="toolbar.userInput">
 				</md-input-container>
 			</div>
-
+		
 			<md-button class="md-icon-button" ng-click="searchUserInput()">
 				<md-icon class="mdi mdi-magnify grey" aria-label="Search"></md-icon>
 				<md-tooltip>Search</md-tooltip>
 			</md-button>
+		</div> -->
+		<!-- Search Bar -->
+		<div layout="row" ng-if="searchBar" flex flex-gt-sm="70" layout-align="center center">
+			<md-button class="md-icon-button" ng-click="hideSearchBar()">
+				<md-icon class="mdi mdi-24px mdi-arrow-left grey" aria-label="Hide Search Bar"></md-icon>
+			</md-button>
+			<!-- Search Bar -->
+			<form layout="row" flex class="main-text">
+				<md-autocomplete placeholder="Search" md-selected-item="toolbar.searchItem" md-search-text="toolbar.searchText" md-items="item in toolbar.getItems(toolbar.searchText)" md-item-text="item.display" flex>
+					<md-item-template>
+						<p>
+							<md-icon class="mdi mdi-magnify mdi-24px grey"></md-icon>
+							<span md-highlight-text="toolbar.searchText" md-highlight-flags="^i">{{item.display}}</span>
+						</p>
+			        </md-item-template>
+					<md-not-found>
+						<p ng-if="!toolbar.searchAll">No results matching <span class="primary-text">"{{toolbar.searchText}}"</span> were found.</p>
+					    <p ng-click="searchUserInput()" ng-if="toolbar.searchAll" flex>Click to see all results for <span class="primary-text">"{{toolbar.searchText}}"</span></p>
+					</md-not-found>
+				</md-autocomplete>
+			</form>
 		</div>
 		<!-- Icon Buttons -->
 		<div flex layout="row" layout-align="end center" ng-if="!searchBar">

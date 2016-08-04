@@ -87,7 +87,7 @@ teamLeaderModule
 						templateUrl: '/app/components/team-leader/templates/toolbar.template.html',
 					},
 					'content@main.edit-member':{
-						templateUrl: '/app/components/team-leader/templates/content/create-member-content.template.html',
+						templateUrl: '/app/components/team-leader/templates/content/edit-member-content.template.html',
 					},
 				}
 			})

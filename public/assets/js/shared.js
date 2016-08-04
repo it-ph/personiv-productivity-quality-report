@@ -300,6 +300,9 @@ sharedModule
 			members: function(id){
 				return $http.get(urlBase + '-members/' + id);
 			},
+			relation: function(projectID, memberID){
+				return $http.get(urlBase + '-relation/' + projectID + '/member/' + memberID);
+			}
 		}
 	}])
 sharedModule

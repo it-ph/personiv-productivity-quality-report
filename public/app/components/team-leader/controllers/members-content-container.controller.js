@@ -1,11 +1,16 @@
 teamLeaderModule
-	.controller('membersContentContainerController', ['$scope', '$state', '$mdDialog', 'Preloader', 'Member', 'User', function($scope, $state, $mdDialog, Preloader, Member, User){
+	.controller('membersContentContainerController', ['$scope', '$filter', '$state', '$mdDialog', 'Preloader', 'Member', 'User', function($scope, $filter, $state, $mdDialog, Preloader, Member, User){
 		/**
 		 * Object for toolbar
 		 *
 		*/
 		$scope.toolbar = {};
 		$scope.toolbar.childState = 'Members';
+		$scope.toolbar.items = [];
+		$scope.toolbar.getItems = function(query){
+			var results = query ? $filter('filter')($scope.toolbar.items, query) : $scope.toolbar.items;
+			return results;
+		}
 		/**
 		 * Object for subheader
 		 *
@@ -51,16 +56,33 @@ teamLeaderModule
 		 *
 		*/
 		$scope.hideSearchBar = function(){
-			$scope.toolbar.userInput = '';
+			$scope.toolbar.searchText = '';
 			$scope.searchBar = false;
 		};
 		
+		var pushItem = function(data){
+			angular.forEach(data, function(member){
+				member.first_letter = member.full_name.charAt(0).toUpperCase();
+				angular.forEach(member.experiences, function(experience){
+					experience.date_started = new Date(experience.date_started);
+				});
+
+				var item = {};
+				item.display = member.full_name;
+
+				$scope.toolbar.items.push(item);
+			});
+			
+			return data;
+		}
+
 		
 		$scope.searchUserInput = function(){
 			$scope.member.all.show = false;
-			Preloader.preload()
+			Preloader.preload();
 			Member.search($scope.toolbar)
 				.success(function(data){
+					pushItem(data);
 					$scope.member.results = data;
 					Preloader.stop();
 				})
@@ -71,15 +93,6 @@ teamLeaderModule
 
 		$scope.editMember = function(id){
 			$state.go('main.edit-member', {'memberID':id});
-			// Preloader.set(id);
-			// $mdDialog.show({
-	  //   		controller: 'editMemberDialogController',
-		 //      	templateUrl: '/app/components/team-leader/templates/dialogs/edit-member.dialog.template.html',
-		 //      	parent: angular.element(document.body),
-		 //    })
-		 //    .then(function(){
-		 //    	$scope.subheader.refresh();
-		 //    })
 		}
 
 		$scope.deleteMember = function(id){
@@ -106,12 +119,7 @@ teamLeaderModule
 					$scope.fab.show = data.data.role == 'team-leader' ? true : false;
 					Member.department()
 						.success(function(data){
-							angular.forEach(data, function(member){
-								member.first_letter = member.full_name.charAt(0).toUpperCase();
-								angular.forEach(member.experiences, function(experience){
-									experience.date_started = new Date(experience.date_started);
-								});
-							});
+							pushItem(data);
 
 							$scope.member.all = data;
 							$scope.member.all.show = true;

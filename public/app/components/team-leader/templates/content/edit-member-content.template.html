@@ -1,0 +1,41 @@
+<div layout="row" flex layout-padding class="overflow-auto">
+	<div flex flex-gt-md="80" ng-cloak>
+		<form name="form.memberForm" novalidate flex layout-margin>
+			<div>
+				<md-toolbar>
+					<div class="md-toolbar-tools">
+						<h2>Member</h2>
+					</div>
+					<span flex></span>
+				</md-toolbar>
+				<md-content layout="column" layout-padding class="md-whiteframe-2dp">				
+					<!-- Full Name -->
+					<md-input-container flex>
+						<label>Full Name</label>
+						<input type="text" name="FullName" ng-model="member.full_name" ng-pattern="/^[a-zA-ZñÑ,. ]+$/" required ng-blur="checkDuplicate()">
+						<div ng-messages="form.memberForm.FullName.$error" ng-if="form.memberForm.FullName.$touched">
+							<div ng-message="required">Full Name is required.</div>
+							<div ng-message="pattern">Alphabet characters only.</div>
+						</div>
+						<div class="pattern" ng-if="duplicate">Member already exists.</div>
+					</md-input-container>
+					<md-subheader class="md-no-sticky">Projects</md-subheader>
+					<md-progress-circular md-mode="indeterminate" md-diameter="96" ng-if="!show"></md-progress-circular>
+					<div ng-repeat="project in projects" ng-if="show" class="fade-transition">
+						<md-checkbox class="md-primary" ng-model="member_projects[$index].project" ng-true-value="{{project}}" ng-false-value="null">{{project.name}}</md-checkbox>
+						<div layout-padding ng-if="member_projects[$index].project">
+							<!-- Date Started -->
+							<h4>Date Started</h4>
+							<md-datepicker name="DateStarted{{$index}}" ng-model="member_projects[$index].date_started" md-placeholder="Date Started" md-max-date="maxDate" required></md-datepicker>
+					        <div class="validation-messages" ng-messages="form.memberForm['DateStarted' + $index].$error" ng-if="form.memberForm['DateStarted' + $index].$touched">
+					        	<div ng-message="valid">The entered value is not a date!</div>
+					        	<div ng-message="required">Date started is required.</div>
+					        	<div ng-message="maxdate">Maximum date allowed is today.</div>
+					        </div>
+						</div>
+					</div>
+				</md-content>
+			</div>
+		</form>
+	</div>
+</div>

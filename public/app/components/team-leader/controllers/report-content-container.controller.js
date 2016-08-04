@@ -64,6 +64,7 @@ teamLeaderModule
 		};
 
 		$scope.showPositions = function(projectID){
+			$scope.toolbar.items = [];
 			Position.project(projectID)
 				.success(function(data){
 					$scope.positions = data;
@@ -74,6 +75,10 @@ teamLeaderModule
 					angular.forEach(data, function(item){
 						item.date_started = new Date(item.date_started);
 						item.first_letter = item.member.full_name.charAt(0).toUpperCase();
+
+						var toolbarItem = {};
+						toolbarItem.display = item.member.full_name;
+						$scope.toolbar.items.push(toolbarItem);
 					});
 
 					$scope.members = data;
@@ -127,6 +132,11 @@ teamLeaderModule
 		 *
 		*/
 		$scope.toolbar = {};
+		$scope.toolbar.items = [];
+		$scope.toolbar.getItems = function(query){
+			var results = query ? $filter('filter')($scope.toolbar.items, query) : $scope.toolbar.items;
+			return results;
+		}
 		$scope.toolbar.childState = 'Report';
 		// $scope.toolbar.hideSearchIcon = true;
 		/**

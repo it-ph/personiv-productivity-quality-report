@@ -91,7 +91,7 @@ teamLeaderModule
 						templateUrl: '/app/components/team-leader/templates/toolbar.template.html',
 					},
 					'content@main.edit-member':{
-						templateUrl: '/app/components/team-leader/templates/content/create-member-content.template.html',
+						templateUrl: '/app/components/team-leader/templates/content/edit-member-content.template.html',
 					},
 				}
 			})
@@ -310,6 +310,7 @@ teamLeaderModule
 		 *
 		*/
 		$scope.toolbar = {};
+		$scope.toolbar.hideSearchIcon = true;
 		$scope.toolbar.childState = 'Approvals';
 		/**
 		 * Object for subheader
@@ -516,7 +517,9 @@ teamLeaderModule
 							if(memberID){
 								angular.forEach($scope.member_projects, function(item){
 									item.member_id = memberID;
-									item.date_started = item.date_started.toDateString();
+									if(item.project){
+										item.date_started = item.date_started.toDateString();
+									}
 								});
 
 								Experience.store($scope.member_projects)
@@ -602,6 +605,10 @@ teamLeaderModule
 				if(!busy){
 					busy = true;
 
+					// angular.forEach(data.experiences, function(item){
+					// 	item.date_started = new Date(item.date_started);
+					// });
+
 					Member.update(memberID, $scope.member)
 						.then(function(data){
 							if(typeof(data.data) === "boolean"){
@@ -616,7 +623,9 @@ teamLeaderModule
 							if(memberID){
 								angular.forEach($scope.member_projects, function(item){
 									item.member_id = memberID;
-									item.date_started = item.date_started.toDateString();
+									if(item.project){
+										item.date_started = item.date_started.toDateString();
+									}
 								});
 
 								Experience.store($scope.member_projects)
@@ -641,19 +650,35 @@ teamLeaderModule
 
 		$scope.init = function(){
 			Project.index()
-				.then(function(data){
-					$scope.projects = data.data;
-				})
-				.then(function(){
+				.success(function(data){
+					$scope.projects = data;
+					angular.forEach(data, function(item, key){
+						$scope.member_projects.push({});
+					});
+
 					Member.show(memberID)
 						.success(function(data){
-							angular.forEach(data.experiences, function(item){
-								item.date_started = new Date(item.date_started);
+							var count = 0;
+							angular.forEach($scope.projects, function(project, project_key){
+								Experience.relation(project.id, memberID)
+									.success(function(data){
+										if(data){
+											data.date_started = new Date(data.date_started);
+											$scope.member_projects.splice(project_key, 1, data);
+										}
+
+										count++;
+
+										if(count == $scope.projects.length){
+											$scope.show = true;
+										}
+
+									})
 							});
+
 							$scope.toolbar.childState = data.full_name;
 
 							$scope.member = data;
-							$scope.member_projects = data.experiences;
 						})
 				})
 		}();
@@ -1055,6 +1080,7 @@ teamLeaderModule
 		 *
 		*/
 		$scope.subheader = {};
+		$scope.subheader.show = true;
 		$scope.subheader.state = 'dashboard';
 
 		/* Refreshes the list */
@@ -1374,6 +1400,7 @@ teamLeaderModule
 		 *
 		*/
 		$scope.subheader = {};
+		$scope.subheader.show = true;
 		$scope.subheader.state = 'dashboard';
 		$scope.subheader.refresh = function(){
 			$scope.report = {};
@@ -1488,13 +1515,18 @@ teamLeaderModule
 
 	}]);
 teamLeaderModule
-	.controller('membersContentContainerController', ['$scope', '$state', '$mdDialog', 'Preloader', 'Member', 'User', function($scope, $state, $mdDialog, Preloader, Member, User){
+	.controller('membersContentContainerController', ['$scope', '$filter', '$state', '$mdDialog', 'Preloader', 'Member', 'User', function($scope, $filter, $state, $mdDialog, Preloader, Member, User){
 		/**
 		 * Object for toolbar
 		 *
 		*/
 		$scope.toolbar = {};
 		$scope.toolbar.childState = 'Members';
+		$scope.toolbar.items = [];
+		$scope.toolbar.getItems = function(query){
+			var results = query ? $filter('filter')($scope.toolbar.items, query) : $scope.toolbar.items;
+			return results;
+		}
 		/**
 		 * Object for subheader
 		 *
@@ -1540,16 +1572,33 @@ teamLeaderModule
 		 *
 		*/
 		$scope.hideSearchBar = function(){
-			$scope.toolbar.userInput = '';
+			$scope.toolbar.searchText = '';
 			$scope.searchBar = false;
 		};
 		
+		var pushItem = function(data){
+			angular.forEach(data, function(member){
+				member.first_letter = member.full_name.charAt(0).toUpperCase();
+				angular.forEach(member.experiences, function(experience){
+					experience.date_started = new Date(experience.date_started);
+				});
+
+				var item = {};
+				item.display = member.full_name;
+
+				$scope.toolbar.items.push(item);
+			});
+			
+			return data;
+		}
+
 		
 		$scope.searchUserInput = function(){
 			$scope.member.all.show = false;
-			Preloader.preload()
+			Preloader.preload();
 			Member.search($scope.toolbar)
 				.success(function(data){
+					pushItem(data);
 					$scope.member.results = data;
 					Preloader.stop();
 				})
@@ -1560,15 +1609,6 @@ teamLeaderModule
 
 		$scope.editMember = function(id){
 			$state.go('main.edit-member', {'memberID':id});
-			// Preloader.set(id);
-			// $mdDialog.show({
-	  //   		controller: 'editMemberDialogController',
-		 //      	templateUrl: '/app/components/team-leader/templates/dialogs/edit-member.dialog.template.html',
-		 //      	parent: angular.element(document.body),
-		 //    })
-		 //    .then(function(){
-		 //    	$scope.subheader.refresh();
-		 //    })
 		}
 
 		$scope.deleteMember = function(id){
@@ -1595,12 +1635,7 @@ teamLeaderModule
 					$scope.fab.show = data.data.role == 'team-leader' ? true : false;
 					Member.department()
 						.success(function(data){
-							angular.forEach(data, function(member){
-								member.first_letter = member.full_name.charAt(0).toUpperCase();
-								angular.forEach(member.experiences, function(experience){
-									experience.date_started = new Date(experience.date_started);
-								});
-							});
+							pushItem(data);
 
 							$scope.member.all = data;
 							$scope.member.all.show = true;
@@ -1695,6 +1730,7 @@ teamLeaderModule
 		};
 
 		$scope.showPositions = function(projectID){
+			$scope.toolbar.items = [];
 			Position.project(projectID)
 				.success(function(data){
 					$scope.positions = data;
@@ -1705,6 +1741,10 @@ teamLeaderModule
 					angular.forEach(data, function(item){
 						item.date_started = new Date(item.date_started);
 						item.first_letter = item.member.full_name.charAt(0).toUpperCase();
+
+						var toolbarItem = {};
+						toolbarItem.display = item.member.full_name;
+						$scope.toolbar.items.push(toolbarItem);
 					});
 
 					$scope.members = data;
@@ -1758,6 +1798,11 @@ teamLeaderModule
 		 *
 		*/
 		$scope.toolbar = {};
+		$scope.toolbar.items = [];
+		$scope.toolbar.getItems = function(query){
+			var results = query ? $filter('filter')($scope.toolbar.items, query) : $scope.toolbar.items;
+			return results;
+		}
 		$scope.toolbar.childState = 'Report';
 		// $scope.toolbar.hideSearchIcon = true;
 		/**

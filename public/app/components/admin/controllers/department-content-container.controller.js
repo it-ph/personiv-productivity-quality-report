@@ -121,6 +121,7 @@ adminModule
 		 *
 		*/
 		$scope.subheader = {};
+		$scope.subheader.show = true;
 		$scope.subheader.state = 'department';
 
 		/* Refreshes the list */

@@ -60,6 +60,10 @@ teamLeaderModule
 				if(!busy){
 					busy = true;
 
+					// angular.forEach(data.experiences, function(item){
+					// 	item.date_started = new Date(item.date_started);
+					// });
+
 					Member.update(memberID, $scope.member)
 						.then(function(data){
 							if(typeof(data.data) === "boolean"){
@@ -74,7 +78,9 @@ teamLeaderModule
 							if(memberID){
 								angular.forEach($scope.member_projects, function(item){
 									item.member_id = memberID;
-									item.date_started = item.date_started.toDateString();
+									if(item.project){
+										item.date_started = item.date_started.toDateString();
+									}
 								});
 
 								Experience.store($scope.member_projects)
@@ -99,19 +105,35 @@ teamLeaderModule
 
 		$scope.init = function(){
 			Project.index()
-				.then(function(data){
-					$scope.projects = data.data;
-				})
-				.then(function(){
+				.success(function(data){
+					$scope.projects = data;
+					angular.forEach(data, function(item, key){
+						$scope.member_projects.push({});
+					});
+
 					Member.show(memberID)
 						.success(function(data){
-							angular.forEach(data.experiences, function(item){
-								item.date_started = new Date(item.date_started);
+							var count = 0;
+							angular.forEach($scope.projects, function(project, project_key){
+								Experience.relation(project.id, memberID)
+									.success(function(data){
+										if(data){
+											data.date_started = new Date(data.date_started);
+											$scope.member_projects.splice(project_key, 1, data);
+										}
+
+										count++;
+
+										if(count == $scope.projects.length){
+											$scope.show = true;
+										}
+
+									})
 							});
+
 							$scope.toolbar.childState = data.full_name;
 
 							$scope.member = data;
-							$scope.member_projects = data.experiences;
 						})
 				})
 		}();

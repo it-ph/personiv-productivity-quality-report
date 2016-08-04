@@ -81,6 +81,7 @@ Route::group(['middleware' => 'auth'], function () {
 	Route::post('position-check-duplicate', 'PositionController@checkDuplicate');
 
 	// Other Routes
+	Route::get('experience-relation/{projectID}/member/{memberID}', 'ExperienceController@relation');
 	Route::get('position-project/{projectID}', 'PositionController@project');
 	Route::get('user-team-leader', 'UserController@teamLeader');
 	Route::get('member-team-leader/{teamLeaderID}', 'MemberController@teamLeader');

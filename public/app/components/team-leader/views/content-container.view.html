@@ -5,7 +5,7 @@
 <div layout="row" flex>
 	<div layout="column" flex class="overflow-y-hidden">
 		<!-- Toogle on scroll Toolbar -->
-		<md-toolbar class="white-toolbar" md-scroll-shrink>
+		<md-toolbar class="white-toolbar" md-scroll-shrink ng-if="subheader.show">
 			<!-- Subheader for Assets -->
 			<div class="md-toolbar-tools" ng-include="'/app/components/team-leader/templates/subheader.template.html'"></div>
 		</md-toolbar>
