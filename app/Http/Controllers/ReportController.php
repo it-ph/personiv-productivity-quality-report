@@ -923,13 +923,9 @@ class ReportController extends Controller
                         $member->total_hours_worked += $performance->hours_worked;
                     }
                     
-
-                $members[$key1]->results = $results;
-                $members[$key1]->productivity_average = $this->productivity_average;
-                $members[$key1]->quality_average = $this->quality_average;
-                $members[$key1]->total_output = $this->total_output;
-                $members[$key1]->total_output_error = $this->total_output_error;
-                $members[$key1]->total_hours_worked = $this->total_hours_worked;
+                    $member->total_average_output = $member->total_output / $member->total_hours_worked * $daily_work_hours;
+                    $member->monthly_productivity = round($member->total_average_output / $member->target->productivity * 100);
+                    $member->monthly_quality = round((1 - $member->total_output_error / $member->total_output) * 100);
 
                     if($member->monthly_productivity < $member->target->productivity && $member->monthly_quality >= $member->target->quality)
                     {
@@ -959,6 +955,7 @@ class ReportController extends Controller
 
         }
 
+        // return $this->projects; 
 
         Excel::create('PQR Monthly Summary '. $this->date_start->toFormattedDateString() . ' to ' . $this->date_end->toFormattedDateString(), function($excel){
             foreach ($this->projects as $project_key => $project) {
@@ -1046,6 +1043,7 @@ class ReportController extends Controller
                         // $performances = Performance::with(['member' => function($query){ $query->with(['experiences' => function($query){ $query->where('project_id', $this->project->id);}]); }])->with('position')->where('position_id', $position->id)->where('project_id', $project->id)->whereBetween('date_start', [$date_start, $date_end])->where('daily_work_hours', 'like', $daily_work_hours.'%')->where('member_id', $member->id)->get();
 
                         $performances = DB::table('performances')->where('position_id', $position->id)->where('project_id', $project->id)->whereBetween('date_start', [$date_start, $date_end])->where('daily_work_hours', 'like', $daily_work_hours.'%')->where('member_id', $member->id)->whereNull('deleted_at')->get();
+
                         if(count($performances)){
                             foreach ($performances as $performance_key => $performance) {
                                 if(count($performances) > 1 && $performance_key > 0){
