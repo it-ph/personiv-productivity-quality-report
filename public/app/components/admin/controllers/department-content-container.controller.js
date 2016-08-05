@@ -166,6 +166,16 @@ adminModule
 		// 	return;
 		// };
 
+		$scope.show = function(data){
+			Preloader.set(data);
+			$mdDialog.show({
+		    	controller: 'otherPerformanceDialogController',
+		      	templateUrl: '/app/shared/templates/dialogs/other-performance.dialog.template.html',
+		      	parent: angular.element(document.body),
+		      	clickOutsideToClose:true,
+		    });
+		}
+
 		$scope.editReport = function(id){
 			$state.go('main.edit-report', {'reportID':id});
 		};

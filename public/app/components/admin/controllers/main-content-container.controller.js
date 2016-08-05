@@ -116,8 +116,11 @@ adminModule
 						report.chart.labels = [];
 
 						report.date_start = new Date(report.date_start);
-						
+						report.count = 0;
 						angular.forEach(report.members, function(member){
+							if(!member.member.deleted_at){
+								report.count++;
+							}
 							if(member.average_productivity && member.average_productivity){
 								report.chart.data[0].push(member.average_productivity);
 								report.chart.data[1].push(member.average_quality);

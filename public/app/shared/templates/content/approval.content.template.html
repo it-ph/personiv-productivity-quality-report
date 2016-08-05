@@ -1,69 +1,3 @@
-<!-- <md-content layout="column" layout-padding layout-margin flex>
-	<md-card>
-		<md-card-content>
-			<md-tabs flex>
-				<md-tab label="Pending">
-					<md-content flex layout="column">
-						<div class="fade-transition" ng-if="pending.show" flex infinite-scroll='pending.paginateLoad()' infinite-scroll-distance="2" infinite-scroll-disabled="pending.busy" infinite-scroll-parent>
-							<md-list>
-								<md-list-item class="md-3-line" layout="row" ng-repeat="pending in pending.paginated | filter:toolbar.userInput" ng-click="showPending(pending.approval_id)">
-									<h2 class="md-avatar md-headline" ng-class="pending.action == 'update' ? 'purple-bg' : 'pink-bg'" layout="row" layout-align="center center">
-										<span class="weight-200 white-text">{{ pending.first_letter }}</span>
-									</h2>
-									<div class="md-list-item-text" layout="column" flex>
-										<h3>{{ pending.first_name }} {{ pending.last_name }}</h3>
-										<h4>{{ pending.action }} weekly performance of <strong>{{ pending.project }}</strong></h4>
-										<p>{{ pending.created_at_formatted }}</p>
-									</div>
-								</md-list-item>
-							</md-list>
-							<p ng-if="!pending.paginated.length">No pending approvals.</p>
-						</div>
-					</md-content>
-				</md-tab>
-				<md-tab label="Approved">
-					<md-content flex layout="column">
-						<div class="fade-transition" ng-if="approved.show" flex infinite-scroll='approved.paginateLoad()' infinite-scroll-distance="2" infinite-scroll-disabled="approved.busy" infinite-scroll-parent>
-							<md-list>
-								<md-list-item class="md-3-line" layout="row" ng-repeat="approved in approved.paginated | filter:toolbar.userInput" ng-click="showApprovedDetails(approved.id)">
-									<h2 class="md-avatar md-headline purple-bg" layout="row" layout-align="center center">
-										<span class="weight-200 white-text">{{ approved.first_letter }}</span>
-									</h2>
-									<div class="md-list-item-text" layout="column" flex>
-										<h3>{{ approved.project }}</h3>
-										<h4>{{ approved.date_start_formatted }} to {{ approved.date_end_formatted }}</h4>
-										<p>Remarks: {{ approved.message }}</p>
-									</div>
-								</md-list-item>
-							</md-list>
-							<p ng-if="!approved.paginated.length">No approved approvals.</p>
-						</div>
-					</md-content>
-				</md-tab>
-				<md-tab label="Declined">
-					<md-content flex layout="column">
-						<div class="fade-transition" ng-if="declined.show" flex infinite-scroll='declined.paginateLoad()' infinite-scroll-distance="2" infinite-scroll-disabled="declined.busy" infinite-scroll-parent>
-							<md-list>
-								<md-list-item class="md-3-line" layout="row" ng-repeat="declined in declined.paginated | filter:toolbar.userInput" ng-click="showDeclinedDetails(declined.id)">
-									<h2 class="md-avatar md-headline purple-bg" layout="row" layout-align="center center">
-										<span class="weight-200 white-text">{{ declined.first_letter }}</span>
-									</h2>
-									<div class="md-list-item-text" layout="column" flex>
-										<h3>{{ declined.project }}</h3>
-										<h4>{{ declined.date_start_formatted }} to {{ declined.date_end_formatted }}</h4>
-										<p>Remarks: {{ declined.message }}</p>
-									</div>
-								</md-list-item>
-							</md-list>
-							<p ng-if="!declined.paginated.length">No declined approvals.</p>
-						</div>
-					</md-content>
-				</md-tab>
-			</md-tabs>
-		</md-card-content>
-	</md-card>
-</md-content>
- -->
 <div layout-padding flex flex-gt-md="75">
 	<form name="form.search" flex="50" layout="row" layout-margin layout-align="center center" novalidate>		
 		<md-input-container flex>
@@ -110,7 +44,7 @@
 			</div>
 		</md-list-item>
 	</md-list>
-	<p ng-if="!asset_types.length">No pending approvals.</p>
+	<p ng-if="!pendingApprovals.length">No pending approvals.</p>
 	<!-- Approved -->
 	<md-divider></md-divider>
 	<md-subheader class="md-no-sticky md-primary" layout="row" layout-align="space-between center" flex>
@@ -135,17 +69,15 @@
 		<span>Declined</span>
 	</md-subheader>
 	<md-list layout="column" layout-padding>
-		<md-list-item class="md-3-line fade-transition" flex ng-repeat="item in declined">
-			<div class="md-list-item-text" layout="column">
-	          	<h2 class="md-avatar md-headline purple-bg" layout="row" layout-align="center center">
-					<span class="weight-200 white-text">{{ item.first_letter }}</span>
-				</h2>
-				<div class="md-list-item-text" layout="column" flex>
-					<h3>{{ item.project }}</h3>
-					<h4>{{ item.date_start_formatted }} to {{ item.date_end_formatted }}</h4>
-					<p>Remarks: {{ item.message }}</p>
-				</div>
-	        </div>
+		<md-list-item class="fade-transition md-3-line" flex ng-repeat="item in declined" ng-click="showDeclinedDetails(item.id)">
+          	<h2 class="md-avatar md-headline pink-bg" layout="row" layout-align="center center">
+				<span class="weight-200 white-text">{{ item.first_letter }}</span>
+			</h2>
+			<div class="md-list-item-text" layout="column" flex>
+				<h3>{{ item.project }}</h3>
+				<h4>{{ item.date_start_formatted }} to {{ item.date_end_formatted }}</h4>
+				<p>Remarks: {{ item.message }}</p>
+			</div>
 		</md-list-item>
 	</md-list>
 	<p ng-if="!declined.length">No declined approvals.</p>

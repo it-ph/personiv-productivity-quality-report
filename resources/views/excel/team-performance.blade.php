@@ -3,10 +3,10 @@
 		<th align="center">Position</th>
 		<th align="center">Head Count</th>
 	</tr>
-	@foreach($details->positions as $item)
+	@foreach($project->positions as $position)
 		<tr>
-			<td align="center">{{$item->name}}</td>
-			<td align="center">{{$item->head_count}}</td>
+			<td align="center">{{$position->name}}</td>
+			<td align="center">{{$position->head_count}}</td>
 		</tr>
 	@endforeach
 </table>
@@ -20,50 +20,54 @@
 	</tr>
 	<tr>
 		<th align="center">Beginner</th>
-		<td align="center">{{$details->beginner_total_output}}</td>
-		<td align="center">{{$details->beginner_total_man_hours}}</td>
-		<td align="center">{{$details->beginner_total_average_output}}</td>
+		<th align="center">{{$project->beginner_total_output}}</th>
+		<th align="center">{{$project->beginner_total_hours_worked}}</th>
+		<th align="center">{{$project->beginner_total_average_output}}</th>
 	</tr>
-	@foreach($details->beginner as $item)
-		<tr>
-			<td align="center">{{$item->position}}</td>
-			<td align="center">{{$item->total_output}}</td>
-			<td align="center">{{$item->total_man_hours}}</td>
-			<td align="center">{{$item->total_average_output}}</td>
-		</tr>
+	@foreach($project->positions as $position)
+		@if($position->beginner_total_output && $position->beginner_total_hours_worked && $position->beginner_total_average_output)
+			<tr>
+				<td align="center">{{$position->name}}</td>
+				<td align="center">{{$position->beginner_total_output}}</td>
+				<td align="center">{{$position->beginner_total_hours_worked}}</td>
+				<td align="center">{{$position->beginner_total_average_output}}</td>
+			</tr>
+		@endif
 	@endforeach
 	<tr>
 		<th align="center">Moderately Experienced</th>
-		<td align="center">{{$details->moderately_experienced_total_output}}</td>
-		<td align="center">{{$details->moderately_experienced_total_man_hours}}</td>
-		<td align="center">{{$details->moderately_experienced_total_average_output}}</td>
+		<th align="center">{{$project->moderately_experienced_total_output}}</th>
+		<th align="center">{{$project->moderately_experienced_total_hours_worked}}</th>
+		<th align="center">{{$project->moderately_experienced_total_average_output}}</th>
 	</tr>
-	@foreach($details->moderately_experienced as $item)
-		<tr>
-			<td align="center">{{$item->position}}</td>
-			<td align="center">{{$item->total_output}}</td>
-			<td align="center">{{$item->total_man_hours}}</td>
-			<td align="center">{{$item->total_average_output}}</td>
-		</tr>
+	@foreach($project->positions as $position)
+		@if($position->moderately_experienced_total_output && $position->moderately_experienced_total_hours_worked && $position->moderately_experienced_total_average_output)
+			<tr>
+				<td align="center">{{$position->name}}</td>
+				<td align="center">{{$position->moderately_experienced_total_output}}</td>
+				<td align="center">{{$position->moderately_experienced_total_hours_worked}}</td>
+				<td align="center">{{$position->moderately_experienced_total_average_output}}</td>
+			</tr>
+		@endif
 	@endforeach
 	<tr>
 		<th align="center">Experienced</th>
-		<td align="center">{{$details->experienced_total_output}}</td>
-		<td align="center">{{$details->experienced_total_man_hours}}</td>
-		<td align="center">{{$details->experienced_total_average_output}}</td>
+		<th align="center">{{$project->experienced_total_output}}</th>
+		<th align="center">{{$project->experienced_total_hours_worked}}</th>
+		<th align="center">{{$project->experienced_total_average_output}}</th>
 	</tr>
-	@foreach($details->experienced as $item)
+	@foreach($project->positions as $position)
 		<tr>
-			<td align="center">{{$item->position}}</td>
-			<td align="center">{{$item->total_output}}</td>
-			<td align="center">{{$item->total_man_hours}}</td>
-			<td align="center">{{$item->total_average_output}}</td>
+			<td align="center">{{$position->name}}</td>
+			<td align="center">{{$position->total_output}}</td>
+			<td align="center">{{$position->total_hours_worked}}</td>
+			<td align="center">{{$position->total_average_output}}</td>
 		</tr>
 	@endforeach
 	<tr>
 		<th align="center">Grand Total</th>
-		<th align="center">{{$details->overall_total_output}}</th>
-		<th align="center">{{$details->overall_total_man_hours}}</th>
-		<th align="center">{{$details->overall_total_average_output}}</th>
+		<th align="center">{{$project->total_output}}</th>
+		<th align="center">{{$project->total_hours_worked}}</th>
+		<th align="center">{{$project->total_average_output}}</th>
 	</tr>
 </table>

@@ -1,4 +1,4 @@
-<md-dialog layout="column" flex flex-gt-md="70"  aria-label="Monthly View" ng-cloak>
+<md-dialog layout="column" flex flex-gt-md="70"  aria-label="Other Performance" ng-cloak>
 	<md-dialog-content layout="column" flex layout-padding layout-wrap>
 		<div layout="row" layout-align="space-between center">
 			<md-list>
@@ -17,7 +17,6 @@
 		</div>
 		<div ng-repeat="position in positions" ng-if="position.performances.length">
 			<md-subheader class="md-no-sticky primary-text">{{position.name}}</md-subheader>		
-			<em class="secondary-text md-caption">Performances of {{member.full_name}} in <span class="accent-text">{{position.performances[0].project.name}}</span> only.</em>
 			<table class="table">
 				<tr>
 					<th>Date Start</th>
