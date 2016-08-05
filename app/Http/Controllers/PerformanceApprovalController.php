@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use DB;
+use Auth;
+use Carbon\Carbon;
 use App\PerformanceApproval;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
@@ -98,8 +100,11 @@ class PerformanceApprovalController extends Controller
 
         return response()->json($details);
     }
-    public function declinedUser($id)
+    public function declinedUser(Request $request)
     {
+        $date_start = $request->month && $request->year ? Carbon::parse('first day of '. $request->month. ' '. $request->year) : Carbon::parse('first day of this month');
+        $date_end = $request->month && $request->year ? Carbon::parse('last day of '. $request->month. ' '. $request->year) : Carbon::parse('last day of this month');
+
         return DB::table('performance_approvals')
             ->join('projects', 'projects.id', '=', 'performance_approvals.project_id')
             ->join('reports', 'reports.id', '=', 'performance_approvals.report_id')
@@ -112,14 +117,18 @@ class PerformanceApprovalController extends Controller
                 DB::raw('DATE_FORMAT(performance_approvals.date_end, "%b. %d, %Y") as date_end_formatted')
             )
             ->where('performance_approvals.status', 'declined')
-            ->where('users.id', $id)
+            ->where('users.id', Auth::user()->id)
             ->whereNull('performance_approvals.deleted_at')
+            ->whereBetween('performance_approvals.created_at', [$date_start, $date_end])
             ->orderBy('performance_approvals.created_at')
-            ->paginate(10);
+            ->get();
     }
 
-    public function declined()
+    public function declined(Request $request)
     {
+        $date_start = $request->month && $request->year ? Carbon::parse('first day of '. $request->month. ' '. $request->year) : Carbon::parse('first day of this month');
+        $date_end = $request->month && $request->year ? Carbon::parse('last day of '. $request->month. ' '. $request->year) : Carbon::parse('last day of this month');
+
         return DB::table('performance_approvals')
             ->join('projects', 'projects.id', '=', 'performance_approvals.project_id')
             ->select(
@@ -131,11 +140,15 @@ class PerformanceApprovalController extends Controller
             )
             ->where('performance_approvals.status', 'declined')
             ->whereNull('performance_approvals.deleted_at')
+            ->whereBetween('performance_approvals.created_at', [$date_start, $date_end])
             ->orderBy('performance_approvals.created_at')
-            ->paginate(10);
+            ->get();
     }
-    public function approvedUser($id)
+    public function approvedUser(Request $request)
     {
+        $date_start = $request->month && $request->year ? Carbon::parse('first day of '. $request->month. ' '. $request->year) : Carbon::parse('first day of this month');
+        $date_end = $request->month && $request->year ? Carbon::parse('last day of '. $request->month. ' '. $request->year) : Carbon::parse('last day of this month');
+
         return DB::table('performance_approvals')
             ->join('projects', 'projects.id', '=', 'performance_approvals.project_id')
             ->join('reports', 'reports.id', '=', 'performance_approvals.report_id')
@@ -148,14 +161,18 @@ class PerformanceApprovalController extends Controller
                 DB::raw('DATE_FORMAT(performance_approvals.date_end, "%b. %d, %Y") as date_end_formatted')
             )
             ->where('performance_approvals.status', 'approved')
-            ->where('users.id', $id)
+            ->whereBetween('performance_approvals.created_at', [$date_start, $date_end])
+            ->where('users.id', Auth::user()->id)
             ->whereNull('performance_approvals.deleted_at')
             ->orderBy('performance_approvals.created_at')
-            ->paginate(10);
+            ->get();
     }
 
-    public function approved()
+    public function approved(Request $request)
     {
+        $date_start = $request->month && $request->year ? Carbon::parse('first day of '. $request->month. ' '. $request->year) : Carbon::parse('first day of this month');
+        $date_end = $request->month && $request->year ? Carbon::parse('last day of '. $request->month. ' '. $request->year) : Carbon::parse('last day of this month');
+
         return DB::table('performance_approvals')
             ->join('projects', 'projects.id', '=', 'performance_approvals.project_id')
             ->select(
@@ -167,8 +184,9 @@ class PerformanceApprovalController extends Controller
             )
             ->where('performance_approvals.status', 'approved')
             ->whereNull('performance_approvals.deleted_at')
+            ->whereBetween('performance_approvals.created_at', [$date_start, $date_end])
             ->orderBy('performance_approvals.created_at')
-            ->paginate(10);
+            ->get();
     }
     /**
      * Display a listing of the resource.

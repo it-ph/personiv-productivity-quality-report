@@ -18,17 +18,17 @@ sharedModule
 			delete: function(id){
 				return $http.delete(urlBase + '/' + id);
 			},
-			approved: function(page){
-				return $http.get(urlBase + '-approved?page=' + page);
+			approved: function(data){
+				return $http.post(urlBase + '-approved', data);
 			},
-			declined: function(page){
-				return $http.get(urlBase + '-declined?page=' + page);
+			declined: function(data){
+				return $http.post(urlBase + '-declined', data);
 			},
-			approvedUser: function(id, page){
-				return $http.get(urlBase + '-approved-user/'+ id +'?page=' + page);
+			approvedUser: function(data){
+				return $http.post(urlBase + '-approved-user', data);
 			},
-			declinedUser: function(id, page){
-				return $http.get(urlBase + '-declined-user/'+ id +'?page=' + page);
+			declinedUser: function(id, data){
+				return $http.post(urlBase + '-declined-user', data);
 			},
 			declinedDetails: function(id){
 				return $http.get(urlBase +'-declined-details/' + id);

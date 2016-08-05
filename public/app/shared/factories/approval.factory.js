@@ -21,11 +21,11 @@ sharedModule
 			performanceEdit: function(id, data){
 				return $http.post(urlBase + '-performance-edit/' + id, data);
 			},
-			pending: function(page){
-				return $http.get(urlBase + '-pending?page=' + page);
+			pending: function(data){
+				return $http.post(urlBase + '-pending', data);
 			},
-			pendingUser: function(id, page){
-				return $http.get(urlBase + '-pending-user/'+ id +'?page=' + page);
+			pendingUser: function(data){
+				return $http.post(urlBase + '-pending-user', data);
 			},
 			details: function(id){
 				return $http.get(urlBase + '-details/' + id);

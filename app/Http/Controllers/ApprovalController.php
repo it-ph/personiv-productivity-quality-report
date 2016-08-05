@@ -22,65 +22,6 @@ use Carbon\Carbon;
 
 class ApprovalController extends Controller
 {
-    // public function cancel(Request $request)
-    // {
-    //     $create_notification = false;
-    //     $pending_count = count($request->all());
-    //     for ($i=0; $i < count($request->all()); $i++) {
-    //         if($request->input($i.'.include')){
-    //             $pending_count--;
-    //             $this->validate($request, [
-    //                 $i.'.approval_id' => 'required|numeric',
-    //                 $i.'.performance_approval_id' => 'required|numeric',
-    //                 $i.'.performance_id' => 'required|numeric',
-    //             ]);
-
-    //             if(!$create_notification)
-    //             {
-    //                 $admin = User::where('email', 'sherryl.sanchez@personiv.com')->first();
-    //                 $report = Report::where('id', $request->input($i.'.report_id'))->first();
-
-    //                 $notification = new Notification;
-    //                 $notification->receiver_user_id = $admin->id;
-    //                 $notification->sender_user_id = $report->user_id;
-    //                 $notification->subscriber = 'admin';
-    //                 $notification->message = 'cancelled';
-    //                 $notification->state = 'main.approvals';
-    //                 $notification->event_id = $request->input($i.'.approval_id');
-    //                 $notification->event_id_type = 'approval_id';
-    //                 // $notification->event_id = $report->id;
-    //                 // $notification->event_id_type = 'report_id';
-    //                 $notification->seen = false;
-    //                 $notification->save();
-
-    //                 $notify = DB::table('notifications')
-    //                     ->join('approvals', 'approvals.report_id', '=', 'notifications.event_id')
-    //                     ->join('reports', 'reports.id', '=', 'approvals.report_id')
-    //                     ->join('projects', 'projects.id', '=', 'reports.project_id')
-    //                     ->join('users', 'users.id', '=', 'notifications.sender_user_id')
-    //                     ->select(
-    //                         '*',
-    //                         DB::raw('LEFT(users.first_name, 1) as first_letter')
-    //                     )
-    //                     ->where('notifications.id', $notification->id)
-    //                     ->first();
-
-    //                 event(new ReportSubmittedBroadCast($notify)); 
-    //                 // report 
-    //                 $create_notification = true;
-    //             }
-
-    //             $performance_approval_approved = PerformanceApproval::where('id', $request->input($i.'.performance_approval_id'))->delete();
-    //         }
-    //     }
-
-    //     if(!$pending_count)
-    //     {
-    //         $approval = Approval::where('id', $request->input('0.approval_id'))->first();
-    //         $approval->status = 'done';
-    //         $approval->save();
-    //     }
-    // }
     public function declineDelete(Request $request)
     {
         $approval = DB::table('approvals')
@@ -441,8 +382,11 @@ class ApprovalController extends Controller
 
         return response()->json($details);
     }
-    public function pendingUser($id)
+    public function pendingUser(Request $request)
     {
+        $date_start = $request->month && $request->year ? Carbon::parse('first day of '. $request->month. ' '. $request->year) : Carbon::parse('first day of this month');
+        $date_end = $request->month && $request->year ? Carbon::parse('last day of '. $request->month. ' '. $request->year) : Carbon::parse('last day of this month');
+
         return DB::table('approvals')
             ->join('reports', 'reports.id', '=', 'approvals.report_id')
             ->join('projects', 'projects.id', '=', 'reports.project_id')
@@ -455,13 +399,17 @@ class ApprovalController extends Controller
                 DB::raw('UPPER(LEFT(users.first_name, 1)) as first_letter')
             )
             ->where('approvals.status', 'pending')
-            ->where('reports.user_id', $id)
+            ->whereBetween('approvals.created_at', [$date_start, $date_end])
+            ->where('reports.user_id', Auth::user()->id)
             ->whereNull('approvals.deleted_at')
             ->groupBy('approvals.id')
-            ->paginate(10);
+            ->get();
     }
-    public function pending()
+    public function pending(Request $request)
     {
+        $date_start = $request->month && $request->year ? Carbon::parse('first day of '. $request->month. ' '. $request->year) : Carbon::parse('first day of this month');
+        $date_end = $request->month && $request->year ? Carbon::parse('last day of '. $request->month. ' '. $request->year) : Carbon::parse('last day of this month');
+
         return DB::table('approvals')
             ->join('reports', 'reports.id', '=', 'approvals.report_id')
             ->join('projects', 'projects.id', '=', 'reports.project_id')
@@ -474,10 +422,11 @@ class ApprovalController extends Controller
                 DB::raw('UPPER(LEFT(users.first_name, 1)) as first_letter')
             )
             ->where('approvals.status', 'pending')
+            ->whereBetween('approvals.created_at', [$date_start, $date_end])
             ->whereNull('approvals.deleted_at')
             ->groupBy('approvals.id')
             ->orderBy('approvals.created_at', 'desc')
-            ->paginate(10);
+            ->get();
     }
     public function performanceEdit(Request $request, $reportID)
     {

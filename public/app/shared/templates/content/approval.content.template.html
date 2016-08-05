@@ -1,4 +1,4 @@
-<md-content layout="column" layout-padding layout-margin flex>
+<!-- <md-content layout="column" layout-padding layout-margin flex>
 	<md-card>
 		<md-card-content>
 			<md-tabs flex>
@@ -63,3 +63,90 @@
 		</md-card-content>
 	</md-card>
 </md-content>
+ -->
+<div layout-padding flex flex-gt-md="75">
+	<form name="form.search" flex="50" layout="row" layout-margin layout-align="center center" novalidate>		
+		<md-input-container flex>
+			<label>Month</label>
+			<md-select ng-model="approval.month" name="Month" required>
+				<md-option ng-repeat="month in months" value="{{ month }}">
+					{{ month }}
+				</md-option>
+			</md-select>
+			<div ng-messages="form.searchMonthlyForm.Month.$error" ng-if="form.searchMonthlyForm.Month.$touched">
+				<div ng-messages-include="/app/shared/templates/validation-message.html"></div>
+			</div>
+		</md-input-container>
+		<md-input-container flex>
+			<label>Year</label>
+			<md-select ng-model="approval.year" required name="Year">
+				<md-option ng-repeat="year in years" value="{{ year }}">
+					{{ year }}
+				</md-option>
+			</md-select>
+			<div ng-messages="form.searchMonthlyForm.Year.$error" ng-if="form.searchMonthlyForm.Year.$touched">
+				<div ng-messages-include="/app/shared/templates/validation-message.html"></div>
+			</div>
+		</md-input-container>
+		<md-button class="md-fab md-mini md-primary" ng-click="search()">
+			<md-icon class="mdi mdi-magnify grey"></md-icon>
+			<md-tooltip>Search</md-tooltip>
+		</md-button>
+	</form>
+
+	<!-- Pending -->
+	<md-subheader class="md-no-sticky md-primary">
+		<span>Pending</span>
+	</md-subheader>
+	<md-list layout="column" layout-padding>
+		<md-list-item class="fade-transition md-3-line" flex ng-repeat="pending in pendingApprovals" ng-click="showPending(pending.approval_id)">
+			<h2 class="md-avatar md-headline" ng-class="pending.action == 'update' ? 'purple-bg' : 'pink-bg'" layout="row" layout-align="center center">
+				<span class="weight-200 white-text">{{ pending.first_letter }}</span>
+			</h2>
+			<div class="md-list-item-text" layout="column" flex>
+				<h3>{{ pending.first_name }} {{ pending.last_name }}</h3>
+				<h4>{{ pending.action }} weekly performance of <strong>{{ pending.project }}</strong></h4>
+				<p>{{ pending.created_at_formatted }}</p>
+			</div>
+		</md-list-item>
+	</md-list>
+	<p ng-if="!asset_types.length">No pending approvals.</p>
+	<!-- Approved -->
+	<md-divider></md-divider>
+	<md-subheader class="md-no-sticky md-primary" layout="row" layout-align="space-between center" flex>
+		<span>Approved</span>
+	</md-subheader>
+	<md-list layout="column" layout-padding>
+		<md-list-item class="fade-transition md-3-line" flex ng-repeat="item in approved" ng-click="showApprovedDetails(item.id)">
+			<h2 class="md-avatar md-headline purple-bg" layout="row" layout-align="center center">
+				<span class="weight-200 white-text">{{ item.first_letter }}</span>
+			</h2>
+			<div class="md-list-item-text" layout="column" flex>
+				<h3>{{ item.project }}</h3>
+				<h4>{{ item.date_start_formatted }} to {{ item.date_end_formatted }}</h4>
+				<p>Remarks: {{ item.message }}</p>
+			</div>
+		</md-list-item>
+	</md-list>
+	<p ng-if="!approved.length">No approved approvals.</p>
+	<!-- Declined -->
+	<md-divider></md-divider>
+	<md-subheader class="md-no-sticky md-primary">
+		<span>Declined</span>
+	</md-subheader>
+	<md-list layout="column" layout-padding>
+		<md-list-item class="md-3-line fade-transition" flex ng-repeat="item in declined">
+			<div class="md-list-item-text" layout="column">
+	          	<h2 class="md-avatar md-headline purple-bg" layout="row" layout-align="center center">
+					<span class="weight-200 white-text">{{ item.first_letter }}</span>
+				</h2>
+				<div class="md-list-item-text" layout="column" flex>
+					<h3>{{ item.project }}</h3>
+					<h4>{{ item.date_start_formatted }} to {{ item.date_end_formatted }}</h4>
+					<p>Remarks: {{ item.message }}</p>
+				</div>
+	        </div>
+		</md-list-item>
+	</md-list>
+	<p ng-if="!declined.length">No declined approvals.</p>
+</div>

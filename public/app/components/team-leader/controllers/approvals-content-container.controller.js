@@ -1,138 +1,31 @@
 teamLeaderModule
 	.controller('approvalsContentContainerController', ['$scope', '$mdDialog', 'PerformanceApproval', 'Approval', 'Preloader', 'User',  function($scope, $mdDialog, PerformanceApproval, Approval, Preloader, User){
-		User.index()
-			.success(function(data){
-				$user = data;
+		$scope.form = {};
+		$scope.approval = {};
+		$scope.months = [
+			'January',
+			'February',
+			'March',
+			'April',
+			'May',
+			'June',
+			'July',
+			'August',
+			'September',
+			'October',
+			'November',
+			'December',
+		];
+		var dateCreated = 2016;
 
-				$scope.pending = {};
-				$scope.approved = {};
-				$scope.declined = {};
+		$scope.years = [];
 
-				$scope.pending.page = 2;
-				$scope.approved.page = 2;
-				$scope.declined.page = 2;
+		for (var i = new Date().getFullYear(); i >= dateCreated; i--) {
+			$scope.years.push(i);
+		};
 
-
-				/* Pending */
-				Approval.pendingUser($user.id)
-					.success(function(data){
-						$scope.pending.details = data;
-						$scope.pending.paginated = data.data;
-						$scope.pending.show = true;
-						$scope.pending.busy = false;
-						$scope.pending.paginateLoad = function(){
-							// kills the function if ajax is busy or pagination reaches last page
-							if($scope.pending.busy || ($scope.pending.page > $scope.pending.details.last_page)){
-								return;
-							}
-							/**
-							 * Executes pagination call
-							 *
-							*/
-							// sets to true to disable pagination call if still busy.
-							$scope.pending.busy = true;
-
-							// Calls the next page of pagination.
-							Approval.pendingUser($user.id, $scope.pending.page)
-								.success(function(data){
-									// increment the page to set up next page for next AJAX Call
-									$scope.pending.page++;
-									// iterate over each data then splice it to the data array
-									angular.forEach(data, function(item, key){
-										$scope.pending.paginated.push(item);
-									});
-									// Enables again the pagination call for next call.
-									$scope.pending.busy = false;
-								})
-								error(function(){
-									Preloader.error();
-								});
-						}
-					})
-					.error(function(){
-						Preloader.error();
-					});
-
-				/* Approved */
-				PerformanceApproval.approvedUser($user.id)
-					.success(function(data){
-						$scope.approved.details = data;
-						$scope.approved.paginated = data.data;
-						$scope.approved.show = true;
-						$scope.approved.busy = false;
-						$scope.approved.paginateLoad = function(){
-							// kills the function if ajax is busy or pagination reaches last page
-							if($scope.approved.busy || ($scope.approved.page > $scope.approved.details.last_page)){
-								return;
-							}
-							/**
-							 * Executes pagination call
-							 *
-							*/
-							// sets to true to disable pagination call if still busy.
-							$scope.approved.busy = true;
-
-							// Calls the next page of pagination.
-							PerformanceApproval.approvedUser($user.id, $scope.approved.page)
-								.success(function(data){
-									// increment the page to set up next page for next AJAX Call
-									$scope.approved.page++;
-									// iterate over each data then splice it to the data array
-									angular.forEach(data, function(item, key){
-										$scope.approved.paginated.push(item);
-									});
-									// Enables again the pagination call for next call.
-									$scope.approved.busy = false;
-								})
-								error(function(){
-									Preloader.error();
-								});
-						}
-					})
-					.error(function(){
-						Preloader.error();
-					});
-
-				/* Declined */
-				PerformanceApproval.declinedUser($user.id)
-					.success(function(data){
-						$scope.declined.details = data;
-						$scope.declined.paginated = data.data;
-						$scope.declined.show = true;
-						$scope.declined.busy = false;
-						$scope.declined.paginateLoad = function(){
-							// kills the function if ajax is busy or pagination reaches last page
-							if($scope.declined.busy || ($scope.declined.page > $scope.declined.details.last_page)){
-								return;
-							}
-							/**
-							 * Executes pagination call
-							 *
-							*/
-							// sets to true to disable pagination call if still busy.
-							$scope.declined.busy = true;
-
-							// Calls the next page of pagination.
-							PerformanceApproval.declinedUser($user.id, $scope.declined.page)
-								.success(function(data){
-									// increment the page to set up next page for next AJAX Call
-									$scope.declined.page++;
-									// iterate over each data then splice it to the data array
-									angular.forEach(data, function(item, key){
-										$scope.declined.paginated.push(item);
-									});
-									// Enables again the pagination call for next call.
-									$scope.declined.busy = false;
-								})
-								error(function(){
-									Preloader.error();
-								});
-						}
-					})
-					.error(function(){
-						Preloader.error();
-					});
-			});
+		$scope.approval.month = $scope.months[new Date().getMonth()];
+		$scope.approval.year = new Date().getFullYear();
 		/**
 		 * Object for toolbar
 		 *
@@ -149,39 +42,7 @@ teamLeaderModule
 		
 		$scope.subheader.refresh = function(){
 			Preloader.preload();
-			$scope.pending.show = false;
-			$scope.approved.show = false;
-			$scope.declined.show = false;
-			$scope.pending.page = 2;
-			$scope.approved.page = 2;
-			$scope.declined.page = 2;
-
-			Approval.pendingUser($user.id)
-				.success(function(data){
-					$scope.pending.details = data;
-					$scope.pending.paginated = data.data;
-					
-				
-				PerformanceApproval.approvedUser($user.id)
-					.success(function(data){
-						$scope.approved.details = data;
-						$scope.approved.paginated = data.data;
-						
-
-						PerformanceApproval.declinedUser($user.id)
-							.success(function(data){
-								$scope.declined.details = data;
-								$scope.declined.paginated = data.data;
-
-								$scope.pending.show = true;
-								$scope.declined.show = true;
-								$scope.approved.show = true;
-
-								Preloader.stop();
-							})
-					})
-				})
-
+			$scope.init(true);
 		}
 
 		$scope.showPending = function(id){
@@ -192,8 +53,8 @@ teamLeaderModule
 		      parent: angular.element(document.body),
 		    })
 		    .then(function(){
-		    	// $scope.subheader.refresh();
-		    	$state.go($state.current, {}, {reload:true});
+		    	$scope.subheader.refresh();
+		    	// $state.go($state.current, {}, {reload:true});
 		    });
 		}
 
@@ -204,6 +65,10 @@ teamLeaderModule
 		      templateUrl: '/app/components/admin/templates/dialogs/approved-approval-details.dialog.template.html',
 		      parent: angular.element(document.body),
 		      clickOutsideToClose:true,
+		    })
+		    .then(function(){
+		    	$scope.subheader.refresh();
+		    	// $state.go($state.current, {}, {reload:true});
 		    });
 		}
 
@@ -214,6 +79,10 @@ teamLeaderModule
 		      templateUrl: '/app/components/admin/templates/dialogs/declined-approval-details.dialog.template.html',
 		      parent: angular.element(document.body),
 		      clickOutsideToClose:true,
+		    })
+		    .then(function(){
+		    	$scope.subheader.refresh();
+		    	// $state.go($state.current, {}, {reload:true});
 		    });
 		}
 
@@ -245,16 +114,70 @@ teamLeaderModule
 			$scope.report.show = false;
 		};
 
-		/**
-		 * Object for content view
-		 *
-		*/
-		$scope.fab = {};
+		$scope.search = function(){
+			Preloader.preload();
+			/* Pending */
+			Approval.pendingUser($scope.approval)
+				.success(function(data){
+					$scope.pendingApprovals = data;
+				})
+				.error(function(){
+					Preloader.error();
+				});
 
-		// $scope.fab.icon = 'mdi-plus';
-		// $scope.fab.label = 'Add';
-		
-		$scope.fab.show = false;
+			/* Approved */
+			PerformanceApproval.approvedUser($scope.approval)
+				.success(function(data){
+					$scope.approved = data;
+				})
+				.error(function(){
+					Preloader.error();
+				});
 
+			/* Declined */
+			PerformanceApproval.declinedUser($scope.approval)
+				.success(function(data){
+					$scope.declined = data;
+					Preloader.stop();
+				})
+				.error(function(){
+					Preloader.error();
+				});
 
+		}
+
+		$scope.init = function(refresh){
+			/* Pending */
+			Approval.pendingUser()
+				.success(function(data){
+					$scope.pendingApprovals = data;
+				})
+				.error(function(){
+					Preloader.error();
+				});
+
+			/* Approved */
+			PerformanceApproval.approvedUser()
+				.success(function(data){
+					$scope.approved = data;
+				})
+				.error(function(){
+					Preloader.error();
+				});
+
+			/* Declined */
+			PerformanceApproval.declinedUser()
+				.success(function(data){
+					$scope.declined = data;
+				})
+				.error(function(){
+					Preloader.error();
+				});
+
+			if(refresh){
+				Preloader.stop();
+			}
+		}
+
+		$scope.init();
 	}]);

@@ -203,6 +203,64 @@ sharedModule
 
 	}]);
 sharedModule
+	.service('Preloader', ['$mdDialog', function($mdDialog){
+		var dataHolder = null;
+		var user = null;
+		var departmentID = null;
+		var notification = {};
+		return {
+			/* Starts the preloader */
+			preload: function(){
+				return $mdDialog.show({
+					templateUrl: '/app/shared/templates/preloader.html',
+				    parent: angular.element(document.body),
+				});
+			},
+			/* Stops the preloader */
+			stop: function(data){
+				$mdDialog.hide(data);
+			},
+			/* Shows error message if AJAX failed */
+			error: function(){
+				return $mdDialog.show(
+			    	$mdDialog.alert()
+				        .parent(angular.element($('body')))
+				        .clickOutsideToClose(true)
+				        .title('Oops! Something went wrong!')
+				        .content('An error occured. Please contact administrator for assistance.')
+				        .ariaLabel('Error Message')
+				        .ok('Got it!')
+				);
+			},
+			/* Send temporary data for retrival */
+			set: function(data){
+				dataHolder = data;
+			},
+			/* Retrieves data */
+			get: function(){
+				return dataHolder;
+			},
+			setUser: function(data){
+				user = data;
+			},
+			getUser: function(){
+				return user;
+			},
+			setDepartment: function(id){
+				departmentID = id;
+			},
+			getDepartment: function(){
+				return departmentID;
+			},
+			setNotification: function(data){
+				notification = data;
+			},
+			getNotification: function(){
+				return notification;
+			},
+		};
+	}]);
+sharedModule
 	.factory('Approval', ['$http', function($http){
 		var urlBase = 'approval';
 
@@ -225,11 +283,11 @@ sharedModule
 			performanceEdit: function(id, data){
 				return $http.post(urlBase + '-performance-edit/' + id, data);
 			},
-			pending: function(page){
-				return $http.get(urlBase + '-pending?page=' + page);
+			pending: function(data){
+				return $http.post(urlBase + '-pending', data);
 			},
-			pendingUser: function(id, page){
-				return $http.get(urlBase + '-pending-user/'+ id +'?page=' + page);
+			pendingUser: function(data){
+				return $http.post(urlBase + '-pending-user', data);
 			},
 			details: function(id){
 				return $http.get(urlBase + '-details/' + id);
@@ -384,17 +442,17 @@ sharedModule
 			delete: function(id){
 				return $http.delete(urlBase + '/' + id);
 			},
-			approved: function(page){
-				return $http.get(urlBase + '-approved?page=' + page);
+			approved: function(data){
+				return $http.post(urlBase + '-approved', data);
 			},
-			declined: function(page){
-				return $http.get(urlBase + '-declined?page=' + page);
+			declined: function(data){
+				return $http.post(urlBase + '-declined', data);
 			},
-			approvedUser: function(id, page){
-				return $http.get(urlBase + '-approved-user/'+ id +'?page=' + page);
+			approvedUser: function(data){
+				return $http.post(urlBase + '-approved-user', data);
 			},
-			declinedUser: function(id, page){
-				return $http.get(urlBase + '-declined-user/'+ id +'?page=' + page);
+			declinedUser: function(id, data){
+				return $http.post(urlBase + '-declined-user', data);
 			},
 			declinedDetails: function(id){
 				return $http.get(urlBase +'-declined-details/' + id);
@@ -703,62 +761,4 @@ sharedModule
 			},
 		};
 	}])
-sharedModule
-	.service('Preloader', ['$mdDialog', function($mdDialog){
-		var dataHolder = null;
-		var user = null;
-		var departmentID = null;
-		var notification = {};
-		return {
-			/* Starts the preloader */
-			preload: function(){
-				return $mdDialog.show({
-					templateUrl: '/app/shared/templates/preloader.html',
-				    parent: angular.element(document.body),
-				});
-			},
-			/* Stops the preloader */
-			stop: function(data){
-				$mdDialog.hide(data);
-			},
-			/* Shows error message if AJAX failed */
-			error: function(){
-				return $mdDialog.show(
-			    	$mdDialog.alert()
-				        .parent(angular.element($('body')))
-				        .clickOutsideToClose(true)
-				        .title('Oops! Something went wrong!')
-				        .content('An error occured. Please contact administrator for assistance.')
-				        .ariaLabel('Error Message')
-				        .ok('Got it!')
-				);
-			},
-			/* Send temporary data for retrival */
-			set: function(data){
-				dataHolder = data;
-			},
-			/* Retrieves data */
-			get: function(){
-				return dataHolder;
-			},
-			setUser: function(data){
-				user = data;
-			},
-			getUser: function(){
-				return user;
-			},
-			setDepartment: function(id){
-				departmentID = id;
-			},
-			getDepartment: function(){
-				return departmentID;
-			},
-			setNotification: function(data){
-				notification = data;
-			},
-			getNotification: function(){
-				return notification;
-			},
-		};
-	}]);
 //# sourceMappingURL=shared.js.map
