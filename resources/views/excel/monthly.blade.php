@@ -44,14 +44,13 @@
 @foreach($project->positions as $position)
 <table>
 	<tr>
-		<th align="center">{{ $position->name }}</th>
-		<th align="center"></th>
+		<th align="center" colspan="2"></th>
 		@foreach($project->weeks as $week)
 			<th colspan="2" align="center">{{ $week }}</th>
 		@endforeach
 	</tr>
 	<tr>
-		<th align="center">Name</th>
+		<th align="center">{{ $position->name }}</th>
 		<th align="center">Category</th>
 		@foreach($project->weeks as $week)
 			<th align="center">Productivity</th>
