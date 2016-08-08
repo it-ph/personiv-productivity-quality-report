@@ -39,5 +39,8 @@ sharedModule
 			getWeekends: function(data){
 				return $http.post(urlBase + '-get-weekends', data);
 			},
+			weekly: function(data){
+				return $http.post(urlBase + '-weekly', data);
+			},
 		}
 	}])

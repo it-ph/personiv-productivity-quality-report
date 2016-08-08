@@ -63,6 +63,71 @@ class PerformanceController extends Controller
         return response()->json($performance);
     }
 
+    public function weekly(Request $request)
+    {   
+        $date_start = Carbon::parse($request->date_start);
+        $date_end = Carbon::parse($request->date_end);
+        
+        $member = DB::table('members')->where('id', $request->member_id)->first();
+
+        $member->positions = DB::table('positions')->where('department_id', $request->department_id)->where('name', $request->input('position.name'))->get();
+
+        $overall_weekly_productivity = 0;
+        $overall_weekly_quality = 0;
+        $overall_count = 0;
+
+        foreach ($member->positions as $position_key => $position) {
+            $position->performances = Performance::with('project', 'position')->with(['target' => function($query){ $query->withTrashed(); }])->with(['member' => function($query){ $query->with(['experiences' => function($query){ $query->with('project'); }]);}])->where('position_id', $position->id)->where('member_id', $request->member_id)->whereBetween('date_start', [$date_start, $date_end])->get();
+
+            if(count($position->performances)){
+                $position->total_hours_worked = 0;
+                $position->total_output = 0;
+                $position->total_output_error = 0;
+                $position->total_average_output = 0;
+                $position->weekly_productivity = 0;
+                $position->weekly_quality = 0;
+
+                foreach ($position->performances as $performance_key => $performance) {
+                    $position->total_hours_worked += $performance->hours_worked;
+                    $position->total_output += $performance->output;
+                    $position->total_output_error += $performance->output_error;
+                }
+
+                $position->total_average_output = $position->total_output / $position->total_hours_worked * $position->performances[0]->daily_work_hours;
+                $position->weekly_productivity = round($position->total_average_output / $position->performances[0]->target->productivity * 100);
+                $position->weekly_quality = round((1 - $position->total_output_error / $position->total_output) * 100);
+
+                if($position->weekly_productivity < $position->performances[0]->target->productivity && $position->weekly_quality >= $position->performances[0]->target->quality)
+                {
+                    $position->quadrant = 'Quadrant 1'; 
+                }
+                else if($position->weekly_productivity >= $position->performances[0]->target->productivity && $position->weekly_quality >= $position->performances[0]->target->quality)
+                {
+                    $position->quadrant = 'Quadrant 2'; 
+                }
+                else if($position->weekly_productivity >= $position->performances[0]->target->productivity && $position->weekly_quality < $position->performances[0]->target->quality)
+                {
+                    $position->quadrant = 'Quadrant 3'; 
+                }
+                else if($position->weekly_productivity < $position->performances[0]->target->productivity && $position->weekly_quality < $position->performances[0]->target->quality)
+                {
+                    $position->quadrant = 'Quadrant 4'; 
+                }
+
+                $overall_weekly_productivity += $position->weekly_productivity;
+                $overall_weekly_quality += $position->weekly_quality;
+                $overall_count++;
+            }
+        }
+
+        if($overall_count){
+            $member->average_productivity = $overall_weekly_productivity / $overall_count;
+            $member->average_quality = $overall_weekly_quality / $overall_count;
+        }
+        
+        return response()->json($member);
+    }
+
     public function monthly(Request $request)
     {   
         $date_start = Carbon::parse($request->date_start);

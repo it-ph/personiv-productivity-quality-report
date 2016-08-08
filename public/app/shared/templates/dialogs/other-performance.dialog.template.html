@@ -16,7 +16,8 @@
 			</md-button>
 		</div>
 		<div ng-repeat="position in positions" ng-if="position.performances.length">
-			<md-subheader class="md-no-sticky primary-text">{{position.name}}</md-subheader>		
+			<md-subheader class="md-no-sticky primary-text">{{position.name}}</md-subheader>
+			<em class="secondary-text md-caption">Performances of {{member.full_name}} as <span class="accent-text">{{performance.position.name}}</span> in only.</em>		
 			<table class="table">
 				<tr>
 					<th>Date Start</th>
@@ -52,8 +53,8 @@
 					<th>Total Output</th>
 					<th>Total Output w/Error(s)</th>
 					<th>Total Average Output</th>
-					<th>Monthly Productivity</th>
-					<th>Monthly Quality</th>
+					<th>Weekly Productivity</th>
+					<th>Weekly Quality</th>
 					<th>Quadrant</th>
 				</tr>
 				<tr>
@@ -62,8 +63,8 @@
 					<td>{{position.total_output | number: 1}}</td>
 					<td>{{position.total_output_error | number: 1}}</td>
 					<td>{{position.total_average_output | number: 1}}</td>
-					<td>{{position.monthly_productivity}}%</td>
-					<td>{{position.monthly_quality}}%</td>
+					<td>{{position.weekly_productivity}}%</td>
+					<td>{{position.weekly_quality}}%</td>
 					<td>{{position.quadrant}}</td>
 				</tr>
 			</table>

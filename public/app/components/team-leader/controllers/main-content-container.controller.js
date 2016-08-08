@@ -163,9 +163,15 @@ teamLeaderModule
 				});
 		};
 
-		// $scope.show = function(id){
-		// 	$state.go('main.units', {'assetID': $stateParams.assetID, 'unitID':id});
-		// };
+		$scope.show = function(data){
+			Preloader.set(data);
+			$mdDialog.show({
+		    	controller: 'otherPerformanceDialogController',
+		      	templateUrl: '/app/shared/templates/dialogs/other-performance.dialog.template.html',
+		      	parent: angular.element(document.body),
+		      	clickOutsideToClose:true,
+		    });
+		}
 		/**
 		 * Object for content view
 		 *

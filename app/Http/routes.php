@@ -102,6 +102,7 @@ Route::group(['middleware' => 'auth'], function () {
 	Route::get('report-download-monthly-summary/{month}/year/{year}/daily-work-hours/{daily_work_hours}', 'ReportController@downloadMonthlySummary');
 	Route::get('report-download-monthly-department/{departmentID}/month/{month}/year/{year}/daily-work-hours/{daily_work_hours}', 'ReportController@downloadMonthlyDepartment');
 	Route::post('report-department-monthly-position', 'ReportController@departmentMonthlyPosition');
+	Route::post('performance-weekly', 'PerformanceController@weekly');
 
 	Route::get('report-monthly', 'ReportController@monthly');
 	Route::post('report-search-monthly', 'ReportController@searchMonthly');
