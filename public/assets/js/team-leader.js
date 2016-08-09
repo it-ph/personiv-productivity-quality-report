@@ -1099,6 +1099,8 @@ teamLeaderModule
 			angular.forEach(report.performances, function(performance){
 				var filter = $filter('filter')(performance.member.experiences, {project_id:performance.project_id});
 				performance.experience = filter[0].experience;
+				performance.full_name = performance.member.full_name;
+				performance.position = performance.position.name;
 			});
 
 			// Targets

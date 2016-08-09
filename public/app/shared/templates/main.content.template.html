@@ -204,8 +204,8 @@
 								</th>
 							</tr>
 							<tr ng-repeat="item in report.performances | filter:rightSidenav.selectedItem | filter: rightSidenav.searchText | filter: filterData.position | filter: toolbar.userInput | orderBy:sortType:sortReverse" ng-class="{shaded:hover}" ng-mouseenter="hover = true" ng-mouseleave="hover = false" ng-click="show(item)">
-								<td>{{ item.member.full_name }}</td>
-								<td>{{ item.position.name }}</td>
+								<td>{{ item.full_name }}</td>
+								<td>{{ item.position }}</td>
 								<td>{{ item.experience }}</td>
 								<td>{{ item.hours_worked | number:1 }}</td>
 								<td>{{ item.output | number:1 }}</td>
@@ -439,8 +439,8 @@
 								</th>
 							</tr>
 							<tr ng-repeat="item in report.performances | filter: rightSidenav.searchText | filter: filterData.position | filter: toolbar.userInput | orderBy:sortType:sortReverse" ng-class="{shaded:hover}" ng-mouseenter="hover = true" ng-mouseleave="hover = false" ng-click="show(item)">
-								<td>{{ item.member.full_name }}</td>
-								<td>{{ item.position.name }}</td>
+								<td>{{ item.full_name }}</td>
+								<td>{{ item.position }}</td>
 								<td>{{ item.experience }}</td>
 								<td>{{ item.hours_worked | number:1 }}</td>
 								<td>{{ item.output | number:1 }}</td>
