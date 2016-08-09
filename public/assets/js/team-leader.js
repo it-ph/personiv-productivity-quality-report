@@ -1396,6 +1396,7 @@ teamLeaderModule
 						project.date_start = new Date(project.date_start);
 						
 						angular.forEach(project.members, function(member){
+							member.full_name = member.member.full_name;
 							if(member.average_productivity && member.average_productivity){
 								project.chart.data[0].push(member.average_productivity);
 								project.chart.data[1].push(member.average_quality);

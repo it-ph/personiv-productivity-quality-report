@@ -165,10 +165,10 @@
 									</table>
 								</th> -->
 								<th>
-									<a href="#" class="main-text" ng-click="sortType = 'productivity_average' ; sortReverse = !sortReverse">
+									<a href="#" class="main-text" ng-click="sortType = 'average_productivity' ; sortReverse = !sortReverse">
 										<span>Monthly Productivity</span>
-										<md-icon ng-show="sortType == 'productivity_average' && !sortReverse" class="mdi mdi-chevron-down grey"></md-icon>
-										<md-icon ng-show="sortType == 'productivity_average' && sortReverse" class="mdi mdi-chevron-up grey"></md-icon>
+										<md-icon ng-show="sortType == 'average_productivity' && !sortReverse" class="mdi mdi-chevron-down grey"></md-icon>
+										<md-icon ng-show="sortType == 'average_productivity' && sortReverse" class="mdi mdi-chevron-up grey"></md-icon>
 										<md-tooltip>
 											<span ng-show="sortReverse">Ascending</span>
 											<span ng-show="!sortReverse">Descending</span>
@@ -176,10 +176,10 @@
 									</a>
 								</th>
 								<th>
-									<a href="#" class="main-text" ng-click="sortType = 'quality_average' ; sortReverse = !sortReverse">
+									<a href="#" class="main-text" ng-click="sortType = 'average_quality' ; sortReverse = !sortReverse">
 										<span>Monthly Quality</span>
-										<md-icon ng-show="sortType == 'quality_average' && !sortReverse" class="mdi mdi-chevron-down grey"></md-icon>
-										<md-icon ng-show="sortType == 'quality_average' && sortReverse" class="mdi mdi-chevron-up grey"></md-icon>
+										<md-icon ng-show="sortType == 'average_quality' && !sortReverse" class="mdi mdi-chevron-down grey"></md-icon>
+										<md-icon ng-show="sortType == 'average_quality' && sortReverse" class="mdi mdi-chevron-up grey"></md-icon>
 										<md-tooltip>
 											<span ng-show="sortReverse">Ascending</span>
 											<span ng-show="!sortReverse">Descending</span>
@@ -199,7 +199,7 @@
 								</th> -->
 							</tr>
 							<tr ng-repeat="item in detail.members | orderBy:sortType:sortReverse" ng-click="view(item, detail.date_start, detail.date_end)" ng-if="!item.member.deleted_at">
-								<td>{{item.member.full_name}}</td>
+								<td>{{item.full_name}}</td>
 								<!-- <td>{{item.position}}</td> -->
 								<td>{{item.experience}}</td>
 								<!-- <td ng-repeat="item in item.results">
