@@ -1,7 +1,10 @@
 teamLeaderModule
-	.controller('downloadReportDialogController', ['$scope', '$mdDialog', '$filter', 'Preloader', 'Report', 'Performance', 'Programme', 'Project', 'Position', function($scope, $mdDialog, $filter, Preloader, Report, Performance, Programme, Project, Position){
+	.controller('downloadReportDialogController', ['$scope', '$mdDialog', '$filter', 'Preloader', 'Report', 'Performance', 'Programme', 'Project', 'Position', 'Member', function($scope, $mdDialog, $filter, Preloader, Report, Performance, Programme, Project, Position, Member){
 		$scope.details = {};
 		$scope.details.type = 'Weekly';
+		$scope.details.date_start = new Date();
+		$scope.details.date_end = new Date();
+		$scope.maxDate = new Date();
 
 		var user = Preloader.getUser();
 
@@ -108,6 +111,13 @@ teamLeaderModule
 					var win = window.open('/report-download-monthly-department/' + user.department_id + '/month/' + $scope.details.month + '/year/' + $scope.details.year + '/daily-work-hours/' + $scope.details.daily_work_hours, '_blank');
 					win.focus();	
 				}
+				else if($scope.details.type=='Performance Evaluation'){
+					$scope.details.date_start = $scope.details.date_start.toDateString();
+					$scope.details.date_end = $scope.details.date_end.toDateString();
+
+					var win = window.open('/performance-evaluation/' + $scope.details.date_start + '/date_end/' + $scope.details.date_end + '/daily-work-hours/' + $scope.details.daily_work_hours + '/department/' + $scope.details.department + /member/ + $scope.details.member, '_blank');
+					win.focus();	
+				}
 
 				$mdDialog.hide();
 			}
@@ -126,6 +136,11 @@ teamLeaderModule
 				})
 				.error(function(){
 					Preloader.error();
+				})
+
+			Member.index()
+				.success(function(data){
+					$scope.members = data;
 				})
 		}();
 

@@ -4,12 +4,15 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Performance;
+use App\Department;
 use App\Target;
 use App\Result;
 use App\Report;
 use App\Notification;
 use App\Events\ReportSubmittedBroadCast;
 use DB;
+use Auth;
+use Excel;
 use Carbon\Carbon;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
@@ -17,6 +20,97 @@ use App\User;
 
 class PerformanceController extends Controller
 {
+    public function evaluation($date_start, $date_end, $daily_work_hours, $department_id, $member_id)
+    {
+        $this->member = DB::table('members')->where('id', $member_id)->first();
+
+        $this->date_start = Carbon::parse($date_start);
+        $this->date_end = Carbon::parse($date_end);
+
+        $this->department_id = (int)$department_id;
+
+        $this->member->department = $this->department_id ? Department::with('projects')->where('id', $this->department_id)->first() : Department::with('projects')->where('id', Auth::user()->department_id)->first();
+
+        foreach ($this->member->department->projects as $project_key => $project) {
+            $project->positions = DB::table('positions')->where('project_id', $project->id)->get();
+            
+            $project->average_productivity = 0;
+            $project->average_quality = 0;
+
+            $overall_productivity = 0;
+            $overall_quality = 0;
+            $overall_count = 0;
+
+            foreach ($project->positions as $position_key => $position) {
+                $position->total_hours_worked = 0;
+                $position->total_output = 0;
+                $position->total_output_error = 0;
+                $position->total_average_output = 0;
+                $position->productivity = 0;
+                $position->quality = 0;
+
+                $position->performances = Performance::with(['target' => function($query){ $query->withTrashed(); }])->where('member_id', $member_id)->where('position_id', $position->id)->whereBetween('date_start', [$this->date_start, $this->date_end])->where('daily_work_hours', 'like', $daily_work_hours.'%')->orderBy('date_start')->get();
+
+                if(count($position->performances)){
+                    foreach ($position->performances as $performance_key => $performance) {
+                        $position->total_hours_worked += $performance->hours_worked;
+                        $position->total_output += $performance->output;
+                        $position->total_output_error += $performance->output_error;
+
+                        $performance->date_start = Carbon::parse($performance->date_start)->toFormattedDateString();
+                        $performance->date_end = Carbon::parse($performance->date_end)->toFormattedDateString();
+                    }
+
+                    $position->total_average_output = round($position->total_output / $position->total_hours_worked * $daily_work_hours, 2);
+
+                    $position->productivity = round($position->total_average_output / $position->performances[0]->target->productivity * 100);
+                    $position->quality = round((1 - $position->total_output_error / $position->total_output) * 100);
+
+                    if($position->productivity < $position->performances[0]->target->productivity && $position->quality >= $position->performances[0]->target->quality)
+                    {
+                        $position->quadrant = 'Quadrant 1'; 
+                    }
+                    else if($position->productivity >= $position->performances[0]->target->productivity && $position->quality >= $position->performances[0]->target->quality)
+                    {
+                        $position->quadrant = 'Quadrant 2'; 
+                    }
+                    else if($position->productivity >= $position->performances[0]->target->productivity && $position->quality < $position->performances[0]->target->quality)
+                    {
+                        $position->quadrant = 'Quadrant 3'; 
+                    }
+                    else if($position->productivity < $position->performances[0]->target->productivity && $position->quality < $position->performances[0]->target->quality)
+                    {
+                        $position->quadrant = 'Quadrant 4'; 
+                    }
+
+                    $overall_productivity += $position->productivity;
+                    $overall_quality += $position->quality;
+                    $overall_count++;
+                }
+            }  
+
+            if($overall_count){
+                $project->average_productivity = $overall_productivity / $overall_count;
+                $project->average_quality = $overall_quality / $overall_count;
+            }      
+        }
+
+        // return response()->json($this->member);
+
+        Excel::create('Performance Evaluation of '. $this->member->full_name .' from '. $this->date_start->toFormattedDateString() .' to '. $this->date_end->toFormattedDateString() , function($excel){
+            foreach ($this->member->department->projects as $project_key => $project) {
+                $this->project = $project;
+                if($project->average_productivity && $project->average_quality){
+                    $excel->sheet($project->name, function($sheet) {
+                        $sheet->loadView('excel.performance-evaluation')
+                            ->with('project', $this->project)
+                            ->with('member', $this->member);
+                    });
+                }
+            }
+        })->download('xls');
+    }
+
     public function getMondays(Request $request)
     {
         $this->validate($request, [

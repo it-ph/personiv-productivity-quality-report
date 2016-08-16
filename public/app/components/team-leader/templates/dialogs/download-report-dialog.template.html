@@ -13,6 +13,7 @@
 			<md-radio-group ng-model="details.type" layout="row">
 			    <md-radio-button class="md-primary" value="Weekly">Weekly</md-radio-button>
 		      	<md-radio-button class="md-primary" value="Monthly">Monthly</md-radio-button>
+		      	<md-radio-button class="md-primary" value="Performance Evaluation">Performance Evaluation</md-radio-button>
 		    </md-radio-group>
 			<div ng-if="details.type=='Weekly'" layout="column">
 				<div layout="row" layout-align="center center">
@@ -137,6 +138,51 @@
 						</div>
 					</md-input-container>
 				</div> -->
+			</div>
+			<div layout-padding ng-if="details.type=='Performance Evaluation'" layout="column">
+				<div layout="row">
+					<div flex>
+						<h4>Date Start</h4>
+						<md-datepicker name="DateStart" ng-model="details.date_start" md-placeholder="Date Start" required></md-datepicker>
+				        <div class="validation-messages" ng-messages="downloadReportForm.DateStart.$error" ng-if="downloadReportForm.DateStart.$touched">
+				        	<div ng-message="valid">The entered value is not a date!</div>
+				        	<div ng-message="required">Date start is required.</div>
+				        </div>
+					</div>
+					<div flex>
+						<h4>Date End</h4>
+						<md-datepicker name="DateEnd" ng-model="details.date_end" md-placeholder="Date End" required md-min-date="details.date_start" md-max-date="maxDate"></md-datepicker>
+				        <div class="validation-messages" ng-messages="downloadReportForm.DateEnd.$error" ng-if="downloadReportForm.DateEnd.$touched">
+				        	<div ng-message="valid">The entered value is not a date!</div>
+				        	<div ng-message="required">Date end is required.</div>
+				        </div>
+					</div>
+				</div>
+				<div layout="row">				
+					<!-- Daily Work Hours -->
+					<md-input-container flex>
+						<label>Daily Work Hours</label>
+						<md-select name="WorkHours" required ng-model="details.daily_work_hours">
+							<md-option ng-repeat="hour in work_hours" value="{{ hour.daily_work_hours }}">
+								{{ hour.label }} - {{ hour.daily_work_hours }} hour(s)
+							</md-option>
+						</md-select>
+						<div ng-messages="downloadReportForm.WorkHours.$error" ng-if="downloadReportForm.WorkHours.$touched">
+							<div ng-messages-include="/app/shared/templates/validation-message-report.html"></div>
+						</div>
+					</md-input-container>
+					<md-input-container flex>
+						<label>Members</label>
+						<md-select name="Members" required ng-model="details.member">
+							<md-option ng-repeat="member in members" value="{{ member.id }}">
+								{{ member.full_name }}
+							</md-option>
+						</md-select>
+						<div ng-messages="downloadReportForm.Members.$error" ng-if="downloadReportForm.Members.$touched">
+							<div ng-messages-include="/app/shared/templates/validation-message-report.html"></div>
+						</div>
+					</md-input-container>
+				</div>
 			</div>
 		</md-dialog-content>
 	</form>

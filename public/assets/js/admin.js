@@ -2184,15 +2184,31 @@ adminModule
 		}
 	}]);
 adminModule
-	.controller('downloadReportDialogController', ['$scope', '$mdDialog', '$filter', 'Preloader', 'Report', 'Performance', 'Programme', function($scope, $mdDialog, $filter, Preloader, Report, Performance, Programme){
+	.controller('downloadReportDialogController', ['$scope', '$mdDialog', '$filter', 'Preloader', 'Report', 'Performance', 'Programme', 'Department', 'Member', function($scope, $mdDialog, $filter, Preloader, Report, Performance, Programme, Department, Member){
 		$scope.details = {};
 		$scope.details.type = 'Weekly';
+		$scope.details.date_start = new Date();
+		$scope.details.date_end = new Date();
+		$scope.maxDate = new Date();
+
 
 		Programme.index()
 			.success(function(data){
 				$scope.work_hours = data;
 				$scope.getMondays();
 			})
+
+		Department.index()
+			.success(function(data){
+				$scope.departments = data;
+			})
+
+		$scope.fetchMembers = function(){
+			Department.show($scope.details.department)
+				.success(function(data){
+					$scope.members = data.members;
+				})
+		}
 
 		// $scope.hours = [7.5, 8.3, 9.1];
 
@@ -2288,6 +2304,13 @@ adminModule
 				}
 				else if($scope.details.type=='Team Performance'){
 					var win = window.open('/report-team-performance/' + $scope.details.month + '/year/' + $scope.details.year + '/daily-work-hours/' + $scope.details.daily_work_hours, '_blank');
+					win.focus();	
+				}
+				else if($scope.details.type=='Performance Evaluation'){
+					$scope.details.date_start = $scope.details.date_start.toDateString();
+					$scope.details.date_end = $scope.details.date_end.toDateString();
+
+					var win = window.open('/performance-evaluation/' + $scope.details.date_start + '/date_end/' + $scope.details.date_end + '/daily-work-hours/' + $scope.details.daily_work_hours + '/department/' + $scope.details.department + /member/ + $scope.details.member, '_blank');
 					win.focus();	
 				}
 
