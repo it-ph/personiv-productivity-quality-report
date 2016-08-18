@@ -764,6 +764,9 @@ sharedModule
 			checkEmail: function(data){
 				return $http.post(urlBase + '-check-email', data);
 			},
+			department: function(id){
+				return $http.get(urlBase + '-department/' + id);
+			},
 		};
 	}])
 sharedModule

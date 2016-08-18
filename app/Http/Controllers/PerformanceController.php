@@ -164,7 +164,7 @@ class PerformanceController extends Controller
         
         $member = DB::table('members')->where('id', $request->member_id)->first();
 
-        $member->positions = DB::table('positions')->where('department_id', $request->department_id)->where('name', $request->input('position.name'))->get();
+        $member->positions = DB::table('positions')->where('department_id', $request->department_id)->where('name', $request->input('position'))->get();
 
         $overall_weekly_productivity = 0;
         $overall_weekly_quality = 0;

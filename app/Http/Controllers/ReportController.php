@@ -223,7 +223,7 @@ class ReportController extends Controller
 
                 $project->total_output = $project->beginner_total_output + $project->moderately_experienced_total_output + $project->experienced_total_output;
                 $project->total_hours_worked = $project->beginner_total_hours_worked + $project->moderately_experienced_total_hours_worked + $project->experienced_total_hours_worked;
-                $project->total_average_output = $project->beginner_total_average_output + $project->moderately_experienced_total_average_output + $project->experienced_total_average_output;
+                $project->total_average_output = $project->total_output / $project->total_hours_worked * $project->first_report->daily_work_hours;
             }            
         }
 
@@ -364,7 +364,7 @@ class ReportController extends Controller
 
                 $project->total_output = $project->beginner_total_output + $project->moderately_experienced_total_output + $project->experienced_total_output;
                 $project->total_hours_worked = $project->beginner_total_hours_worked + $project->moderately_experienced_total_hours_worked + $project->experienced_total_hours_worked;
-                $project->total_average_output = $project->beginner_total_average_output + $project->moderately_experienced_total_average_output + $project->experienced_total_average_output;
+                $project->total_average_output = $project->total_output / $project->total_hours_worked * $daily_work_hours;
                     
             }
         }
@@ -513,7 +513,7 @@ class ReportController extends Controller
 
                 $project->total_output = $project->beginner_total_output + $project->moderately_experienced_total_output + $project->experienced_total_output;
                 $project->total_hours_worked = $project->beginner_total_hours_worked + $project->moderately_experienced_total_hours_worked + $project->experienced_total_hours_worked;
-                $project->total_average_output = $project->beginner_total_average_output + $project->moderately_experienced_total_average_output + $project->experienced_total_average_output;
+                $project->total_average_output = $project->total_output / $project->total_hours_worked * $project->first_report->daily_work_hours;
             }            
         }
 
@@ -649,7 +649,7 @@ class ReportController extends Controller
 
                 $project->total_output = $project->beginner_total_output + $project->moderately_experienced_total_output + $project->experienced_total_output;
                 $project->total_hours_worked = $project->beginner_total_hours_worked + $project->moderately_experienced_total_hours_worked + $project->experienced_total_hours_worked;
-                $project->total_average_output = $project->beginner_total_average_output + $project->moderately_experienced_total_average_output + $project->experienced_total_average_output;
+                $project->total_average_output = $project->total_output / $project->total_hours_worked * $project->first_report->daily_work_hours;
             }            
         }
 
@@ -1286,16 +1286,16 @@ class ReportController extends Controller
     }
     public function searchDepartment(Request $request, $id)
     {
-        return Report::with(['performances' => function($query){ $query->with(['member' => function($query){ $query->with('experiences');}])->with('position'); }])->with(['project' => function($query){ $query->with(['positions' => function($query){ $query->with(['targets' => function($query){ $query->withTrashed()->orderBy('created_at', 'desc'); }]);}]); }])->where('department_id', $id)->where('date_start', Carbon::parse($request->date_start))->where('date_end', Carbon::parse($request->date_end))->orderBy('date_start', 'desc')->get();
+        return Report::with('team_leader')->with(['performances' => function($query){ $query->with(['member' => function($query){ $query->with('experiences');}])->with('position'); }])->with(['project' => function($query){ $query->with(['positions' => function($query){ $query->with(['targets' => function($query){ $query->withTrashed()->orderBy('created_at', 'desc'); }]);}]); }])->where('department_id', $id)->where('date_start', Carbon::parse($request->date_start))->where('date_end', Carbon::parse($request->date_end))->orderBy('date_start', 'desc')->get();
     }
 
     public function search(Request $request)
     {
-        return Report::with(['performances' => function($query){ $query->with(['member' => function($query){ $query->with('experiences');}])->with('position'); }])->with(['project' => function($query){ $query->with(['positions' => function($query){ $query->with(['targets' => function($query){ $query->withTrashed()->orderBy('created_at', 'desc'); }]);}]); }])->where('department_id', Auth::user()->department_id)->where('date_start', Carbon::parse($request->date_start))->where('date_end', Carbon::parse($request->date_end))->orderBy('date_start', 'desc')->get();
+        return Report::with('team_leader')->with(['performances' => function($query){ $query->with(['member' => function($query){ $query->with('experiences');}])->with('position'); }])->with(['project' => function($query){ $query->with(['positions' => function($query){ $query->with(['targets' => function($query){ $query->withTrashed()->orderBy('created_at', 'desc'); }]);}]); }])->where('department_id', Auth::user()->department_id)->where('date_start', Carbon::parse($request->date_start))->where('date_end', Carbon::parse($request->date_end))->orderBy('date_start', 'desc')->get();
     }
     public function paginateDetails()
     {
-        return Report::with(['performances' => function($query){ $query->with(['member' => function($query){ $query->with('experiences');}])->with('position'); }])->with(['project' => function($query){ $query->with(['positions' => function($query){ $query->with(['targets' => function($query){ $query->withTrashed()->orderBy('created_at', 'desc'); }]);}]); }])->where('department_id', Auth::user()->department_id)->orderBy('date_start', 'desc')->paginate(10);   
+        return Report::with('team_leader')->with(['performances' => function($query){ $query->with(['member' => function($query){ $query->with('experiences');}])->with('position'); }])->with(['project' => function($query){ $query->with(['positions' => function($query){ $query->with(['targets' => function($query){ $query->withTrashed()->orderBy('created_at', 'desc'); }]);}]); }])->with('team_leader')->where('department_id', Auth::user()->department_id)->orderBy('date_start', 'desc')->paginate(10);   
     }
     public function paginate()
     {
@@ -1382,7 +1382,7 @@ class ReportController extends Controller
 
     public function paginateDepartmentDetails($departmentID)
     {
-        return Report::with(['performances' => function($query){ $query->with(['member' => function($query){ $query->with('experiences');}])->with('position'); }])->with(['project' => function($query){ $query->with(['positions' => function($query){ $query->with(['targets' => function($query){ $query->withTrashed()->orderBy('created_at', 'desc'); }]);}]); }])->where('department_id', $departmentID)->orderBy('date_start', 'desc')->paginate(10);
+        return Report::with('team_leader')->with(['performances' => function($query){ $query->with(['member' => function($query){ $query->with('experiences');}])->with('position'); }])->with(['project' => function($query){ $query->with(['positions' => function($query){ $query->with(['targets' => function($query){ $query->withTrashed()->orderBy('created_at', 'desc'); }]);}]); }])->where('department_id', $departmentID)->orderBy('date_start', 'desc')->paginate(10);
     }
     public function paginateDepartment($departmentID)
     {

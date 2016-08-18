@@ -17,7 +17,7 @@
 		</div>
 		<div ng-repeat="position in positions" ng-if="position.performances.length">
 			<md-subheader class="md-no-sticky primary-text">{{position.name}}</md-subheader>
-			<em class="secondary-text md-caption">Performances of {{member.full_name}} as <span class="accent-text">{{performance.position.name}}</span> only.</em>		
+			<em class="secondary-text md-caption">Performances of {{member.full_name}} as <span class="accent-text">{{position.name}}</span> only with the same date range.</em>		
 			<table class="table">
 				<tr>
 					<th>Date Start</th>

@@ -1,6 +1,7 @@
 adminModule
 	.controller('departmentContentContainerController', ['$scope', '$filter', '$state', '$stateParams', '$mdDialog', 'Preloader', 'Member', 'Position', 'Department', 'Report', 'Performance', 'Target', 'User', 'Project', function($scope, $filter, $state, $stateParams, $mdDialog, Preloader, Member, Position, Department, Report, Performance, Target, User, Project){
 		var departmentID = $stateParams.departmentID;
+		$scope.hideDateDiff = true;
 
 		Project.department(departmentID)
 			.success(function(data){
@@ -33,6 +34,11 @@ adminModule
 			.success(function(data){
 				$scope.positions = data;
 			});
+
+		User.department(departmentID)
+			.success(function(data){
+				$scope.users = data;
+			})		
 
 		$scope.months = [
 			{'value': '01', 'month': 'January'},

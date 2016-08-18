@@ -37,7 +37,7 @@ class Report extends Model
 
     public function team_leader()
     {
-    	return $this->belongsTo('App\User');
+    	return $this->belongsTo('App\User', 'user_id');
     }
 
     public function results()

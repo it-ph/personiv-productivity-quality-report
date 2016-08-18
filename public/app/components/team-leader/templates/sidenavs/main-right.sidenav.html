@@ -76,6 +76,16 @@
 			<div ng-messages-include="/app/shared/templates/validation-message-date.html"></div>
 		</div>
 	</md-input-container>
+	<!-- Team Leader -->
+	<md-input-container flex ng-if="users.length > 1">
+		<label>Submitted by</label>
+		<md-select name="Submitter" ng-model="filterData.submitter">
+			<md-option ng-repeat="user in users" value="{{user.id}}">{{user.first_name}} {{user.last_name}}</md-option>
+		</md-select>
+		<div ng-messages="form.createReportForm.Submitter.$error" ng-if="form.createReportForm.Submitter.$touched">
+			<div ng-messages-include="/app/shared/templates/validation-message-date.html"></div>
+		</div>
+	</md-input-container>
 	<div layout="row" layout-align="end center">
 		<md-button class="md-fab md-primary" ng-click="searchUserInput()">
 			<md-icon class="mdi mdi-magnify"></md-icon>

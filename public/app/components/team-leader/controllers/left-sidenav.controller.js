@@ -21,8 +21,8 @@ teamLeaderModule
 							// 'tip': 'Dashboard: tracks your team\'s weekly performance, targets, and top performers.',
 						},
 						{
-							'name':'Approvals',
-							'state':'main.approvals',
+							'name':'Activity Feeds',
+							'state':'main.activity',
 							'icon':'mdi-file-document-box',
 							// 'tip': 'Approvals: shows pending request for report changes.',
 						},

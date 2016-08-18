@@ -803,8 +803,8 @@ teamLeaderModule
 							// 'tip': 'Dashboard: tracks your team\'s weekly performance, targets, and top performers.',
 						},
 						{
-							'name':'Approvals',
-							'state':'main.approvals',
+							'name':'Activity Feeds',
+							'state':'main.activity',
 							'icon':'mdi-file-document-box',
 							// 'tip': 'Approvals: shows pending request for report changes.',
 						},
@@ -896,7 +896,6 @@ teamLeaderModule
 		// 			}
 		// 		})
 		// }
-
 		$scope.filterDate = {};
 		$scope.filterData = {};
 		$scope.filterDate.type = 'Weekly';
@@ -1093,8 +1092,15 @@ teamLeaderModule
 		}
 
 		var pushItem = function(report){
+			report.created_at = new Date(report.created_at);
 			report.date_start = new Date(report.date_start);
 			report.date_end = new Date(report.date_end);
+
+			var today = new Date();
+			var timeDiff = Math.abs(today.getTime() - report.created_at.getTime());
+			report.diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
+			
+			report.locked = report.diffDays > 7 ? true : false;
 
 			angular.forEach(report.performances, function(performance){
 				var filter = $filter('filter')(performance.member.experiences, {project_id:performance.project_id});
@@ -1171,13 +1177,18 @@ teamLeaderModule
 
 		$scope.init = function(refresh){
 			Member.index()
-			.success(function(data){
-				angular.forEach(data, function(item){
-					var member = {};
-					member.full_name = item.full_name;
-					$scope.rightSidenav.items.push(member);
-				});
-			})
+				.success(function(data){
+					angular.forEach(data, function(item){
+						var member = {};
+						member.full_name = item.full_name;
+						$scope.rightSidenav.items.push(member);
+					});
+				})
+
+			User.department()
+				.success(function(data){
+					$scope.users = data;
+				})
 
 			Position.index()
 				.success(function(data){

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\User;
 use DB;
+use Auth;
 use Carbon\Carbon;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
@@ -12,6 +13,13 @@ use Hash;
 
 class UserController extends Controller
 {   
+    public function department($id)
+    {
+        $id = (int)$id;
+
+        return $id ? User::where('department_id', $id)->where('role', 'team-leader')->get() : User::where('department_id', Auth::user()->department_id)->where('role', 'team-leader')->get();
+    }
+
     public function checkEmail(Request $request)
     {
         $user = User::where('email', $request->email)->first();

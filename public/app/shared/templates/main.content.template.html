@@ -1,6 +1,6 @@
 <!-- Search reports -->
 <div class="fade-transition" flex ng-if="report.results && !report.show">
-	<div layout="row" layout-padding flex ng-repeat="report in report.results | filter: projects[filterData.project].name | filter:filterDate.date_start | filter:filterDate.date_end | filter: toolbar.userInput">
+	<div layout="row" layout-padding flex ng-repeat="report in report.results | filter: {user_id:filterData.submitter} | filter: projects[filterData.project].name | filter:filterDate.date_start | filter:filterDate.date_end | filter: toolbar.userInput">
 		<div flex>
 			<div class="panel panel-default">
 				<div class="panel-heading">
@@ -61,13 +61,16 @@
 						</div>					
 					</div>
 					<h2 class="primary-text md-headline">{{ report.project.name }}</h2>
+					<p>Submitted by: {{report.team_leader.first_name}} {{report.team_leader.last_name}} {{report.team_leader.last_name}}</p>
+					<p ng-if="report.locked" class="secondary-text"><em>*Report is locked for any changes.</em></p>
+					<p ng-if="!report.locked" class="secondary-text"><em>*Report will lock in {{ 8 - report.diffDays}} day(s).</em></p>
 					<div layout="row" layout-align="space-between center">
 						<!-- <h3 class="secondary-text md-subhead">Daily Work Hours: {{ details[0].daily_work_hours | number:1 }} hours</h3> -->
 						<div layout="row">
 							<md-switch class="md-primary" ng-model="report.showCharts" aria-label="report.showCharts">
 							    <span ng-if="!report.showCharts">Show</span> <span ng-if="report.showCharts">Hide</span> Charts
 							</md-switch>
-							<md-menu>
+							<md-menu ng-if="!report.locked">
 						    	<md-button aria-label="Open phone interactions menu" class="md-icon-button" ng-click="$mdOpenMenu($event)">
 							        <md-icon class="mdi mdi-dots-horizontal grey"></md-icon>
 							        <md-tooltip>Menu</md-tooltip>
@@ -80,13 +83,6 @@
 											Edit
 										</md-button>
 							        </md-menu-item>
-							        <!-- <md-menu-item>
-							        										Download
-							        										<md-button href="/report-download/{{ report.id }}" target="_blank">
-							        											<md-icon class="mdi mdi-download grey"></md-icon>
-							        											Download
-							        										</md-button>
-							        </md-menu-item> -->
 							        <md-menu-item ng-if="user.role!='manager'">
 										<!-- Delete -->
 										<md-button ng-click="deleteReport(report.id)">
@@ -235,7 +231,7 @@
 </div>
 <!-- Paginated Data -->
 <div class="fade-transition" ng-if="report.show" infinite-scroll='report.paginateLoad()' infinite-scroll-distance="2" infinite-scroll-disabled="report.busy" infinite-scroll-parent>
-	<div layout="row" layout-padding flex ng-repeat="report in report.paginated | filter: projects[filterData.project].name | filter:filterDate.date_start | filter:filterDate.date_end | filter: toolbar.userInput">
+	<div layout="row" layout-padding flex ng-repeat="report in report.paginated | filter: {user_id:filterData.submitter} | filter: projects[filterData.project].name | filter:filterDate.date_start | filter:filterDate.date_end | filter: toolbar.userInput">
 		<div flex>
 			<div class="panel panel-default">
 				<div class="panel-heading">
@@ -296,13 +292,16 @@
 						</div>					
 					</div>
 					<h2 class="primary-text md-headline">{{ report.project.name }}</h2>
+					<p>Submitted by: {{report.team_leader.first_name}} {{report.team_leader.last_name}}</p>
+					<p ng-if="report.locked" class="secondary-text"><em>*Report is locked for any changes.</em></p>
+					<p ng-if="!report.locked && !hideDateDiff" class="secondary-text"><em>*Report will lock in {{ 8 - report.diffDays}} day(s).</em></p>
 					<div layout="row" layout-align="space-between center">
 						<!-- <h3 class="secondary-text md-subhead">Daily Work Hours: {{ details[0].daily_work_hours | number:1 }} hours</h3> -->
 						<div layout="row">
 							<md-switch class="md-primary" ng-model="report.showCharts" aria-label="report.showCharts">
 							    <span ng-if="!report.showCharts">Show</span> <span ng-if="report.showCharts">Hide</span> Charts
 							</md-switch>
-							<md-menu>
+							<md-menu ng-if="!report.locked">
 						    	<md-button aria-label="Open phone interactions menu" class="md-icon-button" ng-click="$mdOpenMenu($event)">
 							        <md-icon class="mdi mdi-dots-horizontal grey"></md-icon>
 							        <md-tooltip>Menu</md-tooltip>
@@ -315,13 +314,6 @@
 											Edit
 										</md-button>
 							        </md-menu-item>
-							        <!-- <md-menu-item>
-							        										Download
-							        										<md-button href="/report-download/{{ report.id }}" target="_blank">
-							        											<md-icon class="mdi mdi-download grey"></md-icon>
-							        											Download
-							        										</md-button>
-							        </md-menu-item> -->
 							        <md-menu-item ng-if="user.role!='manager'">
 										<!-- Delete -->
 										<md-button ng-click="deleteReport(report.id)">
