@@ -106,7 +106,7 @@ teamLeaderModule
 		}
 
 		$scope.clearFilter = function(){
-			$scope.positions = [];
+			$scope.rightSidenav.searchText = '';
 			$scope.filterData.project = '';
 			$scope.filterData.position = '';
 			$scope.filterDate.date_start = '';

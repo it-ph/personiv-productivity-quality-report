@@ -120,6 +120,10 @@ class ReportController extends Controller
                 $project->experienced_total_average_output = 0;
 
                 foreach ($project->positions as $position_key => $position) {
+                    $position->beginner = 0;
+                    $position->moderately_experienced = 0;
+                    $position->experienced = 0;
+                    $position->head_count = 0;
                     $position->beginner_total_output = 0;
                     $position->beginner_total_hours_worked = 0;
                     $position->beginner_total_average_output = 0;
@@ -156,19 +160,23 @@ class ReportController extends Controller
                                 $position->total_output_error += $performance->output_error;
 
                                 if($performance->target->experience == 'Beginner'){
+                                    $project->positions[$position_key]->beginner += 1;
                                     $project->positions[$position_key]->beginner_total_output += $performance->output;
                                     $project->positions[$position_key]->beginner_total_hours_worked += $performance->hours_worked;
                                 }
                                 else if($performance->target->experience == 'Moderately Experienced'){
+                                    $project->positions[$position_key]->moderately_experienced += 1;
                                     $project->positions[$position_key]->moderately_experienced_total_output += $performance->output;
                                     $project->positions[$position_key]->moderately_experienced_total_hours_worked += $performance->hours_worked;   
                                 }
                                 else if($performance->target->experience == 'Experienced'){
+                                    $project->positions[$position_key]->experienced += 1;
                                     $project->positions[$position_key]->experienced_total_output += $performance->output;
                                     $project->positions[$position_key]->experienced_total_hours_worked += $performance->hours_worked;
                                 }
                             }
-
+                            
+                            $project->positions[$position_key]->head_count = $project->positions[$position_key]->beginner + $project->positions[$position_key]->moderately_experienced + $project->positions[$position_key]->experienced;
                             $position->total_average_output = $position->total_output / $position->total_hours_worked * $performances[0]->daily_work_hours;
                             $position->monthly_productivity = round($position->total_average_output / $performances[0]->target->productivity * 100);
                             $position->monthly_quality = round((1 - $position->total_output_error / $position->total_output) * 100);
@@ -240,9 +248,10 @@ class ReportController extends Controller
         $this->projects = DB::table('projects')->get();
 
         foreach ($this->projects as $project_key => $project) {
+            $project->first_report =  Report::where('project_id', $project->id)->where('daily_work_hours', 'like', $daily_work_hours.'%')->whereBetween('date_start', [$this->date_start, $this->date_end])->first();
             // for each projects fetch its positions
             $positions = DB::table('positions')->where('project_id', $project->id)->get();
-            if(count($positions)){
+            if($project->first_report){
                 $project->members = Experience::with(['member' => function($query){ $query->withTrashed(); }])->where('project_id', $project->id)->get();
                 $project->positions = $positions;
                 $project->beginner_total_output = 0;
@@ -258,6 +267,11 @@ class ReportController extends Controller
                 $project->experienced_total_average_output = 0;
 
                 foreach ($project->positions as $position_key => $position) {
+                    $position->beginner = 0;
+                    $position->moderately_experienced = 0;
+                    $position->experienced = 0;
+                    $position->head_count = 0;
+
                     $position->beginner_total_output = 0;
                     $position->beginner_total_hours_worked = 0;
                     $position->beginner_total_average_output = 0;
@@ -271,7 +285,6 @@ class ReportController extends Controller
                     $position->experienced_total_average_output = 0;
 
                     $performances = Performance::where('position_id', $position->id)->whereBetween('date_start', [$this->date_start, $this->date_end])->groupBy('member_id')->get();
-                    $position->head_count = count($performances);
                 }
 
                 foreach ($project->members as $member_key => $member) {
@@ -297,19 +310,23 @@ class ReportController extends Controller
                                 $position->total_output_error += $performance->output_error;
 
                                 if($performance->target->experience == 'Beginner'){
+                                    $project->positions[$position_key]->beginner += 1;
                                     $project->positions[$position_key]->beginner_total_output += $performance->output;
                                     $project->positions[$position_key]->beginner_total_hours_worked += $performance->hours_worked;
                                 }
                                 else if($performance->target->experience == 'Moderately Experienced'){
+                                    $project->positions[$position_key]->moderately_experienced += 1;
                                     $project->positions[$position_key]->moderately_experienced_total_output += $performance->output;
                                     $project->positions[$position_key]->moderately_experienced_total_hours_worked += $performance->hours_worked;   
                                 }
                                 else if($performance->target->experience == 'Experienced'){
+                                    $project->positions[$position_key]->experienced += 1;
                                     $project->positions[$position_key]->experienced_total_output += $performance->output;
                                     $project->positions[$position_key]->experienced_total_hours_worked += $performance->hours_worked;
                                 }
                             }
 
+                            $project->positions[$position_key]->head_count = $project->positions[$position_key]->beginner + $project->positions[$position_key]->moderately_experienced + $project->positions[$position_key]->experienced;
                             $position->total_average_output = $position->total_output / $position->total_hours_worked * $performances[0]->daily_work_hours;
                             $position->monthly_productivity = round($position->total_average_output / $performances[0]->target->productivity * 100);
                             $position->monthly_quality = round((1 - $position->total_output_error / $position->total_output) * 100);
@@ -373,7 +390,7 @@ class ReportController extends Controller
         Excel::create('PQR Project Summary Report '. $months[(int)$month-1] .' '. $year, function($excel){
             foreach ($this->projects as $project_key => $project) {
                 $this->project = $project;
-                if($project->total_hours_worked){
+                if($project->first_report){
                     $excel->sheet($project->name, function($sheet) {
                         $sheet->loadView('excel.team-performance')
                             ->with('project', $this->project);
@@ -410,6 +427,11 @@ class ReportController extends Controller
                 $project->experienced_total_average_output = 0;
 
                 foreach ($project->positions as $position_key => $position) {
+                    $position->beginner = 0;
+                    $position->moderately_experienced = 0;
+                    $position->experienced = 0;
+                    $position->head_count = 0;
+
                     $position->beginner_total_output = 0;
                     $position->beginner_total_hours_worked = 0;
                     $position->beginner_total_average_output = 0;
@@ -446,19 +468,23 @@ class ReportController extends Controller
                                 $position->total_output_error += $performance->output_error;
 
                                 if($performance->target->experience == 'Beginner'){
+                                    $project->positions[$position_key]->beginner += 1;
                                     $project->positions[$position_key]->beginner_total_output += $performance->output;
                                     $project->positions[$position_key]->beginner_total_hours_worked += $performance->hours_worked;
                                 }
                                 else if($performance->target->experience == 'Moderately Experienced'){
+                                    $project->positions[$position_key]->moderately_experienced += 1;
                                     $project->positions[$position_key]->moderately_experienced_total_output += $performance->output;
                                     $project->positions[$position_key]->moderately_experienced_total_hours_worked += $performance->hours_worked;   
                                 }
                                 else if($performance->target->experience == 'Experienced'){
+                                    $project->positions[$position_key]->experienced += 1;
                                     $project->positions[$position_key]->experienced_total_output += $performance->output;
                                     $project->positions[$position_key]->experienced_total_hours_worked += $performance->hours_worked;
                                 }
                             }
 
+                            $project->positions[$position_key]->head_count = $project->positions[$position_key]->beginner + $project->positions[$position_key]->moderately_experienced + $project->positions[$position_key]->experienced;
                             $position->total_average_output = $position->total_output / $position->total_hours_worked * $performances[0]->daily_work_hours;
                             $position->monthly_productivity = round($position->total_average_output / $performances[0]->target->productivity * 100);
                             $position->monthly_quality = round((1 - $position->total_output_error / $position->total_output) * 100);
@@ -546,6 +572,10 @@ class ReportController extends Controller
                 $project->experienced_total_average_output = 0;
 
                 foreach ($project->positions as $position_key => $position) {
+                    $position->beginner = 0;
+                    $position->moderately_experienced = 0;
+                    $position->experienced = 0;
+
                     $position->beginner_total_output = 0;
                     $position->beginner_total_hours_worked = 0;
                     $position->beginner_total_average_output = 0;
@@ -582,19 +612,23 @@ class ReportController extends Controller
                                 $position->total_output_error += $performance->output_error;
 
                                 if($performance->target->experience == 'Beginner'){
+                                    $project->positions[$position_key]->beginner += 1; 
                                     $project->positions[$position_key]->beginner_total_output += $performance->output;
                                     $project->positions[$position_key]->beginner_total_hours_worked += $performance->hours_worked;
                                 }
                                 else if($performance->target->experience == 'Moderately Experienced'){
+                                    $project->positions[$position_key]->moderately_experienced += 1;
                                     $project->positions[$position_key]->moderately_experienced_total_output += $performance->output;
                                     $project->positions[$position_key]->moderately_experienced_total_hours_worked += $performance->hours_worked;   
                                 }
                                 else if($performance->target->experience == 'Experienced'){
+                                    $project->positions[$position_key]->experienced += 1;
                                     $project->positions[$position_key]->experienced_total_output += $performance->output;
                                     $project->positions[$position_key]->experienced_total_hours_worked += $performance->hours_worked;
                                 }
                             }
 
+                            $project->positions[$position_key]->head_count = $project->positions[$position_key]->beginner + $project->positions[$position_key]->moderately_experienced + $project->positions[$position_key]->experienced;
                             $position->total_average_output = $position->total_output / $position->total_hours_worked * $performances[0]->daily_work_hours;
                             $position->monthly_productivity = round($position->total_average_output / $performances[0]->target->productivity * 100);
                             $position->monthly_quality = round((1 - $position->total_output_error / $position->total_output) * 100);
@@ -997,8 +1031,10 @@ class ReportController extends Controller
             }
         })->download('xls');
     }
-    public function downloadSummary($date_start, $date_end, $daily_work_hours)
+    public function downloadSummary($date_start, $date_end, $daily_work_hours, $preview)
     {
+        $preview = (int)$preview;
+
         $this->projects = DB::table('projects')->whereNull('deleted_at')->get();
 
         foreach ($this->projects as $project_key => $project) {
@@ -1044,18 +1080,23 @@ class ReportController extends Controller
 
         }
 
-        Excel::create('PQR Weekly Summary '. Carbon::parse($date_start)->toFormattedDateString() . ' to ' . Carbon::parse($date_end)->toFormattedDateString(), function($excel)
-        {
-            foreach ($this->projects as $project_key => $project) {
-                $this->project = $project;
-                if(count($this->project->reports)){
-                    $excel->sheet($this->project->name, function($sheet) {
-                        $sheet->loadView('excel.weekly')
-                            ->with('project', $this->project);
-                    });
+        if(!$preview){
+            Excel::create('PQR Weekly Summary '. Carbon::parse($date_start)->toFormattedDateString() . ' to ' . Carbon::parse($date_end)->toFormattedDateString(), function($excel)
+            {
+                foreach ($this->projects as $project_key => $project) {
+                    $this->project = $project;
+                    if(count($this->project->reports)){
+                        $excel->sheet($this->project->name, function($sheet) {
+                            $sheet->loadView('excel.weekly')
+                                ->with('project', $this->project);
+                        });
+                    }
                 }
-            }
-        })->download('xls');
+            })->download('xls');
+        }
+        else{
+            return view('preview.weekly')->with('projects', $this->projects);
+        }
 
     }
 

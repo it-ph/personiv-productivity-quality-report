@@ -1,5 +1,5 @@
 teamLeaderModule
-	.controller('downloadReportDialogController', ['$scope', '$mdDialog', '$filter', 'Preloader', 'Report', 'Performance', 'Programme', 'Project', 'Position', 'Member', function($scope, $mdDialog, $filter, Preloader, Report, Performance, Programme, Project, Position, Member){
+	.controller('downloadReportDialogController', ['$scope', '$mdDialog', '$filter', 'Preloader', 'Report', 'Performance', 'Programme', 'Project', 'Position', 'Member', 'Experience', function($scope, $mdDialog, $filter, Preloader, Report, Performance, Programme, Project, Position, Member, Experience){
 		$scope.details = {};
 		$scope.details.type = 'Weekly';
 		$scope.details.date_start = new Date();
@@ -88,6 +88,20 @@ teamLeaderModule
 				});
 		};
 
+		$scope.fetchMembers = function(){
+			var projectID = $scope.details.project;
+
+			Project.show(projectID)
+				.success(function(data){
+					$scope.positions = data.positions;					
+				})
+
+			Experience.members(projectID)
+				.success(function(data){
+					$scope.members = data;
+				})
+		}
+
 		$scope.cancel = function(){
 			$mdDialog.cancel();
 		};
@@ -115,7 +129,7 @@ teamLeaderModule
 					$scope.details.date_start = $scope.details.date_start.toDateString();
 					$scope.details.date_end = $scope.details.date_end.toDateString();
 
-					var win = window.open('/performance-evaluation/' + $scope.details.date_start + '/date_end/' + $scope.details.date_end + '/daily-work-hours/' + $scope.details.daily_work_hours + '/department/' + $scope.details.department + /member/ + $scope.details.member, '_blank');
+					var win = window.open('/performance-evaluation/' + $scope.details.date_start + '/date_end/' + $scope.details.date_end + '/daily-work-hours/' + $scope.details.daily_work_hours + '/department/' + $scope.details.department + '/project/' + $scope.details.project + '/position/' + $scope.details.position + /member/ + $scope.details.member + '/download/1', '_blank');
 					win.focus();	
 				}
 

@@ -108,7 +108,8 @@ adminModule
 		};
 
 		$scope.clearFilter = function(){
-			$scope.subheader.project = '';
+			$scope.rightSidenav.searchText = '';
+			$scope.filterData.project = '';
 			$scope.filterDate.date_start = '';
 			$scope.filterDate.date_end = '';
 			$scope.filterData.position = '';

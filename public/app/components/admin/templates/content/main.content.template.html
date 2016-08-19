@@ -55,6 +55,22 @@
 						<div flex layout="column" layout-align="end end">
 							<table class="table">
 								<tr>
+									<th>Positions</th>
+									<th>Beginner</th>
+									<th>Moderately Experienced</th>
+									<th>Experienced</th>
+									<th>Head Count</th>
+								</tr>
+								<tr ng-repeat="position in detail.positions">
+									<td>{{position.name}}</td>
+									<td>{{position.beginner}}</td>
+									<td>{{position.moderately_experienced}}</td>
+									<td>{{position.experienced}}</td>
+									<th>{{position.head_count}}</th>
+								</tr>
+							</table>
+							<table class="table">
+								<tr>
 									<th>Row Labels</th>
 									<th>Sum of Total Output</th>
 									<th>Sum of Total Man Hours</th>

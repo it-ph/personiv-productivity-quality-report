@@ -50,6 +50,7 @@ Route::group(['middleware' => 'auth'], function () {
 	Route::resource('performance-approval', 'PerformanceApprovalController');
 	Route::resource('walk-through', 'WalkThroughController');
 	Route::resource('experience', 'ExperienceController');
+	Route::resource('activity', 'ActivityController');
 
 	// Route resource paginate
 	Route::get('member-paginate/{teamLeaderID}', 'MemberController@paginateTeamLeader');
@@ -103,7 +104,7 @@ Route::group(['middleware' => 'auth'], function () {
 	Route::get('report-download-monthly-department/{departmentID}/month/{month}/year/{year}/daily-work-hours/{daily_work_hours}', 'ReportController@downloadMonthlyDepartment');
 	Route::post('report-department-monthly-position', 'ReportController@departmentMonthlyPosition');
 	Route::post('performance-weekly', 'PerformanceController@weekly');
-	Route::get('performance-evaluation/{date_start}/date_end/{date_end}/daily-work-hours/{daily_work_hours}/department/{departmentID}/member/{memberID}', 'PerformanceController@evaluation');
+	Route::get('performance-evaluation/{date_start}/date_end/{date_end}/daily-work-hours/{daily_work_hours}/department/{departmentID}/project/{projectID}/position/{positionID}/member/{memberID}/download/{download}', 'PerformanceController@evaluation');
 	Route::get('user-department/{departmentID}', 'UserController@department');
 
 	Route::get('report-monthly', 'ReportController@monthly');
@@ -111,7 +112,7 @@ Route::group(['middleware' => 'auth'], function () {
 	Route::get('target-project/{reportID}', 'TargetController@project');
 	Route::get('performance-top-performers/{reportID}', 'PerformanceController@topPerformers');
 	Route::post('performance-monthly', 'PerformanceController@monthly');
-	Route::get('report-team-performance/{month}/year/{year}/daily-work-hours/{daily_work_hours}', 'ReportController@teamPerformance');
+	Route::get('report-team-performance/{month}/year/{year}/daily-work-hours/{daily_work_hours}/download/{download}', 'ReportController@teamPerformance');
 	Route::post('approval-performance-edit/{reportID}', 'ApprovalController@performanceEdit');
 	Route::post('performance-get-mondays', 'PerformanceController@getMondays');
 	Route::post('performance-get-weekends', 'PerformanceController@getWeekends');

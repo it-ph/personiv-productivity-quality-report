@@ -15,4 +15,9 @@ class Activity extends Model
     {
     	return $this->belongsTo('App\User');
     }
+
+    public function activity_type()
+    {
+    	return $this->belongsTo('App\ActivityType');
+    }
 }

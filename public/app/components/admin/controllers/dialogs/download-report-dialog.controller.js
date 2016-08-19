@@ -1,11 +1,10 @@
 adminModule
-	.controller('downloadReportDialogController', ['$scope', '$mdDialog', '$filter', 'Preloader', 'Report', 'Performance', 'Programme', 'Department', 'Member', function($scope, $mdDialog, $filter, Preloader, Report, Performance, Programme, Department, Member){
+	.controller('downloadReportDialogController', ['$scope', '$mdDialog', '$filter', 'Preloader', 'Report', 'Performance', 'Project', 'Experience', 'Programme', 'Department', 'Member', function($scope, $mdDialog, $filter, Preloader, Report, Performance, Project, Experience, Programme, Department, Member){
 		$scope.details = {};
 		$scope.details.type = 'Weekly';
 		$scope.details.date_start = new Date();
 		$scope.details.date_end = new Date();
 		$scope.maxDate = new Date();
-
 
 		Programme.index()
 			.success(function(data){
@@ -18,10 +17,25 @@ adminModule
 				$scope.departments = data;
 			})
 
+		$scope.fetchProjects = function(){
+			var departmentID = $scope.details.department;
+
+			var department = $filter('filter')($scope.departments, {id: departmentID});	
+			
+			$scope.projects = department[0].projects;		
+		}
+
 		$scope.fetchMembers = function(){
-			Department.show($scope.details.department)
+			var projectID = $scope.details.project;
+
+			Project.show(projectID)
 				.success(function(data){
-					$scope.members = data.members;
+					$scope.positions = data.positions;					
+				})
+
+			Experience.members(projectID)
+				.success(function(data){
+					$scope.members = data;
 				})
 		}
 
@@ -118,14 +132,14 @@ adminModule
 					win.focus();	
 				}
 				else if($scope.details.type=='Team Performance'){
-					var win = window.open('/report-team-performance/' + $scope.details.month + '/year/' + $scope.details.year + '/daily-work-hours/' + $scope.details.daily_work_hours, '_blank');
+					var win = window.open('/report-team-performance/' + $scope.details.month + '/year/' + $scope.details.year + '/daily-work-hours/' + $scope.details.daily_work_hours + '/download/1', '_blank');
 					win.focus();	
 				}
 				else if($scope.details.type=='Performance Evaluation'){
 					$scope.details.date_start = $scope.details.date_start.toDateString();
 					$scope.details.date_end = $scope.details.date_end.toDateString();
 
-					var win = window.open('/performance-evaluation/' + $scope.details.date_start + '/date_end/' + $scope.details.date_end + '/daily-work-hours/' + $scope.details.daily_work_hours + '/department/' + $scope.details.department + /member/ + $scope.details.member, '_blank');
+					var win = window.open('/performance-evaluation/' + $scope.details.date_start + '/date_end/' + $scope.details.date_end + '/daily-work-hours/' + $scope.details.daily_work_hours + '/department/' + $scope.details.department + '/project/' + $scope.details.project + '/position/' + $scope.details.position + /member/ + $scope.details.member + '/download/1', '_blank');
 					win.focus();	
 				}
 

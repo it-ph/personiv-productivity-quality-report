@@ -171,11 +171,36 @@
 							<div ng-messages-include="/app/shared/templates/validation-message-report.html"></div>
 						</div>
 					</md-input-container>
+					<!-- Project -->
 					<md-input-container flex>
-						<label>Members</label>
-						<md-select name="Members" required ng-model="details.member">
-							<md-option ng-repeat="member in members" value="{{ member.id }}">
-								{{ member.full_name }}
+						<label>Project</label>
+						<md-select name="Project" required ng-model="details.project" ng-change="fetchMembers()">
+							<md-option ng-repeat="project in projects" value="{{ project.id }}">
+								{{project.name}}
+							</md-option>
+						</md-select>
+						<div ng-messages="downloadReportForm.Project.$error" ng-if="downloadReportForm.Project.$touched">
+							<div ng-messages-include="/app/shared/templates/validation-message-report.html"></div>
+						</div>
+					</md-input-container>
+				</div>
+				<div layout="row">
+					<md-input-container flex>
+						<label>Position</label>
+						<md-select name="Position" required ng-model="details.position" ng-disabled="!details.project">
+							<md-option ng-repeat="position in positions" value="{{ position.id }}">
+								{{ position.name }}
+							</md-option>
+						</md-select>
+						<div ng-messages="downloadReportForm.Position.$error" ng-if="downloadReportForm.Position.$touched">
+							<div ng-messages-include="/app/shared/templates/validation-message-report.html"></div>
+						</div>
+					</md-input-container>
+					<md-input-container flex>
+						<label>Member</label>
+						<md-select name="Members" required ng-model="details.member" ng-disabled="!details.position">
+							<md-option ng-repeat="member in members" value="{{ member.member_id }}">
+								{{ member.member.full_name }}
 							</md-option>
 						</md-select>
 						<div ng-messages="downloadReportForm.Members.$error" ng-if="downloadReportForm.Members.$touched">

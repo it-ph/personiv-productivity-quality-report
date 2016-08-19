@@ -20,96 +20,193 @@ use App\User;
 
 class PerformanceController extends Controller
 {
-    public function evaluation($date_start, $date_end, $daily_work_hours, $department_id, $member_id)
+    public function evaluation($date_start, $date_end, $daily_work_hours, $department_id, $project_id, $position_id, $member_id, $download)
     {
+        $download = (int)$download;
+
         $this->member = DB::table('members')->where('id', $member_id)->first();
 
         $this->date_start = Carbon::parse($date_start);
         $this->date_end = Carbon::parse($date_end);
 
-        $this->department_id = (int)$department_id;
+        $department_id = (int)$department_id;
 
-        $this->member->department = $this->department_id ? Department::with('projects')->where('id', $this->department_id)->first() : Department::with('projects')->where('id', Auth::user()->department_id)->first();
+        $this->department_id = $department_id ? $department_id : Auth::user()->department_id;
+        
+        $this->project = DB::table('projects')->where('id', $project_id)->first();
+        $this->member->position = DB::table('positions')->where('id', $position_id)->first();
 
-        foreach ($this->member->department->projects as $project_key => $project) {
-            $project->positions = DB::table('positions')->where('project_id', $project->id)->get();
-            
-            $project->average_productivity = 0;
-            $project->average_quality = 0;
+        $this->project->average_productivity = 0;
+        $this->project->average_quality = 0;
 
-            $overall_productivity = 0;
-            $overall_quality = 0;
-            $overall_count = 0;
+        $overall_productivity = 0;
+        $overall_quality = 0;
+        $overall_count = 0;
 
-            foreach ($project->positions as $position_key => $position) {
-                $position->total_hours_worked = 0;
-                $position->total_output = 0;
-                $position->total_output_error = 0;
-                $position->total_average_output = 0;
-                $position->productivity = 0;
-                $position->quality = 0;
+        $this->member->position->total_hours_worked = 0;
+        $this->member->position->total_output = 0;
+        $this->member->position->total_output_error = 0;
+        $this->member->position->total_average_output = 0;
+        $this->member->position->productivity = 0;
+        $this->member->position->quality = 0;
 
-                $position->performances = Performance::with(['target' => function($query){ $query->withTrashed(); }])->where('member_id', $member_id)->where('position_id', $position->id)->whereBetween('date_start', [$this->date_start, $this->date_end])->where('daily_work_hours', 'like', $daily_work_hours.'%')->orderBy('date_start')->get();
+        $this->member->performances = Performance::with(['target' => function($query){ $query->withTrashed(); }])->where('member_id', $member_id)->where('position_id', $position_id)->whereBetween('date_start', [$this->date_start, $this->date_end])->where('daily_work_hours', 'like', $daily_work_hours.'%')->orderBy('date_start')->get();
 
-                if(count($position->performances)){
-                    foreach ($position->performances as $performance_key => $performance) {
-                        $position->total_hours_worked += $performance->hours_worked;
-                        $position->total_output += $performance->output;
-                        $position->total_output_error += $performance->output_error;
+        if(count($this->member->performances)){
+            foreach ($this->member->performances as $performance_key => $performance) {
+                $this->member->position->total_hours_worked += $performance->hours_worked;
+                $this->member->position->total_output += $performance->output;
+                $this->member->position->total_output_error += $performance->output_error;
 
-                        $performance->date_start = Carbon::parse($performance->date_start)->toFormattedDateString();
-                        $performance->date_end = Carbon::parse($performance->date_end)->toFormattedDateString();
-                    }
+                $performance->date_start = Carbon::parse($performance->date_start)->toFormattedDateString();
+                $performance->date_end = Carbon::parse($performance->date_end)->toFormattedDateString();
+            }
 
-                    $position->total_average_output = round($position->total_output / $position->total_hours_worked * $daily_work_hours, 2);
+            $this->member->position->total_average_output = round($this->member->position->total_output / $this->member->position->total_hours_worked * $daily_work_hours, 2);
 
-                    $position->productivity = round($position->total_average_output / $position->performances[0]->target->productivity * 100);
-                    $position->quality = round((1 - $position->total_output_error / $position->total_output) * 100);
+            $this->member->position->productivity = round($this->member->position->total_average_output / $this->member->performances[0]->target->productivity * 100);
+            $this->member->position->quality = round((1 - $this->member->position->total_output_error / $this->member->position->total_output) * 100);
 
-                    if($position->productivity < $position->performances[0]->target->productivity && $position->quality >= $position->performances[0]->target->quality)
-                    {
-                        $position->quadrant = 'Quadrant 1'; 
-                    }
-                    else if($position->productivity >= $position->performances[0]->target->productivity && $position->quality >= $position->performances[0]->target->quality)
-                    {
-                        $position->quadrant = 'Quadrant 2'; 
-                    }
-                    else if($position->productivity >= $position->performances[0]->target->productivity && $position->quality < $position->performances[0]->target->quality)
-                    {
-                        $position->quadrant = 'Quadrant 3'; 
-                    }
-                    else if($position->productivity < $position->performances[0]->target->productivity && $position->quality < $position->performances[0]->target->quality)
-                    {
-                        $position->quadrant = 'Quadrant 4'; 
-                    }
+            if($this->member->position->productivity < $this->member->performances[0]->target->productivity && $this->member->position->quality >= $this->member->performances[0]->target->quality)
+            {
+                $this->member->position->quadrant = 'Quadrant 1'; 
+            }
+            else if($this->member->position->productivity >= $this->member->performances[0]->target->productivity && $this->member->position->quality >= $this->member->performances[0]->target->quality)
+            {
+                $this->member->position->quadrant = 'Quadrant 2'; 
+            }
+            else if($this->member->position->productivity >= $this->member->performances[0]->target->productivity && $this->member->position->quality < $this->member->performances[0]->target->quality)
+            {
+                $this->member->position->quadrant = 'Quadrant 3'; 
+            }
+            else if($this->member->position->productivity < $this->member->performances[0]->target->productivity && $this->member->position->quality < $this->member->performances[0]->target->quality)
+            {
+                $this->member->position->quadrant = 'Quadrant 4'; 
+            }
 
-                    $overall_productivity += $position->productivity;
-                    $overall_quality += $position->quality;
-                    $overall_count++;
-                }
-            }  
+            $overall_productivity += $this->member->position->productivity;
+            $overall_quality += $this->member->position->quality;
+            $overall_count++;
+        }
 
-            if($overall_count){
-                $project->average_productivity = $overall_productivity / $overall_count;
-                $project->average_quality = $overall_quality / $overall_count;
-            }      
+        if($overall_count){
+            $this->project->average_productivity = $overall_productivity / $overall_count;
+            $this->project->average_quality = $overall_quality / $overall_count;
         }
 
         // return response()->json($this->member);
 
-        Excel::create('Performance Evaluation of '. $this->member->full_name .' from '. $this->date_start->toFormattedDateString() .' to '. $this->date_end->toFormattedDateString() , function($excel){
-            foreach ($this->member->department->projects as $project_key => $project) {
-                $this->project = $project;
-                if($project->average_productivity && $project->average_quality){
-                    $excel->sheet($project->name, function($sheet) {
+        if($download)
+        {
+            Excel::create('Performance Evaluation of '. $this->member->full_name .' from '. $this->date_start->toFormattedDateString() .' to '. $this->date_end->toFormattedDateString() , function($excel){
+                if($this->project->average_productivity && $this->project->average_quality){
+                    $excel->sheet($this->project->name, function($sheet) {
                         $sheet->loadView('excel.performance-evaluation')
                             ->with('project', $this->project)
                             ->with('member', $this->member);
                     });
                 }
-            }
-        })->download('xls');
+            })->download('xls');
+        }
+
     }
+
+    // public function evaluation($date_start, $date_end, $daily_work_hours, $department_id, $member_id, $download)
+    // {
+    //     $download = (int)$download;
+
+    //     $this->member = DB::table('members')->where('id', $member_id)->first();
+
+    //     $this->date_start = Carbon::parse($date_start);
+    //     $this->date_end = Carbon::parse($date_end);
+
+    //     $this->department_id = (int)$department_id;
+
+    //     $this->member->department = $this->department_id ? Department::with('projects')->where('id', $this->department_id)->first() : Department::with('projects')->where('id', Auth::user()->department_id)->first();
+
+    //     foreach ($this->member->department->projects as $project_key => $project) {
+    //         $project->positions = DB::table('positions')->where('project_id', $project->id)->get();
+            
+    //         $project->average_productivity = 0;
+    //         $project->average_quality = 0;
+
+    //         $overall_productivity = 0;
+    //         $overall_quality = 0;
+    //         $overall_count = 0;
+
+    //         foreach ($project->positions as $position_key => $position) {
+    //             $position->total_hours_worked = 0;
+    //             $position->total_output = 0;
+    //             $position->total_output_error = 0;
+    //             $position->total_average_output = 0;
+    //             $position->productivity = 0;
+    //             $position->quality = 0;
+
+    //             $position->performances = Performance::with(['target' => function($query){ $query->withTrashed(); }])->where('member_id', $member_id)->where('position_id', $position->id)->whereBetween('date_start', [$this->date_start, $this->date_end])->where('daily_work_hours', 'like', $daily_work_hours.'%')->orderBy('date_start')->get();
+
+    //             if(count($position->performances)){
+    //                 foreach ($position->performances as $performance_key => $performance) {
+    //                     $position->total_hours_worked += $performance->hours_worked;
+    //                     $position->total_output += $performance->output;
+    //                     $position->total_output_error += $performance->output_error;
+
+    //                     $performance->date_start = Carbon::parse($performance->date_start)->toFormattedDateString();
+    //                     $performance->date_end = Carbon::parse($performance->date_end)->toFormattedDateString();
+    //                 }
+
+    //                 $position->total_average_output = round($position->total_output / $position->total_hours_worked * $daily_work_hours, 2);
+
+    //                 $position->productivity = round($position->total_average_output / $position->performances[0]->target->productivity * 100);
+    //                 $position->quality = round((1 - $position->total_output_error / $position->total_output) * 100);
+
+    //                 if($position->productivity < $position->performances[0]->target->productivity && $position->quality >= $position->performances[0]->target->quality)
+    //                 {
+    //                     $position->quadrant = 'Quadrant 1'; 
+    //                 }
+    //                 else if($position->productivity >= $position->performances[0]->target->productivity && $position->quality >= $position->performances[0]->target->quality)
+    //                 {
+    //                     $position->quadrant = 'Quadrant 2'; 
+    //                 }
+    //                 else if($position->productivity >= $position->performances[0]->target->productivity && $position->quality < $position->performances[0]->target->quality)
+    //                 {
+    //                     $position->quadrant = 'Quadrant 3'; 
+    //                 }
+    //                 else if($position->productivity < $position->performances[0]->target->productivity && $position->quality < $position->performances[0]->target->quality)
+    //                 {
+    //                     $position->quadrant = 'Quadrant 4'; 
+    //                 }
+
+    //                 $overall_productivity += $position->productivity;
+    //                 $overall_quality += $position->quality;
+    //                 $overall_count++;
+    //             }
+    //         }  
+
+    //         if($overall_count){
+    //             $project->average_productivity = $overall_productivity / $overall_count;
+    //             $project->average_quality = $overall_quality / $overall_count;
+    //         }      
+    //     }
+
+    //     // return response()->json($this->member);
+
+    //     if($download)
+    //     {
+    //         Excel::create('Performance Evaluation of '. $this->member->full_name .' from '. $this->date_start->toFormattedDateString() .' to '. $this->date_end->toFormattedDateString() , function($excel){
+    //             foreach ($this->member->department->projects as $project_key => $project) {
+    //                 $this->project = $project;
+    //                 if($project->average_productivity && $project->average_quality){
+    //                     $excel->sheet($project->name, function($sheet) {
+    //                         $sheet->loadView('excel.performance-evaluation')
+    //                             ->with('project', $this->project)
+    //                             ->with('member', $this->member);
+    //                     });
+    //                 }
+    //             }
+    //         })->download('xls');
+    //     }
+
+    // }
 
     public function getMondays(Request $request)
     {
