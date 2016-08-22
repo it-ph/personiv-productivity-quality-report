@@ -54,12 +54,12 @@
 			<md-button class="md-icon-button" ng-click="showSearchBar()" tourtip="{{tour.search}}" tourtip-placement="bottom" tourtip-next-label="NEXT" tourtip-step="0" ng-if="!toolbar.hideSearchIcon">
 				<md-icon class="mdi mdi-magnify grey" aria-label="Search"></md-icon>
 			</md-button>
-			<md-menu ng-if="user.role!='manager'">
+			<!-- <md-menu ng-if="user.role!='manager'">
 				<md-button ng-click="$mdOpenMenu($event)" tourtip="{{tour.notification}}" tourtip-placement="bottom" tourtip-next-label="NEXT" tourtip-step="1" >
 					<md-icon class="mdi mdi-bell" ng-class="notifications.length ? 'pink' : 'grey'" aria-label="Notifications"></md-icon>
 					<span class="badge" ng-if="notifications.length">{{ notifications.length }}</span>
 				</md-button>
-
+			
 				<md-menu-content width="6">
 					<p flex layout="column" layout-align="center center" ng-if="!notifications.length">
 						<span>No unseen notifications</span>
@@ -77,7 +77,7 @@
 					    </md-list-item>
 					</div>
 				</md-menu-content>
-			</md-menu>
+			</md-menu> -->
 			<!-- Toggle Left Sidenav Button -->
 			<md-button class="md-icon-button" ng-click="toggleSidenav('left')" hide-gt-md>
 				<md-icon class="mdi mdi-menu grey" aria-label="Toogle Sidenav"></md-icon>

@@ -56,34 +56,34 @@ sharedModule
 				    		});
 				    });
 				}
-				else if ($scope.user.role == 'team-leader'){
-					WalkThrough.show($scope.user.id)
-						.success(function(data){
-							$scope.leftSidenavTour = data ? -1 : 0;
-						});
+				// else if ($scope.user.role == 'team-leader'){
+				// 	WalkThrough.show($scope.user.id)
+				// 		.success(function(data){
+				// 			$scope.leftSidenavTour = data ? -1 : 0;
+				// 		});
 
-					$scope.toolbarTour = function(){
-						$scope.toolbarTour = 0;
-					}
-					var channel = pusher.subscribe('approvals.' + $scope.user.id);
+				// 	$scope.toolbarTour = function(){
+				// 		$scope.toolbarTour = 0;
+				// 	}
+				// 	var channel = pusher.subscribe('approvals.' + $scope.user.id);
 				    
-				    channel.bind('App\\Events\\ApprovalNotificationBroadCast', function(data) {
-				    	Preloader.setNotification(data.data);
-				    	// pops out the toast
-				    	$mdToast.show({
-					    	controller: 'notificationToastController',
-					      	templateUrl: '/app/components/team-leader/templates/toasts/notification.toast.html',
-					      	parent : angular.element($('body')),
-					      	hideDelay: 6000,
-					      	position: 'bottom right'
-					    });
-				    	// updates the notification menu
-				    	Notification.unseen()
-				    		.success(function(data){
-				    			$scope.notifications = data;
-				    		});
-				    });
-				}
+				//     channel.bind('App\\Events\\ApprovalNotificationBroadCast', function(data) {
+				//     	Preloader.setNotification(data.data);
+				//     	// pops out the toast
+				//     	$mdToast.show({
+				// 	    	controller: 'notificationToastController',
+				// 	      	templateUrl: '/app/components/team-leader/templates/toasts/notification.toast.html',
+				// 	      	parent : angular.element($('body')),
+				// 	      	hideDelay: 6000,
+				// 	      	position: 'bottom right'
+				// 	    });
+				//     	// updates the notification menu
+				//     	Notification.unseen()
+				//     		.success(function(data){
+				//     			$scope.notifications = data;
+				//     		});
+				//     });
+				// }
 			});
 
 		Notification.unseen()

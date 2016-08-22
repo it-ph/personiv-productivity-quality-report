@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Activity;
+use App\ActivityType;
 use App\Performance;
 use App\Department;
 use App\Target;
@@ -620,6 +622,17 @@ class PerformanceController extends Controller
                     // }
 
                     event(new ReportSubmittedBroadCast($notify)); 
+
+                    $activity_type = ActivityType::where('action', 'create')->first();
+
+                    $activity = new Activity;
+
+                    $activity->report_id = $report->id;
+                    $activity->user_id = $request->user()->id;
+                    $activity->activity_type_id = $activity_type->id;
+
+                    $activity->save();
+
                     // report 
                     $create_report = true;
                 }

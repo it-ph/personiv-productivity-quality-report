@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use DB;
+use App\Activity;
+use App\ActivityType;
 use App\Approval;
 use App\Report;
 use App\Target;
@@ -106,15 +108,18 @@ class ApprovalController extends Controller
         $approval->status = 'done';
         $approval->save();
     }
+    
     public function reportDelete(Request $request, $id)
     {
-        $approval = new Approval;
+        $activity_type = ActivityType::where('action', 'delete')->first();
 
-        $approval->action = 'delete';
-        $approval->report_id = $id;
-        $approval->status = 'pending';
+        $activity = new Activity;
 
-        $approval->save();
+        $activity->report_id = $id;
+        $activity->user_id = $request->user()->id;
+        $activity->activity_type_id = $activity_type->id;
+
+        $activity->save();
 
         $admin = User::where('email', 'sherryl.sanchez@personiv.com')->first();
 
@@ -146,6 +151,7 @@ class ApprovalController extends Controller
 
         event(new ReportSubmittedBroadCast($notify));
     }
+
     public function decline(Request $request)
     {
         $create_notification = false;

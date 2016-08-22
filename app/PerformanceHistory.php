@@ -49,4 +49,9 @@ class PerformanceHistory extends Model
     {
         return $this->belongsTo('App\Programme');
     }
+
+    public function activity()
+    {
+        return $this->belongsTo('App\Activity');
+    }
 }

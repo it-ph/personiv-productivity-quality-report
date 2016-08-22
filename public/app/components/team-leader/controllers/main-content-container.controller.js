@@ -192,8 +192,8 @@ teamLeaderModule
 
 		$scope.deleteReport = function(id){
 			var confirm = $mdDialog.confirm()
-		        .title('Delete Report')
-		        .content('Are you sure you want to delete this report?')
+		        .title('Delete report')
+		        .content('This report will be deleted permanently.')
 		        .ok('Delete')
 		        .cancel('Cancel');
 		    $mdDialog.show(confirm)
@@ -201,13 +201,20 @@ teamLeaderModule
 		    		Preloader.preload();
 			    	Approval.reportDelete(id)
 			    		.success(function(){
-			    			Preloader.stop();
-			    			$mdToast.show(
-						    	$mdToast.simple()
-							        .content('Request has been submitted for approval.')
-							        .position('bottom right')
-							        .hideDelay(3000)
-						    );
+			    			Report.delete(id)
+			    				.success(function(){
+					    			Preloader.stop();
+					    			$mdToast.show(
+								    	$mdToast.simple()
+									        .content('Report deleted.')
+									        .position('bottom right')
+									        .hideDelay(3000)
+								    );
+								    $scope.subheader.refresh();
+			    				})
+			    				.error(function(){
+			    					Preloader.error();
+			    				})
 			    		})
 			    }, function() {
 			    	return;

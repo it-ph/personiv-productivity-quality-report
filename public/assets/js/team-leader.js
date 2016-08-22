@@ -49,6 +49,21 @@ teamLeaderModule
 					}
 				},
 			})
+			.state('main.activity',{
+				url:'activities',
+				views: {
+					'content-container': {
+						templateUrl: '/app/components/team-leader/views/content-container.view.html',
+						controller: 'activityContentContainerController',
+					},
+					'toolbar@main.activity': {
+						templateUrl: '/app/components/team-leader/templates/toolbar.template.html',
+					},
+					'content@main.activity': {
+						templateUrl: '/app/shared/templates/content/activity.content.template.html',
+					},
+				},
+			})
 			.state('main.members', {
 				url:'members',
 				views: {
@@ -169,6 +184,197 @@ teamLeaderModule
 				}],
 			})
 
+	}]);
+teamLeaderModule
+	.controller('activityContentContainerController', ['$scope', '$mdDialog', 'Activity', 'Preloader', 'User',  function($scope, $mdDialog, Activity, Preloader, User){
+		$scope.form = {};
+		$scope.activity = {};
+		$scope.months = [
+			'January',
+			'February',
+			'March',
+			'April',
+			'May',
+			'June',
+			'July',
+			'August',
+			'September',
+			'October',
+			'November',
+			'December',
+		];
+		var dateCreated = 2016;
+
+		$scope.years = [];
+
+		for (var i = new Date().getFullYear(); i >= dateCreated; i--) {
+			$scope.years.push(i);
+		};
+
+		$scope.activity.month = $scope.months[new Date().getMonth()];
+		$scope.activity.year = new Date().getFullYear();
+		/**
+		 * Object for toolbar
+		 *
+		*/
+		$scope.toolbar = {};
+		$scope.toolbar.hideSearchIcon = true;
+		$scope.toolbar.childState = 'Activities';
+		/**
+		 * Object for subheader
+		 *
+		*/
+		$scope.subheader = {};
+		
+		$scope.subheader.refresh = function(){
+			Preloader.preload();
+			$scope.init(true);
+		}
+
+		/**
+		 * Status of search bar.
+		 *
+		*/
+		$scope.searchBar = false;
+
+		/**
+		 * Reveals the search bar.
+		 *
+		*/
+		$scope.showSearchBar = function(){
+			$scope.searchBar = true;
+		};
+
+		/**
+		 * Hides the search bar.
+		 *
+		*/
+		$scope.hideSearchBar = function(){
+			$scope.toolbar.userInput = '';
+			$scope.searchBar = false;
+		};
+		
+		
+		$scope.searchUserInput = function(){
+			$scope.report.show = false;
+		};
+
+		$scope.showDetails = function(id){
+			Preloader.set(id);
+			$mdDialog.show({
+		    	controller: 'reportDialogController',
+		      	templateUrl: '/app/shared/templates/dialogs/report.dialog.template.html',
+		      	parent: angular.element(document.body),
+		    })
+		}
+
+		$scope.showHistory = function(id){
+			Preloader.set(id);
+			$mdDialog.show({
+		    	controller: 'performanceHistoryDialogController',
+		      	templateUrl: '/app/shared/templates/dialogs/performance-history.dialog.template.html',
+		      	parent: angular.element(document.body),
+		    })
+		}
+
+		var formatItem = function(activity){
+			activity.created_at = new Date(activity.created_at);
+			activity.first_letter = activity.user.first_name.charAt(0).toUpperCase();
+
+			return activity;
+		}
+
+		$scope.search = function(){
+			Preloader.preload();
+			/* Submitted */
+			Activity.reportSubmitted($scope.activity)
+				.success(function(data){
+					angular.forEach(data, function(item){
+						formatItem(item);
+					});
+
+					$scope.submitted = data;
+				})
+				.error(function(){
+					Preloader.error();
+				});
+
+			/* Updated */
+			Activity.reportUpdated($scope.activity)
+				.success(function(data){
+					angular.forEach(data, function(item){
+						formatItem(item);
+					});
+
+					$scope.updated = data;
+				})
+				.error(function(){
+					Preloader.error();
+				});
+
+			/* Deleted */
+			Activity.reportDeleted($scope.activity)
+				.success(function(data){
+					angular.forEach(data, function(item){
+						formatItem(item);
+					});
+
+					Preloader.stop();
+					Preloader.stop();
+
+					$scope.deleted = data;
+				})
+				.error(function(){
+					Preloader.error();
+				});
+
+		}
+
+		$scope.init = function(refresh){
+			/* Submitted */
+			Activity.reportSubmitted()
+				.success(function(data){
+					angular.forEach(data, function(item){
+						formatItem(item);
+					});
+					$scope.submitted = data;
+				})
+				.error(function(){
+					Preloader.error();
+				});
+
+			/* Updated */
+			Activity.reportUpdated()
+				.success(function(data){
+					angular.forEach(data, function(item){
+						formatItem(item);
+					});
+
+					$scope.updated = data;
+				})
+				.error(function(){
+					Preloader.error();
+				});
+
+			/* Deleted */
+			Activity.reportDeleted()
+				.success(function(data){
+					angular.forEach(data, function(item){
+						formatItem(item);
+					});
+
+					$scope.deleted = data;
+				})
+				.error(function(){
+					Preloader.error();
+				});
+
+			if(refresh){
+				Preloader.stop();
+			}
+		}
+
+		$scope.init();
 	}]);
 teamLeaderModule
 	.controller('approvalsContentContainerController', ['$scope', '$mdDialog', 'PerformanceApproval', 'Approval', 'Preloader', 'User',  function($scope, $mdDialog, PerformanceApproval, Approval, Preloader, User){
@@ -608,7 +814,7 @@ teamLeaderModule
 
 	}]);
 teamLeaderModule
-	.controller('editReportContentContainerController', ['$scope', '$filter', '$mdDialog', '$state', '$mdToast', '$stateParams', 'Preloader', 'Performance', 'Position', 'Project', 'Approval', function($scope, $filter, $mdDialog, $state, $mdToast, $stateParams, Preloader, Performance, Position, Project, Approval){
+	.controller('editReportContentContainerController', ['$scope', '$filter', '$mdDialog', '$state', '$mdToast', '$stateParams', 'Preloader', 'Performance', 'Position', 'Project', 'PerformanceHistory', function($scope, $filter, $mdDialog, $state, $mdToast, $stateParams, Preloader, Performance, Position, Project, PerformanceHistory){
 		var reportID = $stateParams.reportID;
 		var busy = false;
 		$scope.form = {};
@@ -759,17 +965,23 @@ teamLeaderModule
 						item.daily_work_hours = $scope.details.daily_work_hours;
 					});
 
-					Approval.performanceEdit(reportID, $scope.performances)
+					PerformanceHistory.store($scope.performances)
 						.success(function(){
-							$mdToast.show(
-						      	$mdToast.simple()
-							        .content('Edit report has been submitted for approval.')
-							        .position('bottom right')
-							        .hideDelay(3000)
-						    );
-							$state.go('main');
-							Preloader.stop();
-							busy = false;
+							Performance.update(reportID, $scope.performances)
+								.success(function(){
+									$mdToast.show(
+								      	$mdToast.simple()
+									        .content('Changes saved.')
+									        .position('bottom right')
+									        .hideDelay(3000)
+								    );
+									$state.go('main');
+									Preloader.stop();
+									busy = false;
+								})
+								.error(function(){
+									Preloader.error();
+								})
 						})
 						.error(function(){
 							Preloader.error();
@@ -803,7 +1015,7 @@ teamLeaderModule
 							// 'tip': 'Dashboard: tracks your team\'s weekly performance, targets, and top performers.',
 						},
 						{
-							'name':'Activity Feeds',
+							'name':'Activities',
 							'state':'main.activity',
 							'icon':'mdi-file-document-box',
 							// 'tip': 'Approvals: shows pending request for report changes.',
@@ -1069,8 +1281,8 @@ teamLeaderModule
 
 		$scope.deleteReport = function(id){
 			var confirm = $mdDialog.confirm()
-		        .title('Delete Report')
-		        .content('Are you sure you want to delete this report?')
+		        .title('Delete report')
+		        .content('This report will be deleted permanently.')
 		        .ok('Delete')
 		        .cancel('Cancel');
 		    $mdDialog.show(confirm)
@@ -1078,13 +1290,20 @@ teamLeaderModule
 		    		Preloader.preload();
 			    	Approval.reportDelete(id)
 			    		.success(function(){
-			    			Preloader.stop();
-			    			$mdToast.show(
-						    	$mdToast.simple()
-							        .content('Request has been submitted for approval.')
-							        .position('bottom right')
-							        .hideDelay(3000)
-						    );
+			    			Report.delete(id)
+			    				.success(function(){
+					    			Preloader.stop();
+					    			$mdToast.show(
+								    	$mdToast.simple()
+									        .content('Report deleted.')
+									        .position('bottom right')
+									        .hideDelay(3000)
+								    );
+								    $scope.subheader.refresh();
+			    				})
+			    				.error(function(){
+			    					Preloader.error();
+			    				})
 			    		})
 			    }, function() {
 			    	return;

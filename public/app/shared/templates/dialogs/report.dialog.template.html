@@ -1,0 +1,45 @@
+<md-dialog layout="column" flex flex-gt-md="70"  aria-label="Other Performance" ng-cloak>
+	<md-dialog-content layout="column" flex layout-padding layout-wrap>
+		<div layout="row" layout-align="space-between center">
+			<md-list>
+				<md-list-item class="md-3-line">
+					<md-icon class="md-avatar-icon mdi mdi-account" aria-label="Member"></md-icon>
+					<div class="md-list-item-text">
+						<h3>{{report.project.name}}</h3>
+						<h4>{{report.date_start | date: 'MMMM dd, yyyy'}} to {{report.date_end | date: 'MMMM dd, yyyy'}}</h4>
+						<p>Submitted by: {{report.team_leader.first_name}} {{report.team_leader.last_name}}</p>
+					</div>
+				</md-list-item>
+			</md-list>
+			<md-button class="md-icon-button" ng-click="cancel()" aria-label="Cancel">
+				<md-icon class="mdi mdi-close grey"></md-icon>
+			</md-button>
+		</div>
+		<table class="table">
+			<tr>
+				<th>Name</th>
+				<th>Position</th>
+				<th>Category</th>
+				<th>Hours Worked</th>
+				<th>Output</th>
+				<th>Output w/Error(s)</th>
+				<th>Average Output</th>
+				<th>Productivity</th>
+				<th>Quality</th>
+				<th>Quadrant</th>
+			</tr>
+			<tr class="fade-transition" ng-repeat="performance in report.performances">
+				<td>{{performance.member.full_name}}</td>
+				<td>{{performance.position.name}}</td>
+				<td>{{performance.experience}}</td>
+				<td>{{performance.hours_worked}}</td>
+				<td>{{performance.output | number: 1}}</td>
+				<td>{{performance.output_error | number: 1}}</td>
+				<td>{{performance.average_output | number: 1}}</td>
+				<td>{{performance.productivity | number: 1}}%</td>
+				<td>{{performance.quality | number: 1}}%</td>
+				<td>{{performance.quadrant}}</td>
+			</tr>
+		</table>
+	</md-dialog-content>
+</md-dialog>

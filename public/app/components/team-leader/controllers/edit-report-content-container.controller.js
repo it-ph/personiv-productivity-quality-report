@@ -1,5 +1,5 @@
 teamLeaderModule
-	.controller('editReportContentContainerController', ['$scope', '$filter', '$mdDialog', '$state', '$mdToast', '$stateParams', 'Preloader', 'Performance', 'Position', 'Project', 'Approval', function($scope, $filter, $mdDialog, $state, $mdToast, $stateParams, Preloader, Performance, Position, Project, Approval){
+	.controller('editReportContentContainerController', ['$scope', '$filter', '$mdDialog', '$state', '$mdToast', '$stateParams', 'Preloader', 'Performance', 'Position', 'Project', 'PerformanceHistory', function($scope, $filter, $mdDialog, $state, $mdToast, $stateParams, Preloader, Performance, Position, Project, PerformanceHistory){
 		var reportID = $stateParams.reportID;
 		var busy = false;
 		$scope.form = {};
@@ -150,17 +150,23 @@ teamLeaderModule
 						item.daily_work_hours = $scope.details.daily_work_hours;
 					});
 
-					Approval.performanceEdit(reportID, $scope.performances)
+					PerformanceHistory.store($scope.performances)
 						.success(function(){
-							$mdToast.show(
-						      	$mdToast.simple()
-							        .content('Edit report has been submitted for approval.')
-							        .position('bottom right')
-							        .hideDelay(3000)
-						    );
-							$state.go('main');
-							Preloader.stop();
-							busy = false;
+							Performance.update(reportID, $scope.performances)
+								.success(function(){
+									$mdToast.show(
+								      	$mdToast.simple()
+									        .content('Changes saved.')
+									        .position('bottom right')
+									        .hideDelay(3000)
+								    );
+									$state.go('main');
+									Preloader.stop();
+									busy = false;
+								})
+								.error(function(){
+									Preloader.error();
+								})
 						})
 						.error(function(){
 							Preloader.error();

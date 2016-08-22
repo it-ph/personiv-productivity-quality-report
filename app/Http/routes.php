@@ -48,6 +48,7 @@ Route::group(['middleware' => 'auth'], function () {
 	Route::resource('report', 'ReportController');
 	Route::resource('approval', 'ApprovalController');
 	Route::resource('performance-approval', 'PerformanceApprovalController');
+	Route::resource('performance-history', 'PerformanceHistoryController');
 	Route::resource('walk-through', 'WalkThroughController');
 	Route::resource('experience', 'ExperienceController');
 	Route::resource('activity', 'ActivityController');
@@ -135,4 +136,7 @@ Route::group(['middleware' => 'auth'], function () {
 	Route::post('member-check-duplicate', 'MemberController@checkDuplicate');
 	Route::get('experience-members/{projectID}', 'ExperienceController@members');
 	Route::get('position-unique', 'PositionController@unique');
+	Route::post('activity-report-submitted', 'ActivityController@reportSubmitted');
+	Route::post('activity-report-updated', 'ActivityController@reportUpdated');
+	Route::post('activity-report-deleted', 'ActivityController@reportDeleted');
 });

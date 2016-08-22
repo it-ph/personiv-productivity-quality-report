@@ -1547,7 +1547,7 @@ class ReportController extends Controller
      */
     public function show($id)
     {
-        //
+        return Report::withTrashed()->with('team_leader')->with(['performances' => function($query){ $query->withTrashed()->with(['member' => function($query){ $query->with('experiences');}])->with('position'); }])->with(['project' => function($query){ $query->with(['positions' => function($query){ $query->with(['targets' => function($query){ $query->withTrashed()->orderBy('created_at', 'desc'); }]);}]); }])->with('team_leader')->where('id', $id)->first();
     }
 
     /**

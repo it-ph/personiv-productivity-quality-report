@@ -27,6 +27,21 @@ adminModule
 					},
 				}
 			})
+			.state('main.activity',{
+				url:'activities',
+				views: {
+					'content-container': {
+						templateUrl: '/app/components/team-leader/views/content-container.view.html',
+						controller: 'activityContentContainerController',
+					},
+					'toolbar@main.activity': {
+						templateUrl: '/app/components/team-leader/templates/toolbar.template.html',
+					},
+					'content@main.activity': {
+						templateUrl: '/app/shared/templates/content/activity.content.template.html',
+					},
+				},
+			})
 			.state('main.weekly-report', {
 				url: 'weekly-report/{departmentID}',
 				params: {'departmentID':null},

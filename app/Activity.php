@@ -20,4 +20,9 @@ class Activity extends Model
     {
     	return $this->belongsTo('App\ActivityType');
     }
+
+    public function performance_history()
+    {
+        return $this->hasMany('App\PerformanceHistory');
+    }
 }

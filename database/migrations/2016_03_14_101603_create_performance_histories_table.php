@@ -15,6 +15,7 @@ class CreatePerformanceHistoriesTable extends Migration
         Schema::create('performance_histories', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('performance_id');
+            $table->integer('activity_id');
             $table->integer('report_id');
             // $table->integer('result_id')->nullable();
             $table->integer('member_id');

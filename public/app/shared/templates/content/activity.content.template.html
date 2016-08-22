@@ -1,0 +1,84 @@
+<div layout-padding flex flex-gt-md="75">
+	<form name="form.search" flex="50" layout="row" layout-margin layout-align="center center" novalidate>		
+		<md-input-container flex>
+			<label>Month</label>
+			<md-select ng-model="activity.month" name="Month" required>
+				<md-option ng-repeat="month in months" value="{{ month }}">
+					{{ month }}
+				</md-option>
+			</md-select>
+			<div ng-messages="form.searchMonthlyForm.Month.$error" ng-if="form.searchMonthlyForm.Month.$touched">
+				<div ng-messages-include="/app/shared/templates/validation-message.html"></div>
+			</div>
+		</md-input-container>
+		<md-input-container flex>
+			<label>Year</label>
+			<md-select ng-model="activity.year" required name="Year">
+				<md-option ng-repeat="year in years" value="{{ year }}">
+					{{ year }}
+				</md-option>
+			</md-select>
+			<div ng-messages="form.searchMonthlyForm.Year.$error" ng-if="form.searchMonthlyForm.Year.$touched">
+				<div ng-messages-include="/app/shared/templates/validation-message.html"></div>
+			</div>
+		</md-input-container>
+		<md-button class="md-fab md-mini md-primary" ng-click="search()">
+			<md-icon class="mdi mdi-magnify grey"></md-icon>
+			<md-tooltip>Search</md-tooltip>
+		</md-button>
+	</form>
+
+	<!-- Report Submitted -->
+	<md-subheader class="md-no-sticky md-primary">
+		<span>Report Submitted</span>
+	</md-subheader>
+	<md-list layout="column" layout-padding>
+		<md-list-item class="fade-transition md-3-line" flex ng-repeat="activity in submitted" ng-click="showDetails(activity.report_id)">
+			<h2 class="md-avatar md-headline purple-bg" layout="row" layout-align="center center">
+				<span class="weight-200 white-text">{{ activity.first_letter }}</span>
+			</h2>
+			<div class="md-list-item-text" layout="column" flex>
+				<h3>{{ activity.user.first_name }} {{ activity.user.last_name }}</h3>
+				<h4>{{ activity.activity_type.description }}</h4>
+				<p>{{ activity.created_at | date:'EEEE, MMM. dd, yyyy' }}</p>
+			</div>
+		</md-list-item>
+	</md-list>
+	<p ng-if="!submitted.length">No submitted reports.</p>
+	<!-- Report Updated -->
+	<md-divider></md-divider>
+	<md-subheader class="md-no-sticky md-primary" layout="row" layout-align="space-between center" flex>
+		<span>Report Updated</span>
+	</md-subheader>
+	<md-list layout="column" layout-padding>
+		<md-list-item class="fade-transition md-3-line" flex ng-repeat="activity in updated" ng-click="showHistory(activity.id)">
+			<h2 class="md-avatar md-headline purple-bg" layout="row" layout-align="center center">
+				<span class="weight-200 white-text">{{ activity.first_letter }}</span>
+			</h2>
+			<div class="md-list-item-text" layout="column" flex>
+				<h3>{{ activity.user.first_name }} {{ activity.user.last_name }}</h3>
+				<h4>{{ activity.activity_type.description }}</h4>
+				<p>{{ activity.created_at | date:'EEEE, MMM. dd, yyyy' }}</p>
+			</div>
+		</md-list-item>
+	</md-list>
+	<p ng-if="!updated.length">No updated reports.</p>
+	<!-- Deleted Report -->
+	<md-divider></md-divider>
+	<md-subheader class="md-no-sticky md-primary">
+		<span>Deleted Report</span>
+	</md-subheader>
+	<md-list layout="column" layout-padding>
+		<md-list-item class="fade-transition md-3-line" flex ng-repeat="activity in deleted" ng-click="showDetails(activity.report_id)">
+			<h2 class="md-avatar md-headline purple-bg" layout="row" layout-align="center center">
+				<span class="weight-200 white-text">{{ activity.first_letter }}</span>
+			</h2>
+			<div class="md-list-item-text" layout="column" flex>
+				<h3>{{ activity.user.first_name }} {{ activity.user.last_name }}</h3>
+				<h4>{{ activity.activity_type.description }}</h4>
+				<p>{{ activity.created_at | date:'EEEE, MMM. dd, yyyy' }}</p>
+			</div>
+		</md-list-item>
+	</md-list>
+	<p ng-if="!deleted.length">No deleted approvals.</p>
+</div>

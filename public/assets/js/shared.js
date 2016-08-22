@@ -143,34 +143,34 @@ sharedModule
 				    		});
 				    });
 				}
-				else if ($scope.user.role == 'team-leader'){
-					WalkThrough.show($scope.user.id)
-						.success(function(data){
-							$scope.leftSidenavTour = data ? -1 : 0;
-						});
+				// else if ($scope.user.role == 'team-leader'){
+				// 	WalkThrough.show($scope.user.id)
+				// 		.success(function(data){
+				// 			$scope.leftSidenavTour = data ? -1 : 0;
+				// 		});
 
-					$scope.toolbarTour = function(){
-						$scope.toolbarTour = 0;
-					}
-					var channel = pusher.subscribe('approvals.' + $scope.user.id);
+				// 	$scope.toolbarTour = function(){
+				// 		$scope.toolbarTour = 0;
+				// 	}
+				// 	var channel = pusher.subscribe('approvals.' + $scope.user.id);
 				    
-				    channel.bind('App\\Events\\ApprovalNotificationBroadCast', function(data) {
-				    	Preloader.setNotification(data.data);
-				    	// pops out the toast
-				    	$mdToast.show({
-					    	controller: 'notificationToastController',
-					      	templateUrl: '/app/components/team-leader/templates/toasts/notification.toast.html',
-					      	parent : angular.element($('body')),
-					      	hideDelay: 6000,
-					      	position: 'bottom right'
-					    });
-				    	// updates the notification menu
-				    	Notification.unseen()
-				    		.success(function(data){
-				    			$scope.notifications = data;
-				    		});
-				    });
-				}
+				//     channel.bind('App\\Events\\ApprovalNotificationBroadCast', function(data) {
+				//     	Preloader.setNotification(data.data);
+				//     	// pops out the toast
+				//     	$mdToast.show({
+				// 	    	controller: 'notificationToastController',
+				// 	      	templateUrl: '/app/components/team-leader/templates/toasts/notification.toast.html',
+				// 	      	parent : angular.element($('body')),
+				// 	      	hideDelay: 6000,
+				// 	      	position: 'bottom right'
+				// 	    });
+				//     	// updates the notification menu
+				//     	Notification.unseen()
+				//     		.success(function(data){
+				//     			$scope.notifications = data;
+				//     		});
+				//     });
+				// }
 			});
 
 		Notification.unseen()
@@ -226,6 +226,88 @@ sharedModule
 			})
 
 	}]);
+sharedModule
+	.controller('performanceHistoryDialogController', ['$scope', '$filter', '$mdDialog', 'Preloader', 'PerformanceHistory', function($scope, $filter, $mdDialog, Preloader, PerformanceHistory){
+		var activityID = Preloader.get();
+
+		$scope.cancel = function(){
+			$mdDialog.cancel();
+		}
+
+		PerformanceHistory.show(activityID)
+			.success(function(data){
+				data[0].activity.created_at = new Date(data[0].activity.created_at);
+				data[0].first_letter = data[0].project.name.charAt(0);
+				data[0].date_start = new Date(data[0].date_start);
+				data[0].date_end = new Date(data[0].date_end);
+
+				angular.forEach(data, function(item){
+					angular.forEach(item.performances, function(performance){
+						var filter = $filter('filter')(performance.member.experiences, {project_id:performance.project_id});
+						performance.experience = filter[0].experience;
+						performance.date_start = new Date(performance.date_start);
+						performance.date_end = new Date(performance.date_end);
+					});
+				})
+				
+				$scope.history = data;
+			})
+
+	}]);
+sharedModule
+	.controller('reportDialogController', ['$scope', '$filter', '$mdDialog', 'Preloader', 'Report', function($scope, $filter, $mdDialog, Preloader, Report){
+		var reportID = Preloader.get();
+
+		$scope.cancel = function(){
+			$mdDialog.cancel();
+		}
+
+		Report.show(reportID)
+			.success(function(data){
+				data.date_start = new Date(data.date_start);
+				data.date_end = new Date(data.date_end);
+
+				angular.forEach(data.performances, function(performance){
+					var filter = $filter('filter')(performance.member.experiences, {project_id:performance.project_id});
+					performance.experience = filter[0].experience;
+					performance.date_start = new Date(performance.date_start);
+					performance.date_end = new Date(performance.date_end);
+				});
+				
+				$scope.report = data;
+			})
+
+	}]);
+sharedModule
+	.factory('Activity', ['$http', function($http){
+		var urlBase = '/activity';
+		return {
+			index: function(){
+				return $http.get(urlBase);
+			},
+			show: function(id){
+				return $http.get(urlBase + '/' + id);
+			},
+			store: function(data){
+				return $http.post(urlBase, data);
+			},
+			update: function(id, data){
+				return $http.put(urlBase + '/' + id, data);
+			},
+			delete: function(id){
+				return $http.delete(urlBase + '/' + id);
+			},
+			reportSubmitted: function(data){
+				return $http.post(urlBase + '-report-submitted', data);
+			},
+			reportUpdated: function(data){
+				return $http.post(urlBase + '-report-updated', data);
+			},
+			reportDeleted: function(data){
+				return $http.post(urlBase + '-report-deleted', data);
+			},
+		}
+	}])
 sharedModule
 	.factory('Approval', ['$http', function($http){
 		var urlBase = 'approval';
@@ -425,6 +507,27 @@ sharedModule
 			},
 			approvedDetails: function(id){
 				return $http.get(urlBase +'-approved-details/' + id);
+			},
+		}
+	}])
+sharedModule
+	.factory('PerformanceHistory', ['$http', function($http){
+		var urlBase = '/performance-history';
+		return {
+			index: function(){
+				return $http.get(urlBase);
+			},
+			show: function(id){
+				return $http.get(urlBase + '/' + id);
+			},
+			store: function(data){
+				return $http.post(urlBase, data);
+			},
+			update: function(id, data){
+				return $http.put(urlBase + '/' + id, data);
+			},
+			delete: function(id){
+				return $http.delete(urlBase + '/' + id);
 			},
 		}
 	}])
