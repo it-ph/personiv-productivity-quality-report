@@ -19,10 +19,10 @@ class ActivityController extends Controller
 
         if($request->user()->role == 'admin')
         {
-            return Activity::with(['report' => function($query){ $query->withTrashed(); }])->with('activity_type', 'user')->where('activity_type_id', 1)->whereBetween('created_at', [$date_start, $date_end])->get();
+            return Activity::with(['report' => function($query){ $query->withTrashed(); }])->with('activity_type', 'user')->where('activity_type_id', 1)->whereBetween('created_at', [$date_start, $date_end])->orderBy('created_at','desc')->get();
         }
 
-        return Activity::with(['report' => function($query){ $query->withTrashed(); }])->with('activity_type', 'user')->where('user_id', $request->user()->id)->where('activity_type_id', 1)->whereBetween('created_at', [$date_start, $date_end])->get();            
+        return Activity::with(['report' => function($query){ $query->withTrashed(); }])->with('activity_type', 'user')->where('user_id', $request->user()->id)->where('activity_type_id', 1)->whereBetween('created_at', [$date_start, $date_end])->orderBy('created_at','desc')->get();            
     }
 
     public function reportUpdated(Request $request)
@@ -32,10 +32,10 @@ class ActivityController extends Controller
 
         if($request->user()->role == 'admin')
         {
-            return Activity::with(['report' => function($query){ $query->withTrashed(); }])->with('activity_type', 'user')->where('activity_type_id', 2)->whereBetween('created_at', [$date_start, $date_end])->get();
+            return Activity::with(['report' => function($query){ $query->withTrashed(); }])->with('activity_type', 'user')->where('activity_type_id', 2)->whereBetween('created_at', [$date_start, $date_end])->orderBy('created_at','desc')->get();
         }
 
-        return Activity::with(['report' => function($query){ $query->withTrashed(); }])->with('activity_type', 'user')->where('user_id', $request->user()->id)->where('activity_type_id', 2)->whereBetween('created_at', [$date_start, $date_end])->get();  
+        return Activity::with(['report' => function($query){ $query->withTrashed(); }])->with('activity_type', 'user')->where('user_id', $request->user()->id)->where('activity_type_id', 2)->whereBetween('created_at', [$date_start, $date_end])->orderBy('created_at','desc')->get();  
     }
 
     public function reportDeleted(Request $request)
@@ -45,10 +45,10 @@ class ActivityController extends Controller
 
         if($request->user()->role == 'admin')
         {
-            return Activity::with(['report' => function($query){ $query->withTrashed(); }])->with('activity_type', 'user')->where('activity_type_id', 3)->whereBetween('created_at', [$date_start, $date_end])->get();
+            return Activity::with(['report' => function($query){ $query->withTrashed(); }])->with('activity_type', 'user')->where('activity_type_id', 3)->whereBetween('created_at', [$date_start, $date_end])->orderBy('created_at','desc')->get();
         }
 
-        return Activity::with(['report' => function($query){ $query->withTrashed(); }])->with('activity_type', 'user')->where('user_id', $request->user()->id)->where('activity_type_id', 3)->whereBetween('created_at', [$date_start, $date_end])->get();  
+        return Activity::with(['report' => function($query){ $query->withTrashed(); }])->with('activity_type', 'user')->where('user_id', $request->user()->id)->where('activity_type_id', 3)->whereBetween('created_at', [$date_start, $date_end])->orderBy('created_at','desc')->get();  
     }
 
     /**
