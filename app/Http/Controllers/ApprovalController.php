@@ -128,7 +128,7 @@ class ApprovalController extends Controller
         $notification->sender_user_id = $request->user()->id;
         $notification->subscriber = 'admin';
         $notification->message = 'deletes ';
-        $notification->state = 'main.approvals';
+        $notification->state = 'main.activity';
         $notification->event_id = $id;
         $notification->event_id_type = 'report_id';
         $notification->seen = false;

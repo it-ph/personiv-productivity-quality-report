@@ -160,17 +160,23 @@ class ReportController extends Controller
                                 $position->total_output_error += $performance->output_error;
 
                                 if($performance->target->experience == 'Beginner'){
-                                    $project->positions[$position_key]->beginner += 1;
+                                    if($performance_key === 0){
+                                        $project->positions[$position_key]->beginner += 1;
+                                    }
                                     $project->positions[$position_key]->beginner_total_output += $performance->output;
                                     $project->positions[$position_key]->beginner_total_hours_worked += $performance->hours_worked;
                                 }
                                 else if($performance->target->experience == 'Moderately Experienced'){
-                                    $project->positions[$position_key]->moderately_experienced += 1;
+                                    if($performance_key === 0){
+                                        $project->positions[$position_key]->moderately_experienced += 1;
+                                    }
                                     $project->positions[$position_key]->moderately_experienced_total_output += $performance->output;
                                     $project->positions[$position_key]->moderately_experienced_total_hours_worked += $performance->hours_worked;   
                                 }
                                 else if($performance->target->experience == 'Experienced'){
-                                    $project->positions[$position_key]->experienced += 1;
+                                    if($performance_key === 0){
+                                        $project->positions[$position_key]->experienced += 1;
+                                    }
                                     $project->positions[$position_key]->experienced_total_output += $performance->output;
                                     $project->positions[$position_key]->experienced_total_hours_worked += $performance->hours_worked;
                                 }
@@ -310,17 +316,23 @@ class ReportController extends Controller
                                 $position->total_output_error += $performance->output_error;
 
                                 if($performance->target->experience == 'Beginner'){
-                                    $project->positions[$position_key]->beginner += 1;
+                                    if($performance_key === 0){
+                                        $project->positions[$position_key]->beginner += 1;
+                                    }
                                     $project->positions[$position_key]->beginner_total_output += $performance->output;
                                     $project->positions[$position_key]->beginner_total_hours_worked += $performance->hours_worked;
                                 }
                                 else if($performance->target->experience == 'Moderately Experienced'){
-                                    $project->positions[$position_key]->moderately_experienced += 1;
+                                    if($performance_key === 0){
+                                        $project->positions[$position_key]->moderately_experienced += 1;
+                                    }
                                     $project->positions[$position_key]->moderately_experienced_total_output += $performance->output;
                                     $project->positions[$position_key]->moderately_experienced_total_hours_worked += $performance->hours_worked;   
                                 }
                                 else if($performance->target->experience == 'Experienced'){
-                                    $project->positions[$position_key]->experienced += 1;
+                                    if($performance_key === 0){
+                                        $project->positions[$position_key]->experienced += 1;
+                                    }
                                     $project->positions[$position_key]->experienced_total_output += $performance->output;
                                     $project->positions[$position_key]->experienced_total_hours_worked += $performance->hours_worked;
                                 }
@@ -468,17 +480,23 @@ class ReportController extends Controller
                                 $position->total_output_error += $performance->output_error;
 
                                 if($performance->target->experience == 'Beginner'){
-                                    $project->positions[$position_key]->beginner += 1;
+                                    if($performance_key === 0){
+                                        $project->positions[$position_key]->beginner += 1;
+                                    }
                                     $project->positions[$position_key]->beginner_total_output += $performance->output;
                                     $project->positions[$position_key]->beginner_total_hours_worked += $performance->hours_worked;
                                 }
                                 else if($performance->target->experience == 'Moderately Experienced'){
-                                    $project->positions[$position_key]->moderately_experienced += 1;
+                                    if($performance_key === 0){
+                                        $project->positions[$position_key]->moderately_experienced += 1;
+                                    }
                                     $project->positions[$position_key]->moderately_experienced_total_output += $performance->output;
                                     $project->positions[$position_key]->moderately_experienced_total_hours_worked += $performance->hours_worked;   
                                 }
                                 else if($performance->target->experience == 'Experienced'){
-                                    $project->positions[$position_key]->experienced += 1;
+                                    if($performance_key === 0){
+                                        $project->positions[$position_key]->experienced += 1;
+                                    }
                                     $project->positions[$position_key]->experienced_total_output += $performance->output;
                                     $project->positions[$position_key]->experienced_total_hours_worked += $performance->hours_worked;
                                 }
@@ -617,12 +635,16 @@ class ReportController extends Controller
                                     $project->positions[$position_key]->beginner_total_hours_worked += $performance->hours_worked;
                                 }
                                 else if($performance->target->experience == 'Moderately Experienced'){
-                                    $project->positions[$position_key]->moderately_experienced += 1;
+                                    if($performance_key === 0){
+                                        $project->positions[$position_key]->moderately_experienced += 1;
+                                    }
                                     $project->positions[$position_key]->moderately_experienced_total_output += $performance->output;
                                     $project->positions[$position_key]->moderately_experienced_total_hours_worked += $performance->hours_worked;   
                                 }
                                 else if($performance->target->experience == 'Experienced'){
-                                    $project->positions[$position_key]->experienced += 1;
+                                    if($performance_key === 0){
+                                        $project->positions[$position_key]->experienced += 1;
+                                    }
                                     $project->positions[$position_key]->experienced_total_output += $performance->output;
                                     $project->positions[$position_key]->experienced_total_hours_worked += $performance->hours_worked;
                                 }

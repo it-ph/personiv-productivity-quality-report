@@ -32,7 +32,7 @@ sharedModule
 				 * Pusher
 				 *
 				*/
-				var pusher = new Pusher('ea9ebfd35756f6c643da', {
+				var pusher = new Pusher('23a55307c335e49bc68a', {
 			    	encrypted: true
 			    });
 				if($scope.user.role == 'admin'){
@@ -106,6 +106,13 @@ sharedModule
 					Preloader.error();
 				});
 		}
+
+		$scope.lock = true;
+
+		$scope.sidenavLock = function(){
+			$scope.lock = $scope.lock ? false : true;
+		}
+
 		/**
 		 * Toggles Left Sidenav
 		 *

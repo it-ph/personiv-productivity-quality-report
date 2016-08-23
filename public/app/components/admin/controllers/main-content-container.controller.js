@@ -59,6 +59,22 @@ adminModule
 		    });
 		}
 
+		$scope.subheader.evaluate = function(){
+			$mdDialog.show({
+		    	controller: 'evaluateDialogController',
+		      	templateUrl: '/app/components/admin/templates/dialogs/evaluate-dialog.template.html',
+		      	parent: angular.element(document.body),
+		    })
+		    .then(function(data){
+		    	Preloader.set(data);
+				$mdDialog.show({
+			    	controller: 'performanceEvaluationDialogController',
+			      	templateUrl: '/app/shared/templates/dialogs/performance-evaluation.dialog.template.html',
+			      	parent: angular.element(document.body),
+			    });
+		    });
+		}
+
 		/**
 		 * Status of search bar.
 		 *
@@ -169,9 +185,13 @@ adminModule
 							report.chart.labels = [];
 
 							report.date_start = new Date(report.date_start);
+							report.count = 0;
 							
 							angular.forEach(report.members, function(member){
 								member.full_name = member.member.full_name;
+								if(!member.member.deleted_at){
+									report.count++;
+								}
 								if(member.average_productivity && member.average_productivity){
 									report.chart.data[0].push(member.average_productivity);
 									report.chart.data[1].push(member.average_quality);

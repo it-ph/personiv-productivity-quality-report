@@ -96,7 +96,6 @@ class PerformanceController extends Controller
             $this->project->average_quality = $overall_quality / $overall_count;
         }
 
-        // return response()->json($this->member);
 
         if($download)
         {
@@ -111,6 +110,9 @@ class PerformanceController extends Controller
             })->download('xls');
         }
 
+        $this->member->project = $this->project;
+
+        return response()->json($this->member);
     }
 
     // public function evaluation($date_start, $date_end, $daily_work_hours, $department_id, $member_id, $download)

@@ -1,10 +1,18 @@
 <div layout="row" layout-align="start center" flex>
-	<md-button class="md-icon-button" ng-click="subheader.refresh()" ng-if="subheader.state!='report'">
+	<md-button class="md-icon-button" ng-click="sidenavLock()" ng-if="subheader.state=='department'">
+		<md-icon class="mdi mdi-menu grey" aria-label="Lock"></md-icon>
+		<md-tooltip>Toogle Navigation</md-tooltip>
+	</md-button>
+	<md-button class="md-icon-button" ng-click="subheader.refresh()" ng-if="subheader.state!='report' && lock">
 		<md-icon class="mdi mdi-refresh grey" aria-label="Refresh"></md-icon>
 		<md-tooltip>Refresh</md-tooltip>
 	</md-button>
-	<md-button class="md-icon-button" ng-click="subheader.download()" ng-if="subheader.state=='dashboard'">
+	<md-button class="md-icon-button" ng-click="subheader.download()" ng-if="subheader.state!='report' && lock">
 		<md-icon class="mdi mdi-download grey" aria-label="Download"></md-icon>
 		<md-tooltip>Download</md-tooltip>
+	</md-button>
+	<md-button class="md-icon-button" ng-click="subheader.evaluate()" ng-if="subheader.state!='report' && lock">
+		<md-icon class="mdi mdi-clipboard-account grey" aria-label="Performance Evaluation"></md-icon>
+		<md-tooltip>Performance Evaluation</md-tooltip>
 	</md-button>
 </div>

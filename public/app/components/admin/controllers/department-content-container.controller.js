@@ -137,6 +137,30 @@ adminModule
 			$scope.report.show = false;
 			$scope.init(true);
 		};
+
+		$scope.subheader.download = function(){
+			$mdDialog.show({
+		    	controller: 'downloadReportDialogController',
+		      	templateUrl: '/app/components/admin/templates/dialogs/download-report-dialog.template.html',
+		      	parent: angular.element(document.body),
+		    });
+		}
+
+		$scope.subheader.evaluate = function(){
+			$mdDialog.show({
+		    	controller: 'evaluateDialogController',
+		      	templateUrl: '/app/components/admin/templates/dialogs/evaluate-dialog.template.html',
+		      	parent: angular.element(document.body),
+		    })
+		    .then(function(data){
+		    	Preloader.set(data);
+				$mdDialog.show({
+			    	controller: 'performanceEvaluationDialogController',
+			      	templateUrl: '/app/shared/templates/dialogs/performance-evaluation.dialog.template.html',
+			      	parent: angular.element(document.body),
+			    });
+		    });
+		}
 		
 		$scope.searchUserInput = function(){
 			$scope.report.show = false;

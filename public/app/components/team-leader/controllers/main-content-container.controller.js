@@ -15,7 +15,7 @@ teamLeaderModule
 		// 				WalkThrough.store(user)
 		// 					.error(function(){
 		// 						Preloader.error();
-		// 					});
+		// 					});asd
 		// 			}
 		// 		})
 		// }
@@ -126,7 +126,7 @@ teamLeaderModule
 		*/
 		$scope.subheader = {};
 		$scope.subheader.show = true;
-		$scope.subheader.state = 'dashboard';
+		$scope.subheader.state = 'weekly';
 
 		/* Refreshes the list */
 		$scope.subheader.refresh = function(){
@@ -145,6 +145,22 @@ teamLeaderModule
 		    });
 		}
 		
+		$scope.subheader.evaluate = function(){
+			$mdDialog.show({
+		    	controller: 'evaluateDialogController',
+		      	templateUrl: '/app/components/team-leader/templates/dialogs/evaluate-dialog.template.html',
+		      	parent: angular.element(document.body),
+		    })
+		    .then(function(data){
+		    	Preloader.set(data);
+				$mdDialog.show({
+			    	controller: 'performanceEvaluationDialogController',
+			      	templateUrl: '/app/shared/templates/dialogs/performance-evaluation.dialog.template.html',
+			      	parent: angular.element(document.body),
+			    });
+		    });
+		}
+
 		$scope.searchUserInput = function(){
 			$scope.report.show = false;
 			Preloader.preload();

@@ -90,6 +90,22 @@ teamLeaderModule
 		    });
 		}
 
+		$scope.subheader.evaluate = function(){
+			$mdDialog.show({
+		    	controller: 'evaluateDialogController',
+		      	templateUrl: '/app/components/team-leader/templates/dialogs/evaluate-dialog.template.html',
+		      	parent: angular.element(document.body),
+		    })
+		    .then(function(data){
+		    	Preloader.set(data);
+				$mdDialog.show({
+			    	controller: 'performanceEvaluationDialogController',
+			      	templateUrl: '/app/shared/templates/dialogs/performance-evaluation.dialog.template.html',
+			      	parent: angular.element(document.body),
+			    });
+		    });
+		}
+
 		$scope.searchFilter = function(){
 			if($scope.form.filterSearchForm.$invalid){
 				angular.forEach($scope.form.filterSearchForm.$error, function(field){

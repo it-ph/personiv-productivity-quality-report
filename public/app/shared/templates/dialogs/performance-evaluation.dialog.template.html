@@ -1,0 +1,67 @@
+<md-dialog layout="column" flex flex-gt-md="70"  aria-label="Other Performance" ng-cloak>
+	<md-dialog-content layout="column" flex layout-padding layout-wrap>
+		<div layout="row" layout-align="space-between center">
+			<md-list>
+				<md-list-item class="md-3-line">
+					<md-icon class="md-avatar-icon mdi mdi-account" aria-label="Member"></md-icon>
+					<div class="md-list-item-text">
+						<h3>{{evaluation.full_name}}</h3>
+						<h4>Average Productivity: {{evaluation.project.average_productivity}}%</h4>
+						<p>Average Quality: {{evaluation.project.average_quality}}%</p>
+					</div>
+				</md-list-item>
+			</md-list>
+			<md-button class="md-icon-button" ng-click="cancel()" aria-label="Cancel">
+				<md-icon class="mdi mdi-close grey"></md-icon>
+			</md-button>
+		</div>
+		<md-subheader class="md-no-sticky primary-text">{{evaluation.position.name}}</md-subheader>
+		<em class="secondary-text md-caption">Performances of {{evaluation.full_name}} as <span class="accent-text">{{evaluation.position.name}}</span> in {{evaluation.project.name}}.</em>		
+		<table class="table">
+			<tr>
+				<th>Date Start</th>
+				<th>Date End</th>
+				<th>Daily Work Hours</th>
+				<th>Hours Worked</th>
+				<th>Output</th>
+				<th>Output w/Error(s)</th>
+				<th>Average Output</th>
+				<th>Productivity</th>
+				<th>Quality</th>
+				<th>Quadrant</th>
+			</tr>
+			<tr class="fade-transition" ng-repeat="performance in evaluation.performances">
+				<td>{{performance.date_start | date: 'MMMM dd'}}</td>
+				<td>{{performance.date_end | date: 'MMMM dd'}}</td>
+				<td>{{performance.daily_work_hours | number:1}}</td>
+				<td>{{performance.hours_worked}}</td>
+				<td>{{performance.output | number: 1}}</td>
+				<td>{{performance.output_error | number: 1}}</td>
+				<td>{{performance.average_output | number: 1}}</td>
+				<td>{{performance.productivity | number: 1}}%</td>
+				<td>{{performance.quality | number: 1}}%</td>
+				<td>{{performance.quadrant}}</td>
+			</tr>
+			<tr>
+				<th colspan="3"></th>
+				<th>Total Hours Worked</th>
+				<th>Total Output</th>
+				<th>Total Output w/Error(s)</th>
+				<th>Total Average Output</th>
+				<th>Productivity</th>
+				<th>Quality</th>
+				<th>Quadrant</th>
+			</tr>
+			<tr>
+				<th colspan="3"></th>
+				<td>{{evaluation.position.total_hours_worked}}</td>
+				<td>{{evaluation.position.total_output | number: 1}}</td>
+				<td>{{evaluation.position.total_output_error | number: 1}}</td>
+				<td>{{evaluation.position.total_average_output | number: 1}}</td>
+				<td>{{evaluation.position.productivity}}%</td>
+				<td>{{evaluation.position.quality}}%</td>
+				<td>{{evaluation.position.quadrant}}</td>
+			</tr>
+		</table>
+	</md-dialog-content>
+</md-dialog>
