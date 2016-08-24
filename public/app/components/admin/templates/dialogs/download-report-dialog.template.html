@@ -202,6 +202,9 @@
 					<md-input-container flex>
 						<label>Project</label>
 						<md-select name="Project" required ng-model="details.project" ng-disabled="!details.department" ng-change="fetchMembers()">
+							<md-option value="all" ng-if="projects.length > 1">
+								All Projects
+							</md-option>
 							<md-option ng-repeat="project in projects" value="{{ project.id }}">
 								{{project.name}}
 							</md-option>
@@ -226,7 +229,7 @@
 					<label>Member</label>
 					<md-select name="Members" required ng-model="details.member" ng-disabled="!details.position">
 						<md-option ng-repeat="member in members" value="{{ member.member_id }}">
-							{{ member.member.full_name }}
+							{{ member.full_name }}
 						</md-option>
 					</md-select>
 					<div ng-messages="downloadReportForm.Members.$error" ng-if="downloadReportForm.Members.$touched">

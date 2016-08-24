@@ -106,6 +106,7 @@ Route::group(['middleware' => 'auth'], function () {
 	Route::post('report-department-monthly-position', 'ReportController@departmentMonthlyPosition');
 	Route::post('performance-weekly', 'PerformanceController@weekly');
 	Route::get('performance-evaluation/{date_start}/date_end/{date_end}/daily-work-hours/{daily_work_hours}/department/{departmentID}/project/{projectID}/position/{positionID}/member/{memberID}/download/{download}', 'PerformanceController@evaluation');
+	Route::get('performance-evaluation-multiple/{date_start}/date_end/{date_end}/daily-work-hours/{daily_work_hours}/department/{departmentID}/position/{position}/member/{memberID}/download/{download}', 'PerformanceController@evaluationMultiple');
 	Route::get('user-department/{departmentID}', 'UserController@department');
 
 	Route::get('report-monthly', 'ReportController@monthly');
@@ -129,13 +130,13 @@ Route::group(['middleware' => 'auth'], function () {
 	Route::post('approval-approve-delete', 'ApprovalController@approveDelete');
 	Route::post('approval-decline-delete', 'ApprovalController@declineDelete');
 	Route::post('user-search', 'UserController@search');
-	Route::get('member-department', 'MemberController@department');
+	Route::get('member-department/{departmentID}', 'MemberController@department');
 	Route::get('report-test', 'ReportController@test');
 	Route::post('report-department-monthly', 'ReportController@departmentMonthly');
 	Route::get('position-department/{departmentID}', 'PositionController@department');
 	Route::post('member-check-duplicate', 'MemberController@checkDuplicate');
 	Route::get('experience-members/{projectID}', 'ExperienceController@members');
-	Route::get('position-unique', 'PositionController@unique');
+	Route::get('position-unique/{departmentID}', 'PositionController@unique');
 	Route::post('activity-report-submitted', 'ActivityController@reportSubmitted');
 	Route::post('activity-report-updated', 'ActivityController@reportUpdated');
 	Route::post('activity-report-deleted', 'ActivityController@reportDeleted');

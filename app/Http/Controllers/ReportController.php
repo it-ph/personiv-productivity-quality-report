@@ -139,6 +139,7 @@ class ReportController extends Controller
 
                 foreach ($project->members as $member_key => $member) {
                     $member->positions = $project->positions;
+                    $member->roles = 0;
                     $overall_monthly_productivity = 0;
                     $overall_monthly_quality = 0;
                     $overall_count = 0;
@@ -147,6 +148,7 @@ class ReportController extends Controller
                         $performances = Performance::with('project', 'position')->with(['target' => function($query){ $query->withTrashed(); }])->with(['member' => function($query){ $query->with(['experiences' => function($query){ $query->with('project'); }]);}])->where('daily_work_hours', 'like', $project->first_report->daily_work_hours .'%')->where('position_id', $position->id)->where('member_id', $member->member_id)->whereBetween('date_start', [$this->date_start, $this->date_end])->get();
 
                         if(count($performances)){
+                            $member->roles++;
                             $position->total_hours_worked = 0;
                             $position->total_output = 0;
                             $position->total_output_error = 0;
@@ -251,7 +253,7 @@ class ReportController extends Controller
         $this->date_start = new Carbon('first Monday of '. $months[(int)$month-1] .' '. $year);
         $this->date_end = Carbon::parse('last Monday of '. $months[(int)$month-1] .' '. $year)->addDay();
 
-        $this->projects = DB::table('projects')->get();
+        $this->projects = Auth::user()->role != 'admin' ? DB::table('projects')->where('department_id', Auth::user()->department_id)->get() : DB::table('projects')->get();
 
         foreach ($this->projects as $project_key => $project) {
             $project->first_report =  Report::where('project_id', $project->id)->where('daily_work_hours', 'like', $daily_work_hours.'%')->whereBetween('date_start', [$this->date_start, $this->date_end])->first();
@@ -295,6 +297,7 @@ class ReportController extends Controller
 
                 foreach ($project->members as $member_key => $member) {
                     $member->positions = $project->positions;
+                    $member->roles = 0;
                     $overall_monthly_productivity = 0;
                     $overall_monthly_quality = 0;
                     $overall_count = 0;
@@ -303,6 +306,7 @@ class ReportController extends Controller
                         $performances = Performance::with('project', 'position')->with(['target' => function($query){ $query->withTrashed(); }])->with(['member' => function($query){ $query->with(['experiences' => function($query){ $query->with('project'); }]);}])->where('daily_work_hours', 'like', $daily_work_hours .'%')->where('position_id', $position->id)->where('member_id', $member->member_id)->whereBetween('date_start', [$this->date_start, $this->date_end])->get();
 
                         if(count($performances)){
+                            $member->roles++;
                             $position->total_hours_worked = 0;
                             $position->total_output = 0;
                             $position->total_output_error = 0;
@@ -459,6 +463,7 @@ class ReportController extends Controller
 
                 foreach ($project->members as $member_key => $member) {
                     $member->positions = $project->positions;
+                    $member->roles = 0;
                     $overall_monthly_productivity = 0;
                     $overall_monthly_quality = 0;
                     $overall_count = 0;
@@ -467,6 +472,7 @@ class ReportController extends Controller
                         $performances = Performance::with('project', 'position')->with(['target' => function($query){ $query->withTrashed(); }])->with(['member' => function($query){ $query->with(['experiences' => function($query){ $query->with('project'); }]);}])->where('daily_work_hours', 'like', $project->first_report->daily_work_hours .'%')->where('position_id', $position->id)->where('member_id', $member->member_id)->whereBetween('date_start', [$this->date_start, $this->date_end])->get();
 
                         if(count($performances)){
+                            $member->roles++;
                             $position->total_hours_worked = 0;
                             $position->total_output = 0;
                             $position->total_output_error = 0;
@@ -609,6 +615,7 @@ class ReportController extends Controller
 
                 foreach ($project->members as $member_key => $member) {
                     $member->positions = $project->positions;
+                    $member->roles = 0;
                     $overall_monthly_productivity = 0;
                     $overall_monthly_quality = 0;
                     $overall_count = 0;
@@ -617,6 +624,7 @@ class ReportController extends Controller
                         $performances = Performance::with('project', 'position')->with(['target' => function($query){ $query->withTrashed(); }])->with(['member' => function($query){ $query->with(['experiences' => function($query){ $query->with('project'); }]);}])->where('daily_work_hours', 'like', $project->first_report->daily_work_hours .'%')->where('position_id', $position->id)->where('member_id', $member->member_id)->whereBetween('date_start', [$this->date_start, $this->date_end])->get();
 
                         if(count($performances)){
+                            $member->roles++;
                             $position->total_hours_worked = 0;
                             $position->total_output = 0;
                             $position->total_output_error = 0;
@@ -630,7 +638,9 @@ class ReportController extends Controller
                                 $position->total_output_error += $performance->output_error;
 
                                 if($performance->target->experience == 'Beginner'){
-                                    $project->positions[$position_key]->beginner += 1; 
+                                    if($performance_key === 0){
+                                        $project->positions[$position_key]->beginner += 1;
+                                    } 
                                     $project->positions[$position_key]->beginner_total_output += $performance->output;
                                     $project->positions[$position_key]->beginner_total_hours_worked += $performance->hours_worked;
                                 }

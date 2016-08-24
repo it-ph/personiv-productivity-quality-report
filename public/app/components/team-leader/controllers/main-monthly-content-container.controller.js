@@ -151,11 +151,19 @@ teamLeaderModule
 						project.chart.series = ['Productivity', 'Quality'];
 						project.chart.data = [[],[]];
 						project.chart.labels = [];
+						project.count = 0;
 
 						project.date_start = new Date(project.date_start);
 						
 						angular.forEach(project.members, function(member){
 							member.full_name = member.member.full_name;
+							if(!member.member.deleted_at && member.average_productivity && member.average_quality){
+								if(member.roles > 1){
+									project.count++;
+								}
+
+								project.count++;
+							}
 							if(member.average_productivity && member.average_productivity){
 								project.chart.data[0].push(member.average_productivity);
 								project.chart.data[1].push(member.average_quality);

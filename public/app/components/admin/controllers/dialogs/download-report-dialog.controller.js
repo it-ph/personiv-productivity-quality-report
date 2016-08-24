@@ -1,5 +1,5 @@
 adminModule
-	.controller('downloadReportDialogController', ['$scope', '$mdDialog', '$filter', 'Preloader', 'Report', 'Performance', 'Project', 'Experience', 'Programme', 'Department', 'Member', function($scope, $mdDialog, $filter, Preloader, Report, Performance, Project, Experience, Programme, Department, Member){
+	.controller('downloadReportDialogController', ['$scope', '$mdDialog', '$filter', 'Preloader', 'Report', 'Performance', 'Project', 'Experience', 'Programme', 'Department', 'Member', 'Position', function($scope, $mdDialog, $filter, Preloader, Report, Performance, Project, Experience, Programme, Department, Member, Position){
 		$scope.details = {};
 		$scope.details.type = 'Weekly';
 		$scope.details.date_start = new Date();
@@ -28,15 +28,38 @@ adminModule
 		$scope.fetchMembers = function(){
 			var projectID = $scope.details.project;
 
-			Project.show(projectID)
-				.success(function(data){
-					$scope.positions = data.positions;					
-				})
+			if($scope.details.project == 'all'){
+				Position.unique($scope.details.department)
+					.success(function(data){
+						$scope.positions = data;
+					})
 
-			Experience.members(projectID)
-				.success(function(data){
-					$scope.members = data;
-				})
+				Member.department($scope.details.department)
+					.success(function(data){
+						angular.forEach(data, function(member){
+							member.member_id = member.id;
+						});
+
+						$scope.members = data;
+					})
+			}
+			else{
+				Project.show(projectID)
+					.success(function(data){
+						$scope.positions = data.positions;					
+					})
+
+				Experience.members(projectID)
+					.success(function(data){
+						angular.forEach(data, function(member){
+							member.full_name = member.member.full_name;
+						});
+
+						$scope.members = data;
+					})
+			}
+
+
 		}
 
 		// $scope.hours = [7.5, 8.3, 9.1];
@@ -139,7 +162,12 @@ adminModule
 					$scope.details.date_start = $scope.details.date_start.toDateString();
 					$scope.details.date_end = $scope.details.date_end.toDateString();
 
-					var win = window.open('/performance-evaluation/' + $scope.details.date_start + '/date_end/' + $scope.details.date_end + '/daily-work-hours/' + $scope.details.daily_work_hours + '/department/' + $scope.details.department + '/project/' + $scope.details.project + '/position/' + $scope.details.position + /member/ + $scope.details.member + '/download/1', '_blank');
+					if($scope.details.project == 'all'){
+						var win = window.open('/performance-evaluation-multiple/' + $scope.details.date_start + '/date_end/' + $scope.details.date_end + '/daily-work-hours/' + $scope.details.daily_work_hours + '/department/' + $scope.details.department + '/position/' + $scope.details.position + /member/ + $scope.details.member + '/download/1', '_blank');
+					}
+					else{						
+						var win = window.open('/performance-evaluation/' + $scope.details.date_start + '/date_end/' + $scope.details.date_end + '/daily-work-hours/' + $scope.details.daily_work_hours + '/department/' + $scope.details.department + '/project/' + $scope.details.project + '/position/' + $scope.details.position + /member/ + $scope.details.member + '/download/1', '_blank');
+					}
 					win.focus();	
 				}
 

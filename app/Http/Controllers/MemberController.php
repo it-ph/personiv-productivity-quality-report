@@ -20,7 +20,7 @@ class MemberController extends Controller
         return response()->json($duplicate ? true : false);
     }
 
-    public function department()
+    public function department($id)
     {
         // return DB::table('members')
         //     ->join('users', 'users.id', '=', 'members.team_leader_id')
@@ -34,7 +34,9 @@ class MemberController extends Controller
         //     ->orderBy('members.full_name')
         //     ->get();
 
-        return Member::with(['experiences' => function($query){ $query->with('project');}])->where('department_id', Auth::user()->department_id)->orderBy('full_name')->get();
+        $id = (int)$id;
+
+        return $id ? Member::with(['experiences' => function($query){ $query->with('project');}])->where('department_id', $id)->orderBy('full_name')->get() : Member::with(['experiences' => function($query){ $query->with('project');}])->where('department_id', Auth::user()->department_id)->orderBy('full_name')->get();
     }
     public function updateTenure()
     {

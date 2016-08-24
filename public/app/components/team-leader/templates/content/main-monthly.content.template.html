@@ -80,7 +80,7 @@
 						</div>					
 					</div>
 					<h3 class="md-headline primary-text">{{detail.name}}</h2>
-					<p class="md-subhead">Program Head Count: <strong>{{detail.members.length}}</strong></p>
+					<p class="md-subhead">Program Head Count: <strong>{{detail.count}}</strong></p>
 					<md-switch class="md-primary" ng-model="detail.showCharts" aria-label="detail.showCharts">
 					    <span ng-if="!detail.showCharts">Show</span> <span ng-if="detail.showCharts">Hide</span> Charts
 					</md-switch>
@@ -133,7 +133,7 @@
 								</th>
 								
 							</tr>
-							<tr ng-repeat="item in detail.members | orderBy:sortType:sortReverse" ng-click="view(item, detail.date_start, detail.date_end)" ng-if="!item.member.deleted_at">
+							<tr ng-repeat="item in detail.members | orderBy:sortType:sortReverse" ng-click="view(item, detail.date_start, detail.date_end)" ng-if="!item.member.deleted_at && item.average_productivity && item.average_quality">
 								<td>{{item.member.full_name}}</td>
 								<td>{{item.experience}}</td>
 								<td><span ng-if="!item.average_productivity">0</span>{{item.average_productivity}}%</td>

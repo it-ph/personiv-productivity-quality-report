@@ -15,6 +15,7 @@ adminModule
 			'November',
 			'December',
 		];
+
 		var dateCreated = 2016;
 
 		$scope.years = [];
@@ -135,7 +136,11 @@ adminModule
 						report.count = 0;
 						angular.forEach(report.members, function(member){
 							member.full_name = member.member.full_name;
-							if(!member.member.deleted_at){
+							if(!member.member.deleted_at && member.average_productivity && member.average_quality){
+								if(member.roles > 1){
+									report.count++;
+								}
+
 								report.count++;
 							}
 							if(member.average_productivity && member.average_productivity){

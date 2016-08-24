@@ -455,8 +455,8 @@ sharedModule
 			updateTenure: function(){
 				return $http.put(urlBase + '-update-tenure');
 			},
-			department: function(){
-				return $http.get(urlBase +'-department');
+			department: function(id){
+				return $http.get(urlBase +'-department/' + id);
 			},
 			checkDuplicate: function(data){
 				return $http.post(urlBase + '-check-duplicate', data);
@@ -621,8 +621,8 @@ sharedModule
 			department: function(id){
 				return $http.get(urlBase + '-department/' + id);
 			},
-			unique: function(){
-				return $http.get(urlBase + '-unique');
+			unique: function(id){
+				return $http.get(urlBase + '-unique/' + id);
 			},
 			checkDuplicate: function(data){
 				return $http.post(urlBase + '-check-duplicate', data);

@@ -1654,11 +1654,19 @@ teamLeaderModule
 						project.chart.series = ['Productivity', 'Quality'];
 						project.chart.data = [[],[]];
 						project.chart.labels = [];
+						project.count = 0;
 
 						project.date_start = new Date(project.date_start);
 						
 						angular.forEach(project.members, function(member){
 							member.full_name = member.member.full_name;
+							if(!member.member.deleted_at && member.average_productivity && member.average_quality){
+								if(member.roles > 1){
+									project.count++;
+								}
+
+								project.count++;
+							}
 							if(member.average_productivity && member.average_productivity){
 								project.chart.data[0].push(member.average_productivity);
 								project.chart.data[1].push(member.average_quality);
@@ -1923,6 +1931,14 @@ teamLeaderModule
 				});
 		};
 
+		$scope.setDefaultPosition = function(){
+			angular.forEach($scope.members, function(member){
+				if(!member.output && !member.hours_worked){
+					member.position_id = $scope.details.position_id;
+				}
+			});
+		}
+
 		$scope.showPositions = function(projectID){
 			$scope.toolbar.items = [];
 			Position.project(projectID)
@@ -1935,6 +1951,7 @@ teamLeaderModule
 					angular.forEach(data, function(item){
 						item.date_started = new Date(item.date_started);
 						item.first_letter = item.member.full_name.charAt(0).toUpperCase();
+						item.output_error = 0;
 
 						var toolbarItem = {};
 						toolbarItem.display = item.member.full_name;
@@ -2122,7 +2139,6 @@ teamLeaderModule
 			Performance.checkLimit($scope.members[idx].member.id, $scope.details)
 				.success(function(data){
 					$scope.members[idx].limit = data;
-					console.log($scope.members[idx].limit);
 					if($scope.reset){
 						$scope.count++;
 						// console.log($scope.count, $scope.members.length);
@@ -2406,16 +2422,37 @@ teamLeaderModule
 
 		$scope.fetchMembers = function(){
 			var projectID = $scope.details.project;
+			
+			if($scope.details.project == 'all'){
+				Position.unique()
+					.success(function(data){
+						$scope.positions = data;
+					})
 
-			Project.show(projectID)
-				.success(function(data){
-					$scope.positions = data.positions;					
-				})
+				// Member.department()
+				// 	.success(function(data){
+				// 		angular.forEach(data, function(member){
+				// 			member.member_id = member.id;
+				// 		});
 
-			Experience.members(projectID)
-				.success(function(data){
-					$scope.members = data;
-				})
+				// 		$scope.members = data;
+				// 	})
+			}
+			else{
+				Project.show(projectID)
+					.success(function(data){
+						$scope.positions = data.positions;					
+					})
+
+				// Experience.members(projectID)
+				// 	.success(function(data){
+				// 		angular.forEach(data, function(member){
+				// 			member.full_name = member.member.full_name;
+				// 		});
+
+				// 		$scope.members = data;
+				// 	})
+			}
 		}
 
 		$scope.cancel = function(){
@@ -2441,11 +2478,21 @@ teamLeaderModule
 					var win = window.open('/report-download-monthly-department/' + user.department_id + '/month/' + $scope.details.month + '/year/' + $scope.details.year + '/daily-work-hours/' + $scope.details.daily_work_hours, '_blank');
 					win.focus();	
 				}
+				else if($scope.details.type=='Team Performance'){
+					var win = window.open('/report-team-performance/' + $scope.details.month + '/year/' + $scope.details.year + '/daily-work-hours/' + $scope.details.daily_work_hours + '/download/1', '_blank');
+					win.focus();	
+				}
 				else if($scope.details.type=='Performance Evaluation'){
 					$scope.details.date_start = $scope.details.date_start.toDateString();
 					$scope.details.date_end = $scope.details.date_end.toDateString();
 
-					var win = window.open('/performance-evaluation/' + $scope.details.date_start + '/date_end/' + $scope.details.date_end + '/daily-work-hours/' + $scope.details.daily_work_hours + '/department/' + $scope.details.department + '/project/' + $scope.details.project + '/position/' + $scope.details.position + /member/ + $scope.details.member + '/download/1', '_blank');
+					if($scope.details.project == 'all'){
+						var win = window.open('/performance-evaluation-multiple/' + $scope.details.date_start + '/date_end/' + $scope.details.date_end + '/daily-work-hours/' + $scope.details.daily_work_hours + '/department/' + $scope.details.department + '/position/' + $scope.details.position + /member/ + $scope.details.member + '/download/1', '_blank');
+					}
+					else{						
+						var win = window.open('/performance-evaluation/' + $scope.details.date_start + '/date_end/' + $scope.details.date_end + '/daily-work-hours/' + $scope.details.daily_work_hours + '/department/' + $scope.details.department + '/project/' + $scope.details.project + '/position/' + $scope.details.position + /member/ + $scope.details.member + '/download/1', '_blank');
+					}
+
 					win.focus();	
 				}
 
@@ -2470,6 +2517,9 @@ teamLeaderModule
 
 			Member.index()
 				.success(function(data){
+					angular.forEach(data, function(member){
+						member.member_id = member.id;
+					});
 					$scope.members = data;
 				})
 		}();

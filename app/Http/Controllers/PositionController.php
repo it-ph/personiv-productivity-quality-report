@@ -17,9 +17,11 @@ class PositionController extends Controller
     
         return response()->json($position ? true : false);
     }
-    public function unique()
+    public function unique($id)
     {
-        return Position::where('department_id', Auth::user()->department_id)->groupBy('name')->get();
+        $id = (int)$id;
+
+        return $id ? Position::where('department_id', $id)->groupBy('name')->get() : Position::where('department_id', Auth::user()->department_id)->groupBy('name')->get();
     }
 
     public function department($id)

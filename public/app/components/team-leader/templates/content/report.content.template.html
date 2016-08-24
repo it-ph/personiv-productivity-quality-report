@@ -70,10 +70,22 @@
 								<div ng-messages-include="/app/shared/templates/validation-message-report.html"></div>
 							</div>
 						</md-input-container>
+						<!-- Position -->
+						<md-input-container flex>
+							<label>Default Position</label>
+							<md-select name="Position" required ng-model="details.position_id" ng-disabled="!details.project_id" ng-change="setDefaultPosition()">
+								<md-option ng-repeat="position in positions" value="{{ position.id }}">
+									{{ position.name }}
+								</md-option>
+							</md-select>
+							<div ng-messages="form.createReportForm.Position.$error" ng-if="form.createReportForm.Position.$touched">
+								<div ng-messages-include="/app/shared/templates/validation-message-report.html"></div>
+							</div>
+						</md-input-container>
 						<!-- Daily Work Hours -->
 						<md-input-container flex>
 							<label>Daily Work Hours</label>
-							<md-select name="WorkHours" ng-change="resetMembers()" required ng-model="details.daily_work_hours">
+							<md-select name="WorkHours" ng-change="resetMembers()" required ng-disabled="!details.position_id" ng-model="details.daily_work_hours">
 								<md-option ng-repeat="hour in work_hours" value="{{ hour.daily_work_hours }}">
 									{{ hour.label }} - {{ hour.daily_work_hours }} hour(s)
 								</md-option>
@@ -113,19 +125,19 @@
 						</md-list>
 						<div ng-if="member.include" class="fade-transition">
 							<div ng-if="member.limit > 0" layout="column">
-								<!-- Position -->
-								<md-input-container flex>
-									<label>Position</label>
-									<md-select name="Position{{$index}}" required ng-model="member.position_id" ng-change="getTarget(member)">
-										<md-option ng-repeat="position in positions" value="{{ position.id }}">
-											{{ position.name }}
-										</md-option>
-									</md-select>
-									<div ng-messages="form.createReportForm['Position' + $index].$error" ng-if="form.createReportForm['Position' + $index].$touched">
-										<div ng-messages-include="/app/shared/templates/validation-message-report.html"></div>
-									</div>
-								</md-input-container>
 								<div layout="row">
+									<!-- Position -->
+									<md-input-container flex>
+										<label>Position</label>
+										<md-select name="Position{{$index}}" required ng-model="member.position_id" ng-change="getTarget(member)">
+											<md-option ng-repeat="position in positions" value="{{ position.id }}">
+												{{ position.name }}
+											</md-option>
+										</md-select>
+										<div ng-messages="form.createReportForm['Position' + $index].$error" ng-if="form.createReportForm['Position' + $index].$touched">
+											<div ng-messages-include="/app/shared/templates/validation-message-report.html"></div>
+										</div>
+									</md-input-container>
 									<!-- Total Output -->
 									<md-input-container flex>
 										<label>Total Output</label>

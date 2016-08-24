@@ -24,8 +24,8 @@ sharedModule
 			department: function(id){
 				return $http.get(urlBase + '-department/' + id);
 			},
-			unique: function(){
-				return $http.get(urlBase + '-unique');
+			unique: function(id){
+				return $http.get(urlBase + '-unique/' + id);
 			},
 			checkDuplicate: function(data){
 				return $http.post(urlBase + '-check-duplicate', data);
