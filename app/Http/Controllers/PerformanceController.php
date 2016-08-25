@@ -119,9 +119,12 @@ class PerformanceController extends Controller
     {
         $download = (int)$download;
 
-        $position = DB::table('positions')->where('id', $position_id)->first();
 
         $this->member = DB::table('members')->where('id', $member_id)->first();
+        $this->member->position = DB::table('positions')->where('id', $position_id)->first();
+        $this->member->average_productivity = 0;
+        $this->member->average_quality = 0;
+        $this->member->count = 0;
 
         $this->date_start = Carbon::parse($date_start);
         $this->date_end = Carbon::parse($date_end);
@@ -131,7 +134,7 @@ class PerformanceController extends Controller
         $this->member->department = $this->department_id ? Department::with('projects')->where('id', $this->department_id)->first() : Department::with('projects')->where('id', Auth::user()->department_id)->first();
 
         foreach ($this->member->department->projects as $project_key => $project) {
-            $project->positions = DB::table('positions')->where('project_id', $project->id)->where('name', $position->name)->get();
+            $project->positions = DB::table('positions')->where('project_id', $project->id)->where('name', $this->member->position->name)->get();
             
             if(count($project->positions)){
                 $project->average_productivity = 0;
@@ -192,6 +195,10 @@ class PerformanceController extends Controller
                 if($overall_count){
                     $project->average_productivity = $overall_productivity / $overall_count;
                     $project->average_quality = $overall_quality / $overall_count;
+
+                    $this->member->average_productivity += $project->average_productivity;
+                    $this->member->average_quality += $project->average_quality;
+                    $this->member->count++;
                 }      
             }
         }
@@ -211,6 +218,9 @@ class PerformanceController extends Controller
                 }
             })->download('xls');
         }
+
+        $this->member->average_productivity = $this->member->average_productivity / $this->member->count;
+        $this->member->average_quality = $this->member->average_quality / $this->member->count;
 
         return response()->json($this->member);
     }

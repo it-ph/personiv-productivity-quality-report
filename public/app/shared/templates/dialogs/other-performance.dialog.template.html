@@ -1,11 +1,11 @@
-<md-dialog layout="column" flex flex-gt-md="70"  aria-label="Other Performance" ng-cloak>
-	<md-dialog-content layout="column" flex layout-padding layout-wrap>
+<md-dialog layout="column" flex aria-label="Other Performance" ng-cloak>
+	<md-dialog-content flex layout-padding>
 		<div layout="row" layout-align="space-between center">
 			<md-list>
 				<md-list-item class="md-3-line">
 					<md-icon class="md-avatar-icon mdi mdi-account" aria-label="Member"></md-icon>
 					<div class="md-list-item-text">
-						<h3>{{member.full_name}}</h3>
+						<h3>{{member.full_name}} <span class="md-caption secondary-text">({{member.total_hours_worked}} hour(s) worked)</span></h3>
 						<h4>Average Productivity: {{member.average_productivity}}%</h4>
 						<p>Average Quality: {{member.average_quality}}%</p>
 					</div>

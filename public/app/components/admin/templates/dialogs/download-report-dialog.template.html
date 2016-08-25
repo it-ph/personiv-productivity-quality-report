@@ -186,13 +186,13 @@
 						</div>
 					</md-input-container>
 					<md-input-container flex>
-						<label>Departments</label>
-						<md-select name="Departments" required ng-model="details.department" ng-change="fetchProjects()">
+						<label>Department</label>
+						<md-select name="Department" required ng-model="details.department" ng-change="fetchProjects()">
 							<md-option ng-repeat="department in departments" value="{{ department.id }}">
 								{{ department.name }}
 							</md-option>
 						</md-select>
-						<div ng-messages="downloadReportForm.Departments.$error" ng-if="downloadReportForm.Departments.$touched">
+						<div ng-messages="downloadReportForm.Department.$error" ng-if="downloadReportForm.Department.$touched">
 							<div ng-messages-include="/app/shared/templates/validation-message-report.html"></div>
 						</div>
 					</md-input-container>

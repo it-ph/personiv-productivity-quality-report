@@ -68,11 +68,22 @@ adminModule
 		    })
 		    .then(function(data){
 		    	Preloader.set(data);
-				$mdDialog.show({
-			    	controller: 'performanceEvaluationDialogController',
-			      	templateUrl: '/app/shared/templates/dialogs/performance-evaluation.dialog.template.html',
-			      	parent: angular.element(document.body),
-			    });
+		    	
+		    	if(!data.department)
+		    	{
+					$mdDialog.show({
+				    	controller: 'performanceEvaluationDialogController',
+				      	templateUrl: '/app/shared/templates/dialogs/performance-evaluation.dialog.template.html',
+				      	parent: angular.element(document.body),
+				    });
+		    	}
+		    	else{
+		    		$mdDialog.show({
+				    	controller: 'performanceEvaluationDialogController',
+				      	templateUrl: '/app/shared/templates/dialogs/performance-evaluation-multiple.dialog.template.html',
+				      	parent: angular.element(document.body),
+				    });	
+		    	}
 		    });
 		}
 
