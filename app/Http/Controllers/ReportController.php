@@ -1063,9 +1063,9 @@ class ReportController extends Controller
             }
         })->download('xls');
     }
-    public function downloadSummary($date_start, $date_end, $daily_work_hours, $preview)
+    public function downloadSummary($date_start, $date_end, $daily_work_hours)
     {
-        $preview = (int)$preview;
+        // $preview = (int)$preview;
 
         $this->projects = DB::table('projects')->whereNull('deleted_at')->get();
 
@@ -1112,7 +1112,7 @@ class ReportController extends Controller
 
         }
 
-        if(!$preview){
+        // if(!$preview){
             Excel::create('PQR Weekly Summary '. Carbon::parse($date_start)->toFormattedDateString() . ' to ' . Carbon::parse($date_end)->toFormattedDateString(), function($excel)
             {
                 foreach ($this->projects as $project_key => $project) {
@@ -1125,10 +1125,10 @@ class ReportController extends Controller
                     }
                 }
             })->download('xls');
-        }
-        else{
-            return view('preview.weekly')->with('projects', $this->projects);
-        }
+        // }
+        // else{
+        //     return view('preview.weekly')->with('projects', $this->projects);
+        // }
 
     }
 
