@@ -277,8 +277,8 @@ class PerformanceController extends Controller
         $date_end = Carbon::parse($request->date_end);
         
         $member = DB::table('members')->where('id', $request->member_id)->first();
-
-        $member->positions = DB::table('positions')->where('department_id', $request->department_id)->where('name', $request->input('position'))->get();
+        $member->position = DB::table('positions')->where('id', $request->position_id)->first();
+        $member->positions = DB::table('positions')->where('department_id', $request->department_id)->get();
 
         $overall_weekly_productivity = 0;
         $overall_weekly_quality = 0;
@@ -322,9 +322,11 @@ class PerformanceController extends Controller
                     $position->quadrant = 'Quadrant 4'; 
                 }
 
-                $overall_weekly_productivity += $position->weekly_productivity;
-                $overall_weekly_quality += $position->weekly_quality;
-                $overall_count++;
+                if($position->name == $request->position){
+                    $overall_weekly_productivity += $position->weekly_productivity;
+                    $overall_weekly_quality += $position->weekly_quality;
+                    $overall_count++;
+                }
             }
         }
 
