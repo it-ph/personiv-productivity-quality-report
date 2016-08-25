@@ -1962,6 +1962,7 @@ teamLeaderModule
 			angular.forEach($scope.members, function(member){
 				if(!member.output && !member.hours_worked){
 					member.position_id = $scope.details.position_id;
+					$scope.getTarget(member);
 				}
 			});
 		}
