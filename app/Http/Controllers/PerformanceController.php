@@ -680,19 +680,19 @@ class PerformanceController extends Controller
                 $performance->quality = round((1 - $performance->output_error / $performance->output) * 100, 1);
 
                 // Quadrant
-                if($performance->productivity < $target->productivity && $performance->quality >= $target->quality)
+                if($performance->productivity < 100 && $performance->quality >= $target->quality)
                 {
                     $performance->quadrant = 'Quadrant 1'; 
                 }
-                else if($performance->productivity >= $target->productivity && $performance->quality >= $target->quality)
+                else if($performance->productivity >= 100 && $performance->quality >= $target->quality)
                 {
                     $performance->quadrant = 'Quadrant 2'; 
                 }
-                else if($performance->productivity >= $target->productivity && $performance->quality < $target->quality)
+                else if($performance->productivity >= 100 && $performance->quality < $target->quality)
                 {
                     $performance->quadrant = 'Quadrant 3'; 
                 }
-                else if($performance->productivity < $target->productivity && $performance->quality < $target->quality)
+                else if($performance->productivity < 100 && $performance->quality < $target->quality)
                 {
                     $performance->quadrant = 'Quadrant 4'; 
                 }
@@ -789,19 +789,19 @@ class PerformanceController extends Controller
                 // 1 - output w/error / output * 100 to convert to percentage
                 $performance->quality = round((1 - $performance->output_error / $performance->output) * 100);
                 
-                if($performance->productivity < $target->productivity && $performance->quality >= $target->quality)
+                if($performance->productivity < 100 && $performance->quality >= $target->quality)
                 {
                     $performance->quadrant = 'Quadrant 1'; 
                 }
-                else if($performance->productivity >= $target->productivity && $performance->quality >= $target->quality)
+                else if($performance->productivity >= 100 && $performance->quality >= $target->quality)
                 {
                     $performance->quadrant = 'Quadrant 2'; 
                 }
-                else if($performance->productivity >= $target->productivity && $performance->quality < $target->quality)
+                else if($performance->productivity >= 100 && $performance->quality < $target->quality)
                 {
                     $performance->quadrant = 'Quadrant 3'; 
                 }
-                else if($performance->productivity < $target->productivity && $performance->quality < $target->quality)
+                else if($performance->productivity < 100 && $performance->quality < $target->quality)
                 {
                     $performance->quadrant = 'Quadrant 4'; 
                 }

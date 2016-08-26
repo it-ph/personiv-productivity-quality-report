@@ -67,19 +67,19 @@ class ReportController extends Controller
                         $member->monthly_productivity = round($member->average_output / $target->productivity * 100);
                         $member->monthly_quality = round((1 - $member->total_output_error / $member->total_output) * 100);
 
-                        if($member->monthly_productivity < $target->productivity && $member->monthly_quality >= $target->quality)
+                        if($member->monthly_productivity < 100 && $member->monthly_quality >= $target->quality)
                         {
                             $member->quadrant = 'Quadrant 1'; 
                         }
-                        else if($member->monthly_productivity >= $target->productivity && $member->monthly_quality >= $target->quality)
+                        else if($member->monthly_productivity >= 100 && $member->monthly_quality >= $target->quality)
                         {
                             $member->quadrant = 'Quadrant 2'; 
                         }
-                        else if($member->monthly_productivity >= $target->productivity && $member->monthly_quality < $target->quality)
+                        else if($member->monthly_productivity >= 100 && $member->monthly_quality < $target->quality)
                         {
                             $member->quadrant = 'Quadrant 3'; 
                         }
-                        else if($member->monthly_productivity < $target->productivity && $member->monthly_quality < $target->quality)
+                        else if($member->monthly_productivity < 100 && $member->monthly_quality < $target->quality)
                         {
                             $member->quadrant = 'Quadrant 4'; 
                         }
@@ -189,19 +189,19 @@ class ReportController extends Controller
                             $position->monthly_productivity = round($position->total_average_output / $performances[0]->target->productivity * 100);
                             $position->monthly_quality = round((1 - $position->total_output_error / $position->total_output) * 100);
 
-                            if($position->monthly_productivity < $performances[0]->target->productivity && $position->monthly_quality >= $performances[0]->target->quality)
+                            if($position->monthly_productivity < 100 && $position->monthly_quality >= $performances[0]->target->quality)
                             {
                                 $position->quadrant = 'Quadrant 1'; 
                             }
-                            else if($position->monthly_productivity >= $performances[0]->target->productivity && $position->monthly_quality >= $performances[0]->target->quality)
+                            else if($position->monthly_productivity >= 100 && $position->monthly_quality >= $performances[0]->target->quality)
                             {
                                 $position->quadrant = 'Quadrant 2'; 
                             }
-                            else if($position->monthly_productivity >= $performances[0]->target->productivity && $position->monthly_quality < $performances[0]->target->quality)
+                            else if($position->monthly_productivity >= 100 && $position->monthly_quality < $performances[0]->target->quality)
                             {
                                 $position->quadrant = 'Quadrant 3'; 
                             }
-                            else if($position->monthly_productivity < $performances[0]->target->productivity && $position->monthly_quality < $performances[0]->target->quality)
+                            else if($position->monthly_productivity < 100 && $position->monthly_quality < $performances[0]->target->quality)
                             {
                                 $position->quadrant = 'Quadrant 4'; 
                             }
@@ -347,19 +347,19 @@ class ReportController extends Controller
                             $position->monthly_productivity = round($position->total_average_output / $performances[0]->target->productivity * 100);
                             $position->monthly_quality = round((1 - $position->total_output_error / $position->total_output) * 100);
 
-                            if($position->monthly_productivity < $performances[0]->target->productivity && $position->monthly_quality >= $performances[0]->target->quality)
+                            if($position->monthly_productivity < 100 && $position->monthly_quality >= $performances[0]->target->quality)
                             {
                                 $position->quadrant = 'Quadrant 1'; 
                             }
-                            else if($position->monthly_productivity >= $performances[0]->target->productivity && $position->monthly_quality >= $performances[0]->target->quality)
+                            else if($position->monthly_productivity >= 100 && $position->monthly_quality >= $performances[0]->target->quality)
                             {
                                 $position->quadrant = 'Quadrant 2'; 
                             }
-                            else if($position->monthly_productivity >= $performances[0]->target->productivity && $position->monthly_quality < $performances[0]->target->quality)
+                            else if($position->monthly_productivity >= 100 && $position->monthly_quality < $performances[0]->target->quality)
                             {
                                 $position->quadrant = 'Quadrant 3'; 
                             }
-                            else if($position->monthly_productivity < $performances[0]->target->productivity && $position->monthly_quality < $performances[0]->target->quality)
+                            else if($position->monthly_productivity < 100 && $position->monthly_quality < $performances[0]->target->quality)
                             {
                                 $position->quadrant = 'Quadrant 4'; 
                             }
@@ -513,19 +513,19 @@ class ReportController extends Controller
                             $position->monthly_productivity = round($position->total_average_output / $performances[0]->target->productivity * 100);
                             $position->monthly_quality = round((1 - $position->total_output_error / $position->total_output) * 100);
 
-                            if($position->monthly_productivity < $performances[0]->target->productivity && $position->monthly_quality >= $performances[0]->target->quality)
+                            if($position->monthly_productivity < 100 && $position->monthly_quality >= $performances[0]->target->quality)
                             {
                                 $position->quadrant = 'Quadrant 1'; 
                             }
-                            else if($position->monthly_productivity >= $performances[0]->target->productivity && $position->monthly_quality >= $performances[0]->target->quality)
+                            else if($position->monthly_productivity >= 100 && $position->monthly_quality >= $performances[0]->target->quality)
                             {
                                 $position->quadrant = 'Quadrant 2'; 
                             }
-                            else if($position->monthly_productivity >= $performances[0]->target->productivity && $position->monthly_quality < $performances[0]->target->quality)
+                            else if($position->monthly_productivity >= 100 && $position->monthly_quality < $performances[0]->target->quality)
                             {
                                 $position->quadrant = 'Quadrant 3'; 
                             }
-                            else if($position->monthly_productivity < $performances[0]->target->productivity && $position->monthly_quality < $performances[0]->target->quality)
+                            else if($position->monthly_productivity < 100 && $position->monthly_quality < $performances[0]->target->quality)
                             {
                                 $position->quadrant = 'Quadrant 4'; 
                             }
@@ -665,19 +665,19 @@ class ReportController extends Controller
                             $position->monthly_productivity = round($position->total_average_output / $performances[0]->target->productivity * 100);
                             $position->monthly_quality = round((1 - $position->total_output_error / $position->total_output) * 100);
 
-                            if($position->monthly_productivity < $performances[0]->target->productivity && $position->monthly_quality >= $performances[0]->target->quality)
+                            if($position->monthly_productivity < 100 && $position->monthly_quality >= $performances[0]->target->quality)
                             {
                                 $position->quadrant = 'Quadrant 1'; 
                             }
-                            else if($position->monthly_productivity >= $performances[0]->target->productivity && $position->monthly_quality >= $performances[0]->target->quality)
+                            else if($position->monthly_productivity >= 100 && $position->monthly_quality >= $performances[0]->target->quality)
                             {
                                 $position->quadrant = 'Quadrant 2'; 
                             }
-                            else if($position->monthly_productivity >= $performances[0]->target->productivity && $position->monthly_quality < $performances[0]->target->quality)
+                            else if($position->monthly_productivity >= 100 && $position->monthly_quality < $performances[0]->target->quality)
                             {
                                 $position->quadrant = 'Quadrant 3'; 
                             }
-                            else if($position->monthly_productivity < $performances[0]->target->productivity && $position->monthly_quality < $performances[0]->target->quality)
+                            else if($position->monthly_productivity < 100 && $position->monthly_quality < $performances[0]->target->quality)
                             {
                                 $position->quadrant = 'Quadrant 4'; 
                             }
@@ -805,19 +805,19 @@ class ReportController extends Controller
                                     $performances[0]->average_output = $performances[0]->output / $performances[0]->hours_worked * $daily_work_hours;
                                     $performances[0]->productivity = round($performances[0]->average_output / $member->target->productivity * 100);
                                     $performances[0]->quality = round((1 - $performances[0]->output_error / $performances[0]->output) * 100);
-                                    if($performances[0]->productivity < $member->target->productivity && $performances[0]->quality >= $member->target->quality)
+                                    if($performances[0]->productivity < 100 && $performances[0]->quality >= $member->target->quality)
                                     {
                                         $member->quadrant = 'Quadrant 1'; 
                                     }
-                                    else if($performances[0]->productivity >= $member->target->productivity && $performances[0]->quality >= $member->target->quality)
+                                    else if($performances[0]->productivity >= 100 && $performances[0]->quality >= $member->target->quality)
                                     {
                                         $member->quadrant = 'Quadrant 2'; 
                                     }
-                                    else if($performances[0]->productivity >= $member->target->productivity && $performances[0]->quality < $member->target->quality)
+                                    else if($performances[0]->productivity >= 100 && $performances[0]->quality < $member->target->quality)
                                     {
                                         $member->quadrant = 'Quadrant 3'; 
                                     }
-                                    else if($performances[0]->productivity < $member->target->productivity && $performances[0]->quality < $member->target->quality)
+                                    else if($performances[0]->productivity < 100 && $performances[0]->quality < $member->target->quality)
                                     {
                                         $member->quadrant = 'Quadrant 4'; 
                                     }
@@ -850,19 +850,19 @@ class ReportController extends Controller
                     $member->monthly_productivity = round($member->total_average_output / $member->target->productivity * 100);
                     $member->monthly_quality = round((1 - $member->total_output_error / $member->total_output) * 100);
 
-                    if($member->monthly_productivity < $member->target->productivity && $member->monthly_quality >= $member->target->quality)
+                    if($member->monthly_productivity < 100 && $member->monthly_quality >= $member->target->quality)
                     {
                         $member->quadrant = 'Quadrant 1'; 
                     }
-                    else if($member->monthly_productivity >= $member->target->productivity && $member->monthly_quality >= $member->target->quality)
+                    else if($member->monthly_productivity >= 100 && $member->monthly_quality >= $member->target->quality)
                     {
                         $member->quadrant = 'Quadrant 2'; 
                     }
-                    else if($member->monthly_productivity >= $member->target->productivity && $member->monthly_quality < $member->target->quality)
+                    else if($member->monthly_productivity >= 100 && $member->monthly_quality < $member->target->quality)
                     {
                         $member->quadrant = 'Quadrant 3'; 
                     }
-                    else if($member->monthly_productivity < $member->target->productivity && $member->monthly_quality < $member->target->quality)
+                    else if($member->monthly_productivity < 100 && $member->monthly_quality < $member->target->quality)
                     {
                         $member->quadrant = 'Quadrant 4'; 
                     }
@@ -976,19 +976,19 @@ class ReportController extends Controller
                                     $performances[0]->average_output = $performances[0]->output / $performances[0]->hours_worked * $daily_work_hours;
                                     $performances[0]->productivity = round($performances[0]->average_output / $member->target->productivity * 100);
                                     $performances[0]->quality = round((1 - $performances[0]->output_error / $performances[0]->output) * 100);
-                                    if($performances[0]->productivity < $member->target->productivity && $performances[0]->quality >= $member->target->quality)
+                                    if($performances[0]->productivity < 100 && $performances[0]->quality >= $member->target->quality)
                                     {
                                         $member->quadrant = 'Quadrant 1'; 
                                     }
-                                    else if($performances[0]->productivity >= $member->target->productivity && $performances[0]->quality >= $member->target->quality)
+                                    else if($performances[0]->productivity >= 100 && $performances[0]->quality >= $member->target->quality)
                                     {
                                         $member->quadrant = 'Quadrant 2'; 
                                     }
-                                    else if($performances[0]->productivity >= $member->target->productivity && $performances[0]->quality < $member->target->quality)
+                                    else if($performances[0]->productivity >= 100 && $performances[0]->quality < $member->target->quality)
                                     {
                                         $member->quadrant = 'Quadrant 3'; 
                                     }
-                                    else if($performances[0]->productivity < $member->target->productivity && $performances[0]->quality < $member->target->quality)
+                                    else if($performances[0]->productivity < 100 && $performances[0]->quality < $member->target->quality)
                                     {
                                         $member->quadrant = 'Quadrant 4'; 
                                     }
@@ -1021,19 +1021,19 @@ class ReportController extends Controller
                     $member->monthly_productivity = round($member->total_average_output / $member->target->productivity * 100);
                     $member->monthly_quality = round((1 - $member->total_output_error / $member->total_output) * 100);
 
-                    if($member->monthly_productivity < $member->target->productivity && $member->monthly_quality >= $member->target->quality)
+                    if($member->monthly_productivity < 100 && $member->monthly_quality >= $member->target->quality)
                     {
                         $member->quadrant = 'Quadrant 1'; 
                     }
-                    else if($member->monthly_productivity >= $member->target->productivity && $member->monthly_quality >= $member->target->quality)
+                    else if($member->monthly_productivity >= 100 && $member->monthly_quality >= $member->target->quality)
                     {
                         $member->quadrant = 'Quadrant 2'; 
                     }
-                    else if($member->monthly_productivity >= $member->target->productivity && $member->monthly_quality < $member->target->quality)
+                    else if($member->monthly_productivity >= 100 && $member->monthly_quality < $member->target->quality)
                     {
                         $member->quadrant = 'Quadrant 3'; 
                     }
-                    else if($member->monthly_productivity < $member->target->productivity && $member->monthly_quality < $member->target->quality)
+                    else if($member->monthly_productivity < 100 && $member->monthly_quality < $member->target->quality)
                     {
                         $member->quadrant = 'Quadrant 4'; 
                     }

@@ -537,19 +537,19 @@ class ApprovalController extends Controller
                 $performance_approval->quality = round((1 - $performance_approval->output_error / $performance_approval->output) * 100, 1);
 
                 // Quadrant
-                if($performance_approval->productivity < $target->productivity && $performance_approval->quality >= $target->quality)
+                if($performance_approval->productivity < 100 && $performance_approval->quality >= $target->quality)
                 {
                     $performance_approval->quadrant = 'Quadrant 1'; 
                 }
-                else if($performance_approval->productivity >= $target->productivity && $performance_approval->quality >= $target->quality)
+                else if($performance_approval->productivity >= 100 && $performance_approval->quality >= $target->quality)
                 {
                     $performance_approval->quadrant = 'Quadrant 2'; 
                 }
-                else if($performance_approval->productivity >= $target->productivity && $performance_approval->quality < $target->quality)
+                else if($performance_approval->productivity >= 100 && $performance_approval->quality < $target->quality)
                 {
                     $performance_approval->quadrant = 'Quadrant 3'; 
                 }
-                else if($performance_approval->productivity < $target->productivity && $performance_approval->quality < $target->quality)
+                else if($performance_approval->productivity < 100 && $performance_approval->quality < $target->quality)
                 {
                     $performance_approval->quadrant = 'Quadrant 4'; 
                 }
