@@ -1394,15 +1394,19 @@ adminModule
 
 						report.date_start = new Date(report.date_start);
 						report.count = 0;
+						angular.forEach(report.positions, function(position){
+							report.count += position.head_count;
+						});
+						
 						angular.forEach(report.members, function(member){
 							member.full_name = member.member.full_name;
-							if(!member.member.deleted_at && member.average_productivity && member.average_quality){
-								if(member.roles > 1){
-									report.count++;
-								}
+							// if(!member.member.deleted_at && member.average_productivity && member.average_quality){
+							// 	if(member.roles > 1){
+							// 		report.count++;
+							// 	}
 
-								report.count++;
-							}
+							// 	report.count++;
+							// }
 							if(member.average_productivity && member.average_productivity){
 								report.chart.data[0].push(member.average_productivity);
 								report.chart.data[1].push(member.average_quality);
@@ -1452,11 +1456,19 @@ adminModule
 							report.date_start = new Date(report.date_start);
 							report.count = 0;
 							
+							angular.forEach(report.positions, function(position){
+								report.count += position.head_count;
+							});
+
 							angular.forEach(report.members, function(member){
 								member.full_name = member.member.full_name;
-								if(!member.member.deleted_at){
-									report.count++;
-								}
+								// if(member.average_productivity && member.average_quality){
+								// 	if(member.roles > 1){
+								// 		report.count++;
+								// 	}
+
+								// 	report.count++;
+								// }
 								if(member.average_productivity && member.average_productivity){
 									report.chart.data[0].push(member.average_productivity);
 									report.chart.data[1].push(member.average_quality);
