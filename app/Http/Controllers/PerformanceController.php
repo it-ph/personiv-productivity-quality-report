@@ -444,7 +444,7 @@ class PerformanceController extends Controller
     }
     public function report($reportID)
     {
-        return Performance::with(['member' => function($query){ $query->with('experiences'); }])->with('project')->where('report_id', $reportID)->get();
+        return Performance::with(['member' => function($query){ $query->with('experiences'); }])->with('project', 'target')->where('report_id', $reportID)->get();
 
         // return DB::table('performances')
         //     ->join('members', 'members.id', '=', 'performances.member_id')
@@ -768,8 +768,8 @@ class PerformanceController extends Controller
                     $i.'.output_error' => 'required|numeric',
                 ]);
 
-                // $target = Target::where('position_id', $request->input($i.'.position_id'))->where('experience', $request->input($i.'.experience'))->first();
-                $target = Target::withTrashed()->where('id', $request->input($i.'.target_id'))->first();
+                $target = Target::where('position_id', $request->input($i.'.position_id'))->where('experience', $request->input($i.'.experience'))->first();
+                // $target = Target::withTrashed()->where('id', $request->input($i.'.target_id'))->first();
 
                 $performance = Performance::where('id', $request->input($i.'.id'))->first();
 

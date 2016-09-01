@@ -1070,7 +1070,7 @@ class ReportController extends Controller
         $this->projects = DB::table('projects')->whereNull('deleted_at')->get();
 
         foreach ($this->projects as $project_key => $project) {
-            $project->reports = Report::with(['performances' => function($query){ $query->with('member')->with('position'); }])->with(['project' => function($query){ $query->with('positions'); }])->where('project_id', $project->id)->where('date_start', Carbon::parse($date_start))->where('date_end', Carbon::parse($date_end))->where('daily_work_hours', 'like', $daily_work_hours.'%')->orderBy('date_start', 'desc')->get();   
+            $project->reports = Report::with(['performances' => function($query){ $query->with(['member' => function($query){ $query->withTrashed(); }])->with('position'); }])->with(['project' => function($query){ $query->with('positions'); }])->where('project_id', $project->id)->where('date_start', Carbon::parse($date_start))->where('date_end', Carbon::parse($date_end))->where('daily_work_hours', 'like', $daily_work_hours.'%')->orderBy('date_start', 'desc')->get();   
             
             if(count($project->reports)){
                 $project->department = DB::table('departments')->where('id', $project->reports[0]->department_id)->first();
@@ -1127,7 +1127,7 @@ class ReportController extends Controller
             })->download('xls');
         // }
         // else{
-        //     return view('preview.weekly')->with('projects', $this->projects);
+            return view('preview.weekly')->with('projects', $this->projects);
         // }
 
     }
@@ -1137,13 +1137,13 @@ class ReportController extends Controller
         $user = Auth::user();
 
         if($user->department_id != $department_id || !$user){
-            return 'Unauthorized';
+            abort(403);
         }
 
         $this->projects = DB::table('projects')->where('department_id', $department_id)->whereNull('deleted_at')->get();
 
         foreach ($this->projects as $project_key => $project) {
-            $project->reports = Report::with(['performances' => function($query){ $query->with('member')->with('position'); }])->with(['project' => function($query){ $query->with('positions'); }])->where('project_id', $project->id)->where('date_start', Carbon::parse($date_start))->where('date_end', Carbon::parse($date_end))->where('daily_work_hours', 'like', $daily_work_hours.'%')->orderBy('date_start', 'desc')->get();   
+            $project->reports = Report::with(['performances' => function($query){ $query->with(['member' => function($query){ $query->withTrashed();}])->with('position'); }])->with(['project' => function($query){ $query->with('positions'); }])->where('project_id', $project->id)->where('date_start', Carbon::parse($date_start))->where('date_end', Carbon::parse($date_end))->where('daily_work_hours', 'like', $daily_work_hours.'%')->orderBy('date_start', 'desc')->get();   
             
             if(count($project->reports)){
                 $project->department = DB::table('departments')->where('id', $department_id)->first();

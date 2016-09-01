@@ -37,7 +37,7 @@
 							<div class="md-list-item-text" layout="column" flex>
 								<h3>{{ performance.member.full_name }}</h3>
 								<h4>Date Started: {{ performance.date_started | date:'MMM. d, yyyy'}}</h4>
-								<p>{{ performance.experience }}</p>
+								<p>{{ performance.experience }} - (based from the date of report)</p>
 							</div>
 						</md-list-item>
 						<md-checkbox ng-change="checkLimit(performance)" ng-model="performance.include" class="md-primary">

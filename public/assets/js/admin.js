@@ -1087,7 +1087,7 @@ adminModule
 				angular.forEach(data, function(performance){
 					var experience = $filter('filter')(performance.member.experiences, {project_id: performance.project_id}, true);
 					performance.date_started = new Date(experience[0].date_started);
-					performance.experience = experience[0].experience;
+					performance.experience = performance.target.experience;
 				});
 
 				$scope.performances = data;
@@ -2619,7 +2619,7 @@ adminModule
 					win.focus();
 				}
 				else if($scope.details.type=='Monthly'){
-					var win = window.open('/report-download-monthly-summary/' + $scope.details.month + '/year/' + $scope.details.year + '/daily-work-hours/' + $scope.details.daily_work_hours, '_blank');
+					var win = window.open('/report-download-monthly-department/' + $scope.details.department + '/month/' + $scope.details.month + '/year/' + $scope.details.year + '/daily-work-hours/' + $scope.details.daily_work_hours, '_blank');
 					win.focus();	
 				}
 				else if($scope.details.type=='Team Performance'){

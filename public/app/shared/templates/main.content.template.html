@@ -63,7 +63,7 @@
 					<h2 class="primary-text md-headline">{{ report.project.name }}</h2>
 					<p>Submitted by: {{report.team_leader.first_name}} {{report.team_leader.last_name}} {{report.team_leader.last_name}}</p>
 					<p ng-if="report.locked" class="secondary-text"><em>*Report is locked for any changes.</em></p>
-					<p ng-if="!report.locked" class="secondary-text"><em>*Report will lock in {{ 8 - report.diffDays}} day(s).</em></p>
+					<p ng-if="!report.locked && !hideDateDiff" class="secondary-text"><em>*Report will lock in {{ 8 - report.diffDays}} day(s).</em></p>
 					<div layout="row" layout-align="space-between center">
 						<!-- <h3 class="secondary-text md-subhead">Daily Work Hours: {{ details[0].daily_work_hours | number:1 }} hours</h3> -->
 						<div layout="row">

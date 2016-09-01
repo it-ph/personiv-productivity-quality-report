@@ -33,7 +33,7 @@ adminModule
 				angular.forEach(data, function(performance){
 					var experience = $filter('filter')(performance.member.experiences, {project_id: performance.project_id}, true);
 					performance.date_started = new Date(experience[0].date_started);
-					performance.experience = experience[0].experience;
+					performance.experience = performance.target.experience;
 				});
 
 				$scope.performances = data;
