@@ -48,8 +48,8 @@
 						<!-- Position -->
 						<md-input-container flex>
 							<label>Position</label>
-							<md-select name="Position{{$index}}" required ng-model="performance.position_id">
-								<md-option ng-repeat="position in positions" value="{{ position.id }}">
+							<md-select name="Position{{$index}}" required ng-model="performance.position_id" ng-change="getTarget(performance)">
+								<md-option ng-repeat="position in project.positions" value="{{ position.id }}">
 									{{ position.name }}
 								</md-option>
 							</md-select>

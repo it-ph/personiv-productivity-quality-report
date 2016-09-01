@@ -831,6 +831,11 @@ teamLeaderModule
 		 *
 		*/
 		$scope.toolbar = {};
+		$scope.toolbar.items = [];
+		$scope.toolbar.getItems = function(query){
+			var results = query ? $filter('filter')($scope.toolbar.items, query) : $scope.toolbar.items;
+			return results;
+		}
 		$scope.toolbar.childState = 'Edit Report';
 		$scope.toolbar.showBack = true;
 		$scope.toolbar.back = function(){
@@ -867,6 +872,10 @@ teamLeaderModule
 					var experience = $filter('filter')(performance.member.experiences, {project_id: performance.project_id}, true);
 					performance.date_started = new Date(experience[0].date_started);
 					performance.experience = performance.target.experience;
+
+					var item = {};
+					item.display = performance.member.full_name;
+					$scope.toolbar.items.push(item);
 				});
 
 				$scope.performances = data;
@@ -880,9 +889,50 @@ teamLeaderModule
 				$scope.details.date_start = $scope.details.date_start.toDateString();
 				$scope.details.date_end = $scope.details.date_end.toDateString();
 
-				Position.project(data[0].project_id)
+				// Position.project(data[0].project_id)
+				// 	.success(function(data){
+				// 		$scope.positions = data;
+				// 	});
+
+				Project.show(data[0].project_id)
 					.success(function(data){
-						$scope.positions = data;
+						$scope.project = data;
+						angular.forEach(data.positions, function(position){
+							var targets = [];
+							var index = 0;
+							angular.forEach(position.targets, function(target){
+								var target_created_at = new Date(target.created_at).setHours(0,0,0,0);
+								if(!target.deleted_at && target_created_at <= new Date($scope.details.date_start)){
+									targets.splice(index, 0, target);
+									index++;
+								}
+								else if(target.deleted_at && target_created_at < new Date($scope.details.date_start)){
+									targets.splice(index, 0, target);
+									index++;
+								}
+							});
+
+							if(targets.length){
+								$scope.default = 'false';
+								var beginner_productivity = $filter('filter')(targets, {experience:'Beginner'}, true);
+								var moderately_experienced_productivity = $filter('filter')(targets, {experience:'Moderately Experienced'}, true);
+								var experienced_productivity = $filter('filter')(targets, {experience:'Experienced'}, true);
+								var quality = $filter('filter')(targets, {experience:'Experienced'}, true);
+							}
+							else{
+								$scope.default = 'true';
+								var beginner_productivity = $filter('filter')(position.targets, {experience:'Beginner', deleted_at:null}, true);
+								var moderately_experienced_productivity = $filter('filter')(position.targets, {experience:'Moderately Experienced', deleted_at:null}, true);
+								var experienced_productivity = $filter('filter')(position.targets, {experience:'Experienced', deleted_at:null}, true);
+								var quality = $filter('filter')(position.targets, {experience:'Experienced', deleted_at:null}, true);							
+							}
+
+							position.targets = [];
+							position.targets.push(beginner_productivity[0]);
+							position.targets.push(moderately_experienced_productivity[0]);
+							position.targets.push(experienced_productivity[0]);
+							
+						});
 					});
 
 				Project.department(data[0].department_id)
@@ -891,12 +941,12 @@ teamLeaderModule
 					});
 			});
 
-		$scope.showPositions = function(id){
-			Position.project(id)
-				.success(function(data){
-					$scope.positions = data;
-				});
-		};
+		// $scope.showPositions = function(id){
+		// 	Position.project(id)
+		// 		.success(function(data){
+		// 			$scope.positions = data;
+		// 		});
+		// };
 
 		$scope.checkLimit = function(data){
 			var idx = $scope.performances.indexOf(data);
@@ -909,6 +959,8 @@ teamLeaderModule
 				.error(function(){
 					$scope.performances[idx].limit = $scope.details.weekly_hours;
 				});
+
+			$scope.getTarget(data);
 		};
 
 		$scope.resetMembers = function(){
@@ -916,6 +968,13 @@ teamLeaderModule
 				item.hours_worked = null;
 				$scope.checkLimit(item);
 			});
+		}
+
+		$scope.getTarget = function(performance){
+			var index = $scope.performances.indexOf(performance);
+			var position = $filter('filter')($scope.project.positions, {id:performance.position_id});
+			var target = $filter('filter')(position[0].targets, {experience:performance.experience}, true);
+			$scope.performances[index].target_id = target[0].id;
 		}
 
 		$scope.checkBalance = function(data){
@@ -975,7 +1034,7 @@ teamLeaderModule
 									        .position('bottom right')
 									        .hideDelay(3000)
 								    );
-									$state.go('main');
+									$scope.toolbar.back();
 									Preloader.stop();
 									busy = false;
 								})
@@ -1683,17 +1742,21 @@ teamLeaderModule
 						project.chart.labels = [];
 						project.count = 0;
 
+						angular.forEach(project.positions, function(position){
+							project.count += position.head_count;
+						});
+
 						project.date_start = new Date(project.date_start);
 						
 						angular.forEach(project.members, function(member){
 							member.full_name = member.member.full_name;
-							if(!member.member.deleted_at && member.average_productivity && member.average_quality){
-								if(member.roles > 1){
-									project.count++;
-								}
+							// if(!member.member.deleted_at && member.average_productivity && member.average_quality){
+							// 	if(member.roles > 1){
+							// 		project.count++;
+							// 	}
 
-								project.count++;
-							}
+							// 	project.count++;
+							// }
 							if(member.average_productivity && member.average_productivity){
 								project.chart.data[0].push(member.average_productivity);
 								project.chart.data[1].push(member.average_quality);
