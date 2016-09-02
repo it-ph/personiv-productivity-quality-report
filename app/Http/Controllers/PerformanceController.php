@@ -8,6 +8,7 @@ use App\ActivityType;
 use App\Performance;
 use App\Department;
 use App\Target;
+use App\Experience;
 use App\Result;
 use App\Report;
 use App\Notification;
@@ -491,6 +492,37 @@ class PerformanceController extends Controller
         $limit = $request->weekly_hours - $hours_worked + $request->current_hours_worked;
 
         return round($limit,1);
+    }
+    public function checkLimitAll(Request $request)
+    {
+        $experiences = array();
+
+        for ($i=0; $i < count($request->all()); $i++) { 
+            $date_start = $request->input($i.'.date_start');
+            $date_end = $request->input($i.'.date_end');
+
+            // fetch all records with the same report details
+            $performance = Performance::where('date_start', $date_start)->whereBetween('date_end', [$date_start, $date_end])->where('daily_work_hours', 'like', $request->input($i.'.daily_work_hours').'%')->where('member_id', $request->input($i.'.member_id'))->orderBy('created_at', 'desc')->get();
+            
+            $hours_worked = 0;
+
+            // iterate every record to check the total of hours worked by the employee
+            foreach ($performance as $key => $value) {
+                $hours_worked += $value->hours_worked;
+            }
+
+            $limit = $request->input($i.'.weekly_hours') - $hours_worked;
+
+            $experience = Experience::with('member')->where('member_id', $request->input($i.'.member_id'))->where('project_id', $request->input($i.'.project_id'))->first();
+
+            $experience->limit = round($limit,1);
+            $experience->position_id = $request->input($i.'.position_id');
+            $experience->target_id = $request->input($i.'.target_id');
+
+            array_push($experiences, $experience);
+        }
+
+        return response()->json($experiences);
     }
     public function checkLimit(Request $request, $memberID)
     {

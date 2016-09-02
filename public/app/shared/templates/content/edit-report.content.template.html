@@ -27,6 +27,11 @@
 					<md-input></md-input>
 				</md-card-content>		
 			</md-card>
+			<div layout-padding>
+				<md-checkbox ng-change="checkAllPerformance()" ng-model="checkAll" class="md-primary">
+					<span ng-if="!checkAll">Check</span><span ng-if="checkAll">Uncheck</span> all
+				</md-checkbox>
+			</div>
 			<md-card class="fade-transition" ng-repeat="performance in performances | filter: toolbar.searchText">
 				<md-card-content>
 					<md-list layout="row" layout-align="space-between center">

@@ -133,6 +133,19 @@ adminModule
 		// 		});
 		// };
 
+		$scope.checkAllPerformance = function(){
+			angular.forEach($scope.performances, function(performance){
+				if(performance.include){
+					performance.include = false;
+				}
+				else{
+					performance.include = true;	
+					$scope.checkLimit(performance);
+				}
+
+			});
+		}
+
 		$scope.checkLimit = function(data){
 			var idx = $scope.performances.indexOf(data);
 			// gets the number of days worked in a day then multiply it to the daily work hours to get weekly limit

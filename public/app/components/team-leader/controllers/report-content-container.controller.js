@@ -81,16 +81,6 @@ teamLeaderModule
 
 			Experience.members(projectID)
 				.success(function(data){
-					angular.forEach(data, function(item){
-						item.date_started = new Date(item.date_started);
-						item.first_letter = item.member.full_name.charAt(0).toUpperCase();
-						item.output_error = 0;
-
-						var toolbarItem = {};
-						toolbarItem.display = item.member.full_name;
-						$scope.toolbar.items.push(toolbarItem);
-					});
-
 					$scope.members = data;
 					// $scope.resetMembers();
 				});
@@ -268,18 +258,18 @@ teamLeaderModule
 			var idx = $scope.members.indexOf(data);
 			// console.log(idx);
 			// gets the number of days worked in a day then multiply it to the daily work hours to get weekly limit
-			$scope.details.weekly_hours = ((new Date($scope.details.date_end) - new Date($scope.details.date_start)) / (1000*60*60*24) + 1) * $scope.details.daily_work_hours;
+			// $scope.details.weekly_hours = ((new Date($scope.details.date_end) - new Date($scope.details.date_start)) / (1000*60*60*24) + 1) * $scope.details.daily_work_hours;
 			Performance.checkLimit($scope.members[idx].member.id, $scope.details)
 				.success(function(data){
 					$scope.members[idx].limit = data;
-					if($scope.reset){
-						$scope.count++;
-						// console.log($scope.count, $scope.members.length);
-						if($scope.count == $scope.members.length){
-							$scope.showMembers = true;
-							$scope.reset = false;
-						}
-					}
+					// if($scope.reset){
+					// 	$scope.count++;
+					// 	// console.log($scope.count, $scope.members.length);
+					// 	if($scope.count == $scope.members.length){
+					// 		$scope.showMembers = true;
+					// 		$scope.reset = false;
+					// 	}
+					// }
 				})
 				.error(function(){
 					$scope.members[idx].limit = $scope.details.weekly_hours;
@@ -287,14 +277,37 @@ teamLeaderModule
 		};
 
 		$scope.resetMembers = function(){
-			$scope.count = 0;
+			$scope.details.weekly_hours = ((new Date($scope.details.date_end) - new Date($scope.details.date_start)) / (1000*60*60*24) + 1) * $scope.details.daily_work_hours;
+			// $scope.count = 0;
 			$scope.showMembers = false;
-			$scope.reset = true;
+			// $scope.reset = true;
 			// $scope.checkLimit();
 			angular.forEach($scope.members, function(item, key){
 				item.hours_worked = null;
-				$scope.checkLimit(item);
+				item.date_start = $scope.details.date_start;
+				item.date_end = $scope.details.date_end;
+				item.daily_work_hours = $scope.details.daily_work_hours;
+				item.weekly_hours = $scope.details.weekly_hours;
+				// $scope.checkLimit(item);
 			});
+
+			Performance.checkLimitAll($scope.members)
+				.success(function(data){
+					angular.forEach(data, function(item){
+						item.date_started = new Date(item.date_started);
+						item.first_letter = item.member.full_name.charAt(0).toUpperCase();
+						item.output_error = 0;
+
+						var toolbarItem = {};
+						toolbarItem.display = item.member.full_name;
+						$scope.toolbar.items.push(toolbarItem);
+					});
+
+
+					$scope.members = data;
+					$scope.showMembers = true;
+					// $scope.reset = false;
+				})
 		}
 
 		$scope.checkBalance = function(data){
@@ -313,6 +326,12 @@ teamLeaderModule
 			var target = $filter('filter')(position[0].targets, {experience:member.experience}, true);
 			$scope.members[index].target_id = target[0].id;
 		}
+
+		// $scope.markInclude = function(member){
+		// 	if(member.limit){
+		// 		member.include = member.include ? false : true;
+		// 	}
+		// }
 
 		$scope.init = function(refresh){
 			Member.updateTenure()

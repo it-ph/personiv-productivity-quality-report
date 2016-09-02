@@ -602,6 +602,9 @@ sharedModule
 			evaluationMultiple: function(date_start, date_end, daily_work_hours, department, position, member){
 				return $http.get(urlBase + '-evaluation-multiple/' + date_start + '/date_end/' + date_end + '/daily-work-hours/' + daily_work_hours + '/department/' + department + '/position/' + position + '/member/' + member + '/download/0')
 			},
+			checkLimitAll: function(data){
+				return $http.post(urlBase + '-check-limit-all', data);
+			},
 		}
 	}])
 sharedModule
