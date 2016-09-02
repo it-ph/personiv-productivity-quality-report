@@ -206,9 +206,9 @@
 								<td>{{ item.hours_worked | number:1 }}</td>
 								<td>{{ item.output | number:1 }}</td>
 								<td>{{ item.output_error | number:1 }}</td>
-								<td>{{ item.average_output | number:1 }}</td>
-								<td>{{ item.productivity | number:1 }}%</td>
-								<td>{{ item.quality | number:1 }}%</td>
+								<td>{{ item.average_output | number:2 }}</td>
+								<td>{{ item.productivity | number:2 }}%</td>
+								<td>{{ item.quality | number:2 }}%</td>
 								<td>
 									{{ item.quadrant }}
 									<md-tooltip ng-if="item.quadrant == 'Quadrant 1'">Producitivity is not met, but Quality is met.</md-tooltip>
@@ -437,9 +437,9 @@
 								<td>{{ item.hours_worked | number:1 }}</td>
 								<td>{{ item.output | number:1 }}</td>
 								<td>{{ item.output_error | number:1 }}</td>
-								<td>{{ item.average_output | number:1 }}</td>
-								<td>{{ item.productivity | number:1 }}%</td>
-								<td>{{ item.quality | number:1 }}%</td>
+								<td>{{ item.average_output | number:2 }}</td>
+								<td>{{ item.productivity | number:2 }}%</td>
+								<td>{{ item.quality | number:2 }}%</td>
 								<td>
 									{{ item.quadrant }}
 									<md-tooltip ng-if="item.quadrant == 'Quadrant 1'">Producitivity is not met, but Quality is met.</md-tooltip>

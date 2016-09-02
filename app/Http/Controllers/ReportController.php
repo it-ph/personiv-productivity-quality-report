@@ -63,9 +63,9 @@ class ReportController extends Controller
                 for ($i=0; $i < count($project->reports); $i++) { 
                     if($project->reports[$i]->members[$member_key]->performance){
                         $target = $project->reports[$i]->members[$member_key]->performance->target;
-                        $member->average_output = $member->total_output / $member->total_hours_worked * $first_report->daily_work_hours;
-                        $member->monthly_productivity = round($member->average_output / $target->productivity * 100);
-                        $member->monthly_quality = round((1 - $member->total_output_error / $member->total_output) * 100);
+                        $member->average_output = round($member->total_output / $member->total_hours_worked * $first_report->daily_work_hours, 2);
+                        $member->monthly_productivity = round($member->average_output / $target->productivity * 100, 2);
+                        $member->monthly_quality = round((1 - $member->total_output_error / $member->total_output) * 100, 2);
 
                         if($member->monthly_productivity < 100 && $member->monthly_quality >= $target->quality)
                         {
@@ -185,9 +185,9 @@ class ReportController extends Controller
                             }
                             
                             $project->positions[$position_key]->head_count = $project->positions[$position_key]->beginner + $project->positions[$position_key]->moderately_experienced + $project->positions[$position_key]->experienced;
-                            $position->total_average_output = $position->total_output / $position->total_hours_worked * $performances[0]->daily_work_hours;
-                            $position->monthly_productivity = round($position->total_average_output / $performances[0]->target->productivity * 100);
-                            $position->monthly_quality = round((1 - $position->total_output_error / $position->total_output) * 100);
+                            $position->total_average_output = round($position->total_output / $position->total_hours_worked * $performances[0]->daily_work_hours, 2);
+                            $position->monthly_productivity = round($position->total_average_output / $performances[0]->target->productivity * 100, 2);
+                            $position->monthly_quality = round((1 - $position->total_output_error / $position->total_output) * 100, 2);
 
                             if($position->monthly_productivity < 100 && $position->monthly_quality >= $performances[0]->target->quality)
                             {
@@ -219,9 +219,9 @@ class ReportController extends Controller
                 }
 
                 foreach ($project->positions as $position_key => $position) {                    
-                    $position->beginner_total_average_output = $position->beginner_total_hours_worked ? $position->beginner_total_output / $position->beginner_total_hours_worked * $project->first_report->daily_work_hours : 0;
-                    $position->moderately_experienced_total_average_output = $position->moderately_experienced_total_hours_worked ? $position->moderately_experienced_total_output / $position->moderately_experienced_total_hours_worked * $project->first_report->daily_work_hours : 0;
-                    $position->experienced_total_average_output = $position->experienced_total_hours_worked ? $position->experienced_total_output / $position->experienced_total_hours_worked * $project->first_report->daily_work_hours : 0;
+                    $position->beginner_total_average_output = $position->beginner_total_hours_worked ? round($position->beginner_total_output / $position->beginner_total_hours_worked * $project->first_report->daily_work_hours, 2) : 0;
+                    $position->moderately_experienced_total_average_output = $position->moderately_experienced_total_hours_worked ? round($position->moderately_experienced_total_output / $position->moderately_experienced_total_hours_worked * $project->first_report->daily_work_hours, 2) : 0;
+                    $position->experienced_total_average_output = $position->experienced_total_hours_worked ? round($position->experienced_total_output / $position->experienced_total_hours_worked * $project->first_report->daily_work_hours, 2) : 0;
                 
                     $project->beginner_total_output += $position->beginner_total_output;
                     $project->beginner_total_hours_worked += $position->beginner_total_hours_worked;
@@ -233,13 +233,13 @@ class ReportController extends Controller
                     $project->experienced_total_hours_worked += $position->experienced_total_hours_worked;
                 }
 
-                $project->beginner_total_average_output = $project->beginner_total_hours_worked ? $project->beginner_total_output / $project->beginner_total_hours_worked * $project->first_report->daily_work_hours : 0;
-                $project->moderately_experienced_total_average_output = $project->moderately_experienced_total_hours_worked ? $project->moderately_experienced_total_output / $project->moderately_experienced_total_hours_worked * $project->first_report->daily_work_hours : 0;
-                $project->experienced_total_average_output = $project->experienced_total_hours_worked ? $project->experienced_total_output / $project->experienced_total_hours_worked * $project->first_report->daily_work_hours : 0;
+                $project->beginner_total_average_output = $project->beginner_total_hours_worked ? round($project->beginner_total_output / $project->beginner_total_hours_worked * $project->first_report->daily_work_hours, 2) : 0;
+                $project->moderately_experienced_total_average_output = $project->moderately_experienced_total_hours_worked ? round($project->moderately_experienced_total_output / $project->moderately_experienced_total_hours_worked * $project->first_report->daily_work_hours, 2) : 0;
+                $project->experienced_total_average_output = $project->experienced_total_hours_worked ? round($project->experienced_total_output / $project->experienced_total_hours_worked * $project->first_report->daily_work_hours, 2) : 0;
 
                 $project->total_output = $project->beginner_total_output + $project->moderately_experienced_total_output + $project->experienced_total_output;
                 $project->total_hours_worked = $project->beginner_total_hours_worked + $project->moderately_experienced_total_hours_worked + $project->experienced_total_hours_worked;
-                $project->total_average_output = $project->total_output / $project->total_hours_worked * $project->first_report->daily_work_hours;
+                $project->total_average_output = round($project->total_output / $project->total_hours_worked * $project->first_report->daily_work_hours, 2);
             }            
         }
 
@@ -343,9 +343,9 @@ class ReportController extends Controller
                             }
 
                             $project->positions[$position_key]->head_count = $project->positions[$position_key]->beginner + $project->positions[$position_key]->moderately_experienced + $project->positions[$position_key]->experienced;
-                            $position->total_average_output = $position->total_output / $position->total_hours_worked * $performances[0]->daily_work_hours;
-                            $position->monthly_productivity = round($position->total_average_output / $performances[0]->target->productivity * 100);
-                            $position->monthly_quality = round((1 - $position->total_output_error / $position->total_output) * 100);
+                            $position->total_average_output = round($position->total_output / $position->total_hours_worked * $performances[0]->daily_work_hours, 2);
+                            $position->monthly_productivity = round($position->total_average_output / $performances[0]->target->productivity * 100, 2);
+                            $position->monthly_quality = round((1 - $position->total_output_error / $position->total_output) * 100, 2);
 
                             if($position->monthly_productivity < 100 && $position->monthly_quality >= $performances[0]->target->quality)
                             {
@@ -377,9 +377,9 @@ class ReportController extends Controller
                 }
 
                 foreach ($project->positions as $position_key => $position) {                    
-                    $position->beginner_total_average_output = $position->beginner_total_hours_worked ? $position->beginner_total_output / $position->beginner_total_hours_worked * $daily_work_hours : 0;
-                    $position->moderately_experienced_total_average_output = $position->moderately_experienced_total_hours_worked ? $position->moderately_experienced_total_output / $position->moderately_experienced_total_hours_worked * $daily_work_hours : 0;
-                    $position->experienced_total_average_output = $position->experienced_total_hours_worked ? $position->experienced_total_output / $position->experienced_total_hours_worked * $daily_work_hours : 0;
+                    $position->beginner_total_average_output = $position->beginner_total_hours_worked ? round($position->beginner_total_output / $position->beginner_total_hours_worked * $daily_work_hours, 2) : 0;
+                    $position->moderately_experienced_total_average_output = $position->moderately_experienced_total_hours_worked ? round($position->moderately_experienced_total_output / $position->moderately_experienced_total_hours_worked * $daily_work_hours, 2) : 0;
+                    $position->experienced_total_average_output = $position->experienced_total_hours_worked ? round($position->experienced_total_output / $position->experienced_total_hours_worked * $daily_work_hours, 2) : 0;
                 
                     $project->beginner_total_output += $position->beginner_total_output;
                     $project->beginner_total_hours_worked += $position->beginner_total_hours_worked;
@@ -391,13 +391,13 @@ class ReportController extends Controller
                     $project->experienced_total_hours_worked += $position->experienced_total_hours_worked;
                 }
 
-                $project->beginner_total_average_output = $project->beginner_total_hours_worked ? $project->beginner_total_output / $project->beginner_total_hours_worked * $daily_work_hours : 0;
-                $project->moderately_experienced_total_average_output = $project->moderately_experienced_total_hours_worked ? $project->moderately_experienced_total_output / $project->moderately_experienced_total_hours_worked * $daily_work_hours : 0;
-                $project->experienced_total_average_output = $project->experienced_total_hours_worked ? $project->experienced_total_output / $project->experienced_total_hours_worked * $daily_work_hours : 0;
+                $project->beginner_total_average_output = $project->beginner_total_hours_worked ? round($project->beginner_total_output / $project->beginner_total_hours_worked * $daily_work_hours, 2) : 0;
+                $project->moderately_experienced_total_average_output = $project->moderately_experienced_total_hours_worked ? round($project->moderately_experienced_total_output / $project->moderately_experienced_total_hours_worked * $daily_work_hours, 2) : 0;
+                $project->experienced_total_average_output = $project->experienced_total_hours_worked ? round($project->experienced_total_output / $project->experienced_total_hours_worked * $daily_work_hours, 2) : 0;
 
                 $project->total_output = $project->beginner_total_output + $project->moderately_experienced_total_output + $project->experienced_total_output;
                 $project->total_hours_worked = $project->beginner_total_hours_worked + $project->moderately_experienced_total_hours_worked + $project->experienced_total_hours_worked;
-                $project->total_average_output = $project->total_output / $project->total_hours_worked * $daily_work_hours;
+                $project->total_average_output = round($project->total_output / $project->total_hours_worked * $daily_work_hours, 2);
                     
             }
         }
@@ -509,9 +509,9 @@ class ReportController extends Controller
                             }
 
                             $project->positions[$position_key]->head_count = $project->positions[$position_key]->beginner + $project->positions[$position_key]->moderately_experienced + $project->positions[$position_key]->experienced;
-                            $position->total_average_output = $position->total_output / $position->total_hours_worked * $performances[0]->daily_work_hours;
-                            $position->monthly_productivity = round($position->total_average_output / $performances[0]->target->productivity * 100);
-                            $position->monthly_quality = round((1 - $position->total_output_error / $position->total_output) * 100);
+                            $position->total_average_output = round($position->total_output / $position->total_hours_worked * $performances[0]->daily_work_hours, 2);
+                            $position->monthly_productivity = round($position->total_average_output / $performances[0]->target->productivity * 100, 2);
+                            $position->monthly_quality = round((1 - $position->total_output_error / $position->total_output) * 100, 2);
 
                             if($position->monthly_productivity < 100 && $position->monthly_quality >= $performances[0]->target->quality)
                             {
@@ -543,9 +543,9 @@ class ReportController extends Controller
                 }
 
                 foreach ($project->positions as $position_key => $position) {                    
-                    $position->beginner_total_average_output = $position->beginner_total_hours_worked ? $position->beginner_total_output / $position->beginner_total_hours_worked * $project->first_report->daily_work_hours : 0;
-                    $position->moderately_experienced_total_average_output = $position->moderately_experienced_total_hours_worked ? $position->moderately_experienced_total_output / $position->moderately_experienced_total_hours_worked * $project->first_report->daily_work_hours : 0;
-                    $position->experienced_total_average_output = $position->experienced_total_hours_worked ? $position->experienced_total_output / $position->experienced_total_hours_worked * $project->first_report->daily_work_hours : 0;
+                    $position->beginner_total_average_output = $position->beginner_total_hours_worked ? round($position->beginner_total_output / $position->beginner_total_hours_worked * $project->first_report->daily_work_hours, 2) : 0;
+                    $position->moderately_experienced_total_average_output = $position->moderately_experienced_total_hours_worked ? round($position->moderately_experienced_total_output / $position->moderately_experienced_total_hours_worked * $project->first_report->daily_work_hours, 2) : 0;
+                    $position->experienced_total_average_output = $position->experienced_total_hours_worked ? round($position->experienced_total_output / $position->experienced_total_hours_worked * $project->first_report->daily_work_hours, 2) : 0;
                 
                     $project->beginner_total_output += $position->beginner_total_output;
                     $project->beginner_total_hours_worked += $position->beginner_total_hours_worked;
@@ -557,13 +557,13 @@ class ReportController extends Controller
                     $project->experienced_total_hours_worked += $position->experienced_total_hours_worked;
                 }
 
-                $project->beginner_total_average_output = $project->beginner_total_hours_worked ? $project->beginner_total_output / $project->beginner_total_hours_worked * $project->first_report->daily_work_hours : 0;
-                $project->moderately_experienced_total_average_output = $project->moderately_experienced_total_hours_worked ? $project->moderately_experienced_total_output / $project->moderately_experienced_total_hours_worked * $project->first_report->daily_work_hours : 0;
-                $project->experienced_total_average_output = $project->experienced_total_hours_worked ? $project->experienced_total_output / $project->experienced_total_hours_worked * $project->first_report->daily_work_hours : 0;
+                $project->beginner_total_average_output = $project->beginner_total_hours_worked ? round($project->beginner_total_output / $project->beginner_total_hours_worked * $project->first_report->daily_work_hours, 2) : 0;
+                $project->moderately_experienced_total_average_output = $project->moderately_experienced_total_hours_worked ? round($project->moderately_experienced_total_output / $project->moderately_experienced_total_hours_worked * $project->first_report->daily_work_hours, 2) : 0;
+                $project->experienced_total_average_output = $project->experienced_total_hours_worked ? round($project->experienced_total_output / $project->experienced_total_hours_worked * $project->first_report->daily_work_hours, 2) : 0;
 
                 $project->total_output = $project->beginner_total_output + $project->moderately_experienced_total_output + $project->experienced_total_output;
                 $project->total_hours_worked = $project->beginner_total_hours_worked + $project->moderately_experienced_total_hours_worked + $project->experienced_total_hours_worked;
-                $project->total_average_output = $project->total_output / $project->total_hours_worked * $project->first_report->daily_work_hours;
+                $project->total_average_output = round($project->total_output / $project->total_hours_worked * $project->first_report->daily_work_hours, 2);
             }            
         }
 
@@ -661,9 +661,9 @@ class ReportController extends Controller
                             }
 
                             $project->positions[$position_key]->head_count = $project->positions[$position_key]->beginner + $project->positions[$position_key]->moderately_experienced + $project->positions[$position_key]->experienced;
-                            $position->total_average_output = $position->total_output / $position->total_hours_worked * $performances[0]->daily_work_hours;
-                            $position->monthly_productivity = round($position->total_average_output / $performances[0]->target->productivity * 100);
-                            $position->monthly_quality = round((1 - $position->total_output_error / $position->total_output) * 100);
+                            $position->total_average_output = round($position->total_output / $position->total_hours_worked * $performances[0]->daily_work_hours, 2);
+                            $position->monthly_productivity = round($position->total_average_output / $performances[0]->target->productivity * 100, 2);
+                            $position->monthly_quality = round((1 - $position->total_output_error / $position->total_output) * 100, 2);
 
                             if($position->monthly_productivity < 100 && $position->monthly_quality >= $performances[0]->target->quality)
                             {
@@ -695,9 +695,9 @@ class ReportController extends Controller
                 }
 
                 foreach ($project->positions as $position_key => $position) {                    
-                    $position->beginner_total_average_output = $position->beginner_total_hours_worked ? $position->beginner_total_output / $position->beginner_total_hours_worked * $project->first_report->daily_work_hours : 0;
-                    $position->moderately_experienced_total_average_output = $position->moderately_experienced_total_hours_worked ? $position->moderately_experienced_total_output / $position->moderately_experienced_total_hours_worked * $project->first_report->daily_work_hours : 0;
-                    $position->experienced_total_average_output = $position->experienced_total_hours_worked ? $position->experienced_total_output / $position->experienced_total_hours_worked * $project->first_report->daily_work_hours : 0;
+                    $position->beginner_total_average_output = $position->beginner_total_hours_worked ? round($position->beginner_total_output / $position->beginner_total_hours_worked * $project->first_report->daily_work_hours, 2) : 0;
+                    $position->moderately_experienced_total_average_output = $position->moderately_experienced_total_hours_worked ? round($position->moderately_experienced_total_output / $position->moderately_experienced_total_hours_worked * $project->first_report->daily_work_hours, 2) : 0;
+                    $position->experienced_total_average_output = $position->experienced_total_hours_worked ? round($position->experienced_total_output / $position->experienced_total_hours_worked * $project->first_report->daily_work_hours, 2) : 0;
                 
                     $project->beginner_total_output += $position->beginner_total_output;
                     $project->beginner_total_hours_worked += $position->beginner_total_hours_worked;
@@ -709,13 +709,13 @@ class ReportController extends Controller
                     $project->experienced_total_hours_worked += $position->experienced_total_hours_worked;
                 }
 
-                $project->beginner_total_average_output = $project->beginner_total_hours_worked ? $project->beginner_total_output / $project->beginner_total_hours_worked * $project->first_report->daily_work_hours : 0;
-                $project->moderately_experienced_total_average_output = $project->moderately_experienced_total_hours_worked ? $project->moderately_experienced_total_output / $project->moderately_experienced_total_hours_worked * $project->first_report->daily_work_hours : 0;
-                $project->experienced_total_average_output = $project->experienced_total_hours_worked ? $project->experienced_total_output / $project->experienced_total_hours_worked * $project->first_report->daily_work_hours : 0;
+                $project->beginner_total_average_output = $project->beginner_total_hours_worked ? round($project->beginner_total_output / $project->beginner_total_hours_worked * $project->first_report->daily_work_hours, 2) : 0;
+                $project->moderately_experienced_total_average_output = $project->moderately_experienced_total_hours_worked ? round($project->moderately_experienced_total_output / $project->moderately_experienced_total_hours_worked * $project->first_report->daily_work_hours, 2) : 0;
+                $project->experienced_total_average_output = $project->experienced_total_hours_worked ? round($project->experienced_total_output / $project->experienced_total_hours_worked * $project->first_report->daily_work_hours, 2) : 0;
 
                 $project->total_output = $project->beginner_total_output + $project->moderately_experienced_total_output + $project->experienced_total_output;
                 $project->total_hours_worked = $project->beginner_total_hours_worked + $project->moderately_experienced_total_hours_worked + $project->experienced_total_hours_worked;
-                $project->total_average_output = $project->total_output / $project->total_hours_worked * $project->first_report->daily_work_hours;
+                $project->total_average_output = round($project->total_output / $project->total_hours_worked * $project->first_report->daily_work_hours, 2);
             }            
         }
 
@@ -802,9 +802,9 @@ class ReportController extends Controller
                                     $performances[0]->output += $performance->output;
                                     $performances[0]->output_error += $performance->output_error;
                                     $performances[0]->hours_worked += $performance->hours_worked;
-                                    $performances[0]->average_output = $performances[0]->output / $performances[0]->hours_worked * $daily_work_hours;
-                                    $performances[0]->productivity = round($performances[0]->average_output / $member->target->productivity * 100);
-                                    $performances[0]->quality = round((1 - $performances[0]->output_error / $performances[0]->output) * 100);
+                                    $performances[0]->average_output = round($performances[0]->output / $performances[0]->hours_worked * $daily_work_hours, 2);
+                                    $performances[0]->productivity = round($performances[0]->average_output / $member->target->productivity * 100, 2);
+                                    $performances[0]->quality = round((1 - $performances[0]->output_error / $performances[0]->output) * 100, 2);
                                     if($performances[0]->productivity < 100 && $performances[0]->quality >= $member->target->quality)
                                     {
                                         $member->quadrant = 'Quadrant 1'; 
@@ -846,9 +846,9 @@ class ReportController extends Controller
                         $member->total_hours_worked += $performance->hours_worked;
                     }
                     
-                    $member->total_average_output = $member->total_output / $member->total_hours_worked * $daily_work_hours;
-                    $member->monthly_productivity = round($member->total_average_output / $member->target->productivity * 100);
-                    $member->monthly_quality = round((1 - $member->total_output_error / $member->total_output) * 100);
+                    $member->total_average_output = round($member->total_output / $member->total_hours_worked * $daily_work_hours, 2);
+                    $member->monthly_productivity = round($member->total_average_output / $member->target->productivity * 100, 2);
+                    $member->monthly_quality = round((1 - $member->total_output_error / $member->total_output) * 100, 2);
 
                     if($member->monthly_productivity < 100 && $member->monthly_quality >= $member->target->quality)
                     {
@@ -917,6 +917,7 @@ class ReportController extends Controller
             foreach ($project->positions as $position_key => $position) {
                 // Beginner
                 $previous_beginner_target = Target::onlyTrashed()->where('position_id', $position->id)->where('experience', 'Beginner')->where('created_at', '<', Carbon::parse('first Monday of'. $months[(int)$month-1] .' '. (int)$year))->orderBy('created_at', 'desc')->first();
+
                 $beginner_productivity = count($previous_beginner_target) ? $previous_beginner_target : Target::where('position_id', $position->id)->where('experience', 'Beginner')->first();
 
                 // Moderately Experienced
@@ -973,9 +974,9 @@ class ReportController extends Controller
                                     $performances[0]->output += $performance->output;
                                     $performances[0]->output_error += $performance->output_error;
                                     $performances[0]->hours_worked += $performance->hours_worked;
-                                    $performances[0]->average_output = $performances[0]->output / $performances[0]->hours_worked * $daily_work_hours;
-                                    $performances[0]->productivity = round($performances[0]->average_output / $member->target->productivity * 100);
-                                    $performances[0]->quality = round((1 - $performances[0]->output_error / $performances[0]->output) * 100);
+                                    $performances[0]->average_output = round($performances[0]->output / $performances[0]->hours_worked * $daily_work_hours, 2);
+                                    $performances[0]->productivity = round($performances[0]->average_output / $member->target->productivity * 100, 2);
+                                    $performances[0]->quality = round((1 - $performances[0]->output_error / $performances[0]->output) * 100, 2);
                                     if($performances[0]->productivity < 100 && $performances[0]->quality >= $member->target->quality)
                                     {
                                         $member->quadrant = 'Quadrant 1'; 
@@ -1017,9 +1018,9 @@ class ReportController extends Controller
                         $member->total_hours_worked += $performance->hours_worked;
                     }
                     
-                    $member->total_average_output = $member->total_output / $member->total_hours_worked * $daily_work_hours;
-                    $member->monthly_productivity = round($member->total_average_output / $member->target->productivity * 100);
-                    $member->monthly_quality = round((1 - $member->total_output_error / $member->total_output) * 100);
+                    $member->total_average_output = round($member->total_output / $member->total_hours_worked * $daily_work_hours, 2);
+                    $member->monthly_productivity = round($member->total_average_output / $member->target->productivity * 100, 2);
+                    $member->monthly_quality = round((1 - $member->total_output_error / $member->total_output) * 100, 2);
 
                     if($member->monthly_productivity < 100 && $member->monthly_quality >= $member->target->quality)
                     {
@@ -1048,8 +1049,6 @@ class ReportController extends Controller
             }
 
         }
-
-        // return $this->projects; 
 
         Excel::create('PQR Monthly Summary '. $this->date_start->toFormattedDateString() . ' to ' . $this->date_end->toFormattedDateString(), function($excel){
             foreach ($this->projects as $project_key => $project) {

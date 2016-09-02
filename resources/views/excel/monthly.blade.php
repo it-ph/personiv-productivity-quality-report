@@ -13,21 +13,21 @@
 	<tr>
 		<td align="center">Beginner (less than 3 months)</td>
 		@foreach($project->beginner as $beginner)
-			<td align="center">{{ $beginner->productivity }}</td>
+			<td align="center">{{ round($beginner->productivity, 2) }}</td>
 		@endforeach
 	</tr>
 	<!-- Moderately Experienced -->
 	<tr>
 		<td align="center">Moderately Experienced (3 to 6 months)</td>
 		@foreach($project->moderately_experienced as $moderately_experienced)
-			<td align="center">{{ $moderately_experienced->productivity }}</td>
+			<td align="center">{{ round($moderately_experienced->productivity, 2) }}</td>
 		@endforeach
 	</tr>
 	<!-- Experienced -->
 	<tr>
 		<td align="center">Experienced (6 months and beyond)</td>
 		@foreach($project->experienced as $experienced)
-			<td align="center">{{ $experienced->productivity }}</td>
+			<td align="center">{{ round($experienced->productivity, 2) }}</td>
 		@endforeach
 	</tr>
 	<tr>
@@ -36,7 +36,7 @@
 	<tr>
 		<th align="center">Quality</th>
 		@foreach($project->quality as $quality)
-			<td align="center">{{ $quality->quality }}%</td>
+			<td align="center">{{ round($quality->quality, 2) }}%</td>
 		@endforeach
 	</tr>
 </table>
@@ -68,14 +68,14 @@
 			<td align="center">{{ $member->full_name }}</td>
 			<td align="center">{{ $member->experience->experience }}</td>
 			@foreach($project->weeks as $week_key => $week)
-				<td align="center">{{ round($member->performances[$week_key]->productivity,1) }}%</td>
-				<td align="center">{{ round($member->performances[$week_key]->quality,1) }}%</td>
+				<td align="center">{{ round($member->performances[$week_key]->productivity,2) }}%</td>
+				<td align="center">{{ round($member->performances[$week_key]->quality,2) }}%</td>
 			@endforeach
-			<td align="center">{{ $member->total_output }}</td>
-			<td align="center">{{ $member->total_output_error }}</td>
-			<td align="center">{{ $member->total_hours_worked }}</td>
-			<td align="center">{{ $member->monthly_productivity }}%</td>
-			<td align="center">{{ $member->monthly_quality }}%</td>
+			<td align="center">{{ round($member->total_output,1) }}</td>
+			<td align="center">{{ round($member->total_output_error,1) }}</td>
+			<td align="center">{{ round($member->total_hours_worked,1) }}</td>
+			<td align="center">{{ round($member->monthly_productivity,2) }}%</td>
+			<td align="center">{{ round($member->monthly_quality,2) }}%</td>
 			<td align="center">{{ $member->quadrant }}</td>
 		</tr>
 	@endforeach

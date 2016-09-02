@@ -4,11 +4,11 @@
 	</tr>
 	<tr>
 		<th align="center">Average Productivity:</th>
-		<th align="center">{{ round($project->average_productivity,1) }}%</th>
+		<th align="center">{{ round($project->average_productivity,2) }}%</th>
 	</tr>
 	<tr>
 		<th align="center">Average Quality:</th>
-		<th align="center">{{ round($project->average_quality,1) }}%</th>
+		<th align="center">{{ round($project->average_quality,2) }}%</th>
 	</tr>
 </table>
 <table>
@@ -31,13 +31,13 @@
 		<tr>
 			<td align="center">{{ $performance->date_start }}</td>
 			<td align="center">{{ $performance->date_end }}</td>
-			<td align="center">{{ $performance->daily_work_hours }}</td>
-			<td align="center">{{ $performance->hours_worked }}</td>
-			<td align="center">{{ $performance->output }}</td>
-			<td align="center">{{ $performance->output_error }}</td>
-			<td align="center">{{ $performance->average_output }}</td>
-			<td align="center">{{ round($performance->productivity ,1) }}%</td>
-			<td align="center">{{ round($performance->quality,1) }}%</td>
+			<td align="center">{{ round($performance->daily_work_hours, 1) }}</td>
+			<td align="center">{{ round($performance->hours_worked, 1) }}</td>
+			<td align="center">{{ round($performance->output, 1) }}</td>
+			<td align="center">{{ round($performance->output_error, 1) }}</td>
+			<td align="center">{{ round($performance->average_output, 2) }}</td>
+			<td align="center">{{ round($performance->productivity ,2) }}%</td>
+			<td align="center">{{ round($performance->quality,2) }}%</td>
 			<td align="center">{{ $performance->quadrant }}</td>
 		</tr>
 	@endforeach
@@ -53,12 +53,12 @@
 	</tr>
 	<tr>
 		<td align="center" colspan="3"></td>
-		<td align="center">{{ $member->position->total_hours_worked }}</td>
-		<td align="center">{{ $member->position->total_output }}</td>
-		<td align="center">{{ $member->position->total_output_error }}</td>
-		<td align="center">{{ $member->position->total_average_output }}</td>
-		<td align="center">{{ round($member->position->productivity,1) }}%</td>
-		<td align="center">{{ round($member->position->quality,1) }}%</td>
+		<td align="center">{{ round($member->position->total_hours_worked, 1) }}</td>
+		<td align="center">{{ round($member->position->total_output, 1) }}</td>
+		<td align="center">{{ round($member->position->total_output_error, 1) }}</td>
+		<td align="center">{{ round($member->position->total_average_output, 2) }}</td>
+		<td align="center">{{ round($member->position->productivity,2) }}%</td>
+		<td align="center">{{ round($member->position->quality,2) }}%</td>
 		<td align="center">{{ $member->position->quadrant }}</td>
 	</tr>
 </table>

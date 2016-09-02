@@ -255,20 +255,32 @@ adminModule
 			report.project.quality = [];
 
 			angular.forEach(report.project.positions, function(position){
+				var targets = [];
+				var index = 0;
 				angular.forEach(position.targets, function(target){
-					var index = 0;
-					if(target.deleted_at && new Date(target.created_at) < report.date_start){
-						position.targets.splice(index, 0, target);
+					var target_created_at = new Date(target.created_at).setHours(0,0,0,0);
+					if(!target.deleted_at && target_created_at <= new Date(report.date_start)){
+						targets.splice(index, 0, target);
+						index++;
 					}
-					else if(!target.deleted_at){
-						position.targets.splice(index, 0, target);
+					else if(target.deleted_at && target_created_at < report.date_start){
+						targets.splice(index, 0, target);
+						index++;
 					}
 				})
 
-				var beginner_productivity = $filter('filter')(position.targets, {experience:'Beginner'}, true);
-				var moderately_experienced_productivity = $filter('filter')(position.targets, {experience:'Moderately Experienced'}, true);
-				var experienced_productivity = $filter('filter')(position.targets, {experience:'Experienced'}, true);
-				var quality = $filter('filter')(position.targets, {experience:'Experienced'}, true);
+				if(targets.length){
+					var beginner_productivity = $filter('filter')(targets, {experience:'Beginner'}, true);
+					var moderately_experienced_productivity = $filter('filter')(targets, {experience:'Moderately Experienced'}, true);
+					var experienced_productivity = $filter('filter')(targets, {experience:'Experienced'}, true);
+					var quality = $filter('filter')(targets, {experience:'Experienced'}, true);
+				}
+				else{
+					var beginner_productivity = $filter('filter')(position.targets, {experience:'Beginner', deleted_at:null}, true);
+					var moderately_experienced_productivity = $filter('filter')(position.targets, {experience:'Moderately Experienced', deleted_at:null}, true);
+					var experienced_productivity = $filter('filter')(position.targets, {experience:'Experienced', deleted_at:null}, true);
+					var quality = $filter('filter')(position.targets, {experience:'Experienced', deleted_at:null}, true);
+				}
 
 				report.project.beginner.push(beginner_productivity[0].productivity);
 				report.project.moderately_experienced.push(moderately_experienced_productivity[0].productivity);

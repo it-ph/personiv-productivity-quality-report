@@ -66,8 +66,8 @@ class PerformanceController extends Controller
 
             $this->member->position->total_average_output = round($this->member->position->total_output / $this->member->position->total_hours_worked * $daily_work_hours, 2);
 
-            $this->member->position->productivity = round($this->member->position->total_average_output / $this->member->performances[0]->target->productivity * 100);
-            $this->member->position->quality = round((1 - $this->member->position->total_output_error / $this->member->position->total_output) * 100);
+            $this->member->position->productivity = round($this->member->position->total_average_output / $this->member->performances[0]->target->productivity * 100, 2);
+            $this->member->position->quality = round((1 - $this->member->position->total_output_error / $this->member->position->total_output) * 100, 2);
 
             if($this->member->position->productivity < $this->member->performances[0]->target->productivity && $this->member->position->quality >= $this->member->performances[0]->target->quality)
             {
@@ -166,8 +166,8 @@ class PerformanceController extends Controller
 
                         $position->total_average_output = round($position->total_output / $position->total_hours_worked * $daily_work_hours, 2);
 
-                        $position->productivity = round($position->total_average_output / $position->performances[0]->target->productivity * 100);
-                        $position->quality = round((1 - $position->total_output_error / $position->total_output) * 100);
+                        $position->productivity = round($position->total_average_output / $position->performances[0]->target->productivity * 100, 2);
+                        $position->quality = round((1 - $position->total_output_error / $position->total_output) * 100, 2);
 
                         if($position->productivity < $position->performances[0]->target->productivity && $position->quality >= $position->performances[0]->target->quality)
                         {
@@ -301,9 +301,9 @@ class PerformanceController extends Controller
                     $position->total_output_error += $performance->output_error;
                 }
 
-                $position->total_average_output = $position->total_output / $position->total_hours_worked * $position->performances[0]->daily_work_hours;
-                $position->weekly_productivity = round($position->total_average_output / $position->performances[0]->target->productivity * 100);
-                $position->weekly_quality = round((1 - $position->total_output_error / $position->total_output) * 100);
+                $position->total_average_output = round($position->total_output / $position->total_hours_worked * $position->performances[0]->daily_work_hours, 2);
+                $position->weekly_productivity = round($position->total_average_output / $position->performances[0]->target->productivity * 100, 2);
+                $position->weekly_quality = round((1 - $position->total_output_error / $position->total_output) * 100, 2);
 
                 if($position->weekly_productivity < $position->performances[0]->target->productivity && $position->weekly_quality >= $position->performances[0]->target->quality)
                 {
@@ -368,9 +368,9 @@ class PerformanceController extends Controller
                     $position->total_output_error += $performance->output_error;
                 }
 
-                $position->total_average_output = $position->total_output / $position->total_hours_worked * $position->performances[0]->daily_work_hours;
-                $position->monthly_productivity = round($position->total_average_output / $position->performances[0]->target->productivity * 100);
-                $position->monthly_quality = round((1 - $position->total_output_error / $position->total_output) * 100);
+                $position->total_average_output = round($position->total_output / $position->total_hours_worked * $position->performances[0]->daily_work_hours, 2);
+                $position->monthly_productivity = round($position->total_average_output / $position->performances[0]->target->productivity * 100, 2);
+                $position->monthly_quality = round((1 - $position->total_output_error / $position->total_output) * 100, 2);
 
                 if($position->monthly_productivity < $position->performances[0]->target->productivity && $position->monthly_quality >= $position->performances[0]->target->quality)
                 {
@@ -675,9 +675,9 @@ class PerformanceController extends Controller
                 // store the rounded value
                 $performance->average_output = round($request->input($i.'.output') / $request->input($i.'.hours_worked') * $request->input($i.'.daily_work_hours'), 2);
                 // average output / target output * 100 to convert to percentage
-                $performance->productivity = round($performance->average_output / $target->productivity * 100, 1);
+                $performance->productivity = round($performance->average_output / $target->productivity * 100, 2);
                 // 1 - output w/error / output * 100 to convert to percentage
-                $performance->quality = round((1 - $performance->output_error / $performance->output) * 100, 1);
+                $performance->quality = round((1 - $performance->output_error / $performance->output) * 100, 2);
 
                 // Quadrant
                 if($performance->productivity < 100 && $performance->quality >= $target->quality)
@@ -783,11 +783,11 @@ class PerformanceController extends Controller
                 $performance->output_error = $request->input($i.'.output_error');
                 // Round((Output / Hours Worked) * Daily Work Hours)
                 // store the rounded value
-                $performance->average_output = $request->input($i.'.output') / $request->input($i.'.hours_worked') * $request->input($i.'.daily_work_hours');
+                $performance->average_output = round($request->input($i.'.output') / $request->input($i.'.hours_worked') * $request->input($i.'.daily_work_hours'), 2);
                 // average output / target output * 100 to convert to percentage
-                $performance->productivity = round($performance->average_output / $target->productivity * 100);
+                $performance->productivity = round($performance->average_output / $target->productivity * 100, 2);
                 // 1 - output w/error / output * 100 to convert to percentage
-                $performance->quality = round((1 - $performance->output_error / $performance->output) * 100);
+                $performance->quality = round((1 - $performance->output_error / $performance->output) * 100, 2);
                 
                 if($performance->productivity < 100 && $performance->quality >= $target->quality)
                 {
