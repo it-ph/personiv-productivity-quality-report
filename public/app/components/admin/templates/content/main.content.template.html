@@ -214,7 +214,7 @@
 									</a>
 								</th> -->
 							</tr>
-							<tr ng-repeat="item in detail.members | orderBy:sortType:sortReverse" ng-click="view(item, detail.date_start, detail.date_end)" ng-if="!item.member.deleted_at && item.average_productivity && item.average_quality">
+							<tr ng-repeat="item in detail.members | orderBy:sortType:sortReverse" ng-click="view(item, detail.date_start, detail.date_end)" ng-if="item.average_productivity && item.average_quality">
 								<td>{{item.full_name}}</td>
 								<!-- <td>{{item.position}}</td> -->
 								<td>{{item.experience}}</td>

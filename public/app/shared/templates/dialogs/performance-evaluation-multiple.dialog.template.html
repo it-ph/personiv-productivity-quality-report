@@ -6,8 +6,8 @@
 					<md-icon class="md-avatar-icon mdi mdi-account" aria-label="Member"></md-icon>
 					<div class="md-list-item-text">
 						<h3>{{evaluation.full_name}}</h3>
-						<h4>Average Productivity: {{evaluation.average_productivity}}%</h4>
-						<p>Average Quality: {{evaluation.average_quality}}%</p>
+						<h4>Average Productivity: {{evaluation.average_productivity | number: 2}}%</h4>
+						<p>Average Quality: {{evaluation.average_quality | number: 2}}%</p>
 					</div>
 				</md-list-item>
 			</md-list>
@@ -43,9 +43,9 @@
 						<td>{{performance.hours_worked}}</td>
 						<td>{{performance.output | number: 1}}</td>
 						<td>{{performance.output_error | number: 1}}</td>
-						<td>{{performance.average_output | number: 1}}</td>
-						<td>{{performance.productivity | number: 1}}%</td>
-						<td>{{performance.quality | number: 1}}%</td>
+						<td>{{performance.average_output | number: 2}}</td>
+						<td>{{performance.productivity | number: 2}}%</td>
+						<td>{{performance.quality | number: 2}}%</td>
 						<td>{{performance.quadrant}}</td>
 					</tr>
 					<tr>
@@ -63,9 +63,9 @@
 						<td>{{position.total_hours_worked}}</td>
 						<td>{{position.total_output | number: 1}}</td>
 						<td>{{position.total_output_error | number: 1}}</td>
-						<td>{{position.total_average_output | number: 1}}</td>
-						<td>{{position.productivity}}%</td>
-						<td>{{position.quality}}%</td>
+						<td>{{position.total_average_output | number: 2}}</td>
+						<td>{{position.productivity | number: 2}}%</td>
+						<td>{{position.quality | number: 2}}%</td>
 						<td>{{position.quadrant}}</td>
 					</tr>
 				</table>
