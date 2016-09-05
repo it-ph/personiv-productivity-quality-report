@@ -181,7 +181,9 @@ teamLeaderModule
 						project.count = 0;
 
 						angular.forEach(project.positions, function(position){
-							project.count += position.head_count;
+							if(position.head_count){
+								project.count += position.head_count;
+							}
 						});
 
 						project.date_start = new Date(project.date_start);

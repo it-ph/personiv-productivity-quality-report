@@ -146,7 +146,9 @@ adminModule
 						report.date_start = new Date(report.date_start);
 						report.count = 0;
 						angular.forEach(report.positions, function(position){
-							report.count += position.head_count;
+							if(position.head_count){
+								report.count += position.head_count;
+							}
 						});
 						
 						angular.forEach(report.members, function(member){
@@ -208,7 +210,9 @@ adminModule
 							report.count = 0;
 							
 							angular.forEach(report.positions, function(position){
-								report.count += position.head_count;
+								if(position.head_count){
+									report.count += position.head_count;
+								}
 							});
 
 							angular.forEach(report.members, function(member){
