@@ -135,12 +135,22 @@ teamLeaderModule
 
 		$scope.checkAllPerformance = function(){
 			angular.forEach($scope.performances, function(performance){
+				performance.weekly_hours = $scope.details.weekly_hours;
 				if(performance.include){
 					performance.include = false;
+					$scope.checkLimitAll = false;
 				}
 				else{
-					performance.include = true;	
-					$scope.checkLimit(performance);
+					performance.include = true;
+					$scope.checkLimitAll = true;
+					// $scope.checkLimit(performance);
+				}
+
+				if($scope.checkLimitAll){
+					Performance.checkLimitEditAll($scope.performances)
+						.success(function(data){
+							$scope.performances = data;
+						})
 				}
 
 			});
@@ -149,7 +159,7 @@ teamLeaderModule
 		$scope.checkLimit = function(data){
 			var idx = $scope.performances.indexOf(data);
 			// gets the number of days worked in a day then multiply it to the daily work hours to get weekly limit
-			$scope.details.current_hours_worked = $scope.performances[idx].hours_worked;
+			$scope.details.current_hours_worked = data.hours_worked;
 			Performance.checkLimitEdit($scope.performances[idx].member_id, $scope.details)
 				.success(function(data){
 					$scope.performances[idx].limit = data;
