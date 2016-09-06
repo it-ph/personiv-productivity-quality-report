@@ -521,6 +521,7 @@ class PerformanceController extends Controller
                 $performance->limit = round($request->input($i.'.weekly_hours') - $hours_worked + $request->input($i.'.current_hours_worked'), 1);
             }
 
+            $performance->date_started = $request->input($i.'.date_started');
             $performance->experience = $request->input($i.'.experience');
             $performance->include = true;
             $performance->weekly_hours = $request->input($i.'.weekly_hours');
