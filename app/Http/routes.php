@@ -141,4 +141,5 @@ Route::group(['middleware' => 'auth'], function () {
 	Route::post('activity-report-updated', 'ActivityController@reportUpdated');
 	Route::post('activity-report-deleted', 'ActivityController@reportDeleted');
 	Route::post('performance-check-limit-all', 'PerformanceController@checkLimitAll');
+	Route::post('performance-check-limit-edit-all', 'PerformanceController@checkLimitEditAll');
 });

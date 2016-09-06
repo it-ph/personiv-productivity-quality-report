@@ -445,7 +445,7 @@ class PerformanceController extends Controller
     }
     public function report($reportID)
     {
-        return Performance::with(['member' => function($query){ $query->with('experiences'); }])->with('project', 'target')->where('report_id', $reportID)->get();
+        return Performance::with(['member' => function($query){ $query->withTrashed()->with('experiences'); }])->with('project')->with(['target' => function($query){ $query->withTrashed(); }])->where('report_id', $reportID)->get();
 
         // return DB::table('performances')
         //     ->join('members', 'members.id', '=', 'performances.member_id')
@@ -492,6 +492,43 @@ class PerformanceController extends Controller
         $limit = $request->weekly_hours - $hours_worked + $request->current_hours_worked;
 
         return round($limit,1);
+    }
+    public function checkLimitEditAll(Request $request)
+    {
+        $performances_array = array();
+
+        for ($i=0; $i < count($request->all()); $i++) { 
+            $date_start = $request->input($i.'.date_start');
+            $date_end = $request->input($i.'.date_end');
+
+            // fetch all records with the same report details
+            $performances = Performance::where('date_start', $date_start)->whereBetween('date_end', [$date_start, $date_end])->where('daily_work_hours', 'like', $request->input($i.'.daily_work_hours').'%')->where('member_id', $request->input($i.'.member_id'))->orderBy('created_at', 'desc')->get();
+            
+            $hours_worked = 0;
+
+            $performance = Performance::with(['member' => function($query){ $query->withTrashed()->with('experiences'); }])->with('project')->with(['target' => function($query){ $query->withTrashed(); }])->where('id', $request->input($i.'.id'))->first();
+
+            // iterate every record to check the total of hours worked by the employee
+            foreach ($performances as $key => $value) {
+                $hours_worked += $value->hours_worked;
+                if($request->input($i.'.weekly_hours') == round($hours_worked,1))
+                {
+                    $performance->limit = $request->input($i.'.hours_worked');
+                }
+            }
+
+            if(!$performance->limit){
+                $performance->limit = round($request->input($i.'.weekly_hours') - $hours_worked + $request->input($i.'.current_hours_worked'), 1);
+            }
+
+            $performance->experience = $request->input($i.'.experience');
+            $performance->include = true;
+            $performance->weekly_hours = $request->input($i.'.weekly_hours');
+
+            array_push($performances_array, $performance);
+        }
+
+        return response()->json($performances_array);
     }
     public function checkLimitAll(Request $request)
     {

@@ -51,5 +51,8 @@ sharedModule
 			checkLimitAll: function(data){
 				return $http.post(urlBase + '-check-limit-all', data);
 			},
+			checkLimitEditAll: function(data){
+				return $http.post(urlBase + '-check-limit-edit-all', data);
+			},
 		}
 	}])
