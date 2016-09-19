@@ -32,8 +32,8 @@
 						<td>{{item.member.full_name}}</td>
 						<td ng-class="item.position.name != item.performance.position.name ? 'primary-text' : 'main-text'">{{item.position.name}}</td>
 						<td ng-class="item.hours_worked != item.performance.hours_worked ? 'primary-text' : 'main-text'">{{item.hours_worked}}</td>
-						<td ng-class="item.output != item.performance.output ? 'primary-text' : 'main-text'">{{item.output}}</td>
-						<td ng-class="item.output_error != item.performance.output_error ? 'primary-text' : 'main-text'">{{item.output_error}}</td>
+						<td ng-class="item.output != item.performance.output ? 'primary-text' : 'main-text'">{{item.output | number: 2}}</td>
+						<td ng-class="item.output_error != item.performance.output_error ? 'primary-text' : 'main-text'">{{item.output_error | number: 2}}</td>
 					</tr>
 				</table>
 			</div>
@@ -49,8 +49,8 @@
 					<tr ng-repeat="item in history">
 						<td ng-class="item.position.name != item.performance.position.name ? 'primary-text' : 'main-text'">{{item.performance.position.name}}</td>
 						<td ng-class="item.hours_worked != item.performance.hours_worked ? 'primary-text' : 'main-text'">{{item.performance.hours_worked}}</td>
-						<td ng-class="item.output != item.performance.output ? 'primary-text' : 'main-text'">{{item.performance.output}}</td>
-						<td ng-class="item.output_error != item.performance.output_error ? 'primary-text' : 'main-text'">{{item.performance.output_error}}</td>
+						<td ng-class="item.output != item.performance.output ? 'primary-text' : 'main-text'">{{item.performance.output | number: 2}}</td>
+						<td ng-class="item.output_error != item.performance.output_error ? 'primary-text' : 'main-text'">{{item.performance.output_error | number: 2}}</td>
 					</tr>
 				</table>
 			</div>

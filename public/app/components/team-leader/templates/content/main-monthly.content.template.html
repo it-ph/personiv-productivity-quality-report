@@ -36,45 +36,45 @@
 								</tr>
 								<tr>
 									<th>Beginner</th>
-									<td>{{detail.beginner_total_output | number: 1}}</td>
+									<td>{{detail.beginner_total_output | number: 2}}</td>
 									<td>{{detail.beginner_total_hours_worked | number: 1}}</td>
-									<td>{{detail.beginner_total_average_output | number: 1}}</td>
+									<td>{{detail.beginner_total_average_output | number: 2}}</td>
 								</tr>
 								<tr ng-repeat="position in detail.positions" ng-if="position.beginner_total_hours_worked">
 									<td>{{position.name}}</td>
-									<td>{{position.beginner_total_output | number: 1}}</td>
+									<td>{{position.beginner_total_output | number: 2}}</td>
 									<td>{{position.beginner_total_hours_worked | number: 1}}</td>
-									<td>{{position.beginner_total_average_output | number: 1}}</td>
+									<td>{{position.beginner_total_average_output | number: 2}}</td>
 								</tr>
 								<tr>
 									<th>Moderately Experienced</th>
-									<td>{{detail.moderately_experienced_total_output | number: 1}}</td>
+									<td>{{detail.moderately_experienced_total_output | number: 2}}</td>
 									<td>{{detail.moderately_experienced_total_hours_worked | number: 1}}</td>
-									<td>{{detail.moderately_experienced_total_average_output | number: 1}}</td>
+									<td>{{detail.moderately_experienced_total_average_output | number: 2}}</td>
 								</tr>
 								<tr ng-repeat="position in detail.positions" ng-if="position.moderately_experienced_total_hours_worked">
 									<td>{{position.name}}</td>
-									<td>{{position.moderately_experienced_total_output | number: 1}}</td>
+									<td>{{position.moderately_experienced_total_output | number: 2}}</td>
 									<td>{{position.moderately_experienced_total_hours_worked | number: 1}}</td>
-									<td>{{position.moderately_experienced_total_average_output | number: 1}}</td>
+									<td>{{position.moderately_experienced_total_average_output | number: 2}}</td>
 								</tr>
 								<tr>
 									<th>Experienced</th>
-									<td>{{detail.experienced_total_output | number: 1}}</td>
+									<td>{{detail.experienced_total_output | number: 2}}</td>
 									<td>{{detail.experienced_total_hours_worked | number: 1}}</td>
-									<td>{{detail.experienced_total_average_output | number: 1}}</td>
+									<td>{{detail.experienced_total_average_output | number: 2}}</td>
 								</tr>
 								<tr ng-repeat="position in detail.positions" ng-if="position.experienced_total_hours_worked">
 									<td>{{position.name}}</td>
-									<td>{{position.experienced_total_output | number: 1}}</td>
+									<td>{{position.experienced_total_output | number: 2}}</td>
 									<td>{{position.experienced_total_hours_worked | number: 1}}</td>
-									<td>{{position.experienced_total_average_output | number: 1}}</td>
+									<td>{{position.experienced_total_average_output | number: 2}}</td>
 								</tr>
 								<tr>
 									<th>Grand Total</th>
-									<th>{{detail.total_output | number: 1}}</th>
+									<th>{{detail.total_output | number: 2}}</th>
 									<th>{{detail.total_hours_worked | number: 1}}</th>
-									<th>{{detail.total_average_output | number: 1}}</th>
+									<th>{{detail.total_average_output | number: 2}}</th>
 								</tr>
 							</table>
 						</div>					
@@ -136,8 +136,8 @@
 							<tr ng-repeat="item in detail.members | orderBy:sortType:sortReverse" ng-click="view(item, detail.date_start, detail.date_end)" ng-if="item.average_productivity && item.average_quality">
 								<td>{{item.member.full_name}}</td>
 								<td>{{item.experience}}</td>
-								<td><span ng-if="!item.average_productivity">0</span>{{item.average_productivity}}%</td>
-								<td><span ng-if="!item.average_quality">0</span>{{item.average_quality}}%</td>
+								<td><span ng-if="!item.average_productivity">0</span>{{item.average_productivity | number: 2}}%</td>
+								<td><span ng-if="!item.average_quality">0</span>{{item.average_quality | number: 2}}%</td>
 							</tr>
 						</table>
 					</div>
