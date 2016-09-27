@@ -15,12 +15,14 @@
 //     return view('welcome');
 // });
 
-Route::get('/', function () {
-	if (Auth::check()) {
-		return redirect('/home');
-    }
-    return view('auth.login');
-});
+// Route::get('/', function () {
+// 	if (Auth::check()) {
+// 		return redirect('/home');
+//     }
+//     return view('auth.login');
+// });
+
+Route::get('/', 'HomeController@home');
 
 // Authentication routes...
 Route::get('auth/login', 'Auth\AuthController@getLogin');
