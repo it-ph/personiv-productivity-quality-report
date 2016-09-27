@@ -568,7 +568,6 @@ class ReportController extends Controller
         }
 
         return $projects;
-
     }
     public function monthly()
     {
@@ -837,7 +836,7 @@ class ReportController extends Controller
                         }
 
 
-                        $date_end->addWeek(5);
+                        $date_end->addDays(5);
                     }
 
                     foreach ($member->performances as $performance_key => $performance) {
@@ -1009,7 +1008,7 @@ class ReportController extends Controller
                         }
 
 
-                        $date_end->addWeek(5);
+                        $date_end->addDays(5);
                     }
 
                     foreach ($member->performances as $performance_key => $performance) {
