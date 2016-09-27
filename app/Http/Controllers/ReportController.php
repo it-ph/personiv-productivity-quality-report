@@ -725,7 +725,7 @@ class ReportController extends Controller
     {
         $months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
         $this->date_start = new Carbon('first Monday of '. $months[(int)$month-1] .' '. $year);
-        $this->date_end = Carbon::parse('last Monday of '. $months[(int)$month-1] .' '. $year)->addDay();
+        $this->date_end = Carbon::parse('last Monday of '. $months[(int)$month-1] .' '. $year)->addDays(5);
 
         $this->projects = DB::table('projects')->get();
 
@@ -836,7 +836,7 @@ class ReportController extends Controller
                         }
 
 
-                        $date_end->addDays(5);
+                       $date_end->addWeek();
                     }
 
                     foreach ($member->performances as $performance_key => $performance) {
@@ -896,7 +896,7 @@ class ReportController extends Controller
     {
         $months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
         $this->date_start = new Carbon('first Monday of '. $months[(int)$month-1] .' '. $year);
-        $this->date_end = Carbon::parse('last Monday of '. $months[(int)$month-1] .' '. $year)->addDay();
+        $this->date_end = Carbon::parse('last Monday of '. $months[(int)$month-1] .' '. $year)->addDays(5);
 
         $this->projects = DB::table('projects')->where('department_id', $department_id)->get();
 
@@ -1008,7 +1008,7 @@ class ReportController extends Controller
                         }
 
 
-                        $date_end->addDays(5);
+                        $date_end->addWeek();
                     }
 
                     foreach ($member->performances as $performance_key => $performance) {
@@ -1359,12 +1359,12 @@ class ReportController extends Controller
     }
     public function searchDepartment(Request $request, $id)
     {
-        return Report::with('team_leader')->with(['performances' => function($query){ $query->with(['target' => function($query){ $query->withTrashed(); }])->with(['member' => function($query){ $query->withTrashed()->with('experiences');}])->with('position'); }])->with(['project' => function($query){ $query->with(['positions' => function($query){ $query->with(['targets' => function($query){ $query->withTrashed()->orderBy('created_at', 'desc'); }]);}]); }])->where('department_id', $id)->where('date_start', Carbon::parse($request->date_start))->where('date_end', Carbon::parse($request->date_end))->orderBy('date_start', 'desc')->get();
+        return Report::with('team_leader')->with(['performances' => function($query){ $query->with(['target' => function($query){ $query->withTrashed(); }])->with(['member' => function($query){ $query->withTrashed()->with('experiences');}])->with('position'); }])->with(['project' => function($query){ $query->with(['positions' => function($query){ $query->with(['targets' => function($query){ $query->withTrashed()->orderBy('created_at', 'desc'); }]);}]); }])->where('department_id', $id)->whereBetween('date_start', [Carbon::parse($request->date_start), Carbon::parse($request->date_end)])->orderBy('date_start', 'desc')->get();
     }
 
     public function search(Request $request)
     {
-        return Report::with('team_leader')->with(['performances' => function($query){ $query->with(['target' => function($query){ $query->withTrashed();}])->with(['member' => function($query){ $query->withTrashed()->with('experiences');}])->with('position'); }])->with(['project' => function($query){ $query->with(['positions' => function($query){ $query->with(['targets' => function($query){ $query->withTrashed()->orderBy('created_at', 'desc'); }]);}]); }])->where('department_id', Auth::user()->department_id)->where('date_start', Carbon::parse($request->date_start))->where('date_end', Carbon::parse($request->date_end))->orderBy('date_start', 'desc')->get();
+        return Report::with('team_leader')->with(['performances' => function($query){ $query->with(['target' => function($query){ $query->withTrashed();}])->with(['member' => function($query){ $query->withTrashed()->with('experiences');}])->with('position'); }])->with(['project' => function($query){ $query->with(['positions' => function($query){ $query->with(['targets' => function($query){ $query->withTrashed()->orderBy('created_at', 'desc'); }]);}]); }])->where('department_id', Auth::user()->department_id)->whereBetween('date_start', [Carbon::parse($request->date_start), Carbon::parse($request->date_end)])->orderBy('date_start', 'desc')->get();
     }
     public function paginateDetails()
     {
