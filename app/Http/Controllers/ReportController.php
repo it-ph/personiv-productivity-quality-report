@@ -1050,6 +1050,8 @@ class ReportController extends Controller
 
         }
 
+        // return $this->projects; 
+
         Excel::create('PQR Monthly Summary '. $this->date_start->toFormattedDateString() . ' to ' . $this->date_end->toFormattedDateString(), function($excel){
             foreach ($this->projects as $project_key => $project) {
                 $this->project = $project;
@@ -1358,7 +1360,7 @@ class ReportController extends Controller
     }
     public function searchDepartment(Request $request, $id)
     {
-        return Report::with('team_leader')->with(['performances' => function($query){ $query->with(['member' => function($query){ $query->withTrashed()->with('experiences');}])->with('position'); }])->with(['project' => function($query){ $query->with(['positions' => function($query){ $query->with(['targets' => function($query){ $query->withTrashed()->orderBy('created_at', 'desc'); }]);}]); }])->where('department_id', $id)->where('date_start', Carbon::parse($request->date_start))->where('date_end', Carbon::parse($request->date_end))->orderBy('date_start', 'desc')->get();
+        return Report::with('team_leader')->with(['performances' => function($query){ $query->with(['target' => function($query){ $query->withTrashed(); }])->with(['member' => function($query){ $query->withTrashed()->with('experiences');}])->with('position'); }])->with(['project' => function($query){ $query->with(['positions' => function($query){ $query->with(['targets' => function($query){ $query->withTrashed()->orderBy('created_at', 'desc'); }]);}]); }])->where('department_id', $id)->where('date_start', Carbon::parse($request->date_start))->where('date_end', Carbon::parse($request->date_end))->orderBy('date_start', 'desc')->get();
     }
 
     public function search(Request $request)

@@ -735,12 +735,12 @@ class PerformanceController extends Controller
                 $performance->department_id = $request->user()->department_id;
                 $performance->project_id = $request->input($i.'.project_id');
                 $performance->target_id = $target->id;
-                $performance->output = $request->input($i.'.output');
+                $performance->output = round($request->input($i.'.output'), 2);
                 $performance->date_start = $request->input($i.'.date_start');
                 $performance->date_end = $request->input($i.'.date_end');
-                $performance->hours_worked = $request->input($i.'.hours_worked');
+                $performance->hours_worked = round($request->input($i.'.hours_worked') ,2);
                 $performance->daily_work_hours = $request->input($i.'.daily_work_hours');
-                $performance->output_error = $request->input($i.'.output_error');
+                $performance->output_error = round($request->input($i.'.output_error'), 2);
                 // Round((Output / Hours Worked) * Daily Work Hours)
                 // store the rounded value
                 $performance->average_output = round($request->input($i.'.output') / $request->input($i.'.hours_worked') * $request->input($i.'.daily_work_hours'), 2);
@@ -845,12 +845,12 @@ class PerformanceController extends Controller
 
                 $performance->position_id = $request->input($i.'.position_id');
                 // $performance->project_id = $request->input($i.'.project_id');
-                $performance->output = $request->input($i.'.output');
+                $performance->output = round($request->input($i.'.output'), 2);
                 // $performance->date_start = $request->input($i.'.date_start');
                 // $performance->date_end = $request->input($i.'.date_end');
-                $performance->hours_worked = $request->input($i.'.hours_worked');
+                $performance->hours_worked = round($request->input($i.'.hours_worked'), 2);
                 // $performance->daily_work_hours = $request->input($i.'.daily_work_hours');
-                $performance->output_error = $request->input($i.'.output_error');
+                $performance->output_error = round($request->input($i.'.output_error'), 2);
                 // Round((Output / Hours Worked) * Daily Work Hours)
                 // store the rounded value
                 $performance->average_output = round($request->input($i.'.output') / $request->input($i.'.hours_worked') * $request->input($i.'.daily_work_hours'), 2);
