@@ -1363,11 +1363,11 @@ class ReportController extends Controller
 
     public function search(Request $request)
     {
-        return Report::with('team_leader')->with(['performances' => function($query){ $query->with(['member' => function($query){ $query->withTrashed()->with('experiences');}])->with('position'); }])->with(['project' => function($query){ $query->with(['positions' => function($query){ $query->with(['targets' => function($query){ $query->withTrashed()->orderBy('created_at', 'desc'); }]);}]); }])->where('department_id', Auth::user()->department_id)->where('date_start', Carbon::parse($request->date_start))->where('date_end', Carbon::parse($request->date_end))->orderBy('date_start', 'desc')->get();
+        return Report::with('team_leader')->with(['performances' => function($query){ $query->with(['target' => function($query){ $query->withTrashed();}])->with(['member' => function($query){ $query->withTrashed()->with('experiences');}])->with('position'); }])->with(['project' => function($query){ $query->with(['positions' => function($query){ $query->with(['targets' => function($query){ $query->withTrashed()->orderBy('created_at', 'desc'); }]);}]); }])->where('department_id', Auth::user()->department_id)->where('date_start', Carbon::parse($request->date_start))->where('date_end', Carbon::parse($request->date_end))->orderBy('date_start', 'desc')->get();
     }
     public function paginateDetails()
     {
-        return Report::with('team_leader')->with(['performances' => function($query){ $query->with(['member' => function($query){ $query->withTrashed()->with('experiences');}])->with('position'); }])->with(['project' => function($query){ $query->with(['positions' => function($query){ $query->with(['targets' => function($query){ $query->withTrashed()->orderBy('created_at', 'desc'); }]);}]); }])->with('team_leader')->where('department_id', Auth::user()->department_id)->orderBy('date_start', 'desc')->paginate(10);   
+        return Report::with('team_leader')->with(['performances' => function($query){ $query->with(['target' => function($query){ $query->withTrashed();}])->with(['member' => function($query){ $query->withTrashed()->with('experiences');}])->with('position'); }])->with(['project' => function($query){ $query->with(['positions' => function($query){ $query->with(['targets' => function($query){ $query->withTrashed()->orderBy('created_at', 'desc'); }]);}]); }])->with('team_leader')->where('department_id', Auth::user()->department_id)->orderBy('date_start', 'desc')->paginate(10);   
     }
     public function paginate()
     {
@@ -1454,7 +1454,7 @@ class ReportController extends Controller
 
     public function paginateDepartmentDetails($departmentID)
     {
-        return Report::with('team_leader')->with(['performances' => function($query){ $query->with(['member' => function($query){ $query->with('experiences');}])->with('position'); }])->with(['project' => function($query){ $query->with(['positions' => function($query){ $query->with(['targets' => function($query){ $query->withTrashed()->orderBy('created_at', 'desc'); }]);}]); }])->where('department_id', $departmentID)->orderBy('date_start', 'desc')->paginate(10);
+        return Report::with('team_leader')->with(['performances' => function($query){ $query->with(['target' => function($query){ $query->withTrashed(); }])->with(['member' => function($query){ $query->with('experiences');}])->with('position'); }])->with(['project' => function($query){ $query->with(['positions' => function($query){ $query->with(['targets' => function($query){ $query->withTrashed()->orderBy('created_at', 'desc'); }]);}]); }])->where('department_id', $departmentID)->orderBy('date_start', 'desc')->paginate(10);
     }
     public function paginateDepartment($departmentID)
     {

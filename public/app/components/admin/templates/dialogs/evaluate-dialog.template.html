@@ -44,7 +44,7 @@
 				<md-input-container flex>
 					<label>Departments</label>
 					<md-select name="Departments" required ng-model="details.department" ng-change="fetchProjects()">
-						<md-option ng-repeat="department in departments" value="{{ department.id }}">
+						<md-option ng-repeat="department in departments | orderBy:'name'" value="{{ department.id }}">
 							{{ department.name }}
 						</md-option>
 					</md-select>
@@ -61,7 +61,7 @@
 						<md-option value="all" ng-if="projects.length > 1">
 							All Projects
 						</md-option>
-						<md-option ng-repeat="project in projects" value="{{ project.id }}">
+						<md-option ng-repeat="project in Projects | orderBy:'name'" value="{{ project.id }}">
 							{{project.name}}
 						</md-option>
 					</md-select>
@@ -72,7 +72,7 @@
 				<md-input-container flex>
 					<label>Position</label>
 					<md-select name="Position" required ng-model="details.position" ng-disabled="!details.project">
-						<md-option ng-repeat="position in positions" value="{{ position.id }}">
+						<md-option ng-repeat="position in positions | orderBy:'name'" value="{{ position.id }}">
 							{{ position.name }}
 						</md-option>
 					</md-select>
@@ -84,7 +84,7 @@
 			<md-input-container flex>
 				<label>Member</label>
 				<md-select name="Members" required ng-model="details.member" ng-disabled="!details.position">
-					<md-option ng-repeat="member in members" value="{{ member.member_id }}">
+					<md-option ng-repeat="member in members | orderBy:'full_name'" value="{{ member.member_id }}">
 						{{ member.full_name }}
 					</md-option>
 				</md-select>

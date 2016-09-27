@@ -13,21 +13,21 @@
 	<tr>
 		<td align="center">Beginner (less than 3 months)</td>
 		@foreach($project->department->beginner as $beginner)
-			<td align="center">{{ round($beginner->productivity, 1) }}</td>
+			<td align="center">{{ round($beginner->productivity, 2) }}</td>
 		@endforeach
 	</tr>
 	<!-- Moderately Experienced -->
 	<tr>
 		<td align="center">Moderately Experienced (3 to 6 months)</td>
 		@foreach($project->department->moderately_experienced as $moderately_experienced)
-			<td align="center">{{ round($moderately_experienced->productivity, 1) }}</td>
+			<td align="center">{{ round($moderately_experienced->productivity, 2) }}</td>
 		@endforeach
 	</tr>
 	<!-- Experienced -->
 	<tr>
 		<td align="center">Experienced (6 months and beyond)</td>
 		@foreach($project->department->experienced as $experienced)
-			<td align="center">{{ round($experienced->productivity, 1) }}</td>
+			<td align="center">{{ round($experienced->productivity, 2) }}</td>
 		@endforeach
 	</tr>
 	<tr>
@@ -63,9 +63,9 @@
 				<td align="center">{{ $performance->position->name }}</td>
 				<td align="center">{{ $performance->experience }}</td>
 				<td align="center">{{ round($performance->daily_work_hours, 1) }}</td>
-				<td align="center">{{ round($performance->hours_worked, 1) }}</td>
-				<td align="center">{{ round($performance->output, 1) }}</td>
-				<td align="center">{{ round($performance->output_error, 1) }}</td>
+				<td align="center">{{ round($performance->hours_worked, 2) }}</td>
+				<td align="center">{{ round($performance->output, 2) }}</td>
+				<td align="center">{{ round($performance->output_error, 2) }}</td>
 				<td align="center">{{ round($performance->average_output, 2) }}</td>
 				<td align="center">{{ round($performance->productivity, 2) }}%</td>
 				<td align="center">{{ round($performance->quality, 2) }}%</td>

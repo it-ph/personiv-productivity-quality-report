@@ -71,9 +71,9 @@
 				<td align="center">{{ round($member->performances[$week_key]->productivity,2) }}%</td>
 				<td align="center">{{ round($member->performances[$week_key]->quality,2) }}%</td>
 			@endforeach
-			<td align="center">{{ round($member->total_output,1) }}</td>
-			<td align="center">{{ round($member->total_output_error,1) }}</td>
-			<td align="center">{{ round($member->total_hours_worked,1) }}</td>
+			<td align="center">{{ round($member->total_output,2) }}</td>
+			<td align="center">{{ round($member->total_output_error,2) }}</td>
+			<td align="center">{{ round($member->total_hours_worked,2) }}</td>
 			<td align="center">{{ round($member->monthly_productivity,2) }}%</td>
 			<td align="center">{{ round($member->monthly_quality,2) }}%</td>
 			<td align="center">{{ $member->quadrant }}</td>

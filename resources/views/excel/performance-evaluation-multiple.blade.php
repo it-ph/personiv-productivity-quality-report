@@ -34,9 +34,9 @@
 					<td align="center">{{ $performance->date_start }}</td>
 					<td align="center">{{ $performance->date_end }}</td>
 					<td align="center">{{ round($performance->daily_work_hours, 1) }}</td>
-					<td align="center">{{ round($performance->hours_worked, 1) }}</td>
-					<td align="center">{{ round($performance->output, 1) }}</td>
-					<td align="center">{{ round($performance->output_error, 1) }}</td>
+					<td align="center">{{ round($performance->hours_worked, 2) }}</td>
+					<td align="center">{{ round($performance->output, 2) }}</td>
+					<td align="center">{{ round($performance->output_error, 2) }}</td>
 					<td align="center">{{ round($performance->average_output, 2) }}</td>
 					<td align="center">{{ round($performance->productivity ,2) }}%</td>
 					<td align="center">{{ round($performance->quality,2) }}%</td>
@@ -55,9 +55,9 @@
 			</tr>
 			<tr>
 				<td align="center" colspan="3"></td>
-				<td align="center">{{ round($position->total_hours_worked, 1) }}</td>
-				<td align="center">{{ round($position->total_output, 1) }}</td>
-				<td align="center">{{ round($position->total_output_error, 1) }}</td>
+				<td align="center">{{ round($position->total_hours_worked, 2) }}</td>
+				<td align="center">{{ round($position->total_output, 2) }}</td>
+				<td align="center">{{ round($position->total_output_error, 2) }}</td>
 				<td align="center">{{ round($position->total_average_output, 2) }}</td>
 				<td align="center">{{ round($position->productivity,2) }}%</td>
 				<td align="center">{{ round($position->quality,2) }}%</td>

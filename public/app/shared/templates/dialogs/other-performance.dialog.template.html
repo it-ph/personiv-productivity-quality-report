@@ -5,7 +5,7 @@
 				<md-list-item class="md-3-line">
 					<md-icon class="md-avatar-icon mdi mdi-account" aria-label="Member"></md-icon>
 					<div class="md-list-item-text">
-						<h3>{{member.full_name}} <span class="md-caption secondary-text">({{member.total_hours_worked}} hour(s) worked)</span></h3>
+						<h3>{{member.full_name}} <span class="md-caption secondary-text">({{member.total_hours_worked | number: 2}} hour(s) worked)</span></h3>
 						<h4>Average Productivity <span ng-if="member.position">as {{member.position.name}}</span>: {{member.average_productivity |number: 2}}%</h4>
 						<p>Average Quality <span ng-if="member.position">as {{member.position.name}}</span>: {{member.average_quality |number: 2}}%</p>
 					</div>
@@ -39,7 +39,7 @@
 					<td>{{performance.daily_work_hours | number:1}}</td>
 					<td>{{performance.project.name}}</td>
 					<td>{{performance.position.name}}</td>
-					<td>{{performance.hours_worked}}</td>
+					<td>{{performance.hours_worked | number: 2}}</td>
 					<td>{{performance.output | number: 2}}</td>
 					<td>{{performance.output_error | number: 2}}</td>
 					<td>{{performance.average_output | number: 2}}</td>
@@ -59,7 +59,7 @@
 				</tr>
 				<tr>
 					<th colspan="5"></th>
-					<td>{{position.total_hours_worked}}</td>
+					<td>{{position.total_hours_worked | number: 2}}</td>
 					<td>{{position.total_output | number: 2}}</td>
 					<td>{{position.total_output_error | number: 2}}</td>
 					<td>{{position.total_average_output | number: 2}}</td>

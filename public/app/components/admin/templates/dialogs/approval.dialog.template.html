@@ -34,9 +34,9 @@
 						<td ng-if="details.action == 'update'"><md-checkbox class="md-primary" ng-model="details.request[$index].include"></md-checkbox></td>
 						<td>{{performance.full_name}}</td>
 						<td ng-class="performance.position != details.request[$index].position && details.action == 'update'? 'primary-text' : 'main-text'">{{performance.position}}</td>
-						<td ng-class="performance.hours_worked != details.request[$index].hours_worked && details.action == 'update' ? 'primary-text' : 'main-text'">{{performance.hours_worked}}</td>
-						<td ng-class="performance.output != details.request[$index].output && details.action == 'update' ? 'primary-text' : 'main-text'">{{performance.output}}</td>
-						<td ng-class="performance.output_error != details.request[$index].output_error ? 'primary-text' : 'main-text'">{{performance.output_error}}</td>
+						<td ng-class="performance.hours_worked != details.request[$index].hours_worked && details.action == 'update' ? 'primary-text' : 'main-text'">{{performance.hours_worked | number: 1}}</td>
+						<td ng-class="performance.output != details.request[$index].output && details.action == 'update' ? 'primary-text' : 'main-text'">{{performance.output | number: 2}}</td>
+						<td ng-class="performance.output_error != details.request[$index].output_error ? 'primary-text' : 'main-text'">{{performance.output_error | number: 2}}</td>
 					</tr>
 				</table>
 			</div>
@@ -52,9 +52,9 @@
 					</tr>
 					<tr ng-repeat="performanceApproval in details.request">
 						<td ng-class="performanceApproval.position != details.current[$index].position ? 'accent-text' : 'main-text'">{{performanceApproval.position}}</td>
-						<td ng-class="performanceApproval.hours_worked != details.current[$index].hours_worked ? 'accent-text' : 'main-text'">{{performanceApproval.hours_worked}}</td>
-						<td ng-class="performanceApproval.output != details.current[$index].output ? 'accent-text' : 'main-text'">{{performanceApproval.output}}</td>
-						<td ng-class="performanceApproval.output_error != details.current[$index].output_error ? 'accent-text' : 'main-text'">{{performanceApproval.output_error}}</td>
+						<td ng-class="performanceApproval.hours_worked != details.current[$index].hours_worked ? 'accent-text' : 'main-text'">{{performanceApproval.hours_worked | number: 1}}</td>
+						<td ng-class="performanceApproval.output != details.current[$index].output ? 'accent-text' : 'main-text'">{{performanceApproval.output | number: 2}}</td>
+						<td ng-class="performanceApproval.output_error != details.current[$index].output_error ? 'accent-text' : 'main-text'">{{performanceApproval.output_error | number: 2}}</td>
 						<td class="accent-text">{{performanceApproval.message}}</td>
 					</tr>
 				</table>

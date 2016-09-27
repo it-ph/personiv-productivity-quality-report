@@ -34,7 +34,7 @@
 				<td>{{performance.date_start | date: 'MMMM dd'}}</td>
 				<td>{{performance.date_end | date: 'MMMM dd'}}</td>
 				<td>{{performance.daily_work_hours | number:1}}</td>
-				<td>{{performance.hours_worked}}</td>
+				<td>{{performance.hours_worked | number: 2}}</td>
 				<td>{{performance.output | number: 2}}</td>
 				<td>{{performance.output_error | number: 2}}</td>
 				<td>{{performance.average_output | number: 2}}</td>
@@ -54,7 +54,7 @@
 			</tr>
 			<tr>
 				<th colspan="3"></th>
-				<td>{{evaluation.position.total_hours_worked}}</td>
+				<td>{{evaluation.position.total_hours_worked | number: 2}}</td>
 				<td>{{evaluation.position.total_output | number: 2}}</td>
 				<td>{{evaluation.position.total_output_error | number: 2}}</td>
 				<td>{{evaluation.position.total_average_output | number: 2}}</td>
