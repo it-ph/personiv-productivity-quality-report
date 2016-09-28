@@ -82,7 +82,7 @@ teamLeaderModule
 			Experience.members(projectID)
 				.success(function(data){
 					$scope.members = data;
-					// $scope.resetMembers();
+					$scope.resetMembers();
 				});
 
 			Project.show(projectID)
