@@ -1,5 +1,5 @@
 adminModule
-	.controller('mainContentContainerController', ['$scope', '$state', '$stateParams', '$mdDialog', 'Preloader', 'Report', 'User', 'Target', 'Programme', function($scope, $state, $stateParams, $mdDialog, Preloader, Report, User, Target, Programme){
+	.controller('mainContentContainerController', ['$scope', '$state', '$stateParams', '$mdDialog', 'Preloader', 'Report', 'User', 'Target', 'Programme', 'Department', function($scope, $state, $stateParams, $mdDialog, Preloader, Report, User, Target, Programme, Department){
 		$scope.report = {};
 		$scope.months = [
 			'January',
@@ -29,7 +29,13 @@ adminModule
 				$scope.work_hours = data;
 			});
 
-		$scope.currentMonth = $scope.months[new Date().getMonth()];
+		Department.index()
+			.success(function(data){
+				$scope.departments = data;
+			})
+
+		$scope.report.month = $scope.months[new Date().getMonth()];
+		$scope.report.year = new Date().getFullYear();
 
 		/**
 		 * Object for toolbar
@@ -134,51 +140,51 @@ adminModule
 
 		// $scope.rightSidenav.show = true;
 
-		$scope.init = function(refresh){
-			Report.monthly()
-				.success(function(data){
-					angular.forEach(data, function(report){
-						report.chart = {};
-						report.chart.series = ['Productivity', 'Quality'];
-						report.chart.data = [[],[]];
-						report.chart.labels = [];
+		// $scope.init = function(refresh){
+		// 	Report.monthly()
+		// 		.success(function(data){
+		// 			angular.forEach(data, function(report){
+		// 				report.chart = {};
+		// 				report.chart.series = ['Productivity', 'Quality'];
+		// 				report.chart.data = [[],[]];
+		// 				report.chart.labels = [];
 
-						report.date_start = new Date(report.date_start);
-						report.count = 0;
-						angular.forEach(report.positions, function(position){
-							if(position.head_count){
-								report.count += position.head_count;
-							}
-						});
+		// 				report.date_start = new Date(report.date_start);
+		// 				report.count = 0;
+		// 				angular.forEach(report.positions, function(position){
+		// 					if(position.head_count){
+		// 						report.count += position.head_count;
+		// 					}
+		// 				});
 						
-						angular.forEach(report.members, function(member){
-							member.full_name = member.member.full_name;
-							// if(!member.member.deleted_at && member.average_productivity && member.average_quality){
-							// 	if(member.roles > 1){
-							// 		report.count++;
-							// 	}
+		// 				angular.forEach(report.members, function(member){
+		// 					member.full_name = member.member.full_name;
+		// 					// if(!member.member.deleted_at && member.average_productivity && member.average_quality){
+		// 					// 	if(member.roles > 1){
+		// 					// 		report.count++;
+		// 					// 	}
 
-							// 	report.count++;
-							// }
-							if(member.average_productivity && member.average_productivity){
-								report.chart.data[0].push(member.average_productivity);
-								report.chart.data[1].push(member.average_quality);
-								report.chart.labels.push(member.member.full_name);
-							}
-						});
-					});
+		// 					// 	report.count++;
+		// 					// }
+		// 					if(member.average_productivity && member.average_productivity){
+		// 						report.chart.data[0].push(member.average_productivity);
+		// 						report.chart.data[1].push(member.average_quality);
+		// 						report.chart.labels.push(member.member.full_name);
+		// 					}
+		// 				});
+		// 			});
 					
-					$scope.reports = data;
+		// 			$scope.reports = data;
 
-					if(refresh){
-						Preloader.stop();
-						Preloader.stop();
-					}
-				})
-				.error(function(){
-					Preloader.error();
-				})
-		}
+		// 			if(refresh){
+		// 				Preloader.stop();
+		// 				Preloader.stop();
+		// 			}
+		// 		})
+		// 		.error(function(){
+		// 			Preloader.error();
+		// 		})
+		// }
 
 
 		$scope.form = {};
@@ -201,33 +207,11 @@ adminModule
 				Report.searchMonthly($scope.report)
 					.success(function(data){
 						angular.forEach(data, function(report){
-							report.chart = {};
-							report.chart.series = ['Productivity', 'Quality'];
-							report.chart.data = [[],[]];
-							report.chart.labels = [];
-
-							report.date_start = new Date(report.date_start);
 							report.count = 0;
 							
 							angular.forEach(report.positions, function(position){
 								if(position.head_count){
 									report.count += position.head_count;
-								}
-							});
-
-							angular.forEach(report.members, function(member){
-								member.full_name = member.member.full_name;
-								// if(member.average_productivity && member.average_quality){
-								// 	if(member.roles > 1){
-								// 		report.count++;
-								// 	}
-
-								// 	report.count++;
-								// }
-								if(member.average_productivity && member.average_productivity){
-									report.chart.data[0].push(member.average_productivity);
-									report.chart.data[1].push(member.average_quality);
-									report.chart.labels.push(member.member.full_name);
 								}
 							});
 						});
@@ -253,5 +237,5 @@ adminModule
 		    });
 		}
 
-		$scope.init();
+		// $scope.init();
 	}]);

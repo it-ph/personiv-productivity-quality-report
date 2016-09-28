@@ -61,7 +61,7 @@
 						<md-option value="all" ng-if="projects.length > 1">
 							All Projects
 						</md-option>
-						<md-option ng-repeat="project in Projects | orderBy:'name'" value="{{ project.id }}">
+						<md-option ng-repeat="project in projects | orderBy:'name'" value="{{ project.id }}">
 							{{project.name}}
 						</md-option>
 					</md-select>

@@ -32,6 +32,7 @@ teamLeaderModule
 		 *
 		*/
 		$scope.rightSidenav = {};
+		$scope.rightSidenav.searchText = '';
 		$scope.rightSidenav.show = true;
 		$scope.rightSidenav.month = $scope.months_array[new Date().getMonth()];
 		$scope.rightSidenav.year = new Date().getFullYear();
@@ -79,7 +80,7 @@ teamLeaderModule
 		$scope.subheader.refresh = function(){
 			$scope.report = {};
 			Preloader.preload();
-			$scope.init(true);
+			$scope.init(true, $scope.rightSidenav);
 		}
 
 		$scope.subheader.download = function(){
@@ -171,52 +172,27 @@ teamLeaderModule
 		};
 
 		$scope.init = function(refresh, query){
-			Report.departmentMonthly(query)
+			Report.searchMonthly(query)
 				.success(function(data){
-					angular.forEach(data, function(project){
-						project.chart = {};
-						project.chart.series = ['Productivity', 'Quality'];
-						project.chart.data = [[],[]];
-						project.chart.labels = [];
-						project.count = 0;
-
-						angular.forEach(project.positions, function(position){
-							if(position.head_count){
-								project.count += position.head_count;
-							}
-						});
-
-						project.date_start = new Date(project.date_start);
+					angular.forEach(data, function(report){
+						report.count = 0;
 						
-						angular.forEach(project.members, function(member){
-							member.full_name = member.member.full_name;
-							// if(!member.member.deleted_at && member.average_productivity && member.average_quality){
-							// 	if(member.roles > 1){
-							// 		project.count++;
-							// 	}
-
-							// 	project.count++;
-							// }
-							if(member.average_productivity && member.average_productivity){
-								project.chart.data[0].push(member.average_productivity);
-								project.chart.data[1].push(member.average_quality);
-								project.chart.labels.push(member.member.full_name);
+						angular.forEach(report.positions, function(position){
+							if(position.head_count){
+								report.count += position.head_count;
 							}
 						});
 					});
 
-					$scope.report.current = data;
-					$scope.report.showCurrent = true;
+					$scope.reports = data;
+					// $scope.report.showCurrent = true;
 
-					if(query){
-						$scope.haveResults = data ? true: false;
-						console.log($scope.haveResults);
-						console.log($scope.report.showCurrent);
-						
-					}
-					else{
-						$scope.haveCurrent = data ? true: false;
-					}
+					// if(query){
+					// 	$scope.haveResults = data ? true: false;
+					// }
+					// else{
+					// 	$scope.haveCurrent = data ? true: false;
+					// }
 
 
 					if(refresh)
@@ -242,7 +218,7 @@ teamLeaderModule
 
 		}
 
-		$scope.init();
+		// $scope.init();
 
 
 	}]);

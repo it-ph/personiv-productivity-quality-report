@@ -1,4 +1,4 @@
-<div class="fade-transition" flex ng-if="report.current && report.showCurrent">
+<!-- <div class="fade-transition" flex ng-if="report.current && report.showCurrent">
 	<div layout-padding flex ng-repeat="detail in report.current | filter: projects[filterData.project].name | filter: toolbar.userInput">
 		<div flex ng-if="detail.first_report">
 			<div class="panel panel-default">
@@ -153,4 +153,203 @@
 
 <div flex layout="row" layout-align="center center" ng-if="!haveCurrent && report.showCurrent">
 	<h3 class="md-subhead">No records for the month found.</h3>
+</div> -->
+
+<div class="fade-transition" flex layout-padding>
+	<div layout="row" layout-padding flex ng-repeat="report in reports" ng-if="report.first_report">
+		<div flex>
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<h3 class="panel-title primary-text">{{report.date_start | date: 'MMMM dd, yyyy'}} to {{report.date_end | date: 'MMMM dd, yyyy'}}</h3>
+				</div>
+				<div class="panel-body" layout="column" flex>
+					<div layout="row" layout-align="center center" flex ng-if="report.showCharts">
+						<div flex="45">					
+							<!-- <canvas id="bar" class="chart chart-bar" chart-data="detail.chart.data" chart-labels="detail.chart.labels" chart-legend="true" chart-series="detail.chart.series"></canvas> -->
+							<table class="table">
+								<table class="table">
+								<tr>
+									<th colspan="{{report.positions.length + 1}}">Targets</th>
+								</tr>
+								<tr>
+									<th>Productivity</th>
+									<th ng-repeat="position in report.positions">{{position.name}}</th>
+								</tr>
+								<tr>
+									<td>Beginner (less than 3 months)</td>
+									<td ng-repeat="beginner in report.beginner">{{beginner.productivity}}</td>
+								</tr>
+								<tr>
+									<td>Moderately Experienced (3 to 6 months)</td>
+									<td ng-repeat="moderately_experience in report.moderately_experienced">{{moderately_experience.productivity}}</td>
+								</tr>
+								<tr>
+									<td>Experienced (6 months and beyond)</td>
+									<td ng-repeat="experience in report.experienced">{{experience.productivity}}</td>
+								</tr>
+								<tr>
+									<th>Quality</th>
+									<td ng-repeat="quality in report.quality track by $index">{{quality.quality}}%</td>
+								</tr>
+							</table>
+							</table>
+						</div>
+						<div flex layout="column" layout-align="end end">
+							<table class="table">
+								<tr>
+									<th>Positions</th>
+									<th>Beginner</th>
+									<th>Moderately Experienced</th>
+									<th>Experienced</th>
+									<th>Head Count</th>
+								</tr>
+								<tr ng-repeat="position in report.positions">
+									<td>{{position.name}}</td>
+									<td>{{position.beginner}}</td>
+									<td>{{position.moderately_experienced}}</td>
+									<td>{{position.experienced}}</td>
+									<th>{{position.head_count}}</th>
+								</tr>
+							</table>
+							<table class="table">
+								<tr>
+									<th>Row Labels</th>
+									<th>Sum of Total Output</th>
+									<th>Sum of Total Man Hours</th>
+									<th>Total Average Output</th>
+								</tr>
+								<tr>
+									<th>Beginner</th>
+									<td>{{report.beginner_total_output | number: 2}}</td>
+									<td>{{report.beginner_total_hours_worked | number: 2}}</td>
+									<td>{{report.beginner_total_average_output | number: 2}}</td>
+								</tr>
+								<tr ng-repeat="position in report.positions" ng-if="position.beginner_total_hours_worked">
+									<td>{{position.name}}</td>
+									<td>{{position.beginner_total_output | number: 2}}</td>
+									<td>{{position.beginner_total_hours_worked | number: 2}}</td>
+									<td>{{position.beginner_total_average_output | number: 2}}</td>
+								</tr>
+								<tr>
+									<th>Moderately Experienced</th>
+									<td>{{report.moderately_experienced_total_output | number: 2}}</td>
+									<td>{{report.moderately_experienced_total_hours_worked | number: 2}}</td>
+									<td>{{report.moderately_experienced_total_average_output | number: 2}}</td>
+								</tr>
+								<tr ng-repeat="position in report.positions" ng-if="position.moderately_experienced_total_hours_worked">
+									<td>{{position.name}}</td>
+									<td>{{position.moderately_experienced_total_output | number: 2}}</td>
+									<td>{{position.moderately_experienced_total_hours_worked | number: 2}}</td>
+									<td>{{position.moderately_experienced_total_average_output | number: 2}}</td>
+								</tr>
+								<tr>
+									<th>Experienced</th>
+									<td>{{report.experienced_total_output | number: 2}}</td>
+									<td>{{report.experienced_total_hours_worked | number: 2}}</td>
+									<td>{{report.experienced_total_average_output | number: 2}}</td>
+								</tr>
+								<tr ng-repeat="position in report.positions" ng-if="position.experienced_total_hours_worked">
+									<td>{{position.name}}</td>
+									<td>{{position.experienced_total_output | number: 2}}</td>
+									<td>{{position.experienced_total_hours_worked | number: 2}}</td>
+									<td>{{position.experienced_total_average_output | number: 2}}</td>
+								</tr>
+								<tr>
+									<th>Grand Total</th>
+									<th>{{report.total_output | number: 2}}</th>
+									<th>{{report.total_hours_worked | number: 2}}</th>
+									<th>{{report.total_average_output | number: 2}}</th>
+								</tr>
+							</table>
+						</div>					
+					</div>
+					<h3 class="md-headline primary-text">{{report.name}}</h2>
+					<p class="md-subhead">Program Head Count: <strong>{{report.count}}</strong></p>
+					<md-switch class="md-primary" ng-model="report.showCharts" aria-label="detail.showCharts">
+					    <span ng-if="!detail.showCharts">Show</span> <span ng-if="detail.showCharts">Hide</span> Charts
+					</md-switch>
+					<div layout="column" flex ng-repeat="position in report.positions">
+						<md-subheader class="md-no-sticky">{{position.name}}</md-subheader>	
+						<table class="table">
+							<tr>
+								<th class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+									<a href="#" class="main-text" ng-click="sortType = 'full_name' ; sortReverse = !sortReverse">	
+										<span>Name</span>
+										<md-icon ng-show="sortType == 'full_name' && !sortReverse" class="mdi mdi-chevron-down grey"></md-icon>
+										<md-icon ng-show="sortType == 'full_name' && sortReverse" class="mdi mdi-chevron-up grey"></md-icon>
+										<md-tooltip>
+											<span ng-show="sortReverse">Ascending</span>
+											<span ng-show="!sortReverse">Descending</span>
+										</md-tooltip>
+									</a>
+								</th>
+								<th class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+									<a href="#" class="main-text" ng-click="sortType = 'experience' ; sortReverse = !sortReverse">
+										<span>Category</span>
+										<md-icon ng-show="sortType == 'experience' && !sortReverse" class="mdi mdi-chevron-down grey"></md-icon>
+										<md-icon ng-show="sortType == 'experience' && sortReverse" class="mdi mdi-chevron-up grey"></md-icon>
+										<md-tooltip>
+											<span ng-show="sortReverse">Ascending</span>
+											<span ng-show="!sortReverse">Descending</span>
+										</md-tooltip>
+									</a>
+								</th>
+								<th class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+									<a href="#" class="main-text" ng-click="sortType = 'monthly_productivity' ; sortReverse = !sortReverse">
+										<span>Monthly Productivity</span>
+										<md-icon ng-show="sortType == 'monthly_productivity' && !sortReverse" class="mdi mdi-chevron-down grey"></md-icon>
+										<md-icon ng-show="sortType == 'monthly_productivity' && sortReverse" class="mdi mdi-chevron-up grey"></md-icon>
+										<md-tooltip>
+											<span ng-show="sortReverse">Ascending</span>
+											<span ng-show="!sortReverse">Descending</span>
+										</md-tooltip>
+									</a>
+								</th>
+								<th class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+									<a href="#" class="main-text" ng-click="sortType = 'monthly_quality' ; sortReverse = !sortReverse">
+										<span>Monthly Quality</span>
+										<md-icon ng-show="sortType == 'monthly_quality' && !sortReverse" class="mdi mdi-chevron-down grey"></md-icon>
+										<md-icon ng-show="sortType == 'monthly_quality' && sortReverse" class="mdi mdi-chevron-up grey"></md-icon>
+										<md-tooltip>
+											<span ng-show="sortReverse">Ascending</span>
+											<span ng-show="!sortReverse">Descending</span>
+										</md-tooltip>
+									</a>
+								</th>
+								<th class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+									<a href="#" class="main-text" ng-click="sortType = 'quadrant' ; sortReverse = !sortReverse">
+										<span>Quadrant</span>
+										<md-icon ng-show="sortType == 'quadrant' && !sortReverse" class="mdi mdi-chevron-down grey"></md-icon>
+										<md-icon ng-show="sortType == 'quadrant' && sortReverse" class="mdi mdi-chevron-up grey"></md-icon>
+										<md-tooltip>
+											<span ng-show="sortReverse">Ascending</span>
+											<span ng-show="!sortReverse">Descending</span>
+										</md-tooltip>
+									</a>
+								</th>
+							</tr>
+							<tr ng-repeat="member in position.members | filter: {full_name:rightSidenav.searchText} | orderBy:sortType:sortReverse" ng-click="view(member.performances[0], report.date_start, report.date_end)" ng-if="member.monthly_productivity && member.monthly_quality">
+								<td class="col-xs-4 col-sm-4 col-md-4 col-lg-4">{{member.full_name}}</td>
+								<td class="col-xs-2 col-sm-2 col-md-2 col-lg-2">{{member.experience.experience}}</td>
+								<td class="col-xs-2 col-sm-2 col-md-2 col-lg-2"><span ng-if="!member.monthly_productivity">0</span>{{member.monthly_productivity | number: 2}}%</td>
+								<td class="col-xs-2 col-sm-2 col-md-2 col-lg-2"><span ng-if="!member.monthly_quality">0</span>{{member.monthly_quality | number: 2}}%</td>
+								<td class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+									{{member.quadrant}}
+									<md-tooltip ng-if="member.quadrant == 'Quadrant 1'">Producitivity is not met, but Quality is met.</md-tooltip>
+									<md-tooltip ng-if="member.quadrant == 'Quadrant 2'">Producitivity and quality are both met.</md-tooltip>
+									<md-tooltip ng-if="member.quadrant == 'Quadrant 3'">Producitivity is met, but Quality is not met.</md-tooltip>
+									<md-tooltip ng-if="member.quadrant == 'Quadrant 4'">Producitivity and quality are both not met.</md-tooltip>
+								</td>
+							</tr>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<md-card layout="row" flex ng-if="!reports.length">
+		<md-card-content>
+			<em class="md-caption secondary-text">(Use the filters to view monthly productivity and qquality reports)</em></p>
+		</md-card-content>
+	</md-card>
 </div>
