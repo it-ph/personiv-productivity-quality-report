@@ -170,19 +170,19 @@ class PerformanceController extends Controller
                         $position->productivity = round($position->total_average_output / $position->performances[0]->target->productivity * 100, 2);
                         $position->quality = round((1 - $position->total_output_error / $position->total_output) * 100, 2);
 
-                        if($position->productivity < $position->performances[0]->target->productivity && $position->quality >= $position->performances[0]->target->quality)
+                        if($position->productivity < 100 && $position->quality >= $position->performances[0]->target->quality)
                         {
                             $position->quadrant = 'Quadrant 1'; 
                         }
-                        else if($position->productivity >= $position->performances[0]->target->productivity && $position->quality >= $position->performances[0]->target->quality)
+                        else if($position->productivity >= 100 && $position->quality >= $position->performances[0]->target->quality)
                         {
                             $position->quadrant = 'Quadrant 2'; 
                         }
-                        else if($position->productivity >= $position->performances[0]->target->productivity && $position->quality < $position->performances[0]->target->quality)
+                        else if($position->productivity >= 100 && $position->quality < $position->performances[0]->target->quality)
                         {
                             $position->quadrant = 'Quadrant 3'; 
                         }
-                        else if($position->productivity < $position->performances[0]->target->productivity && $position->quality < $position->performances[0]->target->quality)
+                        else if($position->productivity < 100 && $position->quality < $position->performances[0]->target->quality)
                         {
                             $position->quadrant = 'Quadrant 4'; 
                         }
@@ -306,19 +306,19 @@ class PerformanceController extends Controller
                 $position->weekly_productivity = round($position->total_average_output / $position->performances[0]->target->productivity * 100, 2);
                 $position->weekly_quality = round((1 - $position->total_output_error / $position->total_output) * 100, 2);
 
-                if($position->weekly_productivity < $position->performances[0]->target->productivity && $position->weekly_quality >= $position->performances[0]->target->quality)
+                if($position->weekly_productivity < 100 && $position->weekly_quality >= $position->performances[0]->target->quality)
                 {
                     $position->quadrant = 'Quadrant 1'; 
                 }
-                else if($position->weekly_productivity >= $position->performances[0]->target->productivity && $position->weekly_quality >= $position->performances[0]->target->quality)
+                else if($position->weekly_productivity >= 100 && $position->weekly_quality >= $position->performances[0]->target->quality)
                 {
                     $position->quadrant = 'Quadrant 2'; 
                 }
-                else if($position->weekly_productivity >= $position->performances[0]->target->productivity && $position->weekly_quality < $position->performances[0]->target->quality)
+                else if($position->weekly_productivity >= 100 && $position->weekly_quality < $position->performances[0]->target->quality)
                 {
                     $position->quadrant = 'Quadrant 3'; 
                 }
-                else if($position->weekly_productivity < $position->performances[0]->target->productivity && $position->weekly_quality < $position->performances[0]->target->quality)
+                else if($position->weekly_productivity < 100 && $position->weekly_quality < $position->performances[0]->target->quality)
                 {
                     $position->quadrant = 'Quadrant 4'; 
                 }
@@ -373,19 +373,19 @@ class PerformanceController extends Controller
                 $position->monthly_productivity = round($position->total_average_output / $position->performances[0]->target->productivity * 100, 2);
                 $position->monthly_quality = round((1 - $position->total_output_error / $position->total_output) * 100, 2);
 
-                if($position->monthly_productivity < $position->performances[0]->target->productivity && $position->monthly_quality >= $position->performances[0]->target->quality)
+                if($position->monthly_productivity < 100 && $position->monthly_quality >= $position->performances[0]->target->quality)
                 {
                     $position->quadrant = 'Quadrant 1'; 
                 }
-                else if($position->monthly_productivity >= $position->performances[0]->target->productivity && $position->monthly_quality >= $position->performances[0]->target->quality)
+                else if($position->monthly_productivity >= 100 && $position->monthly_quality >= $position->performances[0]->target->quality)
                 {
                     $position->quadrant = 'Quadrant 2'; 
                 }
-                else if($position->monthly_productivity >= $position->performances[0]->target->productivity && $position->monthly_quality < $position->performances[0]->target->quality)
+                else if($position->monthly_productivity >= 100 && $position->monthly_quality < $position->performances[0]->target->quality)
                 {
                     $position->quadrant = 'Quadrant 3'; 
                 }
-                else if($position->monthly_productivity < $position->performances[0]->target->productivity && $position->monthly_quality < $position->performances[0]->target->quality)
+                else if($position->monthly_productivity < 100 && $position->monthly_quality < $position->performances[0]->target->quality)
                 {
                     $position->quadrant = 'Quadrant 4'; 
                 }

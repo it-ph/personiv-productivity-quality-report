@@ -59,7 +59,7 @@
 					<h3 class="panel-title primary-text">{{report.date_start | date: 'MMMM dd, yyyy'}} to {{report.date_end | date: 'MMMM dd, yyyy'}}</h3>
 				</div>
 				<div class="panel-body" layout="column" flex>
-					<div layout="row" layout-align="center center" flex ng-if="report.showCharts">
+					<div layout="row" layout-align="center center" flex>
 						<div flex="45">					
 							<!-- <canvas id="bar" class="chart chart-bar" chart-data="detail.chart.data" chart-labels="detail.chart.labels" chart-legend="true" chart-series="detail.chart.series"></canvas> -->
 							<table class="table">
@@ -161,9 +161,9 @@
 					</div>
 					<h3 class="md-headline primary-text">{{report.name}}</h2>
 					<p class="md-subhead">Program Head Count: <strong>{{report.count}}</strong></p>
-					<md-switch class="md-primary" ng-model="report.showCharts" aria-label="detail.showCharts">
+					<!-- <md-switch class="md-primary" ng-model="report.showCharts" aria-label="detail.showCharts">
 					    <span ng-if="!detail.showCharts">Show</span> <span ng-if="detail.showCharts">Hide</span> Charts
-					</md-switch>
+					</md-switch> -->
 					<div layout="column" flex ng-repeat="position in report.positions">
 						<md-subheader class="md-no-sticky">{{position.name}}</md-subheader>	
 						<table class="table">
@@ -243,9 +243,9 @@
 			</div>
 		</div>
 	</div>
-	<!-- <md-card layout="row" flex ng-if="!reports.length">
+	<md-card layout="row" flex ng-if="!reports.length">
 		<md-card-content>
-			<p>No records yet for the month of <strong class="primary-text">{{currentMonth}}</strong>. <br><em class="md-caption secondary-text">(Use the filters to view the previous months)</em></p>
+			<p><em class="md-caption secondary-text">(Use the filters to view monthly productivity and quality report)</em></p>
 		</md-card-content>
-	</md-card> -->
+	</md-card>
 </div>
