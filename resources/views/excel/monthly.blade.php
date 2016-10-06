@@ -46,7 +46,7 @@
 	<tr>
 		<th align="center" colspan="2"></th>
 		@foreach($project->weeks as $week)
-			<th colspan="2" align="center">{{ $week }}</th>
+			<th colspan="3" align="center">{{ $week }}</th>
 		@endforeach
 	</tr>
 	<tr>
@@ -55,6 +55,7 @@
 		@foreach($project->weeks as $week)
 			<th align="center">Productivity</th>
 			<th align="center">Quality</th>
+			<th align="center">Remarks</th>
 		@endforeach
 		<th align="center">Total Output</th>
 		<th align="center">Total Output Error</th>
@@ -70,6 +71,7 @@
 			@foreach($project->weeks as $week_key => $week)
 				<td align="center">{{ round($member->performances[$week_key]->productivity,2) }}%</td>
 				<td align="center">{{ round($member->performances[$week_key]->quality,2) }}%</td>
+				<td align="center">{{ $member->performances[$week_key]->remarks or ''}}</td>
 			@endforeach
 			<td align="center">{{ round($member->total_output,2) }}</td>
 			<td align="center">{{ round($member->total_output_error,2) }}</td>

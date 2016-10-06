@@ -767,6 +767,8 @@ class PerformanceController extends Controller
                     $performance->quadrant = 'Quadrant 4'; 
                 }
 
+                $performance->remarks = $request->input($i.'.remarks');
+
                 // $performance->type = "weekly";
                 $performance->save();
                 // fetch target
@@ -876,6 +878,7 @@ class PerformanceController extends Controller
                     $performance->quadrant = 'Quadrant 4'; 
                 }
 
+                $performance->remarks = $request->input($i.'.remarks');
                 // $performance->type = "weekly";
                 // $performance->performance_id = $request->input($i.'.performance_id');
                 // save performance to database

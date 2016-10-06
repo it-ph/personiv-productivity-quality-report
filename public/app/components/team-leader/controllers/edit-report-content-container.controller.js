@@ -61,6 +61,7 @@ teamLeaderModule
 					var item = {};
 					item.display = performance.member.full_name;
 					$scope.toolbar.items.push(item);
+					performance.first_letter = performance.member.full_name.charAt(0).toUpperCase();
 				});
 
 				$scope.performances = data;
@@ -223,37 +224,50 @@ teamLeaderModule
 			}
 			else{
 				Preloader.preload();
-
 				if(!busy){
 					busy = true;
+					var count = 0;
 					angular.forEach($scope.performances, function(item){
 						item.date_start = $scope.details.date_start;
 						item.date_end = $scope.details.date_end;
 						item.daily_work_hours = $scope.details.daily_work_hours;
+						count = item.include ? count + 1 : count;
 					});
-
-					PerformanceHistory.store($scope.performances)
-						.success(function(){
-							Performance.update(reportID, $scope.performances)
-								.success(function(){
-									$mdToast.show(
-								      	$mdToast.simple()
-									        .content('Changes saved.')
-									        .position('bottom right')
-									        .hideDelay(3000)
-								    );
-									$scope.toolbar.back();
-									Preloader.stop();
-									busy = false;
-								})
-								.error(function(){
-									Preloader.error();
-								})
-						})
-						.error(function(){
-							Preloader.error();
-							busy = false;
-						})
+					if(count){
+						PerformanceHistory.store($scope.performances)
+							.success(function(){
+								Performance.update(reportID, $scope.performances)
+									.success(function(){
+										$mdToast.show(
+									      	$mdToast.simple()
+										        .content('Changes saved.')
+										        .position('bottom right')
+										        .hideDelay(3000)
+									    );
+										$scope.toolbar.back();
+										Preloader.stop();
+										busy = false;
+									})
+									.error(function(){
+										Preloader.error();
+									})
+							})
+							.error(function(){
+								Preloader.error();
+								busy = false;
+							})
+					}
+					else{
+						$mdDialog.show(
+							$mdDialog.alert()
+								.parent(angular.element(document.body))
+								.clickOutsideToClose(true)
+						        .title('Report not submitted.')
+						        .content('Empty reports are not submitted.')
+						        .ariaLabel('Empty Report')
+						        .ok('Got it!')
+						);
+					}
 				}
 			}
 		};

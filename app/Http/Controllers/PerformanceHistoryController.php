@@ -143,6 +143,7 @@ class PerformanceHistoryController extends Controller
                 $performance_history->productivity = $old_performance->productivity;
                 $performance_history->quality = $old_performance->quality;
                 $performance_history->quadrant = $old_performance->quadrant;
+                $performance_history->remarks = $old_performance->remarks;
 
                 $performance_history->save();
             }

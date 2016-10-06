@@ -198,6 +198,17 @@
 										</md-tooltip>
 									</a>
 								</th>
+								<th>
+									<a href="" class="main-text" ng-click="sortType = 'remarks' ; sortReverse = !sortReverse">
+										<span>Remarks</span>
+										<md-icon ng-show="sortType == 'remarks' && !sortReverse" class="mdi mdi-chevron-down grey"></md-icon>
+										<md-icon ng-show="sortType == 'remarks' && sortReverse" class="mdi mdi-chevron-up grey"></md-icon>
+										<md-tooltip>
+											<span ng-show="sortReverse">Ascending</span>
+											<span ng-show="!sortReverse">Descending</span>
+										</md-tooltip>
+									</a>
+								</th>
 							</tr>
 							<tr ng-repeat="item in report.performances | filter:rightSidenav.selectedItem | filter: rightSidenav.searchText | filter: filterData.position | filter: toolbar.userInput | orderBy:sortType:sortReverse" ng-class="{shaded:hover}" ng-mouseenter="hover = true" ng-mouseleave="hover = false" ng-click="show(item)">
 								<td>{{ item.full_name }}</td>
@@ -215,6 +226,9 @@
 									<md-tooltip ng-if="item.quadrant == 'Quadrant 2'">Producitivity and quality are both met.</md-tooltip>
 									<md-tooltip ng-if="item.quadrant == 'Quadrant 3'">Producitivity is met, but Quality is not met.</md-tooltip>
 									<md-tooltip ng-if="item.quadrant == 'Quadrant 4'">Producitivity and quality are both not met.</md-tooltip>
+								</td>
+								<td ng-if="item.remarks" class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+									<span ng-if="!item.readMore">{{ item.remarks}}</span>
 								</td>
 							</tr>
 						</table>
@@ -429,6 +443,17 @@
 										</md-tooltip>
 									</a>
 								</th>
+								<th>
+									<a href="" class="main-text" ng-click="sortType = 'remarks' ; sortReverse = !sortReverse">
+										<span>Remarks</span>
+										<md-icon ng-show="sortType == 'remarks' && !sortReverse" class="mdi mdi-chevron-down grey"></md-icon>
+										<md-icon ng-show="sortType == 'remarks' && sortReverse" class="mdi mdi-chevron-up grey"></md-icon>
+										<md-tooltip>
+											<span ng-show="sortReverse">Ascending</span>
+											<span ng-show="!sortReverse">Descending</span>
+										</md-tooltip>
+									</a>
+								</th>
 							</tr>
 							<tr ng-repeat="item in report.performances | filter: rightSidenav.searchText | filter: filterData.position | filter: toolbar.userInput | orderBy:sortType:sortReverse" ng-class="{shaded:hover}" ng-mouseenter="hover = true" ng-mouseleave="hover = false" ng-click="show(item)">
 								<td>{{ item.full_name }}</td>
@@ -446,6 +471,9 @@
 									<md-tooltip ng-if="item.quadrant == 'Quadrant 2'">Producitivity and quality are both met.</md-tooltip>
 									<md-tooltip ng-if="item.quadrant == 'Quadrant 3'">Producitivity is met, but Quality is not met.</md-tooltip>
 									<md-tooltip ng-if="item.quadrant == 'Quadrant 4'">Producitivity and quality are both not met.</md-tooltip>
+								</td>
+								<td ng-if="item.remarks" class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+									<span ng-if="!item.readMore">{{ item.remarks}}</span>
 								</td>
 							</tr>
 						</table>

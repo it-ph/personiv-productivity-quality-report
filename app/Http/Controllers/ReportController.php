@@ -1230,7 +1230,7 @@ class ReportController extends Controller
             })->download('xls');
         // }
         // else{
-            return view('preview.weekly')->with('projects', $this->projects);
+            // return view('preview.weekly')->with('projects', $this->projects);
         // }
 
     }

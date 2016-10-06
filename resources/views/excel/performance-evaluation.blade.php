@@ -26,6 +26,7 @@
 		<th align="center">Productivity</th>
 		<th align="center">Quality</th>
 		<th align="center">Quadrant</th>
+		<th align="center">Remarks</th>
 	</tr>
 	@foreach($member->performances as $performance)
 		<tr>
@@ -39,6 +40,7 @@
 			<td align="center">{{ round($performance->productivity ,2) }}%</td>
 			<td align="center">{{ round($performance->quality,2) }}%</td>
 			<td align="center">{{ $performance->quadrant }}</td>
+			<td align="center">{{ $performance->remarks }}</td>
 		</tr>
 	@endforeach
 	<tr>

@@ -54,6 +54,7 @@
 		<th align="center">Productivity</th>
 		<th align="center">Quality</th>
 		<th align="center">Quadrant</th>
+		<th align="center">Remarks</th>
 	</tr>
 
 	@foreach($project->reports as $report)
@@ -70,6 +71,7 @@
 				<td align="center">{{ round($performance->productivity, 2) }}%</td>
 				<td align="center">{{ round($performance->quality, 2) }}%</td>
 				<td align="center">{{ $performance->quadrant }}</td>
+				<td align="center">{{ $performance->remarks or '' }}</td>
 			</tr>
 		@endforeach
 	@endforeach

@@ -32,6 +32,7 @@
 					<th>Productivity</th>
 					<th>Quality</th>
 					<th>Quadrant</th>
+					<th>Remarks</th>
 				</tr>
 				<tr class="fade-transition" ng-repeat="performance in position.performances">
 					<td>{{performance.date_start | date: 'MMMM dd'}}</td>
@@ -46,9 +47,10 @@
 					<td>{{performance.productivity | number: 2}}%</td>
 					<td>{{performance.quality | number: 2}}%</td>
 					<td>{{performance.quadrant}}</td>
+					<td ng-if="performance.remarks" class="col-xs-2 col-sm-2 col-md-2 col-lg-2">{{performance.remarks}}</td>
 				</tr>
 				<tr>
-					<th colspan="5"></th>
+					<th colspan="6"></th>
 					<th>Total Hours Worked</th>
 					<th>Total Output</th>
 					<th>Total Output w/Error(s)</th>
@@ -58,7 +60,7 @@
 					<th>Quadrant</th>
 				</tr>
 				<tr>
-					<th colspan="5"></th>
+					<th colspan="6"></th>
 					<td>{{position.total_hours_worked | number:2}}</td>
 					<td>{{position.total_output | number: 2}}</td>
 					<td>{{position.total_output_error | number: 2}}</td>

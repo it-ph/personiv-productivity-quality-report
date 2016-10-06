@@ -27,13 +27,15 @@
 						<th>Hours Worked</th>
 						<th>Output</th>
 						<th>Output w/Error(s)</th>
+						<th>Remarks</th>
 					</tr>
 					<tr ng-repeat="item in history">
 						<td>{{item.member.full_name}}</td>
 						<td ng-class="item.position.name != item.performance.position.name ? 'primary-text' : 'main-text'">{{item.position.name}}</td>
-						<td ng-class="item.hours_worked != item.performance.hours_worked ? 'primary-text' : 'main-text'">{{item.hours_worked}}</td>
+						<td ng-class="item.hours_worked != item.performance.hours_worked ? 'primary-text' : 'main-text'">{{item.hours_worked | number: 2}}</td>
 						<td ng-class="item.output != item.performance.output ? 'primary-text' : 'main-text'">{{item.output | number: 2}}</td>
 						<td ng-class="item.output_error != item.performance.output_error ? 'primary-text' : 'main-text'">{{item.output_error | number: 2}}</td>
+						<td class="col-xs-2 col-sm-2 col-md-2 col-lg-2" ng-class="item.remarks != item.performance.remarks ? 'primary-text' : 'main-text'">{{item.remarks}}</td>
 					</tr>
 				</table>
 			</div>
@@ -45,12 +47,14 @@
 						<th>Hours Worked</th>
 						<th>Output</th>
 						<th>Output w/Error(s)</th>
+						<th>Remarks</th>
 					</tr>
 					<tr ng-repeat="item in history">
 						<td ng-class="item.position.name != item.performance.position.name ? 'primary-text' : 'main-text'">{{item.performance.position.name}}</td>
-						<td ng-class="item.hours_worked != item.performance.hours_worked ? 'primary-text' : 'main-text'">{{item.performance.hours_worked}}</td>
+						<td ng-class="item.hours_worked != item.performance.hours_worked ? 'primary-text' : 'main-text'">{{item.performance.hours_worked | number: 2}}</td>
 						<td ng-class="item.output != item.performance.output ? 'primary-text' : 'main-text'">{{item.performance.output | number: 2}}</td>
 						<td ng-class="item.output_error != item.performance.output_error ? 'primary-text' : 'main-text'">{{item.performance.output_error | number: 2}}</td>
+						<td class="col-xs-2 col-sm-2 col-md-2 col-lg-2" ng-class="item.remarks != item.performance.remarks ? 'primary-text' : 'main-text'">{{item.performance.remarks}}</td>
 					</tr>
 				</table>
 			</div>

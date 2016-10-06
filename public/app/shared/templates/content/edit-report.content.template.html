@@ -32,7 +32,7 @@
 					<span ng-if="!checkAll">Check</span><span ng-if="checkAll">Uncheck</span> all
 				</md-checkbox>
 			</div>
-			<md-card class="fade-transition" ng-repeat="performance in performances | filter: toolbar.searchText">
+			<md-card class="fade-transition" ng-repeat="performance in performances | orderBy:'first_letter' | filter: toolbar.searchText">
 				<md-card-content>
 					<md-list layout="row" layout-align="space-between center">
 						<md-list-item class="md-2-line" layout="row">
@@ -91,6 +91,13 @@
 								<div ng-messages="form.editReportForm['OutputError' + $index].$error" ng-if="form.editReportForm['OutputError' + $index].$touched">
 									<div ng-messages-include="/app/shared/templates/validation-message-edit-report.html"></div>
 								</div>
+							</md-input-container>
+						</div>
+						<div layout="row">
+							<!-- Remarks -->
+							<md-input-container flex>
+								<label>Remarks</label>
+								<textarea name="Remarks{{$index}}" ng-model="performance.remarks"></textarea>
 							</md-input-container>
 						</div>
 						<!-- <md-input-container flex ng-if="user.role=='team-leader'">
