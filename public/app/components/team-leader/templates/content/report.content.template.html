@@ -141,11 +141,12 @@
 									<!-- Total Output -->
 									<md-input-container flex>
 										<label>Total Output</label>
-										<input name="Output{{$index}}" type="number" min="0.1" required ng-model="member.output">
-										<div class="hint" ng-if="!showErrors">Output must not be less than one.</div>
+										<input name="Output{{$index}}" type="number" min="0" required ng-model="member.output">
+										<!-- <div class="hint" ng-if="!showErrors">Output must not be less than one.</div> -->
 										<div ng-messages="form.createReportForm['Output' + $index].$error" ng-if="form.createReportForm['Output' + $index].$touched && showErrors">
 											<div ng-message="required">Total output is required.</div>
-											<div ng-message="min">Total Output must not be lower than one.</div>
+											<div ng-message="min">Total output must not be less than 0</div>
+											<!-- <div ng-message="min">Total Output must not be lower than one.</div> -->
 										</div>
 									</md-input-container>
 									<!-- Total Hours Worked -->

@@ -153,9 +153,16 @@ teamLeaderModule
 		    })
 		    .then(function(data){
 		    	Preloader.set(data);
+		    	if(data.multiple)
+		    	{
+		    		var template = '/app/shared/templates/dialogs/performance-evaluation-multiple.dialog.template.html' 
+		    	}
+		    	else{
+		    		var template = '/app/shared/templates/dialogs/performance-evaluation.dialog.template.html' 
+		    	}
 				$mdDialog.show({
 			    	controller: 'performanceEvaluationDialogController',
-			      	templateUrl: '/app/shared/templates/dialogs/performance-evaluation.dialog.template.html',
+			      	templateUrl: template,
 			      	parent: angular.element(document.body),
 			    });
 		    });

@@ -78,10 +78,11 @@
 							<!-- Total Output -->
 							<md-input-container flex>
 								<label>Total Output</label>
-								<input name="Output{{$index}}" type="number" min="0.1" required ng-model="performance.output">
-								<div class="hint" ng-if="!showErrors">Output must not be less than one.</div>
+								<input name="Output{{$index}}" type="number" min="0" required ng-model="performance.output">
+								<!-- <div class="hint" ng-if="!showErrors">Output must not be less than one.</div> -->
 								<div ng-messages="form.editReportForm['Output' + $index].$error" ng-if="form.editReportForm['Output' + $index].$touched && showErrors">
-									<div ng-messages-include="/app/shared/templates/validation-message-edit-report.html"></div>
+									<div ng-message="required">Total output is required.</div>
+									<div ng-message="min">Total output must not be less than 0</div>
 								</div>
 							</md-input-container>
 							<!-- Total Output w/error -->
@@ -89,7 +90,9 @@
 								<label>Total Output w/Error</label>
 								<input name="OutputError{{$index}}" type="number" min="0" max="{{performance.output}}" required ng-model="performance.output_error">
 								<div ng-messages="form.editReportForm['OutputError' + $index].$error" ng-if="form.editReportForm['OutputError' + $index].$touched">
-									<div ng-messages-include="/app/shared/templates/validation-message-edit-report.html"></div>
+									<div ng-message="required">Total output with error worked is required.</div>
+									<div ng-message="min">Total output with error must not be less than 0.</div>
+									<div ng-message="max">Total output with error cannot be more than total output.</div>
 								</div>
 							</md-input-container>
 						</div>

@@ -65,12 +65,16 @@ class PerformanceController extends Controller
                 $performance->date_end = Carbon::parse($performance->date_end)->toFormattedDateString();
             }
 
-            $this->member->position->total_average_output = round($this->member->position->total_output / $this->member->position->total_hours_worked * $daily_work_hours, 2);
+            $this->member->position->total_average_output = $this->member->position->total_output ? round($this->member->position->total_output / $this->member->position->total_hours_worked * $daily_work_hours, 2) : 0;
 
-            $this->member->position->productivity = round($this->member->position->total_average_output / $this->member->performances[0]->target->productivity * 100, 2);
-            $this->member->position->quality = round((1 - $this->member->position->total_output_error / $this->member->position->total_output) * 100, 2);
+            $this->member->position->productivity = $this->member->position->total_average_output ? round($this->member->position->total_average_output / $this->member->performances[0]->target->productivity * 100, 2) : 0;
+            $this->member->position->quality = $this->member->position->total_output ? round((1 - $this->member->position->total_output_error / $this->member->position->total_output) * 100, 2) : 0;
 
-            if($this->member->position->productivity < $this->member->performances[0]->target->productivity && $this->member->position->quality >= $this->member->performances[0]->target->quality)
+            if(!$this->member->position->productivity && !$this->member->position->quality)
+            {
+                $this->member->position->quadrant = 'N/A'; 
+            }
+            else if($this->member->position->productivity < $this->member->performances[0]->target->productivity && $this->member->position->quality >= $this->member->performances[0]->target->quality)
             {
                 $this->member->position->quadrant = 'Quadrant 1'; 
             }
@@ -165,12 +169,16 @@ class PerformanceController extends Controller
                             $performance->date_end = Carbon::parse($performance->date_end)->toFormattedDateString();
                         }
 
-                        $position->total_average_output = round($position->total_output / $position->total_hours_worked * $daily_work_hours, 2);
+                        $position->total_average_output = $position->total_output ? round($position->total_output / $position->total_hours_worked * $daily_work_hours, 2) : 0;
 
-                        $position->productivity = round($position->total_average_output / $position->performances[0]->target->productivity * 100, 2);
-                        $position->quality = round((1 - $position->total_output_error / $position->total_output) * 100, 2);
+                        $position->productivity = $position->total_average_output ? round($position->total_average_output / $position->performances[0]->target->productivity * 100, 2) : 0;
+                        $position->quality = $position->total_output ? round((1 - $position->total_output_error / $position->total_output) * 100, 2) : 0;
 
-                        if($position->productivity < 100 && $position->quality >= $position->performances[0]->target->quality)
+                        if(!$position->productivity && !$position->quality)
+                        {
+                            $position->quadrant = 'N/A'; 
+                        }
+                        else if($position->productivity < 100 && $position->quality >= $position->performances[0]->target->quality)
                         {
                             $position->quadrant = 'Quadrant 1'; 
                         }
@@ -220,8 +228,8 @@ class PerformanceController extends Controller
             })->download('xls');
         }
 
-        $this->member->average_productivity = $this->member->average_productivity / $this->member->count;
-        $this->member->average_quality = $this->member->average_quality / $this->member->count;
+        $this->member->average_productivity = $this->member->count ? $this->member->average_productivity / $this->member->count : 0;
+        $this->member->average_quality = $this->member->count ? $this->member->average_quality / $this->member->count : 0;
 
         return response()->json($this->member);
     }
@@ -302,11 +310,15 @@ class PerformanceController extends Controller
                     $position->total_output_error += $performance->output_error;
                 }
 
-                $position->total_average_output = round($position->total_output / $position->total_hours_worked * $position->performances[0]->daily_work_hours, 2);
-                $position->weekly_productivity = round($position->total_average_output / $position->performances[0]->target->productivity * 100, 2);
-                $position->weekly_quality = round((1 - $position->total_output_error / $position->total_output) * 100, 2);
+                $position->total_average_output = $position->total_output ? round($position->total_output / $position->total_hours_worked * $position->performances[0]->daily_work_hours, 2) : 0;
+                $position->weekly_productivity = $position->total_average_output ? round($position->total_average_output / $position->performances[0]->target->productivity * 100, 2) : 0;
+                $position->weekly_quality = $position->total_output ? round((1 - $position->total_output_error / $position->total_output) * 100, 2) : 0;
 
-                if($position->weekly_productivity < 100 && $position->weekly_quality >= $position->performances[0]->target->quality)
+                if(!$position->weekly_productivity && !$position->weekly_quality)
+                {
+                    $position->quadrant = 'N/A'; 
+                }
+                else if($position->weekly_productivity < 100 && $position->weekly_quality >= $position->performances[0]->target->quality)
                 {
                     $position->quadrant = 'Quadrant 1'; 
                 }
@@ -369,11 +381,15 @@ class PerformanceController extends Controller
                     $position->total_output_error += $performance->output_error;
                 }
 
-                $position->total_average_output = round($position->total_output / $position->total_hours_worked * $position->performances[0]->daily_work_hours, 2);
-                $position->monthly_productivity = round($position->total_average_output / $position->performances[0]->target->productivity * 100, 2);
-                $position->monthly_quality = round((1 - $position->total_output_error / $position->total_output) * 100, 2);
+                $position->total_average_output = $position->total_output ? round($position->total_output / $position->total_hours_worked * $position->performances[0]->daily_work_hours, 2) : 0;
+                $position->monthly_productivity = $position->total_average_output ? round($position->total_average_output / $position->performances[0]->target->productivity * 100, 2) : 0;
+                $position->monthly_quality = $position->total_output ? round((1 - $position->total_output_error / $position->total_output) * 100, 2) : 0;
 
-                if($position->monthly_productivity < 100 && $position->monthly_quality >= $position->performances[0]->target->quality)
+                if(!$position->monthly_productivity && ! $position->monthly_quality)
+                {
+                    $position->quadrant = 'N/A'; 
+                }
+                else if($position->monthly_productivity < 100 && $position->monthly_quality >= $position->performances[0]->target->quality)
                 {
                     $position->quadrant = 'Quadrant 1'; 
                 }
@@ -743,14 +759,18 @@ class PerformanceController extends Controller
                 $performance->output_error = round($request->input($i.'.output_error'), 2);
                 // Round((Output / Hours Worked) * Daily Work Hours)
                 // store the rounded value
-                $performance->average_output = round($request->input($i.'.output') / $request->input($i.'.hours_worked') * $request->input($i.'.daily_work_hours'), 2);
+                $performance->average_output = $request->input($i.'.output') ? round($request->input($i.'.output') / $request->input($i.'.hours_worked') * $request->input($i.'.daily_work_hours'), 2) : 0;
                 // average output / target output * 100 to convert to percentage
-                $performance->productivity = round($performance->average_output / $target->productivity * 100, 2);
+                $performance->productivity = $performance->average_output ? round($performance->average_output / $target->productivity * 100, 2) : 0;
                 // 1 - output w/error / output * 100 to convert to percentage
-                $performance->quality = round((1 - $performance->output_error / $performance->output) * 100, 2);
+                $performance->quality = $performance->output ? round((1 - $performance->output_error / $performance->output) * 100, 2) : 0;
 
                 // Quadrant
-                if($performance->productivity < 100 && $performance->quality >= $target->quality)
+                if(!$performance->productivity && !$performance->quality)
+                {
+                    $performance->quadrant = 'N/A'; 
+                }
+                else if($performance->productivity < 100 && $performance->quality >= $target->quality)
                 {
                     $performance->quadrant = 'Quadrant 1'; 
                 }
@@ -855,13 +875,18 @@ class PerformanceController extends Controller
                 $performance->output_error = round($request->input($i.'.output_error'), 2);
                 // Round((Output / Hours Worked) * Daily Work Hours)
                 // store the rounded value
-                $performance->average_output = round($request->input($i.'.output') / $request->input($i.'.hours_worked') * $request->input($i.'.daily_work_hours'), 2);
+                $performance->average_output = $request->input($i.'.output') ? round($request->input($i.'.output') / $request->input($i.'.hours_worked') * $request->input($i.'.daily_work_hours'), 2) : 0;
                 // average output / target output * 100 to convert to percentage
-                $performance->productivity = round($performance->average_output / $target->productivity * 100, 2);
+                $performance->productivity = $performance->average_output ? round($performance->average_output / $target->productivity * 100, 2) : 0;
                 // 1 - output w/error / output * 100 to convert to percentage
-                $performance->quality = round((1 - $performance->output_error / $performance->output) * 100, 2);
+                $performance->quality = $performance->output ? round((1 - $performance->output_error / $performance->output) * 100, 2) : 0;
                 
-                if($performance->productivity < 100 && $performance->quality >= $target->quality)
+                // Quadrant
+                if(!$performance->productivity && !$performance->quality)
+                {
+                    $performance->quadrant = 'N/A'; 
+                }
+                else if($performance->productivity < 100 && $performance->quality >= $target->quality)
                 {
                     $performance->quadrant = 'Quadrant 1'; 
                 }

@@ -102,6 +102,7 @@ teamLeaderModule
 				if($scope.details.project == 'all'){
 					Performance.evaluationMultiple($scope.details.date_start, $scope.details.date_end, $scope.details.daily_work_hours, $scope.details.department, $scope.details.position, $scope.details.member)
 						.success(function(data){
+							data.multiple = true;
 							Preloader.stop(data);
 						})
 						.error(function(){

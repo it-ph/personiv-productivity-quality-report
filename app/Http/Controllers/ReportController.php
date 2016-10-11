@@ -63,11 +63,15 @@ class ReportController extends Controller
                 for ($i=0; $i < count($project->reports); $i++) { 
                     if($project->reports[$i]->members[$member_key]->performance){
                         $target = $project->reports[$i]->members[$member_key]->performance->target;
-                        $member->average_output = round($member->total_output / $member->total_hours_worked * $first_report->daily_work_hours, 2);
-                        $member->monthly_productivity = round($member->average_output / $target->productivity * 100, 2);
-                        $member->monthly_quality = round((1 - $member->total_output_error / $member->total_output) * 100, 2);
+                        $member->average_output = $member->total_output ? round($member->total_output / $member->total_hours_worked * $first_report->daily_work_hours, 2) : 0;
+                        $member->monthly_productivity = $member->average_output ? round($member->average_output / $target->productivity * 100, 2) : 0;
+                        $member->monthly_quality = $member->total_output ? round((1 - $member->total_output_error / $member->total_output) * 100, 2) : 0;
 
-                        if($member->monthly_productivity < 100 && $member->monthly_quality >= $target->quality)
+                        if(!$member->monthly_productivity && !$member->monthly_quality)
+                        {
+                            $member->quadrant = 'N/A'; 
+                        }
+                        else if($member->monthly_productivity < 100 && $member->monthly_quality >= $target->quality)
                         {
                             $member->quadrant = 'Quadrant 1'; 
                         }
@@ -185,11 +189,15 @@ class ReportController extends Controller
                             }
                             
                             $project->positions[$position_key]->head_count = $project->positions[$position_key]->beginner + $project->positions[$position_key]->moderately_experienced + $project->positions[$position_key]->experienced;
-                            $position->total_average_output = round($position->total_output / $position->total_hours_worked * $performances[0]->daily_work_hours, 2);
-                            $position->monthly_productivity = round($position->total_average_output / $performances[0]->target->productivity * 100, 2);
-                            $position->monthly_quality = round((1 - $position->total_output_error / $position->total_output) * 100, 2);
+                            $position->total_average_output = $position->total_output ? round($position->total_output / $position->total_hours_worked * $performances[0]->daily_work_hours, 2) : 0;
+                            $position->monthly_productivity = $position->total_average_output ? round($position->total_average_output / $performances[0]->target->productivity * 100, 2) : 0;
+                            $position->monthly_quality = $position->total_output ? round((1 - $position->total_output_error / $position->total_output) * 100, 2) : 0;
 
-                            if($position->monthly_productivity < 100 && $position->monthly_quality >= $performances[0]->target->quality)
+                            if(!$position->monthly_productivity && !$position->monthly_quality)
+                            {
+                                $position->quadrant = 'N/A'; 
+                            }
+                            else if($position->monthly_productivity < 100 && $position->monthly_quality >= $performances[0]->target->quality)
                             {
                                 $position->quadrant = 'Quadrant 1'; 
                             }
@@ -239,7 +247,7 @@ class ReportController extends Controller
 
                 $project->total_output = $project->beginner_total_output + $project->moderately_experienced_total_output + $project->experienced_total_output;
                 $project->total_hours_worked = $project->beginner_total_hours_worked + $project->moderately_experienced_total_hours_worked + $project->experienced_total_hours_worked;
-                $project->total_average_output = round($project->total_output / $project->total_hours_worked * $project->first_report->daily_work_hours, 2);
+                $project->total_average_output = $project->total_hours_worked ? round($project->total_output / $project->total_hours_worked * $project->first_report->daily_work_hours, 2) : 0;
             }            
         }
 
@@ -343,11 +351,15 @@ class ReportController extends Controller
                             }
 
                             $project->positions[$position_key]->head_count = $project->positions[$position_key]->beginner + $project->positions[$position_key]->moderately_experienced + $project->positions[$position_key]->experienced;
-                            $position->total_average_output = round($position->total_output / $position->total_hours_worked * $performances[0]->daily_work_hours, 2);
-                            $position->monthly_productivity = round($position->total_average_output / $performances[0]->target->productivity * 100, 2);
-                            $position->monthly_quality = round((1 - $position->total_output_error / $position->total_output) * 100, 2);
+                            $position->total_average_output = $position->total_output ? round($position->total_output / $position->total_hours_worked * $performances[0]->daily_work_hours, 2) : 0;
+                            $position->monthly_productivity = $position->total_average_output ? round($position->total_average_output / $performances[0]->target->productivity * 100, 2) : 0;
+                            $position->monthly_quality = $position->total_output ? round((1 - $position->total_output_error / $position->total_output) * 100, 2) : 0;
 
-                            if($position->monthly_productivity < 100 && $position->monthly_quality >= $performances[0]->target->quality)
+                            if(!$position->monthly_productivity && !$position->monthly_quality)
+                            {
+                                $position->quadrant = 'N/A'; 
+                            }
+                            else if($position->monthly_productivity < 100 && $position->monthly_quality >= $performances[0]->target->quality)
                             {
                                 $position->quadrant = 'Quadrant 1'; 
                             }
@@ -397,7 +409,7 @@ class ReportController extends Controller
 
                 $project->total_output = $project->beginner_total_output + $project->moderately_experienced_total_output + $project->experienced_total_output;
                 $project->total_hours_worked = $project->beginner_total_hours_worked + $project->moderately_experienced_total_hours_worked + $project->experienced_total_hours_worked;
-                $project->total_average_output = round($project->total_output / $project->total_hours_worked * $daily_work_hours, 2);
+                $project->total_average_output = $project->total_hours_worked ? round($project->total_output / $project->total_hours_worked * $daily_work_hours, 2) : 0;
                     
             }
         }
@@ -538,10 +550,15 @@ class ReportController extends Controller
                                     $performances[0]->output += $performance->output;
                                     $performances[0]->output_error += $performance->output_error;
                                     $performances[0]->hours_worked += $performance->hours_worked;
-                                    $performances[0]->average_output = round($performances[0]->output / $performances[0]->hours_worked * $request->daily_work_hours, 2);
-                                    $performances[0]->productivity = round($performances[0]->average_output / $member->target->productivity * 100, 2);
-                                    $performances[0]->quality = round((1 - $performances[0]->output_error / $performances[0]->output) * 100, 2);
-                                    if($performances[0]->productivity < 100 && $performances[0]->quality >= $member->target->quality)
+                                    $performances[0]->average_output = $performances[0]->output ? round($performances[0]->output / $performances[0]->hours_worked * $request->daily_work_hours, 2) : 0;
+                                    $performances[0]->productivity = $performances[0]->average_output ? round($performances[0]->average_output / $member->target->productivity * 100, 2) : 0;
+                                    $performances[0]->quality = $performances[0]->output ? round((1 - $performances[0]->output_error / $performances[0]->output) * 100, 2) : 0;
+
+                                    if(!$performances[0]->productivity && !$performances[0]->quality)
+                                    {
+                                        $member->quadrant = 'N/A'; 
+                                    }
+                                    else if($performances[0]->productivity < 100 && $performances[0]->quality >= $member->target->quality)
                                     {
                                         $member->quadrant = 'Quadrant 1'; 
                                     }
@@ -612,11 +629,15 @@ class ReportController extends Controller
                     $position->head_count = $position->beginner + $position->moderately_experienced + $position->experienced;
                     // $position->total_average_output = round($position->total_output / $position->total_hours_worked * $request->daily_work_hours, 2);
                     
-                    $member->total_average_output = round($member->total_output / $member->total_hours_worked * $request->daily_work_hours, 2);
-                    $member->monthly_productivity = round($member->total_average_output / $member->target->productivity * 100, 2);
-                    $member->monthly_quality = round((1 - $member->total_output_error / $member->total_output) * 100, 2);
+                    $member->total_average_output = $member->total_output ? round($member->total_output / $member->total_hours_worked * $request->daily_work_hours, 2) : 0;
+                    $member->monthly_productivity = $member->total_average_output ? round($member->total_average_output / $member->target->productivity * 100, 2) : 0;
+                    $member->monthly_quality = $member->total_output ? round((1 - $member->total_output_error / $member->total_output) * 100, 2) : 0;
 
-                    if($member->monthly_productivity < 100 && $member->monthly_quality >= $member->target->quality)
+                    if(!$member->monthly_productivity && !$member->monthly_quality)
+                    {
+                        $member->quadrant = 'N/A'; 
+                    }
+                    else if($member->monthly_productivity < 100 && $member->monthly_quality >= $member->target->quality)
                     {
                         $member->quadrant = 'Quadrant 1'; 
                     }
@@ -761,11 +782,15 @@ class ReportController extends Controller
                             }
 
                             $project->positions[$position_key]->head_count = $project->positions[$position_key]->beginner + $project->positions[$position_key]->moderately_experienced + $project->positions[$position_key]->experienced;
-                            $position->total_average_output = round($position->total_output / $position->total_hours_worked * $performances[0]->daily_work_hours, 2);
-                            $position->monthly_productivity = round($position->total_average_output / $performances[0]->target->productivity * 100, 2);
-                            $position->monthly_quality = round((1 - $position->total_output_error / $position->total_output) * 100, 2);
+                            $position->total_average_output = $position->total_output ? round($position->total_output / $position->total_hours_worked * $performances[0]->daily_work_hours, 2) : 0;
+                            $position->monthly_productivity = $position->total_average_output ? round($position->total_average_output / $performances[0]->target->productivity * 100, 2) : 0;
+                            $position->monthly_quality = $position->total_output ? round((1 - $position->total_output_error / $position->total_output) * 100, 2) : 0;
 
-                            if($position->monthly_productivity < 100 && $position->monthly_quality >= $performances[0]->target->quality)
+                            if(!$position->monthly_productivity && !$position->monthly_quality)
+                            {
+                                $position->quadrant = 'N/A'; 
+                            }
+                            else if($position->monthly_productivity < 100 && $position->monthly_quality >= $performances[0]->target->quality)
                             {
                                 $position->quadrant = 'Quadrant 1'; 
                             }
@@ -815,7 +840,7 @@ class ReportController extends Controller
 
                 $project->total_output = $project->beginner_total_output + $project->moderately_experienced_total_output + $project->experienced_total_output;
                 $project->total_hours_worked = $project->beginner_total_hours_worked + $project->moderately_experienced_total_hours_worked + $project->experienced_total_hours_worked;
-                $project->total_average_output = round($project->total_output / $project->total_hours_worked * $project->first_report->daily_work_hours, 2);
+                $project->total_average_output = $project->total_output ? round($project->total_output / $project->total_hours_worked * $project->first_report->daily_work_hours, 2) : 0;
             }            
         }
 
@@ -902,10 +927,14 @@ class ReportController extends Controller
                                     $performances[0]->output += $performance->output;
                                     $performances[0]->output_error += $performance->output_error;
                                     $performances[0]->hours_worked += $performance->hours_worked;
-                                    $performances[0]->average_output = round($performances[0]->output / $performances[0]->hours_worked * $daily_work_hours, 2);
-                                    $performances[0]->productivity = round($performances[0]->average_output / $member->target->productivity * 100, 2);
-                                    $performances[0]->quality = round((1 - $performances[0]->output_error / $performances[0]->output) * 100, 2);
-                                    if($performances[0]->productivity < 100 && $performances[0]->quality >= $member->target->quality)
+                                    $performances[0]->average_output = $performances[0]->output ? round($performances[0]->output / $performances[0]->hours_worked * $daily_work_hours, 2) : 0;
+                                    $performances[0]->productivity = $performances[0]->average_output ? round($performances[0]->average_output / $member->target->productivity * 100, 2) : 0;
+                                    $performances[0]->quality = $performances[0]->output ? round((1 - $performances[0]->output_error / $performances[0]->output) * 100, 2) : 0;
+                                    if(!$performances[0]->productivity && ! $performances[0]->quality)
+                                    {
+                                        $member->quadrant = 'N/A'; 
+                                    }
+                                    else if($performances[0]->productivity < 100 && $performances[0]->quality >= $member->target->quality)
                                     {
                                         $member->quadrant = 'Quadrant 1'; 
                                     }
@@ -946,11 +975,15 @@ class ReportController extends Controller
                         $member->total_hours_worked += $performance->hours_worked;
                     }
                     
-                    $member->total_average_output = round($member->total_output / $member->total_hours_worked * $daily_work_hours, 2);
-                    $member->monthly_productivity = round($member->total_average_output / $member->target->productivity * 100, 2);
-                    $member->monthly_quality = round((1 - $member->total_output_error / $member->total_output) * 100, 2);
+                    $member->total_average_output = $member->total_output ? round($member->total_output / $member->total_hours_worked * $daily_work_hours, 2) : 0;
+                    $member->monthly_productivity = $member->total_average_output ? round($member->total_average_output / $member->target->productivity * 100, 2) : 0;
+                    $member->monthly_quality = $member->total_output ? round((1 - $member->total_output_error / $member->total_output) * 100, 2) : 0;
 
-                    if($member->monthly_productivity < 100 && $member->monthly_quality >= $member->target->quality)
+                    if(!$member->monthly_productivity && !$member->monthly_quality)
+                    {
+                        $member->quadrant = 'N/A'; 
+                    }
+                    else if($member->monthly_productivity < 100 && $member->monthly_quality >= $member->target->quality)
                     {
                         $member->quadrant = 'Quadrant 1'; 
                     }
@@ -1074,10 +1107,14 @@ class ReportController extends Controller
                                     $performances[0]->output += $performance->output;
                                     $performances[0]->output_error += $performance->output_error;
                                     $performances[0]->hours_worked += $performance->hours_worked;
-                                    $performances[0]->average_output = round($performances[0]->output / $performances[0]->hours_worked * $daily_work_hours, 2);
-                                    $performances[0]->productivity = round($performances[0]->average_output / $member->target->productivity * 100, 2);
-                                    $performances[0]->quality = round((1 - $performances[0]->output_error / $performances[0]->output) * 100, 2);
-                                    if($performances[0]->productivity < 100 && $performances[0]->quality >= $member->target->quality)
+                                    $performances[0]->average_output = $performances[0]->output ? round($performances[0]->output / $performances[0]->hours_worked * $daily_work_hours, 2) : 0;
+                                    $performances[0]->productivity = $performances[0]->average_output ? round($performances[0]->average_output / $member->target->productivity * 100, 2) : 0;
+                                    $performances[0]->quality = $performances[0]->output ? round((1 - $performances[0]->output_error / $performances[0]->output) * 100, 2) : 0;
+                                    if(!$performances[0]->productivity && !$performances[0]->quality)
+                                    {
+                                        $member->quadrant = 'N/A'; 
+                                    }
+                                    else if($performances[0]->productivity < 100 && $performances[0]->quality >= $member->target->quality)
                                     {
                                         $member->quadrant = 'Quadrant 1'; 
                                     }
@@ -1118,11 +1155,15 @@ class ReportController extends Controller
                         $member->total_hours_worked += $performance->hours_worked;
                     }
                     
-                    $member->total_average_output = round($member->total_output / $member->total_hours_worked * $daily_work_hours, 2);
-                    $member->monthly_productivity = round($member->total_average_output / $member->target->productivity * 100, 2);
-                    $member->monthly_quality = round((1 - $member->total_output_error / $member->total_output) * 100, 2);
+                    $member->total_average_output = $member->total_output ? round($member->total_output / $member->total_hours_worked * $daily_work_hours, 2) : 0;
+                    $member->monthly_productivity = $member->total_average_output ? round($member->total_average_output / $member->target->productivity * 100, 2) : 0;
+                    $member->monthly_quality = $member->total_output ? round((1 - $member->total_output_error / $member->total_output) * 100, 2) : 0;
 
-                    if($member->monthly_productivity < 100 && $member->monthly_quality >= $member->target->quality)
+                    if(!$member->monthly_productivity && !$member->monthly_quality)
+                    {
+                        $member->quadrant = 'N\A'; 
+                    }
+                    else if($member->monthly_productivity < 100 && $member->monthly_quality >= $member->target->quality)
                     {
                         $member->quadrant = 'Quadrant 1'; 
                     }
