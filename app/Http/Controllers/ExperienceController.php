@@ -58,16 +58,18 @@ class ExperienceController extends Controller
                     $i.'.date_started' => 'required',
                 ]);
 
-                $experience = new Experience;
+                DB::transaction(function() use($request, $i){
+                    $experience = new Experience;
 
-                $experience->member_id = $request->input($i.'.member_id');
-                $experience->project_id = $request->input($i.'.project.id');
-                $experience->date_started = Carbon::parse($request->input($i.'.date_started'));
+                    $experience->member_id = $request->input($i.'.member_id');
+                    $experience->project_id = $request->input($i.'.project.id');
+                    $experience->date_started = Carbon::parse($request->input($i.'.date_started'));
 
-                $tenure = Carbon::today()->diffInMonths(Carbon::parse($request->input($i.'.date_started')));
-                $experience->experience = $tenure < 3 ? 'Beginner' : (($tenure >= 3 && $tenure < 6) ? 'Moderately Experienced' : 'Experienced');
+                    $tenure = Carbon::today()->diffInMonths(Carbon::parse($request->input($i.'.date_started')));
+                    $experience->experience = $tenure < 3 ? 'Beginner' : (($tenure >= 3 && $tenure < 6) ? 'Moderately Experienced' : 'Experienced');
 
-                $experience->save();
+                    $experience->save();
+                });
             }
         }
     }

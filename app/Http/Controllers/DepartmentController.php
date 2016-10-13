@@ -66,11 +66,13 @@ class DepartmentController extends Controller
             return response()->json(true);
         }
 
-        $department = new Department;
+        DB::transaction(function() use($request){
+            $department = new Department;
 
-        $department->name = $request->name;
+            $department->name = $request->name;
 
-        $department->save();
+            $department->save();
+        });
     }
 
     /**

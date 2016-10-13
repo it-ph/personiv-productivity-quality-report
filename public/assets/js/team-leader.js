@@ -876,6 +876,7 @@ teamLeaderModule
 					var item = {};
 					item.display = performance.member.full_name;
 					$scope.toolbar.items.push(item);
+					performance.first_letter = performance.member.full_name.charAt(0).toUpperCase();
 				});
 
 				$scope.performances = data;
@@ -1038,37 +1039,50 @@ teamLeaderModule
 			}
 			else{
 				Preloader.preload();
-
 				if(!busy){
 					busy = true;
+					var count = 0;
 					angular.forEach($scope.performances, function(item){
 						item.date_start = $scope.details.date_start;
 						item.date_end = $scope.details.date_end;
 						item.daily_work_hours = $scope.details.daily_work_hours;
+						count = item.include ? count + 1 : count;
 					});
-
-					PerformanceHistory.store($scope.performances)
-						.success(function(){
-							Performance.update(reportID, $scope.performances)
-								.success(function(){
-									$mdToast.show(
-								      	$mdToast.simple()
-									        .content('Changes saved.')
-									        .position('bottom right')
-									        .hideDelay(3000)
-								    );
-									$scope.toolbar.back();
-									Preloader.stop();
-									busy = false;
-								})
-								.error(function(){
-									Preloader.error();
-								})
-						})
-						.error(function(){
-							Preloader.error();
-							busy = false;
-						})
+					if(count){
+						PerformanceHistory.store($scope.performances)
+							.success(function(){
+								Performance.update(reportID, $scope.performances)
+									.success(function(){
+										$mdToast.show(
+									      	$mdToast.simple()
+										        .content('Changes saved.')
+										        .position('bottom right')
+										        .hideDelay(3000)
+									    );
+										$scope.toolbar.back();
+										Preloader.stop();
+										busy = false;
+									})
+									.error(function(){
+										Preloader.error();
+									})
+							})
+							.error(function(){
+								Preloader.error();
+								busy = false;
+							})
+					}
+					else{
+						$mdDialog.show(
+							$mdDialog.alert()
+								.parent(angular.element(document.body))
+								.clickOutsideToClose(true)
+						        .title('Report not submitted.')
+						        .content('Empty reports are not submitted.')
+						        .ariaLabel('Empty Report')
+						        .ok('Got it!')
+						);
+					}
 				}
 			}
 		};
@@ -1324,9 +1338,16 @@ teamLeaderModule
 		    })
 		    .then(function(data){
 		    	Preloader.set(data);
+		    	if(data.multiple)
+		    	{
+		    		var template = '/app/shared/templates/dialogs/performance-evaluation-multiple.dialog.template.html' 
+		    	}
+		    	else{
+		    		var template = '/app/shared/templates/dialogs/performance-evaluation.dialog.template.html' 
+		    	}
 				$mdDialog.show({
 			    	controller: 'performanceEvaluationDialogController',
-			      	templateUrl: '/app/shared/templates/dialogs/performance-evaluation.dialog.template.html',
+			      	templateUrl: template,
 			      	parent: angular.element(document.body),
 			    });
 		    });
@@ -1617,6 +1638,7 @@ teamLeaderModule
 		 *
 		*/
 		$scope.rightSidenav = {};
+		$scope.rightSidenav.searchText = '';
 		$scope.rightSidenav.show = true;
 		$scope.rightSidenav.month = $scope.months_array[new Date().getMonth()];
 		$scope.rightSidenav.year = new Date().getFullYear();
@@ -1664,7 +1686,7 @@ teamLeaderModule
 		$scope.subheader.refresh = function(){
 			$scope.report = {};
 			Preloader.preload();
-			$scope.init(true);
+			$scope.init(true, $scope.rightSidenav);
 		}
 
 		$scope.subheader.download = function(){
@@ -1756,52 +1778,27 @@ teamLeaderModule
 		};
 
 		$scope.init = function(refresh, query){
-			Report.departmentMonthly(query)
+			Report.searchMonthly(query)
 				.success(function(data){
-					angular.forEach(data, function(project){
-						project.chart = {};
-						project.chart.series = ['Productivity', 'Quality'];
-						project.chart.data = [[],[]];
-						project.chart.labels = [];
-						project.count = 0;
-
-						angular.forEach(project.positions, function(position){
-							if(position.head_count){
-								project.count += position.head_count;
-							}
-						});
-
-						project.date_start = new Date(project.date_start);
+					angular.forEach(data, function(report){
+						report.count = 0;
 						
-						angular.forEach(project.members, function(member){
-							member.full_name = member.member.full_name;
-							// if(!member.member.deleted_at && member.average_productivity && member.average_quality){
-							// 	if(member.roles > 1){
-							// 		project.count++;
-							// 	}
-
-							// 	project.count++;
-							// }
-							if(member.average_productivity && member.average_productivity){
-								project.chart.data[0].push(member.average_productivity);
-								project.chart.data[1].push(member.average_quality);
-								project.chart.labels.push(member.member.full_name);
+						angular.forEach(report.positions, function(position){
+							if(position.head_count){
+								report.count += position.head_count;
 							}
 						});
 					});
 
-					$scope.report.current = data;
-					$scope.report.showCurrent = true;
+					$scope.reports = data;
+					// $scope.report.showCurrent = true;
 
-					if(query){
-						$scope.haveResults = data ? true: false;
-						console.log($scope.haveResults);
-						console.log($scope.report.showCurrent);
-						
-					}
-					else{
-						$scope.haveCurrent = data ? true: false;
-					}
+					// if(query){
+					// 	$scope.haveResults = data ? true: false;
+					// }
+					// else{
+					// 	$scope.haveCurrent = data ? true: false;
+					// }
 
 
 					if(refresh)
@@ -1827,7 +1824,7 @@ teamLeaderModule
 
 		}
 
-		$scope.init();
+		// $scope.init();
 
 
 	}]);
@@ -2065,7 +2062,7 @@ teamLeaderModule
 			Experience.members(projectID)
 				.success(function(data){
 					$scope.members = data;
-					// $scope.resetMembers();
+					$scope.resetMembers();
 				});
 
 			Project.show(projectID)
@@ -2815,6 +2812,7 @@ teamLeaderModule
 				if($scope.details.project == 'all'){
 					Performance.evaluationMultiple($scope.details.date_start, $scope.details.date_end, $scope.details.daily_work_hours, $scope.details.department, $scope.details.position, $scope.details.member)
 						.success(function(data){
+							data.multiple = true;
 							Preloader.stop(data);
 						})
 						.error(function(){

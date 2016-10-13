@@ -677,137 +677,139 @@ class PerformanceController extends Controller
                     $i.'.output_error' => 'required|numeric',
                 ]);
 
-                // check if a report is already created
-                if(!$create_report)
-                {
-                    $admin = User::where('role', 'admin')->first();
-                    $report = new Report;
+                DB::transaction(function() use($request, $i, $create_report){
+                    // check if a report is already created
+                    if(!$create_report)
+                    {
+                        $admin = User::where('role', 'admin')->first();
+                        $report = new Report;
 
-                    $report->user_id = $request->user()->id;
-                    $report->department_id = $request->user()->department_id;
-                    $report->project_id = $request->input($i.'.project_id');
-                    $report->daily_work_hours = $request->input($i.'.daily_work_hours');
-                    $report->date_start = $request->input($i.'.date_start');
-                    $report->date_end = $request->input($i.'.date_end');
+                        $report->user_id = $request->user()->id;
+                        $report->department_id = $request->user()->department_id;
+                        $report->project_id = $request->input($i.'.project_id');
+                        $report->daily_work_hours = $request->input($i.'.daily_work_hours');
+                        $report->date_start = $request->input($i.'.date_start');
+                        $report->date_end = $request->input($i.'.date_end');
 
-                    $report->save();
+                        $report->save();
 
-                    // create a notification
-                    $notification = new Notification;
+                        // create a notification
+                        $notification = new Notification;
 
-                    $notification->message = 'submitted a ';
-                    $notification->sender_user_id = $request->user()->id;
-                    $notification->receiver_user_id = $admin->id;
-                    $notification->subscriber = 'admin';
-                    $notification->state = 'main.weekly-report';
-                    $notification->event_id = $report->id;
-                    $notification->event_id_type = 'report_id';
-                    $notification->seen = false;
+                        $notification->message = 'submitted a ';
+                        $notification->sender_user_id = $request->user()->id;
+                        $notification->receiver_user_id = $admin->id;
+                        $notification->subscriber = 'admin';
+                        $notification->state = 'main.weekly-report';
+                        $notification->event_id = $report->id;
+                        $notification->event_id_type = 'report_id';
+                        $notification->seen = false;
 
-                    $notification->save();
+                        $notification->save();
 
-                    $notify = DB::table('reports')
-                        ->join('users', 'users.id', '=', 'reports.user_id')
-                        ->join('projects', 'projects.id', '=', 'reports.project_id')
-                        ->join('notifications', 'notifications.event_id', '=', 'reports.id')
-                        ->select(
-                            'reports.*',
-                            'users.*',
-                            DB::raw('LEFT(users.first_name, 1) as first_letter'),
-                            'projects.*',
-                            'notifications.*'
-                        )
-                        ->where('notifications.id', $notification->id)
-                        ->first();
+                        $notify = DB::table('reports')
+                            ->join('users', 'users.id', '=', 'reports.user_id')
+                            ->join('projects', 'projects.id', '=', 'reports.project_id')
+                            ->join('notifications', 'notifications.event_id', '=', 'reports.id')
+                            ->select(
+                                'reports.*',
+                                'users.*',
+                                DB::raw('LEFT(users.first_name, 1) as first_letter'),
+                                'projects.*',
+                                'notifications.*'
+                            )
+                            ->where('notifications.id', $notification->id)
+                            ->first();
 
-                    // foreach ($query as $key => $value) {
-                    //     $notify = $value;
+                        // foreach ($query as $key => $value) {
+                        //     $notify = $value;
+                        // }
+
+                        event(new ReportSubmittedBroadCast($notify)); 
+
+                        $activity_type = ActivityType::where('action', 'create')->first();
+
+                        $activity = new Activity;
+
+                        $activity->report_id = $report->id;
+                        $activity->user_id = $request->user()->id;
+                        $activity->activity_type_id = $activity_type->id;
+
+                        $activity->save();
+
+                        // report 
+                        $create_report = true;
+                    }
+
+                    // $target = Target::where('position_id', $request->input($i.'.position_id'))->where('experience', $request->input($i.'.experience'))->first();
+                    $target = Target::withTrashed()->where('id', $request->input($i.'.target_id'))->first();
+
+                    $performance = new Performance;
+
+                    $performance->report_id = $report->id;
+                    $performance->member_id = $request->input($i.'.member.id');
+                    $performance->position_id = $request->input($i.'.position_id');
+                    $performance->department_id = $request->user()->department_id;
+                    $performance->project_id = $request->input($i.'.project_id');
+                    $performance->target_id = $target->id;
+                    $performance->output = round($request->input($i.'.output'), 2);
+                    $performance->date_start = $request->input($i.'.date_start');
+                    $performance->date_end = $request->input($i.'.date_end');
+                    $performance->hours_worked = round($request->input($i.'.hours_worked') ,2);
+                    $performance->daily_work_hours = $request->input($i.'.daily_work_hours');
+                    $performance->output_error = round($request->input($i.'.output_error'), 2);
+                    // Round((Output / Hours Worked) * Daily Work Hours)
+                    // store the rounded value
+                    $performance->average_output = $request->input($i.'.output') ? round($request->input($i.'.output') / $request->input($i.'.hours_worked') * $request->input($i.'.daily_work_hours'), 2) : 0;
+                    // average output / target output * 100 to convert to percentage
+                    $performance->productivity = $performance->average_output ? round($performance->average_output / $target->productivity * 100, 2) : 0;
+                    // 1 - output w/error / output * 100 to convert to percentage
+                    $performance->quality = $performance->output ? round((1 - $performance->output_error / $performance->output) * 100, 2) : 0;
+
+                    // Quadrant
+                    if(!$performance->productivity && !$performance->quality)
+                    {
+                        $performance->quadrant = 'N/A'; 
+                    }
+                    else if($performance->productivity < 100 && $performance->quality >= $target->quality)
+                    {
+                        $performance->quadrant = 'Quadrant 1'; 
+                    }
+                    else if($performance->productivity >= 100 && $performance->quality >= $target->quality)
+                    {
+                        $performance->quadrant = 'Quadrant 2'; 
+                    }
+                    else if($performance->productivity >= 100 && $performance->quality < $target->quality)
+                    {
+                        $performance->quadrant = 'Quadrant 3'; 
+                    }
+                    else if($performance->productivity < 100 && $performance->quality < $target->quality)
+                    {
+                        $performance->quadrant = 'Quadrant 4'; 
+                    }
+
+                    $performance->remarks = $request->input($i.'.remarks');
+
+                    // $performance->type = "weekly";
+                    $performance->save();
+                    // fetch target
+                    // $productivity = Target::where('type', 'Productivity')->where('position_id', $request->input($i.'.position_id'))->where('experience', $request->input($i.'.experience'))->where('created_at', '<=', $request->input($i.'.date_end'))->orderBy('created_at', 'desc')->first();
+
+                    // if(!$productivity)
+                    // {
+                    //      $productivity = Target::where('type', 'Productivity')->where('position_id', $request->input($i.'.position_id'))->where('experience', $request->input($i.'.experience'))->first();
                     // }
 
-                    event(new ReportSubmittedBroadCast($notify)); 
+                    // $quality = Target::where('type', 'Quality')->where('position_id', $request->input($i.'.position_id'))->where('experience', $request->input($i.'.experience'))->where('created_at', '<=', $request->input($i.'.date_end'))->orderBy('created_at', 'desc')->first();
 
-                    $activity_type = ActivityType::where('action', 'create')->first();
+                    // if(!$quality)
+                    // {
+                    //      $quality = Target::where('type', 'Quality')->where('position_id', $request->input($i.'.position_id'))->where('experience', $request->input($i.'.experience'))->first();
+                    // }
 
-                    $activity = new Activity;
-
-                    $activity->report_id = $report->id;
-                    $activity->user_id = $request->user()->id;
-                    $activity->activity_type_id = $activity_type->id;
-
-                    $activity->save();
-
-                    // report 
-                    $create_report = true;
-                }
-
-                // $target = Target::where('position_id', $request->input($i.'.position_id'))->where('experience', $request->input($i.'.experience'))->first();
-                $target = Target::withTrashed()->where('id', $request->input($i.'.target_id'))->first();
-
-                $performance = new Performance;
-
-                $performance->report_id = $report->id;
-                $performance->member_id = $request->input($i.'.member.id');
-                $performance->position_id = $request->input($i.'.position_id');
-                $performance->department_id = $request->user()->department_id;
-                $performance->project_id = $request->input($i.'.project_id');
-                $performance->target_id = $target->id;
-                $performance->output = round($request->input($i.'.output'), 2);
-                $performance->date_start = $request->input($i.'.date_start');
-                $performance->date_end = $request->input($i.'.date_end');
-                $performance->hours_worked = round($request->input($i.'.hours_worked') ,2);
-                $performance->daily_work_hours = $request->input($i.'.daily_work_hours');
-                $performance->output_error = round($request->input($i.'.output_error'), 2);
-                // Round((Output / Hours Worked) * Daily Work Hours)
-                // store the rounded value
-                $performance->average_output = $request->input($i.'.output') ? round($request->input($i.'.output') / $request->input($i.'.hours_worked') * $request->input($i.'.daily_work_hours'), 2) : 0;
-                // average output / target output * 100 to convert to percentage
-                $performance->productivity = $performance->average_output ? round($performance->average_output / $target->productivity * 100, 2) : 0;
-                // 1 - output w/error / output * 100 to convert to percentage
-                $performance->quality = $performance->output ? round((1 - $performance->output_error / $performance->output) * 100, 2) : 0;
-
-                // Quadrant
-                if(!$performance->productivity && !$performance->quality)
-                {
-                    $performance->quadrant = 'N/A'; 
-                }
-                else if($performance->productivity < 100 && $performance->quality >= $target->quality)
-                {
-                    $performance->quadrant = 'Quadrant 1'; 
-                }
-                else if($performance->productivity >= 100 && $performance->quality >= $target->quality)
-                {
-                    $performance->quadrant = 'Quadrant 2'; 
-                }
-                else if($performance->productivity >= 100 && $performance->quality < $target->quality)
-                {
-                    $performance->quadrant = 'Quadrant 3'; 
-                }
-                else if($performance->productivity < 100 && $performance->quality < $target->quality)
-                {
-                    $performance->quadrant = 'Quadrant 4'; 
-                }
-
-                $performance->remarks = $request->input($i.'.remarks');
-
-                // $performance->type = "weekly";
-                $performance->save();
-                // fetch target
-                // $productivity = Target::where('type', 'Productivity')->where('position_id', $request->input($i.'.position_id'))->where('experience', $request->input($i.'.experience'))->where('created_at', '<=', $request->input($i.'.date_end'))->orderBy('created_at', 'desc')->first();
-
-                // if(!$productivity)
-                // {
-                //      $productivity = Target::where('type', 'Productivity')->where('position_id', $request->input($i.'.position_id'))->where('experience', $request->input($i.'.experience'))->first();
-                // }
-
-                // $quality = Target::where('type', 'Quality')->where('position_id', $request->input($i.'.position_id'))->where('experience', $request->input($i.'.experience'))->where('created_at', '<=', $request->input($i.'.date_end'))->orderBy('created_at', 'desc')->first();
-
-                // if(!$quality)
-                // {
-                //      $quality = Target::where('type', 'Quality')->where('position_id', $request->input($i.'.position_id'))->where('experience', $request->input($i.'.experience'))->first();
-                // }
-
-                // $performance->productivity_id = $productivity->id;
-                // $performance->quality_id = $quality->id;
+                    // $performance->productivity_id = $productivity->id;
+                    // $performance->quality_id = $quality->id;
+                });
             }
         }
 
@@ -860,54 +862,56 @@ class PerformanceController extends Controller
                     $i.'.output_error' => 'required|numeric',
                 ]);
 
-                // $target = Target::where('position_id', $request->input($i.'.position_id'))->where('experience', $request->input($i.'.experience'))->first();
-                $target = Target::withTrashed()->where('id', $request->input($i.'.target_id'))->first();
+                DB::transaction(function() use ($request, $i){
+                    // $target = Target::where('position_id', $request->input($i.'.position_id'))->where('experience', $request->input($i.'.experience'))->first();
+                    $target = Target::withTrashed()->where('id', $request->input($i.'.target_id'))->first();
 
-                $performance = Performance::where('id', $request->input($i.'.id'))->first();
+                    $performance = Performance::where('id', $request->input($i.'.id'))->first();
 
-                $performance->position_id = $request->input($i.'.position_id');
-                // $performance->project_id = $request->input($i.'.project_id');
-                $performance->output = round($request->input($i.'.output'), 2);
-                // $performance->date_start = $request->input($i.'.date_start');
-                // $performance->date_end = $request->input($i.'.date_end');
-                $performance->hours_worked = round($request->input($i.'.hours_worked'), 2);
-                // $performance->daily_work_hours = $request->input($i.'.daily_work_hours');
-                $performance->output_error = round($request->input($i.'.output_error'), 2);
-                // Round((Output / Hours Worked) * Daily Work Hours)
-                // store the rounded value
-                $performance->average_output = $request->input($i.'.output') ? round($request->input($i.'.output') / $request->input($i.'.hours_worked') * $request->input($i.'.daily_work_hours'), 2) : 0;
-                // average output / target output * 100 to convert to percentage
-                $performance->productivity = $performance->average_output ? round($performance->average_output / $target->productivity * 100, 2) : 0;
-                // 1 - output w/error / output * 100 to convert to percentage
-                $performance->quality = $performance->output ? round((1 - $performance->output_error / $performance->output) * 100, 2) : 0;
-                
-                // Quadrant
-                if(!$performance->productivity && !$performance->quality)
-                {
-                    $performance->quadrant = 'N/A'; 
-                }
-                else if($performance->productivity < 100 && $performance->quality >= $target->quality)
-                {
-                    $performance->quadrant = 'Quadrant 1'; 
-                }
-                else if($performance->productivity >= 100 && $performance->quality >= $target->quality)
-                {
-                    $performance->quadrant = 'Quadrant 2'; 
-                }
-                else if($performance->productivity >= 100 && $performance->quality < $target->quality)
-                {
-                    $performance->quadrant = 'Quadrant 3'; 
-                }
-                else if($performance->productivity < 100 && $performance->quality < $target->quality)
-                {
-                    $performance->quadrant = 'Quadrant 4'; 
-                }
+                    $performance->position_id = $request->input($i.'.position_id');
+                    // $performance->project_id = $request->input($i.'.project_id');
+                    $performance->output = round($request->input($i.'.output'), 2);
+                    // $performance->date_start = $request->input($i.'.date_start');
+                    // $performance->date_end = $request->input($i.'.date_end');
+                    $performance->hours_worked = round($request->input($i.'.hours_worked'), 2);
+                    // $performance->daily_work_hours = $request->input($i.'.daily_work_hours');
+                    $performance->output_error = round($request->input($i.'.output_error'), 2);
+                    // Round((Output / Hours Worked) * Daily Work Hours)
+                    // store the rounded value
+                    $performance->average_output = $request->input($i.'.output') ? round($request->input($i.'.output') / $request->input($i.'.hours_worked') * $request->input($i.'.daily_work_hours'), 2) : 0;
+                    // average output / target output * 100 to convert to percentage
+                    $performance->productivity = $performance->average_output ? round($performance->average_output / $target->productivity * 100, 2) : 0;
+                    // 1 - output w/error / output * 100 to convert to percentage
+                    $performance->quality = $performance->output ? round((1 - $performance->output_error / $performance->output) * 100, 2) : 0;
+                    
+                    // Quadrant
+                    if(!$performance->productivity && !$performance->quality)
+                    {
+                        $performance->quadrant = 'N/A'; 
+                    }
+                    else if($performance->productivity < 100 && $performance->quality >= $target->quality)
+                    {
+                        $performance->quadrant = 'Quadrant 1'; 
+                    }
+                    else if($performance->productivity >= 100 && $performance->quality >= $target->quality)
+                    {
+                        $performance->quadrant = 'Quadrant 2'; 
+                    }
+                    else if($performance->productivity >= 100 && $performance->quality < $target->quality)
+                    {
+                        $performance->quadrant = 'Quadrant 3'; 
+                    }
+                    else if($performance->productivity < 100 && $performance->quality < $target->quality)
+                    {
+                        $performance->quadrant = 'Quadrant 4'; 
+                    }
 
-                $performance->remarks = $request->input($i.'.remarks');
-                // $performance->type = "weekly";
-                // $performance->performance_id = $request->input($i.'.performance_id');
-                // save performance to database
-                $performance->save();
+                    $performance->remarks = $request->input($i.'.remarks');
+                    // $performance->type = "weekly";
+                    // $performance->performance_id = $request->input($i.'.performance_id');
+                    // save performance to database
+                    $performance->save();
+                });
             }
         }
     }
