@@ -567,7 +567,7 @@ class PerformanceController extends Controller
 
             $limit = $request->input($i.'.weekly_hours') - $hours_worked;
 
-            $experience = Experience::with('member')->where('member_id', $request->input($i.'.member_id'))->where('project_id', $request->input($i.'.project_id'))->first();
+            $experience = Experience::with(['member' => function($query){ $query->withTrashed(); }])->where('member_id', $request->input($i.'.member_id'))->where('project_id', $request->input($i.'.project_id'))->first();
 
             $experience->limit = round($limit,1);
             $experience->position_id = $request->input($i.'.position_id');

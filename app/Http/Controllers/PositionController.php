@@ -85,17 +85,15 @@ class PositionController extends Controller
             return response()->json(true);
         }
 
-        DB::transaction(function() use ($request){
-            $position = new Position;
+        $position = new Position;
 
-            $position->name = $request->name;
-            $position->department_id = $request->department_id;
-            $position->project_id = $request->project_id;
+        $position->name = $request->name;
+        $position->department_id = $request->department_id;
+        $position->project_id = $request->project_id;
 
-            $position->save();
+        $position->save();
 
-            return $position;
-        });
+        return $position;
     }
 
     /**
