@@ -659,7 +659,8 @@ class PerformanceController extends Controller
      */
     public function store(Request $request)
     {
-        $create_report = false;
+        $this->create_report = false;
+        $this->report = new Report;
         for ($i=0; $i < count($request->all()); $i++) { 
             if($request->input($i.'.include'))
             {
@@ -677,21 +678,21 @@ class PerformanceController extends Controller
                     $i.'.output_error' => 'required|numeric',
                 ]);
 
-                DB::transaction(function() use($request, $i, $create_report){
+                DB::transaction(function() use($request, $i){
                     // check if a report is already created
-                    if(!$create_report)
+                    if(!$this->create_report)
                     {
                         $admin = User::where('role', 'admin')->first();
-                        $report = new Report;
+                        // $report = new Report;
 
-                        $report->user_id = $request->user()->id;
-                        $report->department_id = $request->user()->department_id;
-                        $report->project_id = $request->input($i.'.project_id');
-                        $report->daily_work_hours = $request->input($i.'.daily_work_hours');
-                        $report->date_start = $request->input($i.'.date_start');
-                        $report->date_end = $request->input($i.'.date_end');
+                        $this->report->user_id = $request->user()->id;
+                        $this->report->department_id = $request->user()->department_id;
+                        $this->report->project_id = $request->input($i.'.project_id');
+                        $this->report->daily_work_hours = $request->input($i.'.daily_work_hours');
+                        $this->report->date_start = $request->input($i.'.date_start');
+                        $this->report->date_end = $request->input($i.'.date_end');
 
-                        $report->save();
+                        $this->report->save();
 
                         // create a notification
                         $notification = new Notification;
@@ -701,7 +702,7 @@ class PerformanceController extends Controller
                         $notification->receiver_user_id = $admin->id;
                         $notification->subscriber = 'admin';
                         $notification->state = 'main.weekly-report';
-                        $notification->event_id = $report->id;
+                        $notification->event_id = $this->report->id;
                         $notification->event_id_type = 'report_id';
                         $notification->seen = false;
 
@@ -731,14 +732,14 @@ class PerformanceController extends Controller
 
                         $activity = new Activity;
 
-                        $activity->report_id = $report->id;
+                        $activity->report_id = $this->report->id;
                         $activity->user_id = $request->user()->id;
                         $activity->activity_type_id = $activity_type->id;
 
                         $activity->save();
 
                         // report 
-                        $create_report = true;
+                        $this->create_report = true;
                     }
 
                     // $target = Target::where('position_id', $request->input($i.'.position_id'))->where('experience', $request->input($i.'.experience'))->first();
@@ -746,7 +747,7 @@ class PerformanceController extends Controller
 
                     $performance = new Performance;
 
-                    $performance->report_id = $report->id;
+                    $performance->report_id = $this->report->id;
                     $performance->member_id = $request->input($i.'.member.id');
                     $performance->position_id = $request->input($i.'.position_id');
                     $performance->department_id = $request->user()->department_id;

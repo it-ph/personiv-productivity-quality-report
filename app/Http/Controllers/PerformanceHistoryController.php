@@ -47,7 +47,8 @@ class PerformanceHistoryController extends Controller
      */
     public function store(Request $request)
     {
-        $notify_report = false;
+        $this->notify_report = false;
+        $this->activity = new Activity;
         for ($i=0; $i < count($request->all()); $i++) { 
             if($request->input($i.'.include'))
             {
@@ -66,9 +67,9 @@ class PerformanceHistoryController extends Controller
                     $i.'.output_error' => 'required|numeric',
                 ]);
 
-                DB::transaction(function() use ($request, $i, $notify_report){
+                DB::transaction(function() use ($request, $i){
                     // check if a report is already created
-                    if(!$notify_report)
+                    if(!$this->notify_report)
                     {
                         $admin = User::where('role', 'admin')->first();
                         $report = Report::where('id', $request->input($i.'.report_id'))->first();
@@ -109,16 +110,14 @@ class PerformanceHistoryController extends Controller
 
                         $activity_type = ActivityType::where('action', 'update')->first();
 
-                        $activity = new Activity;
+                        $this->activity->report_id = $report->id;
+                        $this->activity->user_id = $request->user()->id;
+                        $this->activity->activity_type_id = $activity_type->id;
 
-                        $activity->report_id = $report->id;
-                        $activity->user_id = $request->user()->id;
-                        $activity->activity_type_id = $activity_type->id;
-
-                        $activity->save();
+                        $this->activity->save();
 
                         // report 
-                        $create_report = true;
+                        $this->notify_report = true;
                     }
 
                     $old_performance = Performance::where('id', $request->input($i.'.id'))->first();
@@ -126,7 +125,7 @@ class PerformanceHistoryController extends Controller
                     // record history of the performance
                     $performance_history = new PerformanceHistory;
                     
-                    $performance_history->activity_id = $activity->id;
+                    $performance_history->activity_id = $this->activity->id;
                     $performance_history->performance_id = $old_performance->id;
                     $performance_history->report_id = $old_performance->report_id;
                     $performance_history->member_id = $old_performance->member_id;
