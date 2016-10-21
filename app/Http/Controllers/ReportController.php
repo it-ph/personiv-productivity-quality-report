@@ -1247,7 +1247,7 @@ class ReportController extends Controller
 
                 foreach ($project->reports as $report_key => $report) {
                     foreach ($report->performances as $performance_key => $performance) {
-                        $performance->experience = Experience::where('member_id', $performance->member_id)->where('project_id', $performance->project_id)->first()->experience;
+                        $performance->experience = Target::WithTrashed()->where('id', $performance->target_id)->first()->experience;
                     }
                 }
             }
@@ -1322,7 +1322,7 @@ class ReportController extends Controller
 
                 foreach ($project->reports as $report_key => $report) {
                     foreach ($report->performances as $performance_key => $performance) {
-                        $performance->experience = Experience::where('member_id', $performance->member_id)->where('project_id', $performance->project_id)->first()->experience;
+                        $performance->experience = Target::WithTrashed()->where('id', $performance->target_id)->first()->experience;
                     }
                 }
             }
