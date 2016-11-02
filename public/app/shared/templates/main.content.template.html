@@ -8,30 +8,30 @@
 				</div>
 				<div class="panel-body" layout="column">
 					<div layout="row" flex ng-if="report.showCharts" class="fade-transition">
-						<div layout="column" flex="65">
+						<!-- <div layout="column" flex="65">
 							<md-radio-group ng-model="report.chartType" layout="row">
 								<md-radio-button value="bar" class="md-primary">Bar</md-radio-button>
 								<md-radio-button value="line" class="md-primary">Line</md-radio-button>
 							</md-radio-group>
 							<div layout="row">
 								<div flex>
-									<!-- Bar -->
+									Bar
 									<canvas ng-if="report.chartType=='bar'" class="chart chart-bar" chart-data="report.charts.productivity.data" chart-labels="report.charts.productivity.labels"  chart-series="report.charts.productivity.series"></canvas>
-									<!-- Line -->
+									Line
 									<canvas ng-if="report.chartType=='line'" class="chart chart-line" chart-data="report.charts.productivity.data" chart-labels="report.charts.productivity.labels"  chart-series="report.charts.productivity.series"></canvas>
 									
 									<h3 class="md-subhead center-text">Productivity</h3>					
 								</div>
 								<div flex>					
-									<!-- Bar -->
+									Bar
 									<canvas ng-if="report.chartType=='bar'" class="chart chart-bar" chart-data="report.charts.quality.data" chart-labels="report.charts.quality.labels" chart-series="report.charts.quality.series" chart-colours="['#FF4081']"></canvas>
-									<!-- Line -->
+									Line
 									<canvas ng-if="report.chartType=='line'" class="chart chart-line" chart-data="report.charts.quality.data" chart-labels="report.charts.quality.labels"  chart-series="report.charts.quality.series" chart-colours="['#FF4081']"></canvas>
-					
+											
 									<h3 class="md-subhead center-text">Quality</h3>					
 								</div>
 							</div>
-						</div>
+						</div> -->
 						<div flex>						
 							<table class="table">
 								<tr>
@@ -68,7 +68,7 @@
 						<!-- <h3 class="secondary-text md-subhead">Daily Work Hours: {{ details[0].daily_work_hours | number:1 }} hours</h3> -->
 						<div layout="row">
 							<md-switch class="md-primary" ng-model="report.showCharts" aria-label="report.showCharts">
-							    <span ng-if="!report.showCharts">Show</span> <span ng-if="report.showCharts">Hide</span> Charts
+							    <span ng-if="!report.showCharts">Show</span> <span ng-if="report.showCharts">Hide</span> Targets
 							</md-switch>
 							<md-menu ng-if="!report.locked">
 						    	<md-button aria-label="Open phone interactions menu" class="md-icon-button" ng-click="$mdOpenMenu($event)">
@@ -211,8 +211,8 @@
 								</th>
 							</tr>
 							<tr ng-repeat="item in report.performances | filter:rightSidenav.selectedItem | filter: rightSidenav.searchText | filter: filterData.position | filter: toolbar.userInput | orderBy:sortType:sortReverse" ng-class="{shaded:hover}" ng-mouseenter="hover = true" ng-mouseleave="hover = false" ng-click="show(item)">
-								<td>{{ item.full_name }}</td>
-								<td>{{ item.position }}</td>
+								<td>{{ item.member.full_name }}</td>
+								<td>{{ item.position.name }}</td>
 								<td>{{ item.target.experience }}</td>
 								<td>{{ item.hours_worked | number:2 }}</td>
 								<td>{{ item.output | number:2 }}</td>
@@ -253,30 +253,30 @@
 				</div>
 				<div class="panel-body" layout="column">
 					<div layout="row" flex ng-if="report.showCharts" class="fade-transition">
-						<div layout="column" flex="65">
+						<!-- <div layout="column" flex="65">
 							<md-radio-group ng-model="report.chartType" layout="row">
 								<md-radio-button value="bar" class="md-primary">Bar</md-radio-button>
 								<md-radio-button value="line" class="md-primary">Line</md-radio-button>
 							</md-radio-group>
 							<div layout="row">
 								<div flex>
-									<!-- Bar -->
+									Bar
 									<canvas ng-if="report.chartType=='bar'" class="chart chart-bar" chart-data="report.charts.productivity.data" chart-labels="report.charts.productivity.labels"  chart-series="report.charts.productivity.series"></canvas>
-									<!-- Line -->
+									Line
 									<canvas ng-if="report.chartType=='line'" class="chart chart-line" chart-data="report.charts.productivity.data" chart-labels="report.charts.productivity.labels"  chart-series="report.charts.productivity.series"></canvas>
 									
 									<h3 class="md-subhead center-text">Productivity</h3>					
 								</div>
 								<div flex>					
-									<!-- Bar -->
+									Bar
 									<canvas ng-if="report.chartType=='bar'" class="chart chart-bar" chart-data="report.charts.quality.data" chart-labels="report.charts.quality.labels" chart-series="report.charts.quality.series" chart-colours="['#FF4081']"></canvas>
-									<!-- Line -->
+									Line
 									<canvas ng-if="report.chartType=='line'" class="chart chart-line" chart-data="report.charts.quality.data" chart-labels="report.charts.quality.labels"  chart-series="report.charts.quality.series" chart-colours="['#FF4081']"></canvas>
-					
+											
 									<h3 class="md-subhead center-text">Quality</h3>					
 								</div>
 							</div>
-						</div>
+						</div> -->
 						<div flex>						
 							<table class="table">
 								<tr>
@@ -313,7 +313,7 @@
 						<!-- <h3 class="secondary-text md-subhead">Daily Work Hours: {{ details[0].daily_work_hours | number:1 }} hours</h3> -->
 						<div layout="row">
 							<md-switch class="md-primary" ng-model="report.showCharts" aria-label="report.showCharts">
-							    <span ng-if="!report.showCharts">Show</span> <span ng-if="report.showCharts">Hide</span> Charts
+							    <span ng-if="!report.showCharts">Show</span> <span ng-if="report.showCharts">Hide</span> Targets
 							</md-switch>
 							<md-menu ng-if="!report.locked">
 						    	<md-button aria-label="Open phone interactions menu" class="md-icon-button" ng-click="$mdOpenMenu($event)">
@@ -456,8 +456,8 @@
 								</th>
 							</tr>
 							<tr ng-repeat="item in report.performances | filter: rightSidenav.searchText | filter: filterData.position | filter: toolbar.userInput | orderBy:sortType:sortReverse" ng-class="{shaded:hover}" ng-mouseenter="hover = true" ng-mouseleave="hover = false" ng-click="show(item)">
-								<td>{{ item.full_name }}</td>
-								<td>{{ item.position }}</td>
+								<td>{{ item.member.full_name }}</td>
+								<td>{{ item.position.name }}</td>
 								<td>{{ item.target.experience }}</td>
 								<td>{{ item.hours_worked | number:2 }}</td>
 								<td>{{ item.output | number:2 }}</td>

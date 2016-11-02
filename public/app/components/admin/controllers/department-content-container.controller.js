@@ -241,12 +241,12 @@ adminModule
 			report.date_start = new Date(report.date_start);
 			report.date_end = new Date(report.date_end);
 
-			angular.forEach(report.performances, function(performance){
-				var filter = $filter('filter')(performance.member.experiences, {project_id:performance.project_id});
-				performance.experience = filter[0].experience;
-				performance.full_name = performance.member.full_name;
-				performance.position = performance.position.name;
-			});
+			// angular.forEach(report.performances, function(performance){
+			// 	var filter = $filter('filter')(performance.member.experiences, {project_id:performance.project_id});
+			// 	performance.experience = filter[0].experience;
+			// 	performance.full_name = performance.member.full_name;
+			// 	performance.position = performance.position.name;
+			// });
 
 			// Targets
 			report.project.beginner = [];
@@ -289,25 +289,25 @@ adminModule
 			}) 
 
 			// Charts
-			report.chartType = 'bar';
-			report.charts = {};
+			// report.chartType = 'bar';
+			// report.charts = {};
 									
-			report.charts.productivity = {};
-			report.charts.productivity.data = [[]];
-			report.charts.productivity.series = ['Productivity'];
-			report.charts.productivity.labels = [];
+			// report.charts.productivity = {};
+			// report.charts.productivity.data = [[]];
+			// report.charts.productivity.series = ['Productivity'];
+			// report.charts.productivity.labels = [];
 			
-			report.charts.quality = {};
-			report.charts.quality.data = [[]];
-			report.charts.quality.series = ['Quality'];
-			report.charts.quality.labels = [];
+			// report.charts.quality = {};
+			// report.charts.quality.data = [[]];
+			// report.charts.quality.series = ['Quality'];
+			// report.charts.quality.labels = [];
 
-			angular.forEach(report.performances, function(performance, key){
-				report.charts.productivity.data[0].push(performance.productivity);
-				report.charts.quality.data[0].push(performance.quality);
-				report.charts.productivity.labels.push(performance.member.full_name);
-				report.charts.quality.labels.push(performance.member.full_name);
-			});
+			// angular.forEach(report.performances, function(performance, key){
+			// 	report.charts.productivity.data[0].push(performance.productivity);
+			// 	report.charts.quality.data[0].push(performance.quality);
+			// 	report.charts.productivity.labels.push(performance.member.full_name);
+			// 	report.charts.quality.labels.push(performance.member.full_name);
+			// });
 
 			return report;
 		}
