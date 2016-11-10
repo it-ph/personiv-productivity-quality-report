@@ -98,10 +98,10 @@
 						<table class="table">
 							<tr>
 								<th>
-									<a href="" class="main-text" ng-click="sortType = 'full_name' ; sortReverse = !sortReverse">	
+									<a href="" class="main-text" ng-click="sortType = 'member.full_name' ; sortReverse = !sortReverse">	
 										<span>Name</span>
-										<md-icon ng-show="sortType == 'full_name' && !sortReverse" class="mdi mdi-chevron-down grey"></md-icon>
-										<md-icon ng-show="sortType == 'full_name' && sortReverse" class="mdi mdi-chevron-up grey"></md-icon>
+										<md-icon ng-show="sortType == 'member.full_name' && !sortReverse" class="mdi mdi-chevron-down grey"></md-icon>
+										<md-icon ng-show="sortType == 'member.full_name' && sortReverse" class="mdi mdi-chevron-up grey"></md-icon>
 										<md-tooltip>
 											<span ng-show="sortReverse">Ascending</span>
 											<span ng-show="!sortReverse">Descending</span>
@@ -109,10 +109,10 @@
 									</a>
 								</th>
 								<th>
-									<a href="" class="main-text" ng-click="sortType = 'position' ; sortReverse = !sortReverse">	
+									<a href="" class="main-text" ng-click="sortType = 'position.name' ; sortReverse = !sortReverse">	
 										<span>Position</span>
-										<md-icon ng-show="sortType == 'position' && !sortReverse" class="mdi mdi-chevron-down grey"></md-icon>
-										<md-icon ng-show="sortType == 'position' && sortReverse" class="mdi mdi-chevron-up grey"></md-icon>
+										<md-icon ng-show="sortType == 'position.name' && !sortReverse" class="mdi mdi-chevron-down grey"></md-icon>
+										<md-icon ng-show="sortType == 'position.name' && sortReverse" class="mdi mdi-chevron-up grey"></md-icon>
 										<md-tooltip>
 											<span ng-show="sortReverse">Ascending</span>
 											<span ng-show="!sortReverse">Descending</span>
@@ -120,10 +120,10 @@
 									</a>
 								</th>
 								<th>
-									<a href="" class="main-text" ng-click="sortType = 'experience' ; sortReverse = !sortReverse">	
+									<a href="" class="main-text" ng-click="sortType = 'target.experience' ; sortReverse = !sortReverse">	
 										<span>Category</span>
-										<md-icon ng-show="sortType == 'experience' && !sortReverse" class="mdi mdi-chevron-down grey"></md-icon>
-										<md-icon ng-show="sortType == 'experience' && sortReverse" class="mdi mdi-chevron-up grey"></md-icon>
+										<md-icon ng-show="sortType == 'target.experience' && !sortReverse" class="mdi mdi-chevron-down grey"></md-icon>
+										<md-icon ng-show="sortType == 'target.experience' && sortReverse" class="mdi mdi-chevron-up grey"></md-icon>
 										<md-tooltip>
 											<span ng-show="sortReverse">Ascending</span>
 											<span ng-show="!sortReverse">Descending</span>
@@ -212,7 +212,7 @@
 							</tr>
 							<tr ng-repeat="item in report.performances | filter:rightSidenav.selectedItem | filter: rightSidenav.searchText | filter: filterData.position | filter: toolbar.userInput | orderBy:sortType:sortReverse" ng-class="{shaded:hover}" ng-mouseenter="hover = true" ng-mouseleave="hover = false" ng-click="show(item)">
 								<td>{{ item.member.full_name }}</td>
-								<td>{{ item.position }}</td>
+								<td>{{ item.position.name }}</td>
 								<td>{{ item.target.experience }}</td>
 								<td>{{ item.hours_worked | number:2 }}</td>
 								<td>{{ item.output | number:2 }}</td>
@@ -343,10 +343,10 @@
 						<table class="table">
 							<tr>
 								<th>
-									<a href="" class="main-text" ng-click="sortType = 'full_name' ; sortReverse = !sortReverse">	
+									<a href="" class="main-text" ng-click="sortType = 'member.full_name' ; sortReverse = !sortReverse">	
 										<span>Name</span>
-										<md-icon ng-show="sortType == 'full_name' && !sortReverse" class="mdi mdi-chevron-down grey"></md-icon>
-										<md-icon ng-show="sortType == 'full_name' && sortReverse" class="mdi mdi-chevron-up grey"></md-icon>
+										<md-icon ng-show="sortType == 'member.full_name' && !sortReverse" class="mdi mdi-chevron-down grey"></md-icon>
+										<md-icon ng-show="sortType == 'member.full_name' && sortReverse" class="mdi mdi-chevron-up grey"></md-icon>
 										<md-tooltip>
 											<span ng-show="sortReverse">Ascending</span>
 											<span ng-show="!sortReverse">Descending</span>
@@ -354,10 +354,10 @@
 									</a>
 								</th>
 								<th>
-									<a href="" class="main-text" ng-click="sortType = 'position' ; sortReverse = !sortReverse">	
+									<a href="" class="main-text" ng-click="sortType = 'position.name' ; sortReverse = !sortReverse">	
 										<span>Position</span>
-										<md-icon ng-show="sortType == 'position' && !sortReverse" class="mdi mdi-chevron-down grey"></md-icon>
-										<md-icon ng-show="sortType == 'position' && sortReverse" class="mdi mdi-chevron-up grey"></md-icon>
+										<md-icon ng-show="sortType == 'position.name' && !sortReverse" class="mdi mdi-chevron-down grey"></md-icon>
+										<md-icon ng-show="sortType == 'position.name' && sortReverse" class="mdi mdi-chevron-up grey"></md-icon>
 										<md-tooltip>
 											<span ng-show="sortReverse">Ascending</span>
 											<span ng-show="!sortReverse">Descending</span>
@@ -365,10 +365,10 @@
 									</a>
 								</th>
 								<th>
-									<a href="" class="main-text" ng-click="sortType = 'experience' ; sortReverse = !sortReverse">	
+									<a href="" class="main-text" ng-click="sortType = 'target.experience' ; sortReverse = !sortReverse">	
 										<span>Category</span>
-										<md-icon ng-show="sortType == 'experience' && !sortReverse" class="mdi mdi-chevron-down grey"></md-icon>
-										<md-icon ng-show="sortType == 'experience' && sortReverse" class="mdi mdi-chevron-up grey"></md-icon>
+										<md-icon ng-show="sortType == 'target.experience' && !sortReverse" class="mdi mdi-chevron-down grey"></md-icon>
+										<md-icon ng-show="sortType == 'target.experience' && sortReverse" class="mdi mdi-chevron-up grey"></md-icon>
 										<md-tooltip>
 											<span ng-show="sortReverse">Ascending</span>
 											<span ng-show="!sortReverse">Descending</span>
@@ -457,7 +457,7 @@
 							</tr>
 							<tr ng-repeat="item in report.performances | filter: rightSidenav.searchText | filter: filterData.position | filter: toolbar.userInput | orderBy:sortType:sortReverse" ng-class="{shaded:hover}" ng-mouseenter="hover = true" ng-mouseleave="hover = false" ng-click="show(item)">
 								<td>{{ item.member.full_name }}</td>
-								<td>{{ item.position }}</td>
+								<td>{{ item.position.name }}</td>
 								<td>{{ item.target.experience }}</td>
 								<td>{{ item.hours_worked | number:2 }}</td>
 								<td>{{ item.output | number:2 }}</td>

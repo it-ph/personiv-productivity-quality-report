@@ -241,13 +241,13 @@ adminModule
 			report.date_start = new Date(report.date_start);
 			report.date_end = new Date(report.date_end);
 
-			angular.forEach(report.performances, function(performance){
-				// var filter = $filter('filter')(performance.member.experiences, {project_id:performance.project_id});
-				// performance.experience = filter[0].experience;
-				performance.experience = performance.target.experience;
-				performance.full_name = performance.member.full_name;
-				performance.position = performance.position.name;
-			});
+			// angular.forEach(report.performances, function(performance){
+			// 	var filter = $filter('filter')(performance.member.experiences, {project_id:performance.project_id});
+			// 	performance.experience = filter[0].experience;
+			// 	performance.experience = performance.target.experience;
+			// 	performance.full_name = performance.member.full_name;
+			// 	performance.position = performance.position.name;
+			// });
 
 			// Targets
 			report.project.beginner = [];
