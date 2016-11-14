@@ -1293,9 +1293,10 @@ teamLeaderModule
 		$scope.clearFilter = function(){
 			$scope.rightSidenav.searchText = '';
 			$scope.filterData.project = '';
-			$scope.filterData.position = '';
 			$scope.filterDate.date_start = '';
-			$scope.filterDate.date_end = ''
+			$scope.filterDate.date_end = '';
+			$scope.filterData.position = '';
+			$scope.filterData.submitter = '';
 		}
 		
 		/**

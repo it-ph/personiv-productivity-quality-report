@@ -113,6 +113,7 @@ adminModule
 			$scope.filterDate.date_start = '';
 			$scope.filterDate.date_end = '';
 			$scope.filterData.position = '';
+			$scope.filterData.submitter = '';
 		}
 		
 		/**
