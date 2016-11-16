@@ -36,5 +36,8 @@ sharedModule
 			department: function(id){
 				return $http.get(urlBase + '-department/' + id);
 			},
+			resetPassword: function(id){
+				return $http.get(urlBase + '-reset-password/' + id);
+			},
 		};
 	}])

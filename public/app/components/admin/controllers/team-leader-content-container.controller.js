@@ -79,6 +79,52 @@ adminModule
 		      	clickOutsideToClose:true
 		    })
 		};
+
+		$scope.resetPassword = function(id){
+			var confirm = $mdDialog.confirm()
+		        .title('Reset Password')
+		        .textContent('The password for this account will be "!welcome10"')
+		        .ariaLabel('Reset Password')
+		        .ok('Reset')
+		        .cancel('Cancel');
+
+		    $mdDialog.show(confirm)
+		    	.then(function() {
+			    	User.resetPassword(id)
+			    		.success(function(){
+			    			$scope.subheader.refresh();
+			    		})
+			    		.error(function(){
+			    			Preloader.error();
+			    		});
+			    }, function() {
+			    	return;
+			    });
+		}
+
+		$scope.deleteAccount = function(id)
+		{
+			var confirm = $mdDialog.confirm()
+		        .title('Delete Account')
+		        .textContent('This account will be removed permanently.')
+		        .ariaLabel('Delete Account')
+		        .ok('Delete')
+		        .cancel('Cancel');
+
+		    $mdDialog.show(confirm)
+		    	.then(function() {
+			    	User.delete(id)
+			    		.success(function(){
+			    			$scope.subheader.refresh();
+			    		})
+			    		.error(function(){
+			    			Preloader.error();
+			    		});
+			    }, function() {
+			    	return;
+			    });
+		}
+
 		/**
 		 * Object for content view
 		 *

@@ -26,6 +26,12 @@ class AuthServiceProvider extends ServiceProvider
     {
         parent::registerPolicies($gate);
 
-        //
+        $gate->define('update-report', function ($user, $report) {
+            return $user->department_id == $report->department_id;
+        });
+
+        $gate->define('delete-performance', function ($user, $performance) {
+            return $user->department_id == $performance->department_id;
+        });
     }
 }

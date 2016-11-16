@@ -87,7 +87,7 @@ adminModule
 						templateUrl: '/app/components/admin/templates/toolbar.template.html',
 					},
 					'content@main.team-leaders':{
-						templateUrl: '/app/components/admin/templates/content/settings.content.template.html',
+						templateUrl: '/app/components/admin/templates/content/team-leaders.content.template.html',
 					},
 				},
 			})

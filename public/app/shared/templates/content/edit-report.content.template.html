@@ -45,9 +45,15 @@
 								<p>{{ performance.experience }} - (based from the date of report)</p>
 							</div>
 						</md-list-item>
-						<md-checkbox ng-change="checkLimit(performance)" ng-model="performance.include" class="md-primary">
-							<span>Edit</span>
-						</md-checkbox>
+						<div>
+							<md-checkbox ng-change="checkLimit(performance)" ng-model="performance.include" class="md-primary">
+								<span>Edit</span>
+							</md-checkbox>
+							<md-button class="md-icon-button" ng-click="deletePerformance(performance)">
+								<md-icon class="mdi mdi-delete grey"></md-icon>
+								<md-tooltip>Delete</md-tooltip>
+							</md-button>
+						</div>
 					</md-list>
 					<div ng-if="performance.include" class="fade-transition" layout="column">
 						<!-- Position -->

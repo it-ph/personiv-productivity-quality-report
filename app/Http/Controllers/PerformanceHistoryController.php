@@ -71,42 +71,44 @@ class PerformanceHistoryController extends Controller
                     // check if a report is already created
                     if(!$this->notify_report)
                     {
-                        $admin = User::where('role', 'admin')->first();
+                        $admins = User::where('role', 'admin')->get();
                         $report = Report::where('id', $request->input($i.'.report_id'))->first();
 
-                        // create a notification
-                        $notification = new Notification;
+                        foreach ($admins as $admin) {
+                            // create a notification
+                            $notification = new Notification;
 
-                        $notification->message = 'updated a ';
-                        $notification->sender_user_id = $request->user()->id;
-                        $notification->receiver_user_id = $admin->id;
-                        $notification->subscriber = 'admin';
-                        $notification->state = 'main.weekly-report';
-                        $notification->event_id = $report->id;
-                        $notification->event_id_type = 'report_id';
-                        $notification->seen = false;
+                            $notification->message = 'updated a ';
+                            $notification->sender_user_id = $request->user()->id;
+                            $notification->receiver_user_id = $admin->id;
+                            $notification->subscriber = 'admin';
+                            $notification->state = 'main.weekly-report';
+                            $notification->event_id = $report->id;
+                            $notification->event_id_type = 'report_id';
+                            $notification->seen = false;
 
-                        $notification->save();
+                            $notification->save();
 
-                        $notify = DB::table('reports')
-                            ->join('users', 'users.id', '=', 'reports.user_id')
-                            ->join('projects', 'projects.id', '=', 'reports.project_id')
-                            ->join('notifications', 'notifications.event_id', '=', 'reports.id')
-                            ->select(
-                                'reports.*',
-                                'users.*',
-                                DB::raw('LEFT(users.first_name, 1) as first_letter'),
-                                'projects.*',
-                                'notifications.*'
-                            )
-                            ->where('notifications.id', $notification->id)
-                            ->first();
+                            $notify = DB::table('reports')
+                                ->join('users', 'users.id', '=', 'reports.user_id')
+                                ->join('projects', 'projects.id', '=', 'reports.project_id')
+                                ->join('notifications', 'notifications.event_id', '=', 'reports.id')
+                                ->select(
+                                    'reports.*',
+                                    'users.*',
+                                    DB::raw('LEFT(users.first_name, 1) as first_letter'),
+                                    'projects.*',
+                                    'notifications.*'
+                                )
+                                ->where('notifications.id', $notification->id)
+                                ->first();
 
-                        // foreach ($query as $key => $value) {
-                        //     $notify = $value;
-                        // }
+                            // foreach ($query as $key => $value) {
+                            //     $notify = $value;
+                            // }
 
-                        event(new ReportSubmittedBroadCast($notify)); 
+                            event(new ReportSubmittedBroadCast($notify)); 
+                        }
 
                         $activity_type = ActivityType::where('action', 'update')->first();
 

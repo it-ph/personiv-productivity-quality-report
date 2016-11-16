@@ -51,6 +51,27 @@ teamLeaderModule
 		$scope.subheader = {};
 		$scope.subheader.state = 'report';
 
+		$scope.deletePerformance = function(performance){
+			 var confirm = $mdDialog.confirm()
+		        .title('Delete performance')
+		        .textContent('This performance will be deleted permanently. If you would just change something you can edit this instead.')
+		        .ariaLabel('Delete performance')
+		        .ok('Delete')
+		        .cancel('Cancel');
+
+		    $mdDialog.show(confirm).then(function() {
+		    	Preloader.preload();
+		    	var idx = $scope.performances.indexOf(performance);
+		    	Performance.delete(performance.id)
+		    		.success(function(){
+		    			$scope.performances.splice(idx, 1);
+		    			Preloader.stop();
+		    		})
+		    }, function() {
+		    	return;
+		    });
+		}
+
 		Performance.report(reportID)
 			.success(function(data){
 				angular.forEach(data, function(performance){
@@ -125,6 +146,9 @@ teamLeaderModule
 					.success(function(data){
 						$scope.projects = data;
 					});
+			})
+			.error(function(){
+				$state.go('page-not-found');
 			});
 
 		// $scope.showPositions = function(id){

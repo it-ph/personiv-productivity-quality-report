@@ -13,6 +13,22 @@ use Hash;
 
 class UserController extends Controller
 {   
+    public function resetPassword($id)
+    {
+        if(Auth::user()->role != 'admin')
+        {
+            abort(403, 'Unauthorized action.');
+        }
+        else{
+            $user = User::where('id', $id)->first();
+
+            $user->password = Hash::make('!welcome10');
+
+            $user->save();
+        }
+
+    }
+
     public function department($id)
     {
         $id = (int)$id;
@@ -173,6 +189,11 @@ class UserController extends Controller
      */
     public function destroy($id)
     {
-        //
+        if(Auth::user()->role != 'admin')
+        {
+            abort(403, 'Unauthorized action.');
+        }
+
+        User::where('id', $id)->delete();
     }
 }

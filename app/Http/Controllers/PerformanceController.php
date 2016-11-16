@@ -14,6 +14,7 @@ use App\Report;
 use App\Notification;
 use App\Events\ReportSubmittedBroadCast;
 use DB;
+use Gate;
 use Auth;
 use Excel;
 use Carbon\Carbon;
@@ -461,6 +462,10 @@ class PerformanceController extends Controller
     }
     public function report($reportID)
     {
+        if(Auth::user()->role != 'admin' && !Gate::forUser(Auth::user())->allows('update-report', Report::find($reportID))){
+            abort(403, 'Unauthorized access.');
+        }
+
         return Performance::with(['member' => function($query){ $query->withTrashed()->with('experiences'); }])->with('project')->with(['target' => function($query){ $query->withTrashed(); }])->where('report_id', $reportID)->get();
 
         // return DB::table('performances')
@@ -682,7 +687,7 @@ class PerformanceController extends Controller
                     // check if a report is already created
                     if(!$this->create_report)
                     {
-                        $admin = User::where('role', 'admin')->first();
+                        $admins = User::where('role', 'admin')->get();
                         // $report = new Report;
 
                         $this->report->user_id = $request->user()->id;
@@ -694,39 +699,41 @@ class PerformanceController extends Controller
 
                         $this->report->save();
 
-                        // create a notification
-                        $notification = new Notification;
+                        foreach ($admins as $admin) {
+                            // create a notification
+                            $notification = new Notification;
 
-                        $notification->message = 'submitted a ';
-                        $notification->sender_user_id = $request->user()->id;
-                        $notification->receiver_user_id = $admin->id;
-                        $notification->subscriber = 'admin';
-                        $notification->state = 'main.weekly-report';
-                        $notification->event_id = $this->report->id;
-                        $notification->event_id_type = 'report_id';
-                        $notification->seen = false;
+                            $notification->message = 'submitted a ';
+                            $notification->sender_user_id = $request->user()->id;
+                            $notification->receiver_user_id = $admin->id;
+                            $notification->subscriber = 'admin';
+                            $notification->state = 'main.weekly-report';
+                            $notification->event_id = $this->report->id;
+                            $notification->event_id_type = 'report_id';
+                            $notification->seen = false;
 
-                        $notification->save();
+                            $notification->save();
 
-                        $notify = DB::table('reports')
-                            ->join('users', 'users.id', '=', 'reports.user_id')
-                            ->join('projects', 'projects.id', '=', 'reports.project_id')
-                            ->join('notifications', 'notifications.event_id', '=', 'reports.id')
-                            ->select(
-                                'reports.*',
-                                'users.*',
-                                DB::raw('LEFT(users.first_name, 1) as first_letter'),
-                                'projects.*',
-                                'notifications.*'
-                            )
-                            ->where('notifications.id', $notification->id)
-                            ->first();
+                            $notify = DB::table('reports')
+                                ->join('users', 'users.id', '=', 'reports.user_id')
+                                ->join('projects', 'projects.id', '=', 'reports.project_id')
+                                ->join('notifications', 'notifications.event_id', '=', 'reports.id')
+                                ->select(
+                                    'reports.*',
+                                    'users.*',
+                                    DB::raw('LEFT(users.first_name, 1) as first_letter'),
+                                    'projects.*',
+                                    'notifications.*'
+                                )
+                                ->where('notifications.id', $notification->id)
+                                ->first();
 
-                        // foreach ($query as $key => $value) {
-                        //     $notify = $value;
-                        // }
+                            // foreach ($query as $key => $value) {
+                            //     $notify = $value;
+                            // }
 
-                        event(new ReportSubmittedBroadCast($notify)); 
+                            event(new ReportSubmittedBroadCast($notify)); 
+                        }
 
                         $activity_type = ActivityType::where('action', 'create')->first();
 
@@ -925,6 +932,12 @@ class PerformanceController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $performance = Performance::find($id);
+
+        if(Auth::user()->role != 'admin' && !Gate::forUser(Auth::user())->allows('delete-performance', $performance)){
+            abort(403, 'Unauthorized access.');
+        }
+
+        $performance->delete();
     }
 }
