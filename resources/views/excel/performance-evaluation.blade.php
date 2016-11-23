@@ -3,11 +3,11 @@
 		<th align="center">{{ $member->full_name}}</th>
 	</tr>
 	<tr>
-		<th align="center">Average Productivity:</th>
+		<th align="center">Productivity:</th>
 		<th align="center">{{ round($project->average_productivity,2) }}%</th>
 	</tr>
 	<tr>
-		<th align="center">Average Quality:</th>
+		<th align="center">Quality:</th>
 		<th align="center">{{ round($project->average_quality,2) }}%</th>
 	</tr>
 </table>

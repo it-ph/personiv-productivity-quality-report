@@ -5,7 +5,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Personiv | Productivity and Quality Report</title>
 	<!-- Favicon -->
-    <link rel="shortcut icon" href="/assets/img/Personiv-Favicon.png">
+    <link rel="shortcut icon" href="/assets/img/2Color-Favicon_512x512-1-raw.png">
 	<!-- Goolge Fonts Roboto -->
 	<link href='https://fonts.googleapis.com/css?family=Roboto:400,100,100italic,300,300italic,400italic,500,500italic,700,700italic' rel='stylesheet' type='text/css'>
 	<!-- Vendor CSS -->

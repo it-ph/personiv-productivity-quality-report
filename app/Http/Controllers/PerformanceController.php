@@ -336,7 +336,7 @@ class PerformanceController extends Controller
                     $position->quadrant = 'Quadrant 4'; 
                 }
 
-                if($position->name == $request->position){
+                if($position->name == $request->input('position.name')){
                     $overall_weekly_productivity += $position->weekly_productivity;
                     $overall_weekly_quality += $position->weekly_quality;
                     $overall_count++;
