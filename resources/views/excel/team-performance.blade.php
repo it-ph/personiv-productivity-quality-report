@@ -30,6 +30,7 @@
 		<th align="center">{{round($project->beginner_total_output,2)}}</th>
 		<th align="center">{{round($project->beginner_total_hours_worked,2)}}</th>
 		<th align="center">{{round($project->beginner_total_average_output,2)}}</th>
+		<th align="center">{{round($project->beginner_productivity_met,2)}}</th>
 	</tr>
 	@foreach($project->positions as $position)
 		@if($position->beginner_total_output && $position->beginner_total_hours_worked && $position->beginner_total_average_output)
@@ -47,6 +48,7 @@
 		<th align="center">{{round($project->moderately_experienced_total_output,2)}}</th>
 		<th align="center">{{round($project->moderately_experienced_total_hours_worked,2)}}</th>
 		<th align="center">{{round($project->moderately_experienced_total_average_output,2)}}</th>
+		<th align="center">{{round($project->moderately_experienced_productivity_met,2)}}</th>
 	</tr>
 	@foreach($project->positions as $position)
 		@if($position->moderately_experienced_total_output && $position->moderately_experienced_total_hours_worked && $position->moderately_experienced_total_average_output)
@@ -64,6 +66,7 @@
 		<th align="center">{{round($project->experienced_total_output,2)}}</th>
 		<th align="center">{{round($project->experienced_total_hours_worked,2)}}</th>
 		<th align="center">{{round($project->experienced_total_average_output,2)}}</th>
+		<th align="center">{{round($project->experienced_productivity_met,2)}}</th>
 	</tr>
 	@foreach($project->positions as $position)
 		@if($position->experienced_total_output && $position->experienced_total_hours_worked && $position->experienced_total_average_output)
@@ -81,5 +84,6 @@
 		<th align="center">{{round($project->total_output,2)}}</th>
 		<th align="center">{{round($project->total_hours_worked,2)}}</th>
 		<th align="center">{{round($project->total_average_output,2)}}</th>
+		<th align="center">{{round($project->total_productivity_met,2)}}</th>
 	</tr>
 </table>

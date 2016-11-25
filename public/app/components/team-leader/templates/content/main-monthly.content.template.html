@@ -67,6 +67,7 @@
 									<td>{{report.beginner_total_output | number: 2}}</td>
 									<td>{{report.beginner_total_hours_worked | number: 2}}</td>
 									<td>{{report.beginner_total_average_output | number: 2}}</td>
+									<td>{{report.beginner_productivity_met | number: 2}}</td>
 								</tr>
 								<tr ng-repeat="position in report.positions" ng-if="position.beginner_total_hours_worked">
 									<td>{{position.name}}</td>
@@ -80,6 +81,7 @@
 									<td>{{report.moderately_experienced_total_output | number: 2}}</td>
 									<td>{{report.moderately_experienced_total_hours_worked | number: 2}}</td>
 									<td>{{report.moderately_experienced_total_average_output | number: 2}}</td>
+									<td>{{report.moderately_experienced_productivity_met | number: 2}}</td>
 								</tr>
 								<tr ng-repeat="position in report.positions" ng-if="position.moderately_experienced_total_hours_worked">
 									<td>{{position.name}}</td>
@@ -93,6 +95,7 @@
 									<td>{{report.experienced_total_output | number: 2}}</td>
 									<td>{{report.experienced_total_hours_worked | number: 2}}</td>
 									<td>{{report.experienced_total_average_output | number: 2}}</td>
+									<td>{{report.experienced_productivity_met | number: 2}}</td>
 								</tr>
 								<tr ng-repeat="position in report.positions" ng-if="position.experienced_total_hours_worked">
 									<td>{{position.name}}</td>
@@ -106,6 +109,7 @@
 									<th>{{report.total_output | number: 2}}</th>
 									<th>{{report.total_hours_worked | number: 2}}</th>
 									<th>{{report.total_average_output | number: 2}}</th>
+									<th>{{report.total_productivity_met | number: 2}}</th>
 								</tr>
 							</table>
 						</div>					

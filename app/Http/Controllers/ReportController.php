@@ -423,18 +423,22 @@ class ReportController extends Controller
             $project->beginner_total_output = 0;
             $project->beginner_total_hours_worked = 0;
             $project->beginner_total_average_output = 0;
+            $project->beginner_productivity_met = 0;
 
             $project->moderately_experienced_total_output = 0;
             $project->moderately_experienced_total_hours_worked = 0;
             $project->moderately_experienced_total_average_output = 0;
+            $project->moderately_experienced_productivity_met = 0;
 
             $project->experienced_total_output = 0;
             $project->experienced_total_hours_worked = 0;
             $project->experienced_total_average_output = 0;
+            $project->experienced_productivity_met = 0;
 
             $project->total_output = 0;
             $project->total_average_output = 0;
             $project->total_hours_worked = 0;
+            $project->total_productivity_met = 0;
 
             $project->positions = DB::table('positions')->where('project_id', $project->id)->get();
 
@@ -677,12 +681,15 @@ class ReportController extends Controller
             
                 $project->beginner_total_output += $position->beginner_total_output;
                 $project->beginner_total_hours_worked += $position->beginner_total_hours_worked;
+                $project->beginner_productivity_met += $position->beginner_productivity_met;
                 
                 $project->moderately_experienced_total_output += $position->moderately_experienced_total_output;
                 $project->moderately_experienced_total_hours_worked += $position->moderately_experienced_total_hours_worked;
+                $project->moderately_experienced_productivity_met += $position->moderately_experienced_productivity_met;
 
                 $project->experienced_total_output += $position->experienced_total_output;
                 $project->experienced_total_hours_worked += $position->experienced_total_hours_worked;
+                $project->experienced_productivity_met += $position->experienced_productivity_met;
             }
 
             $project->beginner_total_average_output = $project->beginner_total_hours_worked ? round($project->beginner_total_output / $project->beginner_total_hours_worked * $project->first_report->daily_work_hours, 2) : 0;
@@ -692,6 +699,7 @@ class ReportController extends Controller
             $project->total_output = $project->beginner_total_output + $project->moderately_experienced_total_output + $project->experienced_total_output;
             $project->total_hours_worked = $project->beginner_total_hours_worked + $project->moderately_experienced_total_hours_worked + $project->experienced_total_hours_worked;
             $project->total_average_output = $project->total_hours_worked ? round($project->total_output / $project->total_hours_worked * $daily_work_hours, 2) : 0;
+            $project->total_productivity_met = $project->beginner_productivity_met + $project->moderately_experienced_productivity_met + $project->experienced_productivity_met;
         }
 
 
@@ -728,18 +736,22 @@ class ReportController extends Controller
             $project->beginner_total_output = 0;
             $project->beginner_total_hours_worked = 0;
             $project->beginner_total_average_output = 0;
+            $project->beginner_productivity_met = 0;
 
             $project->moderately_experienced_total_output = 0;
             $project->moderately_experienced_total_hours_worked = 0;
             $project->moderately_experienced_total_average_output = 0;
+            $project->moderately_experienced_productivity_met = 0;
 
             $project->experienced_total_output = 0;
             $project->experienced_total_hours_worked = 0;
             $project->experienced_total_average_output = 0;
+            $project->experienced_productivity_met = 0;
 
             $project->total_output = 0;
             $project->total_average_output = 0;
             $project->total_hours_worked = 0;
+            $project->total_productivity_met = 0;
 
             $project->positions = DB::table('positions')->where('project_id', $project->id)->get();
 
@@ -982,12 +994,15 @@ class ReportController extends Controller
             
                 $project->beginner_total_output += $position->beginner_total_output;
                 $project->beginner_total_hours_worked += $position->beginner_total_hours_worked;
+                $project->beginner_productivity_met += $position->beginner_productivity_met;
                 
                 $project->moderately_experienced_total_output += $position->moderately_experienced_total_output;
                 $project->moderately_experienced_total_hours_worked += $position->moderately_experienced_total_hours_worked;
+                $project->moderately_experienced_productivity_met += $position->moderately_experienced_productivity_met;
 
                 $project->experienced_total_output += $position->experienced_total_output;
                 $project->experienced_total_hours_worked += $position->experienced_total_hours_worked;
+                $project->experienced_productivity_met += $position->experienced_productivity_met;
             }
 
             $project->beginner_total_average_output = $project->beginner_total_hours_worked ? round($project->beginner_total_output / $project->beginner_total_hours_worked * $project->first_report->daily_work_hours, 2) : 0;
@@ -997,6 +1012,7 @@ class ReportController extends Controller
             $project->total_output = $project->beginner_total_output + $project->moderately_experienced_total_output + $project->experienced_total_output;
             $project->total_hours_worked = $project->beginner_total_hours_worked + $project->moderately_experienced_total_hours_worked + $project->experienced_total_hours_worked;
             $project->total_average_output = $project->total_hours_worked ? round($project->total_output / $project->total_hours_worked * $request->daily_work_hours, 2) : 0;
+            $project->total_productivity_met = $project->beginner_productivity_met + $project->moderately_experienced_productivity_met + $project->experienced_productivity_met;
         }
 
 
