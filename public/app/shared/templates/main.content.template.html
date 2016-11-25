@@ -210,7 +210,7 @@
 									</a>
 								</th>
 							</tr>
-							<tr ng-repeat="item in report.performances | filter:rightSidenav.selectedItem | filter: rightSidenav.searchText | filter: filterData.position | filter: toolbar.userInput | orderBy:sortType:sortReverse" ng-class="{shaded:hover}" ng-mouseenter="hover = true" ng-mouseleave="hover = false" ng-click="show(item)">
+							<tr ng-repeat="item in report.performances | filter: rightSidenav.searchText | filter: filterData.position | filter: toolbar.userInput | orderBy:sortType:sortReverse" ng-class="{shaded:hover}" ng-mouseenter="hover = true" ng-mouseleave="hover = false" ng-click="show(item)">
 								<td>{{ item.member.full_name }}</td>
 								<td>{{ item.position.name }}</td>
 								<td>{{ item.target.experience }}</td>

@@ -22,7 +22,8 @@
 		<th align="center">Row Labels</th>
 		<th align="center">Sum of Total Output</th>
 		<th align="center">Sum of Total Man Hours</th>
-		<th align="center">Sum of Total Average Output</th>
+		<th align="center">Total Average Output</th>
+		<th align="center">Productivity Met</th>
 	</tr>
 	<tr>
 		<th align="center">Beginner</th>
@@ -37,6 +38,7 @@
 				<td align="center">{{round($position->beginner_total_output,2)}}</td>
 				<td align="center">{{round($position->beginner_total_hours_worked,2)}}</td>
 				<td align="center">{{round($position->beginner_total_average_output,2)}}</td>
+				<td align="center">{{round($position->beginner_productivity_met,2)}}</td>
 			</tr>
 		@endif
 	@endforeach
@@ -53,6 +55,7 @@
 				<td align="center">{{round($position->moderately_experienced_total_output,2)}}</td>
 				<td align="center">{{round($position->moderately_experienced_total_hours_worked,2)}}</td>
 				<td align="center">{{round($position->moderately_experienced_total_average_output,2)}}</td>
+				<td align="center">{{round($position->moderately_experienced_productivity_met,2)}}</td>
 			</tr>
 		@endif
 	@endforeach
@@ -66,9 +69,10 @@
 		@if($position->experienced_total_output && $position->experienced_total_hours_worked && $position->experienced_total_average_output)
 			<tr>
 				<td align="center">{{$position->name}}</td>
-				<td align="center">{{round($position->total_output,2)}}</td>
-				<td align="center">{{round($position->total_hours_worked,2)}}</td>
-				<td align="center">{{round($position->total_average_output,2)}}</td>
+				<td align="center">{{round($position->experienced_total_output,2)}}</td>
+				<td align="center">{{round($position->experienced_total_hours_worked,2)}}</td>
+				<td align="center">{{round($position->experienced_total_average_output,2)}}</td>
+				<td align="center">{{round($position->experienced_productivity_met,2)}}</td>
 			</tr>
 		@endif
 	@endforeach

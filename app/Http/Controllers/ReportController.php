@@ -263,157 +263,439 @@ class ReportController extends Controller
 
         $this->projects = Auth::user()->role != 'admin' ? DB::table('projects')->where('department_id', Auth::user()->department_id)->get() : DB::table('projects')->get();
 
+        // foreach ($this->projects as $project_key => $project) {
+        //     $project->first_report =  Report::where('project_id', $project->id)->where('daily_work_hours', 'like', $daily_work_hours.'%')->whereBetween('date_start', [$this->date_start, $this->date_end])->first();
+        //     // for each projects fetch its positions
+        //     $positions = DB::table('positions')->where('project_id', $project->id)->get();
+        //     if($project->first_report){
+        //         $project->members = Experience::with(['member' => function($query){ $query->withTrashed(); }])->where('project_id', $project->id)->get();
+        //         $project->positions = $positions;
+        //         $project->beginner_total_output = 0;
+        //         $project->beginner_total_hours_worked = 0;
+        //         $project->beginner_total_average_output = 0;
+
+        //         $project->moderately_experienced_total_output = 0;
+        //         $project->moderately_experienced_total_hours_worked = 0;
+        //         $project->moderately_experienced_total_average_output = 0;
+
+        //         $project->experienced_total_output = 0;
+        //         $project->experienced_total_hours_worked = 0;
+        //         $project->experienced_total_average_output = 0;
+
+        //         foreach ($project->positions as $position_key => $position) {
+        //             $position->beginner = 0;
+        //             $position->moderately_experienced = 0;
+        //             $position->experienced = 0;
+        //             $position->head_count = 0;
+
+        //             $position->beginner_total_output = 0;
+        //             $position->beginner_total_hours_worked = 0;
+        //             $position->beginner_total_average_output = 0;
+        //             $position->beginner_productivity_met = 0;
+
+        //             $position->moderately_experienced_total_output = 0;
+        //             $position->moderately_experienced_total_hours_worked = 0;
+        //             $position->moderately_experienced_total_average_output = 0;
+        //             $position->moderately_experienced_productivity_met = 0;
+
+        //             $position->experienced_total_output = 0;
+        //             $position->experienced_total_hours_worked = 0;
+        //             $position->experienced_total_average_output = 0;
+        //             $position->experienced_productivity_met = 0;
+
+        //             $performances = Performance::where('position_id', $position->id)->whereBetween('date_start', [$this->date_start, $this->date_end])->groupBy('member_id')->get();
+        //         }
+
+        //         foreach ($project->members as $member_key => $member) {
+        //             $member->positions = $project->positions;
+        //             $member->roles = 0;
+        //             $overall_monthly_productivity = 0;
+        //             $overall_monthly_quality = 0;
+        //             $overall_count = 0;
+
+        //             foreach ($member->positions as $position_key => $position) {
+        //                 $performances = Performance::with('project', 'position')->with(['target' => function($query){ $query->withTrashed(); }])->with(['member' => function($query){ $query->withTrashed()->with(['experiences' => function($query){ $query->with('project'); }]);}])->where('daily_work_hours', 'like', $daily_work_hours .'%')->where('position_id', $position->id)->where('member_id', $member->member_id)->whereBetween('date_start', [$this->date_start, $this->date_end])->get();
+
+        //                 if(count($performances)){
+        //                     $member->roles++;
+        //                     $position->total_hours_worked = 0;
+        //                     $position->total_output = 0;
+        //                     $position->total_output_error = 0;
+        //                     $position->total_average_output = 0;
+        //                     $position->monthly_productivity = 0;
+        //                     $position->monthly_quality = 0;
+
+        //                     foreach ($performances as $performance_key => $performance) {
+        //                         $position->total_hours_worked += $performance->hours_worked;
+        //                         $position->total_output += $performance->output;
+        //                         $position->total_output_error += $performance->output_error;
+
+        //                         if($performance->target->experience == 'Beginner'){
+        //                             if($performance_key === 0){
+        //                                 $project->positions[$position_key]->beginner += 1;
+        //                             }
+        //                             $project->positions[$position_key]->beginner_total_output += $performance->output;
+        //                             $project->positions[$position_key]->beginner_total_hours_worked += $performance->hours_worked;
+        //                         }
+        //                         else if($performance->target->experience == 'Moderately Experienced'){
+        //                             if($performance_key === 0){
+        //                                 $project->positions[$position_key]->moderately_experienced += 1;
+        //                             }
+        //                             $project->positions[$position_key]->moderately_experienced_total_output += $performance->output;
+        //                             $project->positions[$position_key]->moderately_experienced_total_hours_worked += $performance->hours_worked;   
+        //                         }
+        //                         else if($performance->target->experience == 'Experienced'){
+        //                             if($performance_key === 0){
+        //                                 $project->positions[$position_key]->experienced += 1;
+        //                             }
+        //                             $project->positions[$position_key]->experienced_total_output += $performance->output;
+        //                             $project->positions[$position_key]->experienced_total_hours_worked += $performance->hours_worked;
+        //                         }
+        //                     }
+
+        //                     $project->positions[$position_key]->head_count = $project->positions[$position_key]->beginner + $project->positions[$position_key]->moderately_experienced + $project->positions[$position_key]->experienced;
+        //                     $position->total_average_output = $position->total_output ? round($position->total_output / $position->total_hours_worked * $performances[0]->daily_work_hours, 2) : 0;
+        //                     $position->monthly_productivity = $position->total_average_output ? round($position->total_average_output / $performances[0]->target->productivity * 100, 2) : 0;
+        //                     $position->monthly_quality = $position->total_output ? round((1 - $position->total_output_error / $position->total_output) * 100, 2) : 0;
+
+        //                     if(!$position->monthly_productivity && !$position->monthly_quality)
+        //                     {
+        //                         $position->quadrant = 'N/A'; 
+        //                     }
+        //                     else if($position->monthly_productivity < 100 && $position->monthly_quality >= $performances[0]->target->quality)
+        //                     {
+        //                         $position->quadrant = 'Quadrant 1'; 
+        //                     }
+        //                     else if($position->monthly_productivity >= 100 && $position->monthly_quality >= $performances[0]->target->quality)
+        //                     {
+        //                         $position->quadrant = 'Quadrant 2'; 
+        //                     }
+        //                     else if($position->monthly_productivity >= 100 && $position->monthly_quality < $performances[0]->target->quality)
+        //                     {
+        //                         $position->quadrant = 'Quadrant 3'; 
+        //                     }
+        //                     else if($position->monthly_productivity < 100 && $position->monthly_quality < $performances[0]->target->quality)
+        //                     {
+        //                         $position->quadrant = 'Quadrant 4'; 
+        //                     }
+
+        //                     $overall_monthly_productivity += $position->monthly_productivity;
+        //                     $overall_monthly_quality += $position->monthly_quality;
+        //                     $overall_count++;
+        //                 }
+        //             }
+
+        //             if($overall_count){
+        //                 $member->average_productivity = $overall_monthly_productivity / $overall_count;
+        //                 $member->average_quality = $overall_monthly_quality / $overall_count;
+        //             }
+        //         }
+
+        //         foreach ($project->positions as $position_key => $position) {                    
+        //             $position->beginner_total_average_output = $position->beginner_total_hours_worked ? round($position->beginner_total_output / $position->beginner_total_hours_worked * $daily_work_hours, 2) : 0;
+        //             $position->moderately_experienced_total_average_output = $position->moderately_experienced_total_hours_worked ? round($position->moderately_experienced_total_output / $position->moderately_experienced_total_hours_worked * $daily_work_hours, 2) : 0;
+        //             $position->experienced_total_average_output = $position->experienced_total_hours_worked ? round($position->experienced_total_output / $position->experienced_total_hours_worked * $daily_work_hours, 2) : 0;
+                
+        //             $project->beginner_total_output += $position->beginner_total_output;
+        //             $project->beginner_total_hours_worked += $position->beginner_total_hours_worked;
+                    
+        //             $project->moderately_experienced_total_output += $position->moderately_experienced_total_output;
+        //             $project->moderately_experienced_total_hours_worked += $position->moderately_experienced_total_hours_worked;
+
+        //             $project->experienced_total_output += $position->experienced_total_output;
+        //             $project->experienced_total_hours_worked += $position->experienced_total_hours_worked;
+        //         }
+
+        //         $project->beginner_total_average_output = $project->beginner_total_hours_worked ? round($project->beginner_total_output / $project->beginner_total_hours_worked * $daily_work_hours, 2) : 0;
+        //         $project->moderately_experienced_total_average_output = $project->moderately_experienced_total_hours_worked ? round($project->moderately_experienced_total_output / $project->moderately_experienced_total_hours_worked * $daily_work_hours, 2) : 0;
+        //         $project->experienced_total_average_output = $project->experienced_total_hours_worked ? round($project->experienced_total_output / $project->experienced_total_hours_worked * $daily_work_hours, 2) : 0;
+
+        //         $project->total_output = $project->beginner_total_output + $project->moderately_experienced_total_output + $project->experienced_total_output;
+        //         $project->total_hours_worked = $project->beginner_total_hours_worked + $project->moderately_experienced_total_hours_worked + $project->experienced_total_hours_worked;
+        //         $project->total_average_output = $project->total_hours_worked ? round($project->total_output / $project->total_hours_worked * $daily_work_hours, 2) : 0;
+                    
+        //     }
+        // }
         foreach ($this->projects as $project_key => $project) {
-            $project->first_report =  Report::where('project_id', $project->id)->where('daily_work_hours', 'like', $daily_work_hours.'%')->whereBetween('date_start', [$this->date_start, $this->date_end])->first();
-            // for each projects fetch its positions
-            $positions = DB::table('positions')->where('project_id', $project->id)->get();
-            if($project->first_report){
-                $project->members = Experience::with(['member' => function($query){ $query->withTrashed(); }])->where('project_id', $project->id)->get();
-                $project->positions = $positions;
-                $project->beginner_total_output = 0;
-                $project->beginner_total_hours_worked = 0;
-                $project->beginner_total_average_output = 0;
+            $project->date_start = $this->date_start->toFormattedDateString();
+            $project->date_end = $this->date_end->toFormattedDateString();
+            
+            $project->beginner_total_output = 0;
+            $project->beginner_total_hours_worked = 0;
+            $project->beginner_total_average_output = 0;
 
-                $project->moderately_experienced_total_output = 0;
-                $project->moderately_experienced_total_hours_worked = 0;
-                $project->moderately_experienced_total_average_output = 0;
+            $project->moderately_experienced_total_output = 0;
+            $project->moderately_experienced_total_hours_worked = 0;
+            $project->moderately_experienced_total_average_output = 0;
 
-                $project->experienced_total_output = 0;
-                $project->experienced_total_hours_worked = 0;
-                $project->experienced_total_average_output = 0;
+            $project->experienced_total_output = 0;
+            $project->experienced_total_hours_worked = 0;
+            $project->experienced_total_average_output = 0;
 
-                foreach ($project->positions as $position_key => $position) {
-                    $position->beginner = 0;
-                    $position->moderately_experienced = 0;
-                    $position->experienced = 0;
-                    $position->head_count = 0;
+            $project->total_output = 0;
+            $project->total_average_output = 0;
+            $project->total_hours_worked = 0;
 
-                    $position->beginner_total_output = 0;
-                    $position->beginner_total_hours_worked = 0;
-                    $position->beginner_total_average_output = 0;
+            $project->positions = DB::table('positions')->where('project_id', $project->id)->get();
 
-                    $position->moderately_experienced_total_output = 0;
-                    $position->moderately_experienced_total_hours_worked = 0;
-                    $position->moderately_experienced_total_average_output = 0;
+            $project->first_report = Report::where('project_id', $project->id)->where('daily_work_hours', 'like', $daily_work_hours.'%')->whereBetween('date_start', [$this->date_start, $this->date_end])->first();
 
-                    $position->experienced_total_output = 0;
-                    $position->experienced_total_hours_worked = 0;
-                    $position->experienced_total_average_output = 0;
+            $project->weeks = array();
+            
+            $project->beginner = array();
+            $project->moderately_experienced = array();
+            $project->experienced = array();
+            $project->quality = array();
 
-                    $performances = Performance::where('position_id', $position->id)->whereBetween('date_start', [$this->date_start, $this->date_end])->groupBy('member_id')->get();
-                }
+            $this->project = $project;
 
-                foreach ($project->members as $member_key => $member) {
-                    $member->positions = $project->positions;
-                    $member->roles = 0;
-                    $overall_monthly_productivity = 0;
-                    $overall_monthly_quality = 0;
-                    $overall_count = 0;
+            foreach ($project->positions as $position_key => $position) {
+                $position->beginner = 0;
+                $position->moderately_experienced = 0;
+                $position->experienced = 0;
+                $position->head_count = 0;
 
-                    foreach ($member->positions as $position_key => $position) {
-                        $performances = Performance::with('project', 'position')->with(['target' => function($query){ $query->withTrashed(); }])->with(['member' => function($query){ $query->withTrashed()->with(['experiences' => function($query){ $query->with('project'); }]);}])->where('daily_work_hours', 'like', $daily_work_hours .'%')->where('position_id', $position->id)->where('member_id', $member->member_id)->whereBetween('date_start', [$this->date_start, $this->date_end])->get();
+                $position->beginner_total_output = 0;
+                $position->beginner_total_hours_worked = 0;
+                $position->beginner_total_average_output = 0;
+                $position->beginner_productivity_met = 0;
+
+                $position->moderately_experienced_total_output = 0;
+                $position->moderately_experienced_total_hours_worked = 0;
+                $position->moderately_experienced_total_average_output = 0;
+                $position->moderately_experienced_productivity_met = 0;
+
+                $position->experienced_total_output = 0;
+                $position->experienced_total_hours_worked = 0;
+                $position->experienced_total_average_output = 0;
+                $position->experienced_productivity_met = 0;
+
+                // Beginner
+                $previous_beginner_target = Target::withTrashed()->where('position_id', $position->id)->where('experience', 'Beginner')->where('created_at', '<', Carbon::parse('first Monday of '. $months[(int)$month-1]  .' '. $year))->orderBy('created_at', 'desc')->first();
+
+                $beginner_productivity = count($previous_beginner_target) ? $previous_beginner_target : Target::where('position_id', $position->id)->where('experience', 'Beginner')->first();
+
+                // Moderately Experienced
+                $previous_moderately_experienced_target = Target::withTrashed()->where('position_id', $position->id)->where('experience', 'Moderately Experienced')->where('created_at', '<', Carbon::parse('first Monday of'. $months[(int)$month-1]  .' '. $year))->orderBy('created_at', 'desc')->first();
+                $moderately_experienced_productivity = count($previous_moderately_experienced_target) ? $previous_moderately_experienced_target : Target::where('position_id', $position->id)->where('experience', 'Moderately Experienced')->first();
+
+                // Experienced
+                $previous_experienced_target = Target::withTrashed()->where('position_id', $position->id)->where('experience', 'Experienced')->where('created_at', '<', Carbon::parse('first Monday of'. $months[(int)$month-1]  .' '. $year))->orderBy('created_at', 'desc')->first();
+                $experienced_productivity = count($previous_experienced_target) ? $previous_experienced_target : Target::where('position_id', $position->id)->where('experience', 'Experienced')->first();
+                
+                // Quality
+                $previous_experienced_target = Target::withTrashed()->where('position_id', $position->id)->where('experience', 'Experienced')->where('created_at', '<', Carbon::parse('first Monday of'. $months[(int)$month-1]  .' '. $year))->orderBy('created_at', 'desc')->first();
+                $quality = count($previous_experienced_target) ? $previous_experienced_target : Target::where('position_id', $position->id)->where('experience', 'Experienced')->first();
+                
+                array_push($project->beginner, $beginner_productivity);
+                array_push($project->moderately_experienced, $moderately_experienced_productivity);
+                array_push($project->experienced, $experienced_productivity);
+                array_push($project->quality, $quality);
+
+                $position->members = DB::table('performances')
+                    ->join('members', 'members.id', '=', 'performances.member_id')
+                    ->select('members.*', 'performances.target_id')
+                    ->where('performances.position_id', $position->id)
+                    ->where('performances.project_id', $project->id)
+                    ->whereBetween('performances.date_start', [$this->date_start, $this->date_end])
+                    ->where('performances.daily_work_hours', 'like', $daily_work_hours.'%')
+                    ->whereNull('performances.deleted_at')
+                    ->groupBy('performances.member_id')
+                    ->get();
+
+                foreach ($position->members as $member_key => $member) {
+                    $member->experience = Target::withTrashed()->where('id', $member->target_id)->first();
+                    
+                    $member->total_output = 0;
+                    $member->total_output_error = 0;
+                    $member->total_hours_worked = 0;
+                    $member->monthly_productivity = 0;
+                    $member->monthly_quality = 0;
+
+                    $member->target = $member->experience->experience == 'Beginner' ? $beginner_productivity : ($member->experience->experience == 'Moderately Experienced' ? $moderately_experienced_productivity : $experienced_productivity);
+
+                    $member->performances = array();
+
+                    $date_end = Carbon::parse('first Monday of'. $months[(int)$month-1]  .' '. $year)->addDays(5);
+                    
+                    for ($date_start = Carbon::parse('first Monday of'. $months[(int)$month-1]  .' '. $year); $date_start->lt($this->date_end); $date_start->addWeek()) {
+
+                        // $performances = Performance::with(['member' => function($query){ $query->with(['experiences' => function($query){ $query->where('project_id', $this->project->id);}]); }])->with('position')->where('position_id', $position->id)->where('project_id', $project->id)->whereBetween('date_start', [$date_start, $date_end])->where('daily_work_hours', 'like', $daily_work_hours.'%')->where('member_id', $member->id)->get();
+
+                        $performances = DB::table('performances')->where('position_id', $position->id)->where('project_id', $project->id)->whereBetween('date_start', [$date_start, $date_end])->where('daily_work_hours', 'like', $daily_work_hours.'%')->where('member_id', $member->id)->whereNull('deleted_at')->get();
 
                         if(count($performances)){
-                            $member->roles++;
-                            $position->total_hours_worked = 0;
-                            $position->total_output = 0;
-                            $position->total_output_error = 0;
-                            $position->total_average_output = 0;
-                            $position->monthly_productivity = 0;
-                            $position->monthly_quality = 0;
-
                             foreach ($performances as $performance_key => $performance) {
-                                $position->total_hours_worked += $performance->hours_worked;
-                                $position->total_output += $performance->output;
-                                $position->total_output_error += $performance->output_error;
+                                if(count($performances) > 1 && $performance_key > 0){
+                                    $performances[0]->output += $performance->output;
+                                    $performances[0]->output_error += $performance->output_error;
+                                    $performances[0]->hours_worked += $performance->hours_worked;
+                                    $performances[0]->average_output = $performances[0]->output ? round($performances[0]->output / $performances[0]->hours_worked * $daily_work_hours, 2) : 0;
+                                    $performances[0]->productivity = $performances[0]->average_output ? round($performances[0]->average_output / $member->target->productivity * 100, 2) : 0;
+                                    $performances[0]->quality = $performances[0]->output ? round((1 - $performances[0]->output_error / $performances[0]->output) * 100, 2) : 0;
 
-                                if($performance->target->experience == 'Beginner'){
-                                    if($performance_key === 0){
-                                        $project->positions[$position_key]->beginner += 1;
+                                    if(!$performances[0]->productivity && !$performances[0]->quality)
+                                    {
+                                        $member->quadrant = 'N/A'; 
                                     }
-                                    $project->positions[$position_key]->beginner_total_output += $performance->output;
-                                    $project->positions[$position_key]->beginner_total_hours_worked += $performance->hours_worked;
-                                }
-                                else if($performance->target->experience == 'Moderately Experienced'){
-                                    if($performance_key === 0){
-                                        $project->positions[$position_key]->moderately_experienced += 1;
+                                    else if($performances[0]->productivity < 100 && $performances[0]->quality >= $member->target->quality)
+                                    {
+                                        $member->quadrant = 'Quadrant 1'; 
                                     }
-                                    $project->positions[$position_key]->moderately_experienced_total_output += $performance->output;
-                                    $project->positions[$position_key]->moderately_experienced_total_hours_worked += $performance->hours_worked;   
-                                }
-                                else if($performance->target->experience == 'Experienced'){
-                                    if($performance_key === 0){
-                                        $project->positions[$position_key]->experienced += 1;
+                                    else if($performances[0]->productivity >= 100 && $performances[0]->quality >= $member->target->quality)
+                                    {
+                                        $member->quadrant = 'Quadrant 2'; 
                                     }
-                                    $project->positions[$position_key]->experienced_total_output += $performance->output;
-                                    $project->positions[$position_key]->experienced_total_hours_worked += $performance->hours_worked;
+                                    else if($performances[0]->productivity >= 100 && $performances[0]->quality < $member->target->quality)
+                                    {
+                                        $member->quadrant = 'Quadrant 3'; 
+                                    }
+                                    else if($performances[0]->productivity < 100 && $performances[0]->quality < $member->target->quality)
+                                    {
+                                        $member->quadrant = 'Quadrant 4'; 
+                                    }
                                 }
                             }
 
-                            $project->positions[$position_key]->head_count = $project->positions[$position_key]->beginner + $project->positions[$position_key]->moderately_experienced + $project->positions[$position_key]->experienced;
-                            $position->total_average_output = $position->total_output ? round($position->total_output / $position->total_hours_worked * $performances[0]->daily_work_hours, 2) : 0;
-                            $position->monthly_productivity = $position->total_average_output ? round($position->total_average_output / $performances[0]->target->productivity * 100, 2) : 0;
-                            $position->monthly_quality = $position->total_output ? round((1 - $position->total_output_error / $position->total_output) * 100, 2) : 0;
+                            array_push($member->performances, $performances[0]);
+                        }
+                        else{
+                            $empty = new Performance;
+                            $empty->output = 0;
+                            $empty->output_error = 0;
+                            $empty->hours_worked = 0;
+                            $empty->productivity = 0;
+                            $empty->quality = 0;
+                            $empty->project_id = $project->id;
+                            $empty->member_id = $member->id;
+                            array_push($member->performances, $empty);
+                        }
 
-                            if(!$position->monthly_productivity && !$position->monthly_quality)
-                            {
-                                $position->quadrant = 'N/A'; 
-                            }
-                            else if($position->monthly_productivity < 100 && $position->monthly_quality >= $performances[0]->target->quality)
-                            {
-                                $position->quadrant = 'Quadrant 1'; 
-                            }
-                            else if($position->monthly_productivity >= 100 && $position->monthly_quality >= $performances[0]->target->quality)
-                            {
-                                $position->quadrant = 'Quadrant 2'; 
-                            }
-                            else if($position->monthly_productivity >= 100 && $position->monthly_quality < $performances[0]->target->quality)
-                            {
-                                $position->quadrant = 'Quadrant 3'; 
-                            }
-                            else if($position->monthly_productivity < 100 && $position->monthly_quality < $performances[0]->target->quality)
-                            {
-                                $position->quadrant = 'Quadrant 4'; 
-                            }
+                        $date_end->addWeek();
+                    }
 
-                            $overall_monthly_productivity += $position->monthly_productivity;
-                            $overall_monthly_quality += $position->monthly_quality;
-                            $overall_count++;
+                    foreach ($member->performances as $performance_key => $performance) {
+                        // $position->total_hours_worked += $performance->hours_worked;
+                        // $position->total_output += $performance->output;
+                        // $position->total_output_error += $performance->output_error;
+
+                        if($member->experience->experience == 'Beginner'){
+                            if($performance_key === 0){
+                                $position->beginner += 1;
+                            }
+                            $position->beginner_total_output += $performance->output;
+                            $position->beginner_total_hours_worked += $performance->hours_worked;
+                        }
+                        else if($member->experience->experience == 'Moderately Experienced'){
+                            if($performance_key === 0){
+                                $position->moderately_experienced += 1;
+                            }
+                            $position->moderately_experienced_total_output += $performance->output;
+                            $position->moderately_experienced_total_hours_worked += $performance->hours_worked;   
+                        }
+                        else if($member->experience->experience == 'Experienced'){
+                            if($performance_key === 0){
+                                $position->experienced += 1;
+                            }
+                            $position->experienced_total_output += $performance->output;
+                            $position->experienced_total_hours_worked += $performance->hours_worked;
+                        }
+
+                        $member->total_output += $performance->output;
+                        $member->total_output_error += $performance->output_error;
+                        $member->total_hours_worked += $performance->hours_worked;
+                    }
+
+                    $position->head_count = $position->beginner + $position->moderately_experienced + $position->experienced;
+                    // $position->total_average_output = round($position->total_output / $position->total_hours_worked * $daily_work_hours, 2);
+                    
+                    $member->total_average_output = $member->total_output ? round($member->total_output / $member->total_hours_worked * $daily_work_hours, 2) : 0;
+                    $member->monthly_productivity = $member->total_average_output ? round($member->total_average_output / $member->target->productivity * 100, 2) : 0;
+                    $member->monthly_quality = $member->total_output ? round((1 - $member->total_output_error / $member->total_output) * 100, 2) : 0;
+
+                    if(!$member->monthly_productivity && !$member->monthly_quality)
+                    {
+                        $member->quadrant = 'N/A'; 
+                    }
+                    else if($member->monthly_productivity < 100 && $member->monthly_quality >= $member->target->quality)
+                    {
+                        $member->quadrant = 'Quadrant 1'; 
+                    }
+                    else if($member->monthly_productivity >= 100 && $member->monthly_quality >= $member->target->quality)
+                    {
+                        $member->quadrant = 'Quadrant 2';
+
+                        if($member->experience->experience == 'Beginner')
+                        {
+                            $position->beginner_productivity_met++;
+                        }
+                        else if($member->experience->experience == 'Moderately Experienced')
+                        {
+                            $position->moderately_experienced_productivity_met++;
+                        }
+                        else if($member->experience->experience == 'Experienced')
+                        {
+                            $position->experienced_productivity_met++;
+                        }
+
+                    }
+                    else if($member->monthly_productivity >= 100 && $member->monthly_quality < $member->target->quality)
+                    {
+                        $member->quadrant = 'Quadrant 3';
+
+                        if($member->experience->experience == 'Beginner')
+                        {
+                            $position->beginner_productivity_met++;
+                        }
+                        else if($member->experience->experience == 'Moderately Experienced')
+                        {
+                            $position->moderately_experienced_productivity_met++;
+                        }
+                        else if($member->experience->experience == 'Experienced')
+                        {
+                            $position->experienced_productivity_met++;
                         }
                     }
-
-                    if($overall_count){
-                        $member->average_productivity = $overall_monthly_productivity / $overall_count;
-                        $member->average_quality = $overall_monthly_quality / $overall_count;
+                    else if($member->monthly_productivity < 100 && $member->monthly_quality < $member->target->quality)
+                    {
+                        $member->quadrant = 'Quadrant 4'; 
                     }
                 }
-
-                foreach ($project->positions as $position_key => $position) {                    
-                    $position->beginner_total_average_output = $position->beginner_total_hours_worked ? round($position->beginner_total_output / $position->beginner_total_hours_worked * $daily_work_hours, 2) : 0;
-                    $position->moderately_experienced_total_average_output = $position->moderately_experienced_total_hours_worked ? round($position->moderately_experienced_total_output / $position->moderately_experienced_total_hours_worked * $daily_work_hours, 2) : 0;
-                    $position->experienced_total_average_output = $position->experienced_total_hours_worked ? round($position->experienced_total_output / $position->experienced_total_hours_worked * $daily_work_hours, 2) : 0;
-                
-                    $project->beginner_total_output += $position->beginner_total_output;
-                    $project->beginner_total_hours_worked += $position->beginner_total_hours_worked;
-                    
-                    $project->moderately_experienced_total_output += $position->moderately_experienced_total_output;
-                    $project->moderately_experienced_total_hours_worked += $position->moderately_experienced_total_hours_worked;
-
-                    $project->experienced_total_output += $position->experienced_total_output;
-                    $project->experienced_total_hours_worked += $position->experienced_total_hours_worked;
-                }
-
-                $project->beginner_total_average_output = $project->beginner_total_hours_worked ? round($project->beginner_total_output / $project->beginner_total_hours_worked * $daily_work_hours, 2) : 0;
-                $project->moderately_experienced_total_average_output = $project->moderately_experienced_total_hours_worked ? round($project->moderately_experienced_total_output / $project->moderately_experienced_total_hours_worked * $daily_work_hours, 2) : 0;
-                $project->experienced_total_average_output = $project->experienced_total_hours_worked ? round($project->experienced_total_output / $project->experienced_total_hours_worked * $daily_work_hours, 2) : 0;
-
-                $project->total_output = $project->beginner_total_output + $project->moderately_experienced_total_output + $project->experienced_total_output;
-                $project->total_hours_worked = $project->beginner_total_hours_worked + $project->moderately_experienced_total_hours_worked + $project->experienced_total_hours_worked;
-                $project->total_average_output = $project->total_hours_worked ? round($project->total_output / $project->total_hours_worked * $daily_work_hours, 2) : 0;
-                    
             }
+
+            $date_end = Carbon::parse('first Monday of'. $months[(int)$month-1]  .' '. $year)->addDays(5);
+
+            for ($date_start = Carbon::parse('first Monday of'. $months[(int)$month-1]  .' '. $year); $date_start->lt($this->date_end); $date_start->addWeek()) {
+                array_push($project->weeks, $date_start->toFormattedDateString().' to '. $date_end->toFormattedDateString());
+                $date_end->addWeek();
+            }
+
+            foreach ($project->positions as $position_key => $position) {                    
+                $position->beginner_total_average_output = $position->beginner_total_hours_worked ? round($position->beginner_total_output / $position->beginner_total_hours_worked * $project->first_report->daily_work_hours, 2) : 0;
+                $position->moderately_experienced_total_average_output = $position->moderately_experienced_total_hours_worked ? round($position->moderately_experienced_total_output / $position->moderately_experienced_total_hours_worked * $project->first_report->daily_work_hours, 2) : 0;
+                $position->experienced_total_average_output = $position->experienced_total_hours_worked ? round($position->experienced_total_output / $position->experienced_total_hours_worked * $project->first_report->daily_work_hours, 2) : 0;
+            
+                $project->beginner_total_output += $position->beginner_total_output;
+                $project->beginner_total_hours_worked += $position->beginner_total_hours_worked;
+                
+                $project->moderately_experienced_total_output += $position->moderately_experienced_total_output;
+                $project->moderately_experienced_total_hours_worked += $position->moderately_experienced_total_hours_worked;
+
+                $project->experienced_total_output += $position->experienced_total_output;
+                $project->experienced_total_hours_worked += $position->experienced_total_hours_worked;
+            }
+
+            $project->beginner_total_average_output = $project->beginner_total_hours_worked ? round($project->beginner_total_output / $project->beginner_total_hours_worked * $project->first_report->daily_work_hours, 2) : 0;
+            $project->moderately_experienced_total_average_output = $project->moderately_experienced_total_hours_worked ? round($project->moderately_experienced_total_output / $project->moderately_experienced_total_hours_worked * $project->first_report->daily_work_hours, 2) : 0;
+            $project->experienced_total_average_output = $project->experienced_total_hours_worked ? round($project->experienced_total_output / $project->experienced_total_hours_worked * $project->first_report->daily_work_hours, 2) : 0;
+
+            $project->total_output = $project->beginner_total_output + $project->moderately_experienced_total_output + $project->experienced_total_output;
+            $project->total_hours_worked = $project->beginner_total_hours_worked + $project->moderately_experienced_total_hours_worked + $project->experienced_total_hours_worked;
+            $project->total_average_output = $project->total_hours_worked ? round($project->total_output / $project->total_hours_worked * $daily_work_hours, 2) : 0;
         }
-        // return $this->projects;  
+
+
+        // return $this->projects;
 
         Excel::create('PQR Project Summary Report '. $months[(int)$month-1] .' '. $year, function($excel){
             foreach ($this->projects as $project_key => $project) {
@@ -481,14 +763,17 @@ class ReportController extends Controller
                 $position->beginner_total_output = 0;
                 $position->beginner_total_hours_worked = 0;
                 $position->beginner_total_average_output = 0;
+                $position->beginner_productivity_met = 0;
 
                 $position->moderately_experienced_total_output = 0;
                 $position->moderately_experienced_total_hours_worked = 0;
                 $position->moderately_experienced_total_average_output = 0;
+                $position->moderately_experienced_productivity_met = 0;
 
                 $position->experienced_total_output = 0;
                 $position->experienced_total_hours_worked = 0;
                 $position->experienced_total_average_output = 0;
+                $position->experienced_productivity_met = 0;
 
                 // Beginner
                 $previous_beginner_target = Target::withTrashed()->where('position_id', $position->id)->where('experience', 'Beginner')->where('created_at', '<', Carbon::parse('first Monday of '. $request->month .' '. $request->year))->orderBy('created_at', 'desc')->first();
@@ -643,11 +928,38 @@ class ReportController extends Controller
                     }
                     else if($member->monthly_productivity >= 100 && $member->monthly_quality >= $member->target->quality)
                     {
-                        $member->quadrant = 'Quadrant 2'; 
+                        $member->quadrant = 'Quadrant 2';
+
+                        if($member->experience->experience == 'Beginner')
+                        {
+                            $position->beginner_productivity_met++;
+                        }
+                        else if($member->experience->experience == 'Moderately Experienced')
+                        {
+                            $position->moderately_experienced_productivity_met++;
+                        }
+                        else if($member->experience->experience == 'Experienced')
+                        {
+                            $position->experienced_productivity_met++;
+                        }
+
                     }
                     else if($member->monthly_productivity >= 100 && $member->monthly_quality < $member->target->quality)
                     {
-                        $member->quadrant = 'Quadrant 3'; 
+                        $member->quadrant = 'Quadrant 3';
+
+                        if($member->experience->experience == 'Beginner')
+                        {
+                            $position->beginner_productivity_met++;
+                        }
+                        else if($member->experience->experience == 'Moderately Experienced')
+                        {
+                            $position->moderately_experienced_productivity_met++;
+                        }
+                        else if($member->experience->experience == 'Experienced')
+                        {
+                            $position->experienced_productivity_met++;
+                        }
                     }
                     else if($member->monthly_productivity < 100 && $member->monthly_quality < $member->target->quality)
                     {
