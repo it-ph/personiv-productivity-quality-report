@@ -83,7 +83,7 @@ class ProjectController extends Controller
 
         $project = new Project;
 
-        $project->name = stripslashes(stripcslashes($request->name));
+        $project->name = $request->name;
         $project->department_id = $request->department_id;
 
         $project->save();
