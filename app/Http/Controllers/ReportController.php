@@ -1345,7 +1345,7 @@ class ReportController extends Controller
             foreach ($this->projects as $project_key => $project) {
                 $this->project = $project;
                 if($this->project->first_report){
-                    $excel->sheet($this->project->name, function($sheet) {
+                    $excel->sheet(substr($this->project->name, 0, 31), function($sheet) {
                         $sheet->loadView('excel.monthly')
                             ->with('project', $this->project);
                     });
@@ -1525,7 +1525,7 @@ class ReportController extends Controller
             foreach ($this->projects as $project_key => $project) {
                 $this->project = $project;
                 if($this->project->first_report){
-                    $excel->sheet($this->project->name, function($sheet) {
+                    $excel->sheet(substr($this->project->name, 0, 31), function($sheet) {
                         $sheet->loadView('excel.monthly')
                             ->with('project', $this->project);
                     });
@@ -1590,7 +1590,7 @@ class ReportController extends Controller
                 foreach ($this->projects as $project_key => $project) {
                     $this->project = $project;
                     if(count($this->project->reports)){
-                        $excel->sheet($this->project->name, function($sheet) {
+                        $excel->sheet(substr($this->project->name, 0, 31), function($sheet) {
                             $sheet->loadView('excel.weekly')
                                 ->with('project', $this->project);
                         });
@@ -1664,7 +1664,7 @@ class ReportController extends Controller
             foreach ($this->projects as $project_key => $project) {
                 $this->project = $project;
                 if(count($this->project->reports)){
-                    $excel->sheet($this->project->name, function($sheet) {
+                    $excel->sheet(substr($this->project->name, 0, 31), function($sheet) {
                         $sheet->loadView('excel.weekly')
                             ->with('project', $this->project);
                     });
