@@ -325,6 +325,10 @@ teamLeaderModule
 			var position = $filter('filter')($scope.project.positions, {id:member.position_id});
 			var target = $filter('filter')(position[0].targets, {experience:member.experience}, true);
 			$scope.members[index].target_id = target[0].id;
+			if(member.member_id == 21)
+			{
+				console.log(target);
+			}
 		}
 
 		// $scope.markInclude = function(member){
