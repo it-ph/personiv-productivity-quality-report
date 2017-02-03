@@ -709,7 +709,7 @@ class ReportController extends Controller
             foreach ($this->projects as $project_key => $project) {
                 $this->project = $project;
                 if($project->first_report){
-                    $excel->sheet($project->name, function($sheet) {
+                    $excel->sheet(substr(stripslashes(str_replace('/', '-', $project->name)), 0, 31), function($sheet) {
                         $sheet->loadView('excel.team-performance')
                             ->with('project', $this->project);
                     });
