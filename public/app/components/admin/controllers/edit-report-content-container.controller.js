@@ -72,12 +72,23 @@ adminModule
 		    });
 		}
 
+		var monthDiff = function(d1, d2) {
+		    var months;
+		    months = (d2.getFullYear() - d1.getFullYear()) * 12;
+		    months -= d1.getMonth() + 1;
+		    months += d2.getMonth();
+		    return months <= 0 ? 0 : months;
+		}
+
 		Performance.report(reportID)
 			.success(function(data){
 				angular.forEach(data, function(performance){
 					var experience = $filter('filter')(performance.member.experiences, {project_id: performance.project_id}, true);
 					performance.date_started = new Date(experience[0].date_started);
-					performance.experience = performance.target.experience;
+					
+					var tenure = monthDiff(performance.date_started, new Date(performance.date_start));
+
+					performance.experience = tenure < 3 ? 'Beginner' : ((tenure >= 3 && tenure < 6) ? 'Moderately Experienced' : 'Experienced');
 
 					var item = {};
 					item.display = performance.member.full_name;

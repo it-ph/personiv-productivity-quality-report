@@ -877,6 +877,7 @@ class PerformanceController extends Controller
                     $performance = Performance::where('id', $request->input($i.'.id'))->first();
 
                     $performance->position_id = $request->input($i.'.position_id');
+                    $performance->target_id = $request->input($i.'.target_id');
                     // $performance->project_id = $request->input($i.'.project_id');
                     $performance->output = round($request->input($i.'.output'), 2);
                     // $performance->date_start = $request->input($i.'.date_start');
@@ -891,6 +892,7 @@ class PerformanceController extends Controller
                     $performance->productivity = $performance->average_output ? round($performance->average_output / $target->productivity * 100, 2) : 0;
                     // 1 - output w/error / output * 100 to convert to percentage
                     $performance->quality = $performance->output ? round((1 - $performance->output_error / $performance->output) * 100, 2) : 0;
+
                     
                     // Quadrant
                     if(!$performance->productivity && !$performance->quality)
