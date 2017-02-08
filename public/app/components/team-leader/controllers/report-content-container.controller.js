@@ -293,7 +293,8 @@ teamLeaderModule
 
 			Performance.checkLimitAll($scope.members)
 				.success(function(data){
-					angular.forEach(data, function(item){
+					$scope.members = data;
+					angular.forEach($scope.members, function(item){
 						item.date_started = new Date(item.date_started);
 						item.first_letter = item.member.full_name.charAt(0).toUpperCase();
 						item.output_error = 0;
@@ -301,10 +302,10 @@ teamLeaderModule
 						var toolbarItem = {};
 						toolbarItem.display = item.member.full_name;
 						$scope.toolbar.items.push(toolbarItem);
+						$scope.getTarget(item);
 					});
 
 
-					$scope.members = data;
 					$scope.showMembers = true;
 					// $scope.reset = false;
 				})
@@ -320,14 +321,26 @@ teamLeaderModule
 		// 	$scope.details.programme_id = $scope.work_hours[idx].id;
 		// }
 
+		var monthDiff = function(d1, d2) {
+		    var months;
+		    months = (d2.getFullYear() - d1.getFullYear()) * 12;
+		    months -= d1.getMonth() + 1;
+		    months += d2.getMonth();
+		    return months <= 0 ? 0 : months;
+		}
+
 		$scope.getTarget = function(member){
-			var index = $scope.members.indexOf(member);
-			var position = $filter('filter')($scope.project.positions, {id:member.position_id});
-			var target = $filter('filter')(position[0].targets, {experience:member.experience}, true);
-			$scope.members[index].target_id = target[0].id;
-			if(member.member_id == 21)
+			if(member.position_id)
 			{
-				console.log(target);
+				var index = $scope.members.indexOf(member);
+				var position = $filter('filter')($scope.project.positions, {id:member.position_id});
+
+				var tenure = monthDiff(new Date(member.date_started), new Date($scope.details.date_start));
+
+				member.experience = tenure < 3 ? 'Beginner' : ((tenure >= 3 && tenure < 6) ? 'Moderately Experienced' : 'Experienced');
+
+				var target = $filter('filter')(position[0].targets, {experience:member.experience}, true);
+				member.target_id = target[0].id;
 			}
 		}
 
