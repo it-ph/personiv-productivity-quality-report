@@ -54,8 +54,7 @@ adminModule
 
 		/* Refreshes the list */
 		$scope.subheader.refresh = function(){
-			Preloader.preload();
-			$scope.init(true);
+			$scope.searchMonthlyReport();
 		};
 
 		$scope.subheader.download = function(){
@@ -196,6 +195,8 @@ adminModule
 						errorField.$setTouched();
 					});
 				});
+
+				return;
 			}
 			else{
 
