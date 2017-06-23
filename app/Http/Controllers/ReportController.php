@@ -475,20 +475,20 @@ class ReportController extends Controller
                 $position->experienced_productivity_met = 0;
 
                 // Beginner
-                $previous_beginner_target = Target::withTrashed()->where('position_id', $position->id)->where('experience', 'Beginner')->where('created_at', '<', Carbon::parse('first Monday of '. $months[(int)$month-1]  .' '. $year))->orderBy('created_at', 'desc')->first();
+                $previous_beginner_target = Target::withTrashed()->where('position_id', $position->id)->where('experience', 'Beginner')->where('effective_date', '<', Carbon::parse('first Monday of '. $months[(int)$month-1]  .' '. $year))->orderBy('effective_date', 'desc')->first();
 
                 $beginner_productivity = count($previous_beginner_target) ? $previous_beginner_target : Target::where('position_id', $position->id)->where('experience', 'Beginner')->first();
 
                 // Moderately Experienced
-                $previous_moderately_experienced_target = Target::withTrashed()->where('position_id', $position->id)->where('experience', 'Moderately Experienced')->where('created_at', '<', Carbon::parse('first Monday of'. $months[(int)$month-1]  .' '. $year))->orderBy('created_at', 'desc')->first();
+                $previous_moderately_experienced_target = Target::withTrashed()->where('position_id', $position->id)->where('experience', 'Moderately Experienced')->where('effective_date', '<', Carbon::parse('first Monday of'. $months[(int)$month-1]  .' '. $year))->orderBy('effective_date', 'desc')->first();
                 $moderately_experienced_productivity = count($previous_moderately_experienced_target) ? $previous_moderately_experienced_target : Target::where('position_id', $position->id)->where('experience', 'Moderately Experienced')->first();
 
                 // Experienced
-                $previous_experienced_target = Target::withTrashed()->where('position_id', $position->id)->where('experience', 'Experienced')->where('created_at', '<', Carbon::parse('first Monday of'. $months[(int)$month-1]  .' '. $year))->orderBy('created_at', 'desc')->first();
+                $previous_experienced_target = Target::withTrashed()->where('position_id', $position->id)->where('experience', 'Experienced')->where('effective_date', '<', Carbon::parse('first Monday of'. $months[(int)$month-1]  .' '. $year))->orderBy('effective_date', 'desc')->first();
                 $experienced_productivity = count($previous_experienced_target) ? $previous_experienced_target : Target::where('position_id', $position->id)->where('experience', 'Experienced')->first();
                 
                 // Quality
-                $previous_experienced_target = Target::withTrashed()->where('position_id', $position->id)->where('experience', 'Experienced')->where('created_at', '<', Carbon::parse('first Monday of'. $months[(int)$month-1]  .' '. $year))->orderBy('created_at', 'desc')->first();
+                $previous_experienced_target = Target::withTrashed()->where('position_id', $position->id)->where('experience', 'Experienced')->where('effective_date', '<', Carbon::parse('first Monday of'. $months[(int)$month-1]  .' '. $year))->orderBy('effective_date', 'desc')->first();
                 $quality = count($previous_experienced_target) ? $previous_experienced_target : Target::where('position_id', $position->id)->where('experience', 'Experienced')->first();
                 
                 array_push($project->beginner, $beginner_productivity);
@@ -788,20 +788,20 @@ class ReportController extends Controller
                 $position->experienced_productivity_met = 0;
 
                 // Beginner
-                $previous_beginner_target = Target::withTrashed()->where('position_id', $position->id)->where('experience', 'Beginner')->where('created_at', '<', Carbon::parse('first Monday of '. $request->month .' '. $request->year))->orderBy('created_at', 'desc')->first();
+                $previous_beginner_target = Target::withTrashed()->where('position_id', $position->id)->where('experience', 'Beginner')->where('effective_date', '<', Carbon::parse('first Monday of '. $request->month .' '. $request->year))->orderBy('effective_date', 'desc')->first();
 
                 $beginner_productivity = count($previous_beginner_target) ? $previous_beginner_target : Target::where('position_id', $position->id)->where('experience', 'Beginner')->first();
 
                 // Moderately Experienced
-                $previous_moderately_experienced_target = Target::withTrashed()->where('position_id', $position->id)->where('experience', 'Moderately Experienced')->where('created_at', '<', Carbon::parse('first Monday of'. $request->month .' '. $request->year))->orderBy('created_at', 'desc')->first();
+                $previous_moderately_experienced_target = Target::withTrashed()->where('position_id', $position->id)->where('experience', 'Moderately Experienced')->where('effective_date', '<', Carbon::parse('first Monday of'. $request->month .' '. $request->year))->orderBy('effective_date', 'desc')->first();
                 $moderately_experienced_productivity = count($previous_moderately_experienced_target) ? $previous_moderately_experienced_target : Target::where('position_id', $position->id)->where('experience', 'Moderately Experienced')->first();
 
                 // Experienced
-                $previous_experienced_target = Target::withTrashed()->where('position_id', $position->id)->where('experience', 'Experienced')->where('created_at', '<', Carbon::parse('first Monday of'. $request->month .' '. $request->year))->orderBy('created_at', 'desc')->first();
+                $previous_experienced_target = Target::withTrashed()->where('position_id', $position->id)->where('experience', 'Experienced')->where('effective_date', '<', Carbon::parse('first Monday of'. $request->month .' '. $request->year))->orderBy('effective_date', 'desc')->first();
                 $experienced_productivity = count($previous_experienced_target) ? $previous_experienced_target : Target::where('position_id', $position->id)->where('experience', 'Experienced')->first();
                 
                 // Quality
-                $previous_experienced_target = Target::withTrashed()->where('position_id', $position->id)->where('experience', 'Experienced')->where('created_at', '<', Carbon::parse('first Monday of'. $request->month .' '. $request->year))->orderBy('created_at', 'desc')->first();
+                $previous_experienced_target = Target::withTrashed()->where('position_id', $position->id)->where('experience', 'Experienced')->where('effective_date', '<', Carbon::parse('first Monday of'. $request->month .' '. $request->year))->orderBy('effective_date', 'desc')->first();
                 $quality = count($previous_experienced_target) ? $previous_experienced_target : Target::where('position_id', $position->id)->where('experience', 'Experienced')->first();
                 
                 array_push($project->beginner, $beginner_productivity);
@@ -1198,19 +1198,19 @@ class ReportController extends Controller
 
             foreach ($project->positions as $position_key => $position) {
                 // Beginner
-                $previous_beginner_target = Target::withTrashed()->where('position_id', $position->id)->where('experience', 'Beginner')->where('created_at', '<', Carbon::parse('first Monday of'. $months[(int)$month-1] .' '. (int)$year))->orderBy('created_at', 'desc')->first();
+                $previous_beginner_target = Target::withTrashed()->where('position_id', $position->id)->where('experience', 'Beginner')->where('effective_date', '<', Carbon::parse('first Monday of'. $months[(int)$month-1] .' '. (int)$year))->orderBy('effective_date', 'desc')->first();
                 $beginner_productivity = count($previous_beginner_target) ? $previous_beginner_target : Target::where('position_id', $position->id)->where('experience', 'Beginner')->first();
 
                 // Moderately Experienced
-                $previous_moderately_experienced_target = Target::withTrashed()->where('position_id', $position->id)->where('experience', 'Moderately Experienced')->where('created_at', '<', Carbon::parse('first Monday of'. $months[(int)$month-1] .' '. (int)$year))->orderBy('created_at', 'desc')->first();
+                $previous_moderately_experienced_target = Target::withTrashed()->where('position_id', $position->id)->where('experience', 'Moderately Experienced')->where('effective_date', '<', Carbon::parse('first Monday of'. $months[(int)$month-1] .' '. (int)$year))->orderBy('effective_date', 'desc')->first();
                 $moderately_experienced_productivity = count($previous_moderately_experienced_target) ? $previous_moderately_experienced_target : Target::where('position_id', $position->id)->where('experience', 'Moderately Experienced')->first();
 
                 // Experienced
-                $previous_experienced_target = Target::withTrashed()->where('position_id', $position->id)->where('experience', 'Experienced')->where('created_at', '<', Carbon::parse('first Monday of'. $months[(int)$month-1] .' '. (int)$year))->orderBy('created_at', 'desc')->first();
+                $previous_experienced_target = Target::withTrashed()->where('position_id', $position->id)->where('experience', 'Experienced')->where('effective_date', '<', Carbon::parse('first Monday of'. $months[(int)$month-1] .' '. (int)$year))->orderBy('effective_date', 'desc')->first();
                 $experienced_productivity = count($previous_experienced_target) ? $previous_experienced_target : Target::where('position_id', $position->id)->where('experience', 'Experienced')->first();
                 
                 // Quality
-                $previous_experienced_target = Target::withTrashed()->where('position_id', $position->id)->where('experience', 'Experienced')->where('created_at', '<', Carbon::parse('first Monday of'. $months[(int)$month-1] .' '. (int)$year))->orderBy('created_at', 'desc')->first();
+                $previous_experienced_target = Target::withTrashed()->where('position_id', $position->id)->where('experience', 'Experienced')->where('effective_date', '<', Carbon::parse('first Monday of'. $months[(int)$month-1] .' '. (int)$year))->orderBy('effective_date', 'desc')->first();
                 $quality = count($previous_experienced_target) ? $previous_experienced_target : Target::where('position_id', $position->id)->where('experience', 'Experienced')->first();
                 
                 array_push($project->beginner, $beginner_productivity);
@@ -1377,20 +1377,20 @@ class ReportController extends Controller
 
             foreach ($project->positions as $position_key => $position) {
                 // Beginner
-                $previous_beginner_target = Target::withTrashed()->where('position_id', $position->id)->where('experience', 'Beginner')->where('created_at', '<', Carbon::parse('first Monday of'. $months[(int)$month-1] .' '. (int)$year))->orderBy('created_at', 'desc')->first();
+                $previous_beginner_target = Target::withTrashed()->where('position_id', $position->id)->where('experience', 'Beginner')->where('effective_date', '<', Carbon::parse('first Monday of'. $months[(int)$month-1] .' '. (int)$year))->orderBy('effective_date', 'desc')->first();
 
                 $beginner_productivity = count($previous_beginner_target) ? $previous_beginner_target : Target::where('position_id', $position->id)->where('experience', 'Beginner')->first();
 
                 // Moderately Experienced
-                $previous_moderately_experienced_target = Target::withTrashed()->where('position_id', $position->id)->where('experience', 'Moderately Experienced')->where('created_at', '<', Carbon::parse('first Monday of'. $months[(int)$month-1] .' '. (int)$year))->orderBy('created_at', 'desc')->first();
+                $previous_moderately_experienced_target = Target::withTrashed()->where('position_id', $position->id)->where('experience', 'Moderately Experienced')->where('effective_date', '<', Carbon::parse('first Monday of'. $months[(int)$month-1] .' '. (int)$year))->orderBy('effective_date', 'desc')->first();
                 $moderately_experienced_productivity = count($previous_moderately_experienced_target) ? $previous_moderately_experienced_target : Target::where('position_id', $position->id)->where('experience', 'Moderately Experienced')->first();
 
                 // Experienced
-                $previous_experienced_target = Target::withTrashed()->where('position_id', $position->id)->where('experience', 'Experienced')->where('created_at', '<', Carbon::parse('first Monday of'. $months[(int)$month-1] .' '. (int)$year))->orderBy('created_at', 'desc')->first();
+                $previous_experienced_target = Target::withTrashed()->where('position_id', $position->id)->where('experience', 'Experienced')->where('effective_date', '<', Carbon::parse('first Monday of'. $months[(int)$month-1] .' '. (int)$year))->orderBy('effective_date', 'desc')->first();
                 $experienced_productivity = count($previous_experienced_target) ? $previous_experienced_target : Target::where('position_id', $position->id)->where('experience', 'Experienced')->first();
                 
                 // Quality
-                $previous_experienced_target = Target::withTrashed()->where('position_id', $position->id)->where('experience', 'Experienced')->where('created_at', '<', Carbon::parse('first Monday of'. $months[(int)$month-1] .' '. (int)$year))->orderBy('created_at', 'desc')->first();
+                $previous_experienced_target = Target::withTrashed()->where('position_id', $position->id)->where('experience', 'Experienced')->where('effective_date', '<', Carbon::parse('first Monday of'. $months[(int)$month-1] .' '. (int)$year))->orderBy('effective_date', 'desc')->first();
                 $quality = count($previous_experienced_target) ? $previous_experienced_target : Target::where('position_id', $position->id)->where('experience', 'Experienced')->first();
                 
                 array_push($project->beginner, $beginner_productivity);
@@ -1552,19 +1552,19 @@ class ReportController extends Controller
 
                 foreach ($project->reports[0]->project->positions as $position_key => $position) {
                     // Beginner
-                    $previous_beginner_target = Target::withTrashed()->where('position_id', $position->id)->where('experience', 'Beginner')->where('created_at', '<', $project->reports[0]->date_start)->orderBy('created_at', 'desc')->first();
+                    $previous_beginner_target = Target::withTrashed()->where('position_id', $position->id)->where('experience', 'Beginner')->where('effective_date', '<', $project->reports[0]->date_start)->orderBy('effective_date', 'desc')->first();
                     $beginner_productivity = count($previous_beginner_target) ? $previous_beginner_target : Target::where('position_id', $position->id)->where('experience', 'Beginner')->first();
 
                     // Moderately Experienced
-                    $previous_moderately_experienced_target = Target::withTrashed()->where('position_id', $position->id)->where('experience', 'Moderately Experienced')->where('created_at', '<', $project->reports[0]->date_start)->orderBy('created_at', 'desc')->first();
+                    $previous_moderately_experienced_target = Target::withTrashed()->where('position_id', $position->id)->where('experience', 'Moderately Experienced')->where('effective_date', '<', $project->reports[0]->date_start)->orderBy('effective_date', 'desc')->first();
                     $moderately_experienced_productivity = count($previous_moderately_experienced_target) ? $previous_moderately_experienced_target : Target::where('position_id', $position->id)->where('experience', 'Moderately Experienced')->first();
 
                     // Experienced
-                    $previous_experienced_target = Target::withTrashed()->where('position_id', $position->id)->where('experience', 'Experienced')->where('created_at', '<', $project->reports[0]->date_start)->orderBy('created_at', 'desc')->first();
+                    $previous_experienced_target = Target::withTrashed()->where('position_id', $position->id)->where('experience', 'Experienced')->where('effective_date', '<', $project->reports[0]->date_start)->orderBy('effective_date', 'desc')->first();
                     $experienced_productivity = count($previous_experienced_target) ? $previous_experienced_target : Target::where('position_id', $position->id)->where('experience', 'Experienced')->first();
                     
                     // Quality
-                    $previous_experienced_target = Target::withTrashed()->where('position_id', $position->id)->where('experience', 'Experienced')->where('created_at', '<', $project->reports[0]->date_start)->orderBy('created_at', 'desc')->first();
+                    $previous_experienced_target = Target::withTrashed()->where('position_id', $position->id)->where('experience', 'Experienced')->where('effective_date', '<', $project->reports[0]->date_start)->orderBy('effective_date', 'desc')->first();
                     $quality = count($previous_experienced_target) ? $previous_experienced_target : Target::where('position_id', $position->id)->where('experience', 'Experienced')->first();
                     
                     array_push($project->department->beginner, $beginner_productivity);
@@ -1627,19 +1627,19 @@ class ReportController extends Controller
 
                 foreach ($project->reports[0]->project->positions as $position_key => $position) {
                     // Beginner
-                    $previous_beginner_target = Target::withTrashed()->where('position_id', $position->id)->where('experience', 'Beginner')->where('created_at', '<', $project->reports[0]->date_start)->orderBy('created_at', 'desc')->first();
+                    $previous_beginner_target = Target::withTrashed()->where('position_id', $position->id)->where('experience', 'Beginner')->where('effective_date', '<', $project->reports[0]->date_start)->orderBy('effective_date', 'desc')->first();
                     $beginner_productivity = count($previous_beginner_target) ? $previous_beginner_target : Target::where('position_id', $position->id)->where('experience', 'Beginner')->first();
 
                     // Moderately Experienced
-                    $previous_moderately_experienced_target = Target::withTrashed()->where('position_id', $position->id)->where('experience', 'Moderately Experienced')->where('created_at', '<', $project->reports[0]->date_start)->orderBy('created_at', 'desc')->first();
+                    $previous_moderately_experienced_target = Target::withTrashed()->where('position_id', $position->id)->where('experience', 'Moderately Experienced')->where('effective_date', '<', $project->reports[0]->date_start)->orderBy('effective_date', 'desc')->first();
                     $moderately_experienced_productivity = count($previous_moderately_experienced_target) ? $previous_moderately_experienced_target : Target::where('position_id', $position->id)->where('experience', 'Moderately Experienced')->first();
 
                     // Experienced
-                    $previous_experienced_target = Target::withTrashed()->where('position_id', $position->id)->where('experience', 'Experienced')->where('created_at', '<', $project->reports[0]->date_start)->orderBy('created_at', 'desc')->first();
+                    $previous_experienced_target = Target::withTrashed()->where('position_id', $position->id)->where('experience', 'Experienced')->where('effective_date', '<', $project->reports[0]->date_start)->orderBy('effective_date', 'desc')->first();
                     $experienced_productivity = count($previous_experienced_target) ? $previous_experienced_target : Target::where('position_id', $position->id)->where('experience', 'Experienced')->first();
                     
                     // Quality
-                    $previous_experienced_target = Target::withTrashed()->where('position_id', $position->id)->where('experience', 'Experienced')->where('created_at', '<', $project->reports[0]->date_start)->orderBy('created_at', 'desc')->first();
+                    $previous_experienced_target = Target::withTrashed()->where('position_id', $position->id)->where('experience', 'Experienced')->where('effective_date', '<', $project->reports[0]->date_start)->orderBy('effective_date', 'desc')->first();
                     $quality = count($previous_experienced_target) ? $previous_experienced_target : Target::where('position_id', $position->id)->where('experience', 'Experienced')->first();
                     
                     array_push($project->department->beginner, $beginner_productivity);
@@ -1719,8 +1719,8 @@ class ReportController extends Controller
                 ->where('type', 'Productivity')
                 ->where('project_id', $value->project_id)
                 ->where('experience', 'Beginner')
-                ->where('created_at', '<=', $value->date_end)
-                ->orderBy('created_at', 'desc')
+                ->where('effective_date', '<=', $value->date_end)
+                ->orderBy('effective_date', 'desc')
                 ->get();
 
             if(!$beginner)
@@ -1729,8 +1729,8 @@ class ReportController extends Controller
                     ->where('type', 'Productivity')
                     ->where('project_id', $value->project_id)
                     ->where('experience', 'Beginner')
-                    // ->where('created_at', '<=', $value->date_end)
-                    ->where('active', true)
+                    ->where('effective_date', '<=', $value->date_end)
+                    ->orderBy('effective_date', 'desc')
                     ->get();                
             }
 
@@ -1738,8 +1738,8 @@ class ReportController extends Controller
                 ->where('type', 'Productivity')
                 ->where('project_id', $value->project_id)
                 ->where('experience', 'Moderately Experienced')
-                ->where('created_at', '<=', $value->date_end)
-                ->orderBy('created_at', 'desc')
+                ->where('effective_date', '<=', $value->date_end)
+                ->orderBy('effective_date', 'desc')
                 ->get();
 
             if(!$moderately_experienced)
@@ -1748,8 +1748,8 @@ class ReportController extends Controller
                     ->where('type', 'Productivity')
                     ->where('project_id', $value->project_id)
                     ->where('experience', 'Moderately Experienced')
-                    // ->where('created_at', '<=', $value->date_end)
-                    ->where('active', true)
+                    ->where('effective_date', '<=', $value->date_end)
+                    ->orderBy('effective_date', 'desc')
                     ->get();                
             }
 
@@ -1757,8 +1757,8 @@ class ReportController extends Controller
                 ->where('type', 'Productivity')
                 ->where('project_id', $value->project_id)
                 ->where('experience', 'Experienced')
-                ->where('created_at', '<=', $value->date_end)
-                ->orderBy('created_at', 'desc')
+                ->where('effective_date', '<=', $value->date_end)
+                ->orderBy('effective_date', 'desc')
                 ->get();
 
             if(!$experienced)
@@ -1767,8 +1767,8 @@ class ReportController extends Controller
                     ->where('type', 'Productivity')
                     ->where('project_id', $value->project_id)
                     ->where('experience', 'Experienced')
-                    // ->where('created_at', '<=', $value->date_end)
-                    ->where('active', true)
+                    ->where('effective_date', '<=', $value->date_end)
+                    ->orderBy('effective_date', 'desc')
                     ->get();
 
             }
@@ -1777,8 +1777,8 @@ class ReportController extends Controller
                 ->where('type', 'Quality')
                 ->where('project_id', $value->project_id)
                 ->groupBy('position_id')
-                ->where('created_at', '<=', $value->date_end)
-                ->orderBy('created_at', 'desc')
+                ->where('effective_date', '<=', $value->date_end)
+                ->orderBy('effective_date', 'desc')
                 ->get();
 
             if(!$quality)
@@ -1787,8 +1787,8 @@ class ReportController extends Controller
                     ->where('type', 'Quality')
                     ->where('project_id', $value->project_id)
                     ->groupBy('position_id')
-                    // ->where('created_at', '<=', $value->date_end)
-                    ->where('active', true)
+                    ->where('effective_date', '<=', $value->date_end)
+                    ->orderBy('effective_date', 'desc')
                     ->get();
 
             }
@@ -1831,16 +1831,16 @@ class ReportController extends Controller
     }
     public function searchDepartment(Request $request, $id)
     {
-        return Report::with('team_leader')->with(['performances' => function($query){ $query->with(['target' => function($query){ $query->withTrashed(); }])->with(['member' => function($query){ $query->withTrashed()->with('experiences');}])->with('position'); }])->with(['project' => function($query){ $query->with(['positions' => function($query){ $query->with(['targets' => function($query){ $query->withTrashed()->orderBy('created_at', 'desc'); }]);}]); }])->where('department_id', $id)->whereBetween('date_start', [Carbon::parse($request->date_start), Carbon::parse($request->date_end)])->orderBy('date_start', 'desc')->get();
+        return Report::with('team_leader')->with(['performances' => function($query){ $query->with(['target' => function($query){ $query->withTrashed(); }])->with(['member' => function($query){ $query->withTrashed()->with('experiences');}])->with('position'); }])->with(['project' => function($query){ $query->with(['positions' => function($query){ $query->with(['targets' => function($query){ $query->withTrashed()->orderBy('effective_date', 'desc'); }]);}]); }])->where('department_id', $id)->whereBetween('date_start', [Carbon::parse($request->date_start), Carbon::parse($request->date_end)])->orderBy('date_start', 'desc')->get();
     }
 
     public function search(Request $request)
     {
-        return Report::with('team_leader')->with(['performances' => function($query){ $query->with(['target' => function($query){ $query->withTrashed();}])->with(['member' => function($query){ $query->withTrashed()->with('experiences');}])->with('position'); }])->with(['project' => function($query){ $query->with(['positions' => function($query){ $query->with(['targets' => function($query){ $query->withTrashed()->orderBy('created_at', 'desc'); }]);}]); }])->where('department_id', Auth::user()->department_id)->whereBetween('date_start', [Carbon::parse($request->date_start), Carbon::parse($request->date_end)])->orderBy('date_start', 'desc')->get();
+        return Report::with('team_leader')->with(['performances' => function($query){ $query->with(['target' => function($query){ $query->withTrashed();}])->with(['member' => function($query){ $query->withTrashed()->with('experiences');}])->with('position'); }])->with(['project' => function($query){ $query->with(['positions' => function($query){ $query->with(['targets' => function($query){ $query->withTrashed()->orderBy('effective_date', 'desc'); }]);}]); }])->where('department_id', Auth::user()->department_id)->whereBetween('date_start', [Carbon::parse($request->date_start), Carbon::parse($request->date_end)])->orderBy('date_start', 'desc')->get();
     }
     public function paginateDetails()
     {
-        return Report::with('team_leader')->with(['performances' => function($query){ $query->with(['target' => function($query){ $query->withTrashed();}])->with(['member' => function($query){ $query->withTrashed()->with('experiences');}])->with('position'); }])->with(['project' => function($query){ $query->with(['positions' => function($query){ $query->with(['targets' => function($query){ $query->withTrashed()->orderBy('created_at', 'desc'); }]);}]); }])->with('team_leader')->where('department_id', Auth::user()->department_id)->orderBy('date_start', 'desc')->paginate(10);   
+        return Report::with('team_leader')->with(['performances' => function($query){ $query->with(['target' => function($query){ $query->withTrashed();}])->with(['member' => function($query){ $query->withTrashed()->with('experiences');}])->with('position'); }])->with(['project' => function($query){ $query->with(['positions' => function($query){ $query->with(['targets' => function($query){ $query->withTrashed()->orderBy('effective_date', 'desc'); }]);}]); }])->with('team_leader')->where('department_id', Auth::user()->department_id)->orderBy('date_start', 'desc')->paginate(10);   
     }
     public function paginate()
     {
@@ -1882,8 +1882,8 @@ class ReportController extends Controller
                     ->where('targets.position_id', $queryValue->position_id)
                     ->where('targets.experience', $queryValue->experience)
                     ->where('targets.type', 'Quality')
-                    ->where('targets.created_at', '<=', $this->date_end)
-                    ->orderBy('targets.created_at', 'desc')
+                    ->where('targets.effective_date', '<=', $this->date_end)
+                    ->orderBy('targets.effective_date', 'desc')
                     ->first();
 
                 if(!$quality_target)
@@ -1895,8 +1895,8 @@ class ReportController extends Controller
                     ->where('targets.position_id', $queryValue->position_id)
                     ->where('targets.experience', $queryValue->experience)
                     ->where('targets.type', 'Quality')
-                    // ->where('targets.created_at', '<=', $this->date_end)
-                    ->where('targets.active', true)
+                    ->where('targets.effective_date', '<=', $this->date_end)
+                    ->orderBy('targets.effective_date', 'desc')
                     ->first();
                 }
 
@@ -1927,7 +1927,7 @@ class ReportController extends Controller
 
     public function paginateDepartmentDetails($departmentID)
     {
-        return Report::with('team_leader')->with(['performances' => function($query){ $query->with(['target' => function($query){ $query->withTrashed(); }])->with(['member' => function($query){ $query->with('experiences');}])->with('position'); }])->with(['project' => function($query){ $query->with(['positions' => function($query){ $query->with(['targets' => function($query){ $query->withTrashed()->orderBy('created_at', 'desc'); }]);}]); }])->where('department_id', $departmentID)->orderBy('date_start', 'desc')->paginate(10);
+        return Report::with('team_leader')->with(['performances' => function($query){ $query->with(['target' => function($query){ $query->withTrashed(); }])->with(['member' => function($query){ $query->with('experiences');}])->with('position'); }])->with(['project' => function($query){ $query->with(['positions' => function($query){ $query->with(['targets' => function($query){ $query->withTrashed()->orderBy('effective_date', 'desc'); }]);}]); }])->where('department_id', $departmentID)->orderBy('date_start', 'desc')->paginate(10);
     }
     public function paginateDepartment($departmentID)
     {
@@ -1970,8 +1970,8 @@ class ReportController extends Controller
                         ->where('targets.position_id', $queryValue->position_id)
                         ->where('targets.experience', $queryValue->experience)
                         ->where('targets.type', 'Quality')
-                        ->where('targets.created_at', '<=', $value->date_end)
-                        ->orderBy('targets.created_at', 'desc')
+                        ->where('targets.effective_date', '<=', $this->date_end)
+                        ->orderBy('targets.effective_date', 'desc')
                         ->first();
 
                     if(!$quality_target)
@@ -1983,8 +1983,8 @@ class ReportController extends Controller
                             ->where('targets.position_id', $queryValue->position_id)
                             ->where('targets.experience', $queryValue->experience)
                             ->where('targets.type', 'Quality')
-                            // ->where('targets.created_at', '<=', $value->date_end)
-                            ->where('targets.active', true)
+                            ->where('targets.effective_date', '<=', $this->date_end)
+                            ->orderBy('targets.effective_date', 'desc')
                             ->first();
                     }
                         if($queryValue->productivity < 100 && $queryValue->quality >= 100)
@@ -2051,7 +2051,7 @@ class ReportController extends Controller
      */
     public function show($id)
     {
-        return Report::withTrashed()->with('team_leader')->with(['performances' => function($query){ $query->withTrashed()->with(['member' => function($query){ $query->with('experiences');}])->with('position'); }])->with(['project' => function($query){ $query->with(['positions' => function($query){ $query->with(['targets' => function($query){ $query->withTrashed()->orderBy('created_at', 'desc'); }]);}]); }])->with('team_leader')->where('id', $id)->first();
+        return Report::withTrashed()->with('team_leader')->with(['performances' => function($query){ $query->withTrashed()->with(['member' => function($query){ $query->with('experiences');}])->with('position'); }])->with(['project' => function($query){ $query->with(['positions' => function($query){ $query->with(['targets' => function($query){ $query->withTrashed()->orderBy('effective_date', 'desc'); }]);}]); }])->with('team_leader')->where('id', $id)->first();
     }
 
     /**

@@ -1,2 +1,2915 @@
-var teamLeaderModule=angular.module("teamLeaderModule",["sharedModule"]);teamLeaderModule.config(["$stateProvider",function(e){e.state("main",{url:"/",views:{"":{templateUrl:"/app/shared/views/main.view.html",controller:"mainViewController"},"toolbar@main":{templateUrl:"/app/components/team-leader/templates/toolbar.template.html"},"left-sidenav@main":{templateUrl:"/app/components/team-leader/templates/sidenavs/main-left.sidenav.html",controller:"leftSidenavController"},"content-container@main":{templateUrl:"/app/components/team-leader/views/content-container.view.html",controller:"mainMonthlyContentContainerController"},"content@main":{templateUrl:"/app/components/team-leader/templates/content/main-monthly.content.template.html"},"right-sidenav@main":{templateUrl:"/app/components/team-leader/templates/sidenavs/main-monthly-right.sidenav.html"}}}).state("main.weekly-report",{url:"weekly-report",views:{"content-container":{templateUrl:"/app/components/team-leader/views/content-container.view.html",controller:"mainContentContainerController"},"toolbar@main.weekly-report":{templateUrl:"/app/components/team-leader/templates/toolbar.template.html"},"content@main.weekly-report":{templateUrl:"/app/shared/templates/main.content.template.html"},"right-sidenav@main.weekly-report":{templateUrl:"/app/components/team-leader/templates/sidenavs/main-right.sidenav.html"}}}).state("main.activity",{url:"activities",views:{"content-container":{templateUrl:"/app/components/team-leader/views/content-container.view.html",controller:"activityContentContainerController"},"toolbar@main.activity":{templateUrl:"/app/components/team-leader/templates/toolbar.template.html"},"content@main.activity":{templateUrl:"/app/shared/templates/content/activity.content.template.html"}}}).state("main.members",{url:"members",views:{"content-container":{templateUrl:"/app/components/team-leader/views/content-container.view.html",controller:"membersContentContainerController"},"toolbar@main.members":{templateUrl:"/app/components/team-leader/templates/toolbar.template.html"},"content@main.members":{templateUrl:"/app/components/team-leader/templates/content/members.content.template.html"}}}).state("main.create-member",{url:"member/create",views:{"content-container":{templateUrl:"/app/components/team-leader/views/content-container.view.html",controller:"createMemberContentContainerController"},"toolbar@main.create-member":{templateUrl:"/app/components/team-leader/templates/toolbar.template.html"},"content@main.create-member":{templateUrl:"/app/components/team-leader/templates/content/create-member-content.template.html"}}}).state("main.edit-member",{url:"member/{memberID}/edit",params:{memberID:null},views:{"content-container":{templateUrl:"/app/components/team-leader/views/content-container.view.html",controller:"editMemberContentContainerController"},"toolbar@main.edit-member":{templateUrl:"/app/components/team-leader/templates/toolbar.template.html"},"content@main.edit-member":{templateUrl:"/app/components/team-leader/templates/content/edit-member-content.template.html"}}}).state("main.report",{url:"report",views:{"content-container":{templateUrl:"/app/components/team-leader/views/content-container.view.html",controller:"reportContentContainerController"},"toolbar@main.report":{templateUrl:"/app/components/team-leader/templates/toolbar.template.html"},"content@main.report":{templateUrl:"/app/components/team-leader/templates/content/report.content.template.html"},"right-sidenav@main.report":{templateUrl:"/app/components/team-leader/templates/sidenavs/report-right.sidenav.html"}},onEnter:["$state","User",function(e,t){t.index().success(function(t){"manager"==t.role&&e.go("page-not-found")})}]}).state("main.edit-report",{url:"edit-report/{reportID}",params:{reportID:null},views:{"content-container":{templateUrl:"/app/components/team-leader/views/content-container.view.html",controller:"editReportContentContainerController"},"toolbar@main.edit-report":{templateUrl:"/app/components/team-leader/templates/toolbar.template.html"},"content@main.edit-report":{templateUrl:"/app/shared/templates/content/edit-report.content.template.html"}},onEnter:["$state","User",function(e,t){t.index().success(function(t){"manager"==t.role&&e.go("page-not-found")})}]}).state("main.approvals",{url:"approvals",views:{"content-container":{templateUrl:"/app/components/team-leader/views/content-container.view.html",controller:"approvalsContentContainerController"},"toolbar@main.approvals":{templateUrl:"/app/components/team-leader/templates/toolbar.template.html"},"content@main.approvals":{templateUrl:"/app/shared/templates/content/approval.content.template.html"}},onEnter:["$state","User",function(e,t){t.index().success(function(t){"manager"==t.role&&e.go("page-not-found")})}]})}]),teamLeaderModule.controller("activityContentContainerController",["$scope","$mdDialog","Activity","Preloader","User",function(e,t,r,a,o){e.form={},e.activity={},e.months=["January","February","March","April","May","June","July","August","September","October","November","December"];var n=2016;e.years=[];for(var i=(new Date).getFullYear();i>=n;i--)e.years.push(i);e.activity.month=e.months[(new Date).getMonth()],e.activity.year=(new Date).getFullYear(),e.toolbar={},e.toolbar.hideSearchIcon=!0,e.toolbar.childState="Activities",e.subheader={},e.subheader.refresh=function(){a.preload(),e.init(!0)},e.searchBar=!1,e.showSearchBar=function(){e.searchBar=!0},e.hideSearchBar=function(){e.toolbar.userInput="",e.searchBar=!1},e.searchUserInput=function(){e.report.show=!1},e.showDetails=function(e){a.set(e),t.show({controller:"reportDialogController",templateUrl:"/app/shared/templates/dialogs/report.dialog.template.html",parent:angular.element(document.body)})},e.showHistory=function(e){a.set(e),t.show({controller:"performanceHistoryDialogController",templateUrl:"/app/shared/templates/dialogs/performance-history.dialog.template.html",parent:angular.element(document.body)})};var l=function(e){return e.created_at=new Date(e.created_at),e.first_letter=e.user.first_name.charAt(0).toUpperCase(),e};e.search=function(){a.preload(),r.reportSubmitted(e.activity).success(function(t){angular.forEach(t,function(e){l(e)}),e.submitted=t}).error(function(){a.error()}),r.reportUpdated(e.activity).success(function(t){angular.forEach(t,function(e){l(e)}),e.updated=t}).error(function(){a.error()}),r.reportDeleted(e.activity).success(function(t){angular.forEach(t,function(e){l(e)}),a.stop(),a.stop(),e.deleted=t}).error(function(){a.error()})},e.init=function(t){r.reportSubmitted().success(function(t){angular.forEach(t,function(e){l(e)}),e.submitted=t}).error(function(){a.error()}),r.reportUpdated().success(function(t){angular.forEach(t,function(e){l(e)}),e.updated=t}).error(function(){a.error()}),r.reportDeleted().success(function(t){angular.forEach(t,function(e){l(e)}),e.deleted=t}).error(function(){a.error()}),t&&a.stop()},e.init()}]),teamLeaderModule.controller("approvalsContentContainerController",["$scope","$mdDialog","PerformanceApproval","Approval","Preloader","User",function(e,t,r,a,o,n){e.form={},e.approval={},e.months=["January","February","March","April","May","June","July","August","September","October","November","December"];var i=2016;e.years=[];for(var l=(new Date).getFullYear();l>=i;l--)e.years.push(l);e.approval.month=e.months[(new Date).getMonth()],e.approval.year=(new Date).getFullYear(),e.toolbar={},e.toolbar.hideSearchIcon=!0,e.toolbar.childState="Approvals",e.subheader={},e.subheader.state="approvals",e.subheader.refresh=function(){o.preload(),e.init(!0)},e.showPending=function(r){o.set(r),t.show({controller:"approvalsDialogController",templateUrl:"/app/components/team-leader/templates/dialogs/approval.dialog.template.html",parent:angular.element(document.body)}).then(function(){e.subheader.refresh()})},e.showApprovedDetails=function(r){o.set(r),t.show({controller:"approvedApprovalsDetailsDialogController",templateUrl:"/app/components/admin/templates/dialogs/approved-approval-details.dialog.template.html",parent:angular.element(document.body),clickOutsideToClose:!0}).then(function(){e.subheader.refresh()})},e.showDeclinedDetails=function(r){o.set(r),t.show({controller:"declinedApprovalsDetailsDialogController",templateUrl:"/app/components/admin/templates/dialogs/declined-approval-details.dialog.template.html",parent:angular.element(document.body),clickOutsideToClose:!0}).then(function(){e.subheader.refresh()})},e.searchBar=!1,e.showSearchBar=function(){e.searchBar=!0},e.hideSearchBar=function(){e.toolbar.userInput="",e.searchBar=!1},e.searchUserInput=function(){e.report.show=!1},e.search=function(){o.preload(),a.pendingUser(e.approval).success(function(t){e.pendingApprovals=t}).error(function(){o.error()}),r.approvedUser(e.approval).success(function(t){e.approved=t}).error(function(){o.error()}),r.declinedUser(e.approval).success(function(t){e.declined=t,o.stop()}).error(function(){o.error()})},e.init=function(t){a.pendingUser().success(function(t){e.pendingApprovals=t}).error(function(){o.error()}),r.approvedUser().success(function(t){e.approved=t}).error(function(){o.error()}),r.declinedUser().success(function(t){e.declined=t}).error(function(){o.error()}),t&&o.stop()},e.init()}]),teamLeaderModule.controller("createMemberContentContainerController",["$scope","$state","Project","Member","Experience","Preloader",function(e,t,r,a,o,n){e.form={},e.member={},e.member_projects=[],e.maxDate=new Date,r.index().success(function(t){e.projects=t,angular.forEach(t,function(t,r){e.member_projects.push({})})}).error(function(){n.error()});var i=!1;e.toolbar={},e.toolbar.parentState="Members",e.toolbar.childState="Create",e.toolbar.showBack=!0,e.toolbar.back=function(){t.go("main.members")},e.toolbar.hideSearchIcon=!0,e.fab={},e.fab.icon="mdi-check",e.fab.label="Submit",e.fab.show=!0,e.fab.action=function(){e.submit()},e.checkDuplicate=function(){e.duplicate=!1,a.checkDuplicate(e.member).success(function(t){e.duplicate=t}).error(function(){n.error()})},e.submit=function(){e.form.memberForm.$invalid?angular.forEach(e.form.memberForm.$error,function(e){angular.forEach(e,function(e){e.$setTouched()})}):i||(i=!0,a.store(e.member).then(function(e){return"boolean"==typeof e.data?void(i=!1):e.data}).then(function(r){r&&(angular.forEach(e.member_projects,function(e){e.member_id=r,e.project&&(e.date_started=e.date_started.toDateString())}),o.store(e.member_projects).success(function(){t.go("main.members")}).error(function(){i=!1,n.error()}))},function(){i=!1,n.error()}))}}]),teamLeaderModule.controller("editMemberContentContainerController",["$scope","$state","$stateParams","Project","Member","Experience","Preloader",function(e,t,r,a,o,n,i){var l=r.memberID;e.form={},e.member={},e.member_projects=[],e.maxDate=new Date;var s=!1;e.toolbar={},e.toolbar.parentState="Edit",e.toolbar.showBack=!0,e.toolbar.back=function(){t.go("main.members")},e.toolbar.hideSearchIcon=!0,e.fab={},e.fab.icon="mdi-check",e.fab.label="Submit",e.fab.show=!0,e.fab.action=function(){e.submit()},e.checkDuplicate=function(){e.duplicate=!1,o.checkDuplicate(e.member).success(function(t){e.duplicate=t}).error(function(){i.error()})},e.submit=function(){e.form.memberForm.$invalid?angular.forEach(e.form.memberForm.$error,function(e){angular.forEach(e,function(e){e.$setTouched()})}):s||(s=!0,o.update(l,e.member).then(function(e){return"boolean"==typeof e.data?void(s=!1):e.data}).then(function(r){r&&(angular.forEach(e.member_projects,function(e){e.member_id=r,e.project&&(e.date_started=e.date_started.toDateString())}),n.store(e.member_projects).success(function(){t.go("main.members")}).error(function(){s=!1,i.error()}))},function(){s=!1,i.error()}))},e.init=function(){a.index().success(function(t){e.projects=t,angular.forEach(t,function(t,r){e.member_projects.push({})}),o.show(l).success(function(t){var r=0;angular.forEach(e.projects,function(t,a){n.relation(t.id,l).success(function(t){t&&(t.date_started=new Date(t.date_started),e.member_projects.splice(a,1,t)),r++,r==e.projects.length&&(e.show=!0)})}),e.toolbar.childState=t.full_name,e.member=t})})}()}]),teamLeaderModule.controller("editReportContentContainerController",["$scope","$filter","$mdDialog","$state","$mdToast","$stateParams","Preloader","Performance","Position","Project","PerformanceHistory",function(e,t,r,a,o,n,i,l,s,c,d){var m=n.reportID,u=!1;e.form={},e.details={},e.toolbar={},e.toolbar.items=[],e.toolbar.getItems=function(r){var a=r?t("filter")(e.toolbar.items,r):e.toolbar.items;return a},e.toolbar.childState="Edit Report",e.toolbar.showBack=!0,e.toolbar.back=function(){a.go("main.weekly-report")},e.showSearchBar=function(){e.searchBar=!0},e.hideSearchBar=function(){e.toolbar.userInput="",e.searchBar=!1},e.subheader={},e.subheader.state="report",e.deletePerformance=function(t){var a=r.confirm().title("Delete performance").textContent("This performance will be deleted permanently. If you would just change something you can edit this instead.").ariaLabel("Delete performance").ok("Delete").cancel("Cancel");r.show(a).then(function(){i.preload();var r=e.performances.indexOf(t);l["delete"](t.id).success(function(){e.performances.splice(r,1),i.stop()})},function(){})},l.report(m).success(function(r){angular.forEach(r,function(r){var a=t("filter")(r.member.experiences,{project_id:r.project_id},!0);r.date_started=new Date(a[0].date_started),r.experience=r.target.experience;var o={};o.display=r.member.full_name,e.toolbar.items.push(o),r.first_letter=r.member.full_name.charAt(0).toUpperCase()}),e.performances=r,e.details.date_start=new Date(r[0].date_start),e.details.date_end=new Date(r[0].date_end),e.details.project_name=r[0].project.name,e.details.daily_work_hours=r[0].daily_work_hours,e.details.first_letter=r[0].project.name.charAt(0).toUpperCase(),e.details.weekly_hours=((e.details.date_end-e.details.date_start)/864e5+1)*e.details.daily_work_hours,e.details.date_start=e.details.date_start.toDateString(),e.details.date_end=e.details.date_end.toDateString(),c.show(r[0].project_id).success(function(r){e.project=r,angular.forEach(r.positions,function(r){var a=[],o=0;if(angular.forEach(r.targets,function(t){var r=new Date(t.created_at).setHours(0,0,0,0);!t.deleted_at&&r<=new Date(e.details.date_start)?(a.splice(o,0,t),o++):t.deleted_at&&r<new Date(e.details.date_start)&&(a.splice(o,0,t),o++)}),a.length){e["default"]="false";var n=t("filter")(a,{experience:"Beginner"},!0),i=t("filter")(a,{experience:"Moderately Experienced"},!0),l=t("filter")(a,{experience:"Experienced"},!0);t("filter")(a,{experience:"Experienced"},!0)}else{e["default"]="true";var n=t("filter")(r.targets,{experience:"Beginner",deleted_at:null},!0),i=t("filter")(r.targets,{experience:"Moderately Experienced",deleted_at:null},!0),l=t("filter")(r.targets,{experience:"Experienced",deleted_at:null},!0);t("filter")(r.targets,{experience:"Experienced",deleted_at:null},!0)}r.targets=[],r.targets.push(n[0]),r.targets.push(i[0]),r.targets.push(l[0])})}),c.department(r[0].department_id).success(function(t){e.projects=t})}).error(function(){a.go("page-not-found")}),e.checkAllPerformance=function(){angular.forEach(e.performances,function(t){t.weekly_hours=e.details.weekly_hours,t.include?(t.include=!1,e.checkLimitAll=!1):(t.include=!0,e.checkLimitAll=!0),e.checkLimitAll&&l.checkLimitEditAll(e.performances).success(function(t){e.performances=t})})},e.checkLimit=function(t){var r=e.performances.indexOf(t);e.details.current_hours_worked=t.hours_worked,l.checkLimitEdit(e.performances[r].member_id,e.details).success(function(t){e.performances[r].limit=t}).error(function(){e.performances[r].limit=e.details.weekly_hours}),e.getTarget(t)},e.resetMembers=function(){angular.forEach(e.performances,function(t,r){t.hours_worked=null,e.checkLimit(t)})},e.getTarget=function(r){var a=e.performances.indexOf(r),o=t("filter")(e.project.positions,{id:r.position_id}),n=t("filter")(o[0].targets,{experience:r.experience},!0);e.performances[a].target_id=n[0].id},e.checkBalance=function(t){var r=e.performances.indexOf(t);e.performances[r].balance=e.performances[r].limit-e.performances[r].hours_worked,e.performances[r].balance=e.performances[r].balance?e.performances[r].balance.toFixed(2):0},e.fab={},e.fab.icon="mdi-check",e.fab.label="Submit",e.fab.show=!0,e.fab.action=function(){if(e.showErrors=!0,e.form.editReportForm.$invalid)angular.forEach(e.form.editReportForm.$error,function(e){angular.forEach(e,function(e){e.$setTouched()})}),r.show(r.alert().parent(angular.element(document.body)).clickOutsideToClose(!0).title("Error").content("Please complete the forms or check the errors.").ariaLabel("Error").ok("Got it!"));else if(i.preload(),!u){u=!0;var t=0;angular.forEach(e.performances,function(r){r.date_start=e.details.date_start,r.date_end=e.details.date_end,r.daily_work_hours=e.details.daily_work_hours,t=r.include?t+1:t}),t?d.store(e.performances).success(function(){l.update(m,e.performances).success(function(){o.show(o.simple().content("Changes saved.").position("bottom right").hideDelay(3e3)),e.toolbar.back(),i.stop(),u=!1}).error(function(){i.error()})}).error(function(){i.error(),u=!1}):r.show(r.alert().parent(angular.element(document.body)).clickOutsideToClose(!0).title("Report not submitted.").content("Empty reports are not submitted.").ariaLabel("Empty Report").ok("Got it!"))}}}]),teamLeaderModule.controller("leftSidenavController",["$scope","$mdSidenav","User",function(e,t,r){e.menu={},r.index().success(function(t){var r=t;"team-leader"==r.role?e.menu.section=[{name:"Dashboard",state:"main",icon:"mdi-view-dashboard"},{name:"Weekly Report",state:"main.weekly-report",icon:"mdi-view-carousel"},{name:"Activities",state:"main.activity",icon:"mdi-file-document-box"},{name:"Members",state:"main.members",icon:"mdi-account-multiple"},{name:"Report",state:"main.report",icon:"mdi-file-document"}]:"manager"==r.role?e.menu.section=[{name:"Dashboard",state:"main",icon:"mdi-view-dashboard"},{name:"Weekly Report",state:"main.weekly-report",icon:"mdi-view-carousel"},{name:"Members",state:"main.members",icon:"mdi-account-multiple"}]:e.menu.section=[{name:"Dashboard",state:"main",icon:"mdi-view-dashboard"},{name:"Approvals",state:"main.approvals",icon:"mdi-file-document-box"},{name:"Members",state:"main.members",icon:"mdi-account-multiple"}]}),e.setActive=function(e){angular.element($('[aria-label="section-'+e+'"]').closest("li").toggleClass("active")),angular.element($('[aria-label="section-'+e+'"]').closest("li").siblings().removeClass("active"))}}]),teamLeaderModule.controller("mainContentContainerController",["$scope","$filter","$state","$mdToast","$mdDialog","Approval","Preloader","Member","Position","Report","Performance","Target","User","WalkThrough","Project",function(e,t,r,a,o,n,i,l,s,c,d,m,u,p,f){e.filterDate={},e.filterData={},e.filterDate.type="Weekly",e.rightSidenav={},e.rightSidenav.show=!0,e.rightSidenav.items=[],e.rightSidenav.queryMember=function(r){var a=r?t("filter")(e.rightSidenav.items,r):e.rightSidenav.items;return a},e.months=[{value:"01",month:"January"},{value:"02",month:"February"},{value:"03",month:"March"},{value:"04",month:"April"},{value:"05",month:"May"},{value:"06",month:"June"},{value:"07",month:"July"},{value:"08",month:"August"},{value:"09",month:"September"},{value:"10",month:"October"},{value:"11",month:"November"},{value:"12",month:"December"}],e.months_array=["January","February","March","April","May","June","July","August","September","October","November","December"],e.years=[];for(var h=2016,b=(new Date).getFullYear();b>=h;b--)e.years.push(b);e.filterDate.date_start_month=e.months_array[(new Date).getMonth()],e.filterDate.date_start_year=e.years[0],e.getMondays=function(){e.filterDate.date_end=null,e.filterDate.date_start=null,e.filterDate.weekend=[],d.getMondays(e.filterDate).success(function(t){e.mondays=t}).error(function(){i.error()})},e.getWeekends=function(){e.filterDate.date_end=null,e.filterDate.weekend=[],d.getWeekends(e.filterDate).success(function(t){e.weekends=t}).error(function(){i.error()})},e.getPositions=function(){s.project(e.projects[e.filterData.project].id).success(function(t){e.positions=t})},e.clearFilter=function(){e.rightSidenav.searchText="",e.filterData.project="",e.filterDate.date_start="",e.filterDate.date_end="",e.filterData.position="",e.filterData.submitter=""},e.toolbar={},e.toolbar.childState="Weekly Report",e.toolbar.hideSearchIcon=!0,e.subheader={},e.subheader.show=!0,e.subheader.state="weekly",e.subheader.refresh=function(){e.report.show=!1,i.preload(),e.init(!0)},e.subheader.download=function(){o.show({controller:"downloadReportDialogController",templateUrl:"/app/components/team-leader/templates/dialogs/download-report-dialog.template.html",parent:angular.element(document.body)})},e.subheader.evaluate=function(){o.show({controller:"evaluateDialogController",templateUrl:"/app/components/team-leader/templates/dialogs/evaluate-dialog.template.html",parent:angular.element(document.body)}).then(function(e){if(i.set(e),e.multiple)var t="/app/shared/templates/dialogs/performance-evaluation-multiple.dialog.template.html";else var t="/app/shared/templates/dialogs/performance-evaluation.dialog.template.html";o.show({controller:"performanceEvaluationDialogController",templateUrl:t,parent:angular.element(document.body)})})},e.searchUserInput=function(){e.report.show=!1,i.preload(),c.search(e.filterDate).success(function(t){e.report.results=t,angular.forEach(t,function(e){g(e)}),i.stop()}).error(function(e){i.error()})},e.show=function(e){i.set(e),o.show({controller:"otherPerformanceDialogController",templateUrl:"/app/shared/templates/dialogs/other-performance.dialog.template.html",parent:angular.element(document.body),clickOutsideToClose:!0})},e.fab={},e.fab.show=!1,e.editReport=function(e){r.go("main.edit-report",{reportID:e})},e.deleteReport=function(t){var r=o.confirm().title("Delete report").content("This report will be deleted permanently.").ok("Delete").cancel("Cancel");o.show(r).then(function(){i.preload(),n.reportDelete(t).success(function(){c["delete"](t).success(function(){i.stop(),a.show(a.simple().content("Report deleted.").position("bottom right").hideDelay(3e3)),e.subheader.refresh()}).error(function(){i.error()})})},function(){})};var g=function(e){e.created_at=new Date(e.created_at),e.date_start=new Date(e.date_start),e.date_end=new Date(e.date_end);var r=new Date,a=Math.abs(r.getTime()-e.created_at.getTime());return e.diffDays=Math.ceil(a/864e5),e.locked=e.diffDays>7,e.project.beginner=[],e.project.moderately_experienced=[],e.project.experienced=[],e.project.quality=[],angular.forEach(e.project.positions,function(r){var a=[],o=0;if(angular.forEach(r.targets,function(t){var r=new Date(t.created_at).setHours(0,0,0,0);!t.deleted_at&&r<=new Date(e.date_start)?(a.splice(o,0,t),o++):t.deleted_at&&r<e.date_start&&(a.splice(o,0,t),o++)}),a.length)var n=t("filter")(a,{experience:"Beginner"},!0),i=t("filter")(a,{experience:"Moderately Experienced"},!0),l=t("filter")(a,{experience:"Experienced"},!0),s=t("filter")(a,{experience:"Experienced"},!0);else var n=t("filter")(r.targets,{experience:"Beginner",deleted_at:null},!0),i=t("filter")(r.targets,{experience:"Moderately Experienced",deleted_at:null},!0),l=t("filter")(r.targets,{experience:"Experienced",deleted_at:null},!0),s=t("filter")(r.targets,{experience:"Experienced",deleted_at:null},!0);e.project.beginner.push(n[0].productivity),e.project.moderately_experienced.push(i[0].productivity),e.project.experienced.push(l[0].productivity),e.project.quality.push(s[0].quality)}),e};e.init=function(t){l.index().success(function(t){angular.forEach(t,function(t){var r={};r.full_name=t.full_name,e.rightSidenav.items.push(r)})}),u.department().success(function(t){e.users=t}),s.index().success(function(t){e.positions=t}),f.index().success(function(t){e.projects=t}),e.getMondays(),e.report={},e.report.paginated=[],e.report.page=2,c.paginateDetails().success(function(r){e.report.details=r,e.report.paginated=r.data,e.report.show=!0,r.data.length&&angular.forEach(r.data,function(e){g(e)}),e.report.paginateLoad=function(){e.report.busy||e.report.page>e.report.details.last_page||(e.report.busy=!0,c.paginateDetails(e.report.page).success(function(t){e.report.page++,angular.forEach(t.data,function(t){g(t),e.report.paginated.push(t)}),e.report.busy=!1}).error(function(){i.error()}))},t&&(i.stop(),i.stop())}).error(function(){i.error()})},e.init()}]),teamLeaderModule.controller("mainMonthlyContentContainerController",["$scope","$filter","$mdDialog","Preloader","Report","Programme","Member",function(e,t,r,a,o,n,i){e.report={},e.form={},e.months_array=["January","February","March","April","May","June","July","August","September","October","November","December"],e.years=[];for(var l=2016,s=(new Date).getFullYear();s>=l;s--)e.years.push(s);e.rightSidenav={},e.rightSidenav.searchText="",e.rightSidenav.show=!0,e.rightSidenav.month=e.months_array[(new Date).getMonth()],e.rightSidenav.year=(new Date).getFullYear(),e.rightSidenav.items=[],e.rightSidenav.queryMember=function(r){var a=r?t("filter")(e.rightSidenav.items,r):e.rightSidenav.items;return a},i.index().success(function(t){angular.forEach(t,function(t){var r={};r.full_name=t.full_name,e.rightSidenav.items.push(r)})}),n.index().success(function(t){e.hours=t}),e.clearFilter=function(){e.rightSidenav.searchText="",e.rightSidenav.month=e.months_array[(new Date).getMonth()],e.rightSidenav.year=(new Date).getFullYear(),e.rightSidenav.daily_work_hours=""},e.toolbar={},e.toolbar.childState="Dashboard",e.toolbar.hideSearchIcon=!0,e.subheader={},e.subheader.show=!0,e.subheader.state="dashboard",e.subheader.refresh=function(){e.report={},a.preload(),e.init(!0,e.rightSidenav)},e.subheader.download=function(){r.show({controller:"downloadReportDialogController",templateUrl:"/app/components/team-leader/templates/dialogs/download-report-dialog.template.html",parent:angular.element(document.body)})},e.subheader.evaluate=function(){r.show({controller:"evaluateDialogController",templateUrl:"/app/components/team-leader/templates/dialogs/evaluate-dialog.template.html",parent:angular.element(document.body)}).then(function(e){a.set(e),e.department?r.show({controller:"performanceEvaluationDialogController",templateUrl:"/app/shared/templates/dialogs/performance-evaluation-multiple.dialog.template.html",parent:angular.element(document.body)}):r.show({controller:"performanceEvaluationDialogController",templateUrl:"/app/shared/templates/dialogs/performance-evaluation.dialog.template.html",parent:angular.element(document.body)})})},e.searchFilter=function(){e.form.filterSearchForm.$invalid?angular.forEach(e.form.filterSearchForm.$error,function(e){angular.forEach(e,function(e){e.$setTouched()})}):(a.preload(),e.init(!0,e.rightSidenav))},e.searchBar=!1,e.showSearchBar=function(){e.searchBar=!0},e.hideSearchBar=function(){e.toolbar.userInput="",e.searchBar=!1},e.init=function(t,r){o.searchMonthly(r).success(function(r){angular.forEach(r,function(e){e.count=0,angular.forEach(e.positions,function(t){t.head_count&&(e.count+=t.head_count)})}),e.reports=r,t&&a.stop()}).error(function(){a.error()})},e.view=function(e,t,o){e.date_start=t,e.date_end=o,a.set(e),r.show({controller:"performanceMonthlyViewDialogController",templateUrl:"/app/components/admin/templates/dialogs/performance-monthly-view.dialog.template.html",parent:angular.element(document.body),clickOutsideToClose:!0})}}]),teamLeaderModule.controller("membersContentContainerController",["$scope","$filter","$state","$mdDialog","Preloader","Member","User",function(e,t,r,a,o,n,i){e.toolbar={},e.toolbar.childState="Members",e.toolbar.items=[],e.toolbar.getItems=function(r){var a=r?t("filter")(e.toolbar.items,r):e.toolbar.items;return a},e.subheader={},e.subheader.state="members",e.subheader.refresh=function(){o.preload(),e.init(!0)},e.fab={},e.fab.icon="mdi-plus",e.fab.label="Member",e.fab.action=function(){r.go("main.create-member")},e.searchBar=!1,e.showSearchBar=function(){e.searchBar=!0},e.hideSearchBar=function(){e.toolbar.searchText="",e.searchBar=!1};var l=function(t){return angular.forEach(t,function(t){t.first_letter=t.full_name.charAt(0).toUpperCase(),angular.forEach(t.experiences,function(e){e.date_started=new Date(e.date_started)});var r={};r.display=t.full_name,e.toolbar.items.push(r)}),t};e.searchUserInput=function(){e.member.all.show=!1,o.preload(),n.search(e.toolbar).success(function(t){l(t),e.member.results=t,o.stop()}).error(function(e){o.error()})},e.editMember=function(e){r.go("main.edit-member",{memberID:e})},e.deleteMember=function(t){var r=a.confirm().title("Delete Member").content("This member will not be included to your report anymore.").ariaLabel("Delete Member").ok("Delete").cancel("Cancel");a.show(r).then(function(){n["delete"](t).success(function(){e.subheader.refresh()})},function(){})},e.init=function(t){e.member={},i.index().then(function(r){e.fab.show="team-leader"==r.data.role,n.department().success(function(r){l(r),e.member.all=r,e.member.all.show=!0,e.option=!0,t&&(o.stop(),o.stop())}).error(function(){o.error()})},function(){o.error()})},e.init()}]),teamLeaderModule.controller("notificationToastController",["$scope","$state","Preloader",function(e,t,r){e.notification=r.getNotification(),e.viewNotification=function(){t.go(e.notification.state)}}]),teamLeaderModule.controller("reportContentContainerController",["$scope","$filter","$state","$mdDialog","$mdToast","Preloader","Member","Project","Position","Performance","User","Programme","Experience",function(e,t,r,a,o,n,i,l,s,c,d,m,u){var p=(n.getUser(),!1);e.form={},e.months=["January","February","March","April","May","June","July","August","September","October","November","December"],e.years=[];for(var f=2016,h=(new Date).getFullYear();h>=f;h--)e.years.push(h);e.details={},e.details.date_start_month=e.months[(new Date).getMonth()],e.details.date_start_year=e.years[0],e.getMondays=function(){e.details.date_end=null,e.details.date_start=null,e.details.weekend=[],c.getMondays(e.details).success(function(t){e.mondays=t,e.show=!0}).error(function(){n.error()})},e.getWeekends=function(){e.details.date_end=null,e.details.weekend=[],c.getWeekends(e.details).success(function(t){e.weekends=t}).error(function(){n.error()})},e.setDefaultPosition=function(){angular.forEach(e.members,function(t){t.output||t.hours_worked||(t.position_id=e.details.position_id,e.getTarget(t))})},e.showPositions=function(r){e.toolbar.items=[],s.project(r).success(function(t){e.positions=t}),u.members(r).success(function(t){e.members=t,e.resetMembers()}),l.show(r).success(function(r){e.project=r,angular.forEach(r.positions,function(r){var a=[],o=0;if(angular.forEach(r.targets,function(t){var r=new Date(t.created_at).setHours(0,0,0,0);!t.deleted_at&&r<=new Date(e.details.date_start)?(a.splice(o,0,t),o++):t.deleted_at&&r<new Date(e.details.date_start)&&(a.splice(o,0,t),o++)}),a.length){e["default"]="false";var n=t("filter")(a,{experience:"Beginner"},!0),i=t("filter")(a,{experience:"Moderately Experienced"},!0),l=t("filter")(a,{experience:"Experienced"},!0);t("filter")(a,{experience:"Experienced"},!0)}else{e["default"]="true";var n=t("filter")(r.targets,{experience:"Beginner",deleted_at:null},!0),i=t("filter")(r.targets,{experience:"Moderately Experienced",deleted_at:null},!0),l=t("filter")(r.targets,{experience:"Experienced",deleted_at:null},!0);t("filter")(r.targets,{experience:"Experienced",deleted_at:null},!0)}r.targets=[],r.targets.push(n[0]),r.targets.push(i[0]),r.targets.push(l[0])})})},e.toolbar={},e.toolbar.items=[],e.toolbar.getItems=function(r){var a=r?t("filter")(e.toolbar.items,r):e.toolbar.items;return a},e.toolbar.childState="Report",e.subheader={},e.subheader.state="report",e.subheader.refresh=function(){n.preload(),e.init(!0)},e.searchBar=!1,e.showSearchBar=function(){e.searchBar=!0},e.hideSearchBar=function(){e.toolbar.userInput="",e.searchBar=!1},e.rightSidenav={},e.rightSidenav.show=!0,e.fab={},e.fab.icon="mdi-check",e.fab.label="Submit",e.fab.show=!0,
-e.fab.action=function(){if(e.showErrors=!0,e.form.createReportForm.$invalid)angular.forEach(e.form.createReportForm.$error,function(e){angular.forEach(e,function(e){e.$setTouched()})}),a.show(a.alert().parent(angular.element(document.body)).clickOutsideToClose(!0).title("Error").content("Please complete the forms or check the errors.").ariaLabel("Error").ok("Got it!"));else if(!p){p=!0;var t=0;angular.forEach(e.members,function(r){r.date_start=e.details.date_start,r.date_end=e.details.date_end,r.project_id=e.details.project_id,r.daily_work_hours=e.details.daily_work_hours,t=r.include?t+1:t}),t?(n.preload(),c.store(e.members).success(function(){o.show(o.simple().content("Report Submitted.").position("bottom right").hideDelay(3e3)),n.stop(),r.go("main"),p=!1}).error(function(){n.error(),p=!1})):a.show(a.alert().parent(angular.element(document.body)).clickOutsideToClose(!0).title("Report not submitted.").content("Empty reports are not submitted.").ariaLabel("Empty Report").ok("Got it!"))}},e.checkLimit=function(t){var r=e.members.indexOf(t);c.checkLimit(e.members[r].member.id,e.details).success(function(t){e.members[r].limit=t}).error(function(){e.members[r].limit=e.details.weekly_hours})},e.resetMembers=function(){e.details.weekly_hours=((new Date(e.details.date_end)-new Date(e.details.date_start))/864e5+1)*e.details.daily_work_hours,e.showMembers=!1,angular.forEach(e.members,function(t,r){t.hours_worked=null,t.date_start=e.details.date_start,t.date_end=e.details.date_end,t.daily_work_hours=e.details.daily_work_hours,t.weekly_hours=e.details.weekly_hours}),c.checkLimitAll(e.members).success(function(t){angular.forEach(t,function(t){t.date_started=new Date(t.date_started),t.first_letter=t.member.full_name.charAt(0).toUpperCase(),t.output_error=0;var r={};r.display=t.member.full_name,e.toolbar.items.push(r)}),e.members=t,e.showMembers=!0})},e.checkBalance=function(t){var r=e.members.indexOf(t);e.members[r].balance=e.members[r].limit-e.members[r].hours_worked,e.members[r].balance=e.members[r].balance?e.members[r].balance.toFixed(2):0},e.getTarget=function(r){var a=e.members.indexOf(r),o=t("filter")(e.project.positions,{id:r.position_id}),n=t("filter")(o[0].targets,{experience:r.experience},!0);e.members[a].target_id=n[0].id},e.init=function(t){i.updateTenure().then(function(){}).then(function(){l.index().success(function(t){e.projects=t}).error(function(){n.error()})}).then(function(){m.index().success(function(t){e.work_hours=t})}).then(function(){e.getMondays(),t&&(n.stop(),n.stop())},function(){n.error()})},e.init()}]),teamLeaderModule.controller("addMemberDialogController",["$scope","$mdDialog","Preloader","User","Member",function(e,t,r,a,o){var n=r.getUser(),i=!1;n||a.index().success(function(e){n=e}),e.cancel=function(){t.cancel()},e.member={},e.member.team_leader_id=n.id,e.submit=function(){e.showErrors=!0,e.addMemberForm.$invalid?angular.forEach(e.addMemberForm.$error,function(e){angular.forEach(e,function(e){e.$setTouched()})}):(r.preload(),console.log(i),i||(i=!0,o.store(e.member).then(function(){r.stop(),i=!1},function(){r.error(),i=!1})))}}]),teamLeaderModule.controller("approvalsDialogController",["$scope","$mdDialog","Approval","PerformanceApproval","Preloader",function(e,t,r,a,o){var n=o.get();e.user=o.getUser(),r.details(n).success(function(t){e.details=t}),e.markAll=function(){e.checkAll?e.checkAll=!0:e.checkAll=!1,angular.forEach(e.details.request,function(t,r){t.include=!e.checkAll})},e.cancel=function(){t.cancel()},e.cancelRequest=function(){o.preload(),r["delete"](n).success(function(){o.stop()}).error(function(){o.error()})}}]),teamLeaderModule.controller("approvedApprovalsDetailsDialogController",["$scope","$mdDialog","Approval","PerformanceApproval","Preloader",function(e,t,r,a,o){var n=o.get();a.approvedDetails(n).success(function(t){e.details=t}),e.cancel=function(){t.cancel()}}]),teamLeaderModule.controller("declinedApprovalsDetailsDialogController",["$scope","$mdDialog","Approval","PerformanceApproval","Preloader",function(e,t,r,a,o){var n=o.get();a.declinedDetails(n).success(function(t){e.details=t}),e.cancel=function(){t.cancel()}}]),teamLeaderModule.controller("downloadReportDialogController",["$scope","$mdDialog","$filter","Preloader","Report","Performance","Programme","Project","Position","Member","Experience",function(e,t,r,a,o,n,i,l,s,c,d){e.details={},e.details.type="Weekly",e.details.date_start=new Date,e.details.date_end=new Date,e.maxDate=new Date;var m=a.getUser();m||User.index().success(function(e){m=e}).error(function(){a.error()}),e.months=[{value:"01",month:"January"},{value:"02",month:"February"},{value:"03",month:"March"},{value:"04",month:"April"},{value:"05",month:"May"},{value:"06",month:"June"},{value:"07",month:"July"},{value:"08",month:"August"},{value:"09",month:"September"},{value:"10",month:"October"},{value:"11",month:"November"},{value:"12",month:"December"}],e.months_array=["January","February","March","April","May","June","July","August","September","October","November","December"],e.years=[];for(var u=2016,p=(new Date).getFullYear();p>=u;p--)e.years.push(p);e.details.date_start_month=e.months_array[(new Date).getMonth()],e.details.date_start_year=e.years[0],e.getMondays=function(){e.details.date_end=null,e.details.date_start=null,e.details.weekend=[],n.getMondays(e.details).success(function(t){e.mondays=t}).error(function(){a.error()})},e.getWeekends=function(){e.details.date_end=null,e.details.weekend=[],n.getWeekends(e.details).success(function(t){e.weekends=t}).error(function(){a.error()})},e.fetchMembers=function(){var t=e.details.project;"all"==e.details.project?s.unique().success(function(t){e.positions=t}):l.show(t).success(function(t){e.positions=t.positions})},e.cancel=function(){t.cancel()},e.submit=function(){if(e.downloadReportForm.$invalid)e.showErrors=!0,angular.forEach(e.downloadReportForm.$error,function(e){angular.forEach(e,function(e){e.$setTouched()})});else{if("Weekly"==e.details.type){var a=window.open("/report-download-weekly-department/"+m.department_id+"/date_start/"+r("date")(e.details.date_start,"yyyy-MM-dd")+"/to/"+r("date")(e.details.date_end,"yyyy-MM-dd")+"/daily-work-hours/"+e.details.daily_work_hours,"_blank");a.focus()}else if("Monthly"==e.details.type){var a=window.open("/report-download-monthly-department/"+m.department_id+"/month/"+e.details.month+"/year/"+e.details.year+"/daily-work-hours/"+e.details.daily_work_hours,"_blank");a.focus()}else if("Team Performance"==e.details.type){var a=window.open("/report-team-performance/"+e.details.month+"/year/"+e.details.year+"/daily-work-hours/"+e.details.daily_work_hours+"/download/1","_blank");a.focus()}else if("Performance Evaluation"==e.details.type){if(e.details.date_start=e.details.date_start.toDateString(),e.details.date_end=e.details.date_end.toDateString(),"all"==e.details.project)var a=window.open("/performance-evaluation-multiple/"+e.details.date_start+"/date_end/"+e.details.date_end+"/daily-work-hours/"+e.details.daily_work_hours+"/department/"+e.details.department+"/position/"+e.details.position+/member/+e.details.member+"/download/1","_blank");else var a=window.open("/performance-evaluation/"+e.details.date_start+"/date_end/"+e.details.date_end+"/daily-work-hours/"+e.details.daily_work_hours+"/department/"+e.details.department+"/project/"+e.details.project+"/position/"+e.details.position+/member/+e.details.member+"/download/1","_blank");a.focus()}t.hide()}},e.init=function(){l.index().success(function(t){e.projects=t}),i.index().success(function(t){e.work_hours=t,e.getMondays()}).error(function(){a.error()}),c.index().success(function(t){angular.forEach(t,function(e){e.member_id=e.id}),e.members=t})}(),e.getPositions=function(){l.show(e.details.project).success(function(t){e.positions=t.positions})}}]),teamLeaderModule.controller("editMemberDialogController",["$scope","$mdDialog","Preloader","Member",function(e,t,r,a){var o=r.get(),n=!1;e.cancel=function(){t.cancel()},a.show(o).success(function(t){e.member=t}),e.submit=function(){e.showErrors=!0,e.editMemberForm.$invalid?angular.forEach(e.editMemberForm.$error,function(e){angular.forEach(e,function(e){e.$setTouched()})}):(r.preload(),n||(n=!0,a.update(o,e.member).then(function(){r.stop(),n=!1},function(){r.error(),n=!1})))}}]),teamLeaderModule.controller("evaluateDialogController",["$scope","$mdDialog","$filter","Preloader","Report","Performance","Project","Experience","Programme","Department","Member","Position",function(e,t,r,a,o,n,i,l,s,c,d,m){e.details={},e.details.date_start=new Date,e.details.date_end=new Date,e.maxDate=new Date,i.index().success(function(t){e.projects=t}),s.index().success(function(t){e.work_hours=t}).error(function(){a.error()}),d.index().success(function(t){e.members=t}),e.getPositions=function(){"all"==e.details.project?m.unique().success(function(t){e.positions=t}):i.show(e.details.project).success(function(t){e.positions=t.positions})},e.months=[{value:"01",month:"January"},{value:"02",month:"February"},{value:"03",month:"March"},{value:"04",month:"April"},{value:"05",month:"May"},{value:"06",month:"June"},{value:"07",month:"July"},{value:"08",month:"August"},{value:"09",month:"September"},{value:"10",month:"October"},{value:"11",month:"November"},{value:"12",month:"December"}],e.months_array=["January","February","March","April","May","June","July","August","September","October","November","December"],e.years=[];for(var u=2016,p=(new Date).getFullYear();p>=u;p--)e.years.push(p);e.details.date_start_month=e.months_array[(new Date).getMonth()],e.details.date_start_year=e.years[0],e.cancel=function(){t.cancel()},e.submit=function(){e.performanceEvaluationForm.$invalid?(e.showErrors=!0,angular.forEach(e.performanceEvaluationForm.$error,function(e){angular.forEach(e,function(e){e.$setTouched()})})):(e.details.date_start=e.details.date_start.toDateString(),e.details.date_end=e.details.date_end.toDateString(),"all"==e.details.project?n.evaluationMultiple(e.details.date_start,e.details.date_end,e.details.daily_work_hours,e.details.department,e.details.position,e.details.member).success(function(e){e.multiple=!0,a.stop(e)}).error(function(){a.error()}):n.evaluation(e.details.date_start,e.details.date_end,e.details.daily_work_hours,e.details.department,e.details.project,e.details.position,e.details.member).success(function(e){a.stop(e)}).error(function(){a.error()}))}}]),teamLeaderModule.controller("performanceMonthlyViewDialogController",["$scope","$mdDialog","Performance","Preloader",function(e,t,r,a){e.member=a.get(),r.monthly(e.member).success(function(t){e.member=t,angular.forEach(t.positions,function(e){angular.forEach(e.performances,function(e){e.date_start=new Date(e.date_start),e.date_end=new Date(e.date_end)})}),e.positions=t.positions}).error(function(){a.error()}),e.cancel=function(){t.cancel()}}]);
+var teamLeaderModule = angular.module('teamLeaderModule', [
+	/* Shared Module */
+	'sharedModule'
+]); 
+teamLeaderModule
+	.config(['$stateProvider', function($stateProvider){
+		$stateProvider
+			.state('main', {
+				url:'/',
+				views: {
+					'': {
+						templateUrl: '/app/shared/views/main.view.html',
+						controller: 'mainViewController',
+					},
+					'toolbar@main': {
+						templateUrl: '/app/components/team-leader/templates/toolbar.template.html',
+					},
+					'left-sidenav@main': {
+						templateUrl: '/app/components/team-leader/templates/sidenavs/main-left.sidenav.html',
+						controller: 'leftSidenavController',
+					},
+					'content-container@main': {
+						templateUrl: '/app/components/team-leader/views/content-container.view.html',
+						controller: 'mainMonthlyContentContainerController',
+					},
+					'content@main': {
+						templateUrl: '/app/components/team-leader/templates/content/main-monthly.content.template.html',
+					},
+					'right-sidenav@main': {
+						templateUrl: '/app/components/team-leader/templates/sidenavs/main-monthly-right.sidenav.html',
+					}
+				}
+			})
+			.state('main.weekly-report',{
+				url:'weekly-report',
+				views: {
+					'content-container': {
+						templateUrl: '/app/components/team-leader/views/content-container.view.html',
+						controller: 'mainContentContainerController',
+					},
+					'toolbar@main.weekly-report': {
+						templateUrl: '/app/components/team-leader/templates/toolbar.template.html',
+					},
+					'content@main.weekly-report': {
+						templateUrl: '/app/shared/templates/main.content.template.html',
+					},
+					'right-sidenav@main.weekly-report': {
+						templateUrl: '/app/components/team-leader/templates/sidenavs/main-right.sidenav.html',
+					}
+				},
+			})
+			.state('main.activity',{
+				url:'activities',
+				views: {
+					'content-container': {
+						templateUrl: '/app/components/team-leader/views/content-container.view.html',
+						controller: 'activityContentContainerController',
+					},
+					'toolbar@main.activity': {
+						templateUrl: '/app/components/team-leader/templates/toolbar.template.html',
+					},
+					'content@main.activity': {
+						templateUrl: '/app/shared/templates/content/activity.content.template.html',
+					},
+				},
+			})
+			.state('main.members', {
+				url:'members',
+				views: {
+					'content-container': {
+						templateUrl: '/app/components/team-leader/views/content-container.view.html',
+						controller: 'membersContentContainerController',
+					},
+					'toolbar@main.members': {
+						templateUrl: '/app/components/team-leader/templates/toolbar.template.html',
+					},
+					'content@main.members':{
+						templateUrl: '/app/components/team-leader/templates/content/members.content.template.html',
+					},
+				}
+			})
+			.state('main.create-member', {
+				url:'member/create',
+				views: {
+					'content-container': {
+						templateUrl: '/app/components/team-leader/views/content-container.view.html',
+						controller: 'createMemberContentContainerController',
+					},
+					'toolbar@main.create-member': {
+						templateUrl: '/app/components/team-leader/templates/toolbar.template.html',
+					},
+					'content@main.create-member':{
+						templateUrl: '/app/components/team-leader/templates/content/create-member-content.template.html',
+					},
+				}
+			})
+			.state('main.edit-member', {
+				url:'member/{memberID}/edit',
+				params: {memberID:null},
+				views: {
+					'content-container': {
+						templateUrl: '/app/components/team-leader/views/content-container.view.html',
+						controller: 'editMemberContentContainerController',
+					},
+					'toolbar@main.edit-member': {
+						templateUrl: '/app/components/team-leader/templates/toolbar.template.html',
+					},
+					'content@main.edit-member':{
+						templateUrl: '/app/components/team-leader/templates/content/edit-member-content.template.html',
+					},
+				}
+			})
+			.state('main.report', {
+				url:'report',
+				views: {
+					'content-container': {
+						templateUrl: '/app/components/team-leader/views/content-container.view.html',
+						controller: 'reportContentContainerController',
+					},
+					'toolbar@main.report': {
+						templateUrl: '/app/components/team-leader/templates/toolbar.template.html',
+					},
+					'content@main.report':{
+						templateUrl: '/app/components/team-leader/templates/content/report.content.template.html',
+					},
+					'right-sidenav@main.report':{
+						templateUrl: '/app/components/team-leader/templates/sidenavs/report-right.sidenav.html',
+					}
+				},
+				onEnter: ['$state', 'User', function($state, User){
+					User.index()
+						.success(function(data){
+							if(data.role == 'manager'){
+								$state.go('page-not-found');
+							}
+						});
+				}],
+			})
+			.state('main.edit-report',{
+				url:'edit-report/{reportID}',
+				params: {'reportID':null},
+				views: {
+					'content-container': {
+						templateUrl: '/app/components/team-leader/views/content-container.view.html',
+						controller: 'editReportContentContainerController',
+					},
+					'toolbar@main.edit-report': {
+						templateUrl: '/app/components/team-leader/templates/toolbar.template.html',
+					},
+					'content@main.edit-report':{
+						templateUrl: '/app/shared/templates/content/edit-report.content.template.html',
+					},
+				},
+				onEnter: ['$state', 'User', function($state, User){
+					User.index()
+						.success(function(data){
+							if(data.role == 'manager'){
+								$state.go('page-not-found');
+							}
+						});
+				}],
+			})
+			.state('main.approvals',{
+				url:'approvals',
+				views: {
+					'content-container': {
+						templateUrl: '/app/components/team-leader/views/content-container.view.html',
+						controller: 'approvalsContentContainerController',
+					},
+					'toolbar@main.approvals': {
+						templateUrl: '/app/components/team-leader/templates/toolbar.template.html',
+					},
+					'content@main.approvals':{
+						templateUrl: '/app/shared/templates/content/approval.content.template.html',
+					},
+				},
+				onEnter: ['$state', 'User', function($state, User){
+					User.index()
+						.success(function(data){
+							if(data.role == 'manager'){
+								$state.go('page-not-found');
+							}
+						});
+				}],
+			})
+
+	}]);
+teamLeaderModule
+	.controller('activityContentContainerController', ['$scope', '$mdDialog', 'Activity', 'Preloader', 'User',  function($scope, $mdDialog, Activity, Preloader, User){
+		$scope.form = {};
+		$scope.activity = {};
+		$scope.months = [
+			'January',
+			'February',
+			'March',
+			'April',
+			'May',
+			'June',
+			'July',
+			'August',
+			'September',
+			'October',
+			'November',
+			'December',
+		];
+		var dateCreated = 2016;
+
+		$scope.years = [];
+
+		for (var i = new Date().getFullYear(); i >= dateCreated; i--) {
+			$scope.years.push(i);
+		};
+
+		$scope.activity.month = $scope.months[new Date().getMonth()];
+		$scope.activity.year = new Date().getFullYear();
+		/**
+		 * Object for toolbar
+		 *
+		*/
+		$scope.toolbar = {};
+		$scope.toolbar.hideSearchIcon = true;
+		$scope.toolbar.childState = 'Activities';
+		/**
+		 * Object for subheader
+		 *
+		*/
+		$scope.subheader = {};
+		
+		$scope.subheader.refresh = function(){
+			Preloader.preload();
+			$scope.init(true);
+		}
+
+		/**
+		 * Status of search bar.
+		 *
+		*/
+		$scope.searchBar = false;
+
+		/**
+		 * Reveals the search bar.
+		 *
+		*/
+		$scope.showSearchBar = function(){
+			$scope.searchBar = true;
+		};
+
+		/**
+		 * Hides the search bar.
+		 *
+		*/
+		$scope.hideSearchBar = function(){
+			$scope.toolbar.userInput = '';
+			$scope.searchBar = false;
+		};
+		
+		
+		$scope.searchUserInput = function(){
+			$scope.report.show = false;
+		};
+
+		$scope.showDetails = function(id){
+			Preloader.set(id);
+			$mdDialog.show({
+		    	controller: 'reportDialogController',
+		      	templateUrl: '/app/shared/templates/dialogs/report.dialog.template.html',
+		      	parent: angular.element(document.body),
+		    })
+		}
+
+		$scope.showHistory = function(id){
+			Preloader.set(id);
+			$mdDialog.show({
+		    	controller: 'performanceHistoryDialogController',
+		      	templateUrl: '/app/shared/templates/dialogs/performance-history.dialog.template.html',
+		      	parent: angular.element(document.body),
+		    })
+		}
+
+		var formatItem = function(activity){
+			activity.created_at = new Date(activity.created_at);
+			activity.first_letter = activity.user.first_name.charAt(0).toUpperCase();
+
+			return activity;
+		}
+
+		$scope.search = function(){
+			Preloader.preload();
+			/* Submitted */
+			Activity.reportSubmitted($scope.activity)
+				.success(function(data){
+					angular.forEach(data, function(item){
+						formatItem(item);
+					});
+
+					$scope.submitted = data;
+				})
+				.error(function(){
+					Preloader.error();
+				});
+
+			/* Updated */
+			Activity.reportUpdated($scope.activity)
+				.success(function(data){
+					angular.forEach(data, function(item){
+						formatItem(item);
+					});
+
+					$scope.updated = data;
+				})
+				.error(function(){
+					Preloader.error();
+				});
+
+			/* Deleted */
+			Activity.reportDeleted($scope.activity)
+				.success(function(data){
+					angular.forEach(data, function(item){
+						formatItem(item);
+					});
+
+					Preloader.stop();
+					Preloader.stop();
+
+					$scope.deleted = data;
+				})
+				.error(function(){
+					Preloader.error();
+				});
+
+		}
+
+		$scope.init = function(refresh){
+			/* Submitted */
+			Activity.reportSubmitted()
+				.success(function(data){
+					angular.forEach(data, function(item){
+						formatItem(item);
+					});
+					$scope.submitted = data;
+				})
+				.error(function(){
+					Preloader.error();
+				});
+
+			/* Updated */
+			Activity.reportUpdated()
+				.success(function(data){
+					angular.forEach(data, function(item){
+						formatItem(item);
+					});
+
+					$scope.updated = data;
+				})
+				.error(function(){
+					Preloader.error();
+				});
+
+			/* Deleted */
+			Activity.reportDeleted()
+				.success(function(data){
+					angular.forEach(data, function(item){
+						formatItem(item);
+					});
+
+					$scope.deleted = data;
+				})
+				.error(function(){
+					Preloader.error();
+				});
+
+			if(refresh){
+				Preloader.stop();
+			}
+		}
+
+		$scope.init();
+	}]);
+teamLeaderModule
+	.controller('approvalsContentContainerController', ['$scope', '$mdDialog', 'PerformanceApproval', 'Approval', 'Preloader', 'User',  function($scope, $mdDialog, PerformanceApproval, Approval, Preloader, User){
+		$scope.form = {};
+		$scope.approval = {};
+		$scope.months = [
+			'January',
+			'February',
+			'March',
+			'April',
+			'May',
+			'June',
+			'July',
+			'August',
+			'September',
+			'October',
+			'November',
+			'December',
+		];
+		var dateCreated = 2016;
+
+		$scope.years = [];
+
+		for (var i = new Date().getFullYear(); i >= dateCreated; i--) {
+			$scope.years.push(i);
+		};
+
+		$scope.approval.month = $scope.months[new Date().getMonth()];
+		$scope.approval.year = new Date().getFullYear();
+		/**
+		 * Object for toolbar
+		 *
+		*/
+		$scope.toolbar = {};
+		$scope.toolbar.hideSearchIcon = true;
+		$scope.toolbar.childState = 'Approvals';
+		/**
+		 * Object for subheader
+		 *
+		*/
+		$scope.subheader = {};
+		$scope.subheader.state = 'approvals';
+		
+		$scope.subheader.refresh = function(){
+			Preloader.preload();
+			$scope.init(true);
+		}
+
+		$scope.showPending = function(id){
+			Preloader.set(id);
+			$mdDialog.show({
+		      controller: 'approvalsDialogController',
+		      templateUrl: '/app/components/team-leader/templates/dialogs/approval.dialog.template.html',
+		      parent: angular.element(document.body),
+		    })
+		    .then(function(){
+		    	$scope.subheader.refresh();
+		    	// $state.go($state.current, {}, {reload:true});
+		    });
+		}
+
+		$scope.showApprovedDetails = function(id){
+			Preloader.set(id);
+			$mdDialog.show({
+		      controller: 'approvedApprovalsDetailsDialogController',
+		      templateUrl: '/app/components/admin/templates/dialogs/approved-approval-details.dialog.template.html',
+		      parent: angular.element(document.body),
+		      clickOutsideToClose:true,
+		    })
+		    .then(function(){
+		    	$scope.subheader.refresh();
+		    	// $state.go($state.current, {}, {reload:true});
+		    });
+		}
+
+		$scope.showDeclinedDetails = function(id){
+			Preloader.set(id);
+			$mdDialog.show({
+		      controller: 'declinedApprovalsDetailsDialogController',
+		      templateUrl: '/app/components/admin/templates/dialogs/declined-approval-details.dialog.template.html',
+		      parent: angular.element(document.body),
+		      clickOutsideToClose:true,
+		    })
+		    .then(function(){
+		    	$scope.subheader.refresh();
+		    	// $state.go($state.current, {}, {reload:true});
+		    });
+		}
+
+		/**
+		 * Status of search bar.
+		 *
+		*/
+		$scope.searchBar = false;
+
+		/**
+		 * Reveals the search bar.
+		 *
+		*/
+		$scope.showSearchBar = function(){
+			$scope.searchBar = true;
+		};
+
+		/**
+		 * Hides the search bar.
+		 *
+		*/
+		$scope.hideSearchBar = function(){
+			$scope.toolbar.userInput = '';
+			$scope.searchBar = false;
+		};
+		
+		
+		$scope.searchUserInput = function(){
+			$scope.report.show = false;
+		};
+
+		$scope.search = function(){
+			Preloader.preload();
+			/* Pending */
+			Approval.pendingUser($scope.approval)
+				.success(function(data){
+					$scope.pendingApprovals = data;
+				})
+				.error(function(){
+					Preloader.error();
+				});
+
+			/* Approved */
+			PerformanceApproval.approvedUser($scope.approval)
+				.success(function(data){
+					$scope.approved = data;
+				})
+				.error(function(){
+					Preloader.error();
+				});
+
+			/* Declined */
+			PerformanceApproval.declinedUser($scope.approval)
+				.success(function(data){
+					$scope.declined = data;
+					Preloader.stop();
+				})
+				.error(function(){
+					Preloader.error();
+				});
+
+		}
+
+		$scope.init = function(refresh){
+			/* Pending */
+			Approval.pendingUser()
+				.success(function(data){
+					$scope.pendingApprovals = data;
+				})
+				.error(function(){
+					Preloader.error();
+				});
+
+			/* Approved */
+			PerformanceApproval.approvedUser()
+				.success(function(data){
+					$scope.approved = data;
+				})
+				.error(function(){
+					Preloader.error();
+				});
+
+			/* Declined */
+			PerformanceApproval.declinedUser()
+				.success(function(data){
+					$scope.declined = data;
+				})
+				.error(function(){
+					Preloader.error();
+				});
+
+			if(refresh){
+				Preloader.stop();
+			}
+		}
+
+		$scope.init();
+	}]);
+teamLeaderModule
+	.controller('createMemberContentContainerController', ['$scope', '$state', 'Project', 'Member', 'Experience', 'Preloader', function($scope, $state, Project, Member, Experience, Preloader){
+		$scope.form = {};
+		$scope.member = {};
+		$scope.member_projects = [];
+		$scope.maxDate = new Date();
+
+		Project.index()
+			.success(function(data){
+				$scope.projects = data;
+				angular.forEach(data, function(item, key){
+					$scope.member_projects.push({});
+				});
+			})
+			.error(function(){
+				Preloader.error();
+			})
+
+		var busy = false;
+		/**
+		 * Object for toolbar
+		 *
+		*/
+		$scope.toolbar = {};
+		$scope.toolbar.parentState = 'Members';
+		$scope.toolbar.childState = 'Create';
+		$scope.toolbar.showBack = true;
+		$scope.toolbar.back = function(){
+			$state.go('main.members');
+		}
+		$scope.toolbar.hideSearchIcon = true;
+
+		/**
+		 * Object for content view
+		 *
+		*/
+		$scope.fab = {};
+
+		$scope.fab.icon = 'mdi-check';
+		$scope.fab.label = 'Submit';
+		$scope.fab.show = true;
+
+		$scope.fab.action = function(){
+			$scope.submit();
+		}
+
+		$scope.checkDuplicate = function(){
+			$scope.duplicate = false;
+			Member.checkDuplicate($scope.member)
+				.success(function(data){
+					$scope.duplicate = data;
+				})
+				.error(function(){
+					Preloader.error();
+				});
+		}
+
+		$scope.submit = function(){
+			if($scope.form.memberForm.$invalid){
+				angular.forEach($scope.form.memberForm.$error, function(field){
+					angular.forEach(field, function(errorField){
+						errorField.$setTouched();
+					});
+				});
+			}
+			else{
+				//  * Stores Single Record
+				// Preloader.saving();
+
+				// console.log($scope.member_projects);
+				if(!busy){
+					busy = true;
+
+					Member.store($scope.member)
+						.then(function(data){
+							if(typeof(data.data) === "boolean"){
+								busy = false;
+								return;
+							}
+							else{
+								return data.data;
+							}
+						})
+						.then(function(memberID){
+							if(memberID){
+								angular.forEach($scope.member_projects, function(item){
+									item.member_id = memberID;
+									if(item.project){
+										item.date_started = item.date_started.toDateString();
+									}
+								});
+
+								Experience.store($scope.member_projects)
+									.success(function(){
+										$state.go('main.members');
+										return;
+									})
+									.error(function(){
+										busy = false;
+										Preloader.error();
+									});
+							}
+
+							return
+						}, function(){
+							busy = false;
+							Preloader.error();
+						});
+				}
+			}
+		}
+
+	}]);
+teamLeaderModule
+	.controller('editMemberContentContainerController', ['$scope', '$state', '$stateParams', 'Project', 'Member', 'Experience', 'Preloader', function($scope, $state, $stateParams, Project, Member, Experience, Preloader){
+		var memberID = $stateParams.memberID;
+		$scope.form = {};
+		$scope.member = {};
+		$scope.member_projects = [];
+		$scope.maxDate = new Date();
+
+		var busy = false;
+		/**
+		 * Object for toolbar
+		 *
+		*/
+		$scope.toolbar = {};
+		$scope.toolbar.parentState = 'Edit';
+		$scope.toolbar.showBack = true;
+		$scope.toolbar.back = function(){
+			$state.go('main.members');
+		}
+		$scope.toolbar.hideSearchIcon = true;
+
+		/**
+		 * Object for content view
+		 *
+		*/
+		$scope.fab = {};
+
+		$scope.fab.icon = 'mdi-check';
+		$scope.fab.label = 'Submit';
+		$scope.fab.show = true;
+
+		$scope.fab.action = function(){
+			$scope.submit();
+		}
+
+		$scope.checkDuplicate = function(){
+			$scope.duplicate = false;
+			Member.checkDuplicate($scope.member)
+				.success(function(data){
+					$scope.duplicate = data;
+				})
+				.error(function(){
+					Preloader.error();
+				});
+		}
+
+		$scope.submit = function(){
+			if($scope.form.memberForm.$invalid){
+				angular.forEach($scope.form.memberForm.$error, function(field){
+					angular.forEach(field, function(errorField){
+						errorField.$setTouched();
+					});
+				});
+			}
+			else{
+				//  * Stores Single Record
+				// Preloader.saving();
+
+				// console.log($scope.member_projects);
+				if(!busy){
+					busy = true;
+
+					// angular.forEach(data.experiences, function(item){
+					// 	item.date_started = new Date(item.date_started);
+					// });
+
+					Member.update(memberID, $scope.member)
+						.then(function(data){
+							if(typeof(data.data) === "boolean"){
+								busy = false;
+								return;
+							}
+							else{
+								return data.data;
+							}
+						})
+						.then(function(memberID){
+							if(memberID){
+								angular.forEach($scope.member_projects, function(item){
+									item.member_id = memberID;
+									if(item.project){
+										item.date_started = item.date_started.toDateString();
+									}
+								});
+
+								Experience.store($scope.member_projects)
+									.success(function(){
+										$state.go('main.members');
+										return;
+									})
+									.error(function(){
+										busy = false;
+										Preloader.error();
+									});
+							}
+
+							return
+						}, function(){
+							busy = false;
+							Preloader.error();
+						});
+				}
+			}
+		}
+
+		$scope.init = function(){
+			Project.index()
+				.success(function(data){
+					$scope.projects = data;
+					angular.forEach(data, function(item, key){
+						$scope.member_projects.push({});
+					});
+
+					Member.show(memberID)
+						.success(function(data){
+							var count = 0;
+							angular.forEach($scope.projects, function(project, project_key){
+								Experience.relation(project.id, memberID)
+									.success(function(data){
+										if(data){
+											data.date_started = new Date(data.date_started);
+											$scope.member_projects.splice(project_key, 1, data);
+										}
+
+										count++;
+
+										if(count == $scope.projects.length){
+											$scope.show = true;
+										}
+
+									})
+							});
+
+							$scope.toolbar.childState = data.full_name;
+
+							$scope.member = data;
+						})
+				})
+		}();
+
+	}]);
+teamLeaderModule
+	.controller('editReportContentContainerController', ['$scope', '$filter', '$mdDialog', '$state', '$mdToast', '$stateParams', 'Preloader', 'Performance', 'Position', 'Project', 'PerformanceHistory', function($scope, $filter, $mdDialog, $state, $mdToast, $stateParams, Preloader, Performance, Position, Project, PerformanceHistory){
+		var reportID = $stateParams.reportID;
+		var busy = false;
+		$scope.form = {};
+
+		// $scope.hours = [
+		// 	{'value': 8.3},
+		// 	{'value': 9.1},
+		// ];
+
+		$scope.details = {};
+
+		/**
+		 * Object for toolbar
+		 *
+		*/
+		$scope.toolbar = {};
+		$scope.toolbar.items = [];
+		$scope.toolbar.getItems = function(query){
+			var results = query ? $filter('filter')($scope.toolbar.items, query) : $scope.toolbar.items;
+			return results;
+		}
+		$scope.toolbar.childState = 'Edit Report';
+		$scope.toolbar.showBack = true;
+		$scope.toolbar.back = function(){
+			$state.go('main.weekly-report');
+		}
+
+		/**
+		 * Reveals the search bar.
+		 *
+		*/
+		$scope.showSearchBar = function(){
+			$scope.searchBar = true;
+		};
+
+		/**
+		 * Hides the search bar.
+		 *
+		*/
+		$scope.hideSearchBar = function(){
+			$scope.toolbar.userInput = '';
+			$scope.searchBar = false;
+		};
+
+		/**
+		 * Object for subheader
+		 *
+		*/
+		$scope.subheader = {};
+		$scope.subheader.state = 'report';
+
+		$scope.deletePerformance = function(performance){
+			 var confirm = $mdDialog.confirm()
+		        .title('Delete performance')
+		        .textContent('This performance will be deleted permanently. If you would just change something you can edit this instead.')
+		        .ariaLabel('Delete performance')
+		        .ok('Delete')
+		        .cancel('Cancel');
+
+		    $mdDialog.show(confirm).then(function() {
+		    	Preloader.preload();
+		    	var idx = $scope.performances.indexOf(performance);
+		    	Performance.delete(performance.id)
+		    		.success(function(){
+		    			$scope.performances.splice(idx, 1);
+		    			Preloader.stop();
+		    		})
+		    }, function() {
+		    	return;
+		    });
+		}
+
+		var monthDiff = function(d1, d2) {
+		    var months;
+		    months = (d2.getFullYear() - d1.getFullYear()) * 12;
+		    months -= d1.getMonth() + 1;
+		    months += d2.getMonth();
+		    return months <= 0 ? 0 : months;
+		}
+
+		Performance.report(reportID)
+			.success(function(data){
+				angular.forEach(data, function(performance){
+					var experience = $filter('filter')(performance.member.experiences, {project_id: performance.project_id}, true);
+					performance.date_started = new Date(experience[0].date_started);
+					
+					var tenure = monthDiff(performance.date_started, new Date(performance.date_start));
+
+					performance.experience = tenure < 3 ? 'Beginner' : ((tenure >= 3 && tenure < 6) ? 'Moderately Experienced' : 'Experienced');
+
+					var item = {};
+					item.display = performance.member.full_name;
+					$scope.toolbar.items.push(item);
+					performance.first_letter = performance.member.full_name.charAt(0).toUpperCase();
+				});
+
+				$scope.performances = data;
+				
+				$scope.details.date_start = new Date(data[0].date_start);
+				$scope.details.date_end = new Date(data[0].date_end);
+				$scope.details.project_name = data[0].project.name;
+				$scope.details.daily_work_hours = data[0].daily_work_hours;
+				$scope.details.first_letter = data[0].project.name.charAt(0).toUpperCase();
+				$scope.details.weekly_hours = (($scope.details.date_end - $scope.details.date_start) / (1000*60*60*24) + 1) * $scope.details.daily_work_hours;
+				$scope.details.date_start = $scope.details.date_start.toDateString();
+				$scope.details.date_end = $scope.details.date_end.toDateString();
+
+				// Position.project(data[0].project_id)
+				// 	.success(function(data){
+				// 		$scope.positions = data;
+				// 	});
+
+				Project.show(data[0].project_id)
+					.success(function(data){
+						$scope.project = data;
+						angular.forEach(data.positions, function(position){
+							var targets = [];
+							var index = 0;
+							angular.forEach(position.targets, function(target){
+								var target_effective_date = new Date(target.effective_date).setHours(0,0,0,0);
+								if(!target.deleted_at && target_effective_date <= new Date($scope.details.date_start)){
+									targets.splice(index, 0, target);
+									index++;
+								}
+								else if(target.deleted_at && target_effective_date < new Date($scope.details.date_start)){
+									targets.splice(index, 0, target);
+									index++;
+								}
+							});
+
+							if(targets.length){
+								$scope.default = 'false';
+								var beginner_productivity = $filter('filter')(targets, {experience:'Beginner'}, true);
+								var moderately_experienced_productivity = $filter('filter')(targets, {experience:'Moderately Experienced'}, true);
+								var experienced_productivity = $filter('filter')(targets, {experience:'Experienced'}, true);
+								var quality = $filter('filter')(targets, {experience:'Experienced'}, true);
+							}
+							else{
+								$scope.default = 'true';
+								var beginner_productivity = $filter('filter')(position.targets, {experience:'Beginner', deleted_at:null}, true);
+								var moderately_experienced_productivity = $filter('filter')(position.targets, {experience:'Moderately Experienced', deleted_at:null}, true);
+								var experienced_productivity = $filter('filter')(position.targets, {experience:'Experienced', deleted_at:null}, true);
+								var quality = $filter('filter')(position.targets, {experience:'Experienced', deleted_at:null}, true);							
+							}
+
+							position.targets = [];
+							position.targets.push(beginner_productivity[0]);
+							position.targets.push(moderately_experienced_productivity[0]);
+							position.targets.push(experienced_productivity[0]);
+							
+						});
+					});
+
+				Project.department(data[0].department_id)
+					.success(function(data){
+						$scope.projects = data;
+					});
+			})
+			.error(function(){
+				$state.go('page-not-found');
+			});
+
+		// $scope.showPositions = function(id){
+		// 	Position.project(id)
+		// 		.success(function(data){
+		// 			$scope.positions = data;
+		// 		});
+		// };
+
+		$scope.checkAllPerformance = function(){
+			angular.forEach($scope.performances, function(performance){
+				performance.weekly_hours = $scope.details.weekly_hours;
+				if(performance.include){
+					performance.include = false;
+					$scope.checkLimitAll = false;
+					$scope.getTarget();
+				}
+				else{
+					performance.include = true;
+					$scope.checkLimitAll = true;
+					// $scope.checkLimit(performance);
+				}
+
+				if($scope.checkLimitAll){
+					Performance.checkLimitEditAll($scope.performances)
+						.success(function(data){
+							$scope.performances = data;
+						})
+				}
+
+			});
+		}
+
+		$scope.checkLimit = function(data){
+			var idx = $scope.performances.indexOf(data);
+			// gets the number of days worked in a day then multiply it to the daily work hours to get weekly limit
+			$scope.details.current_hours_worked = data.hours_worked;
+			Performance.checkLimitEdit($scope.performances[idx].member_id, $scope.details)
+				.success(function(data){
+					$scope.performances[idx].limit = data;
+				})
+				.error(function(){
+					$scope.performances[idx].limit = $scope.details.weekly_hours;
+				});
+
+			$scope.getTarget(data);
+		};
+
+		$scope.resetMembers = function(){
+			angular.forEach($scope.performances, function(item, key){
+				item.hours_worked = null;
+				$scope.checkLimit(item);
+			});
+		}
+
+		$scope.getTarget = function(performance){
+			var index = $scope.performances.indexOf(performance);
+			var position = $filter('filter')($scope.project.positions, {id:performance.position_id});
+			var target = $filter('filter')(position[0].targets, {experience:performance.experience}, true);
+			$scope.performances[index].target_id = target[0].id;
+		}
+
+		$scope.checkBalance = function(data){
+			var index = $scope.performances.indexOf(data);
+			$scope.performances[index].balance = $scope.performances[index].limit - $scope.performances[index].hours_worked;
+			$scope.performances[index].balance = $scope.performances[index].balance ? $scope.performances[index].balance.toFixed(2) : 0;
+		}
+
+		/**
+		 * Object for content view
+		 *
+		*/
+		$scope.fab = {};
+
+		$scope.fab.icon = 'mdi-check';
+		$scope.fab.label = 'Submit';
+		
+		$scope.fab.show = true;
+
+		$scope.fab.action = function(){
+			$scope.showErrors = true;
+			if($scope.form.editReportForm.$invalid){
+				angular.forEach($scope.form.editReportForm.$error, function(field){
+					angular.forEach(field, function(errorField){
+						errorField.$setTouched();
+					});
+				});
+
+				$mdDialog.show(
+					$mdDialog.alert()
+						.parent(angular.element(document.body))
+						.clickOutsideToClose(true)
+				        .title('Error')
+				        .content('Please complete the forms or check the errors.')
+				        .ariaLabel('Error')
+				        .ok('Got it!')
+				);
+			}
+			else{
+				Preloader.preload();
+				if(!busy){
+					busy = true;
+					var count = 0;
+					angular.forEach($scope.performances, function(item){
+						item.date_start = $scope.details.date_start;
+						item.date_end = $scope.details.date_end;
+						item.daily_work_hours = $scope.details.daily_work_hours;
+						count = item.include ? count + 1 : count;
+					});
+					if(count){
+						PerformanceHistory.store($scope.performances)
+							.success(function(){
+								Performance.update(reportID, $scope.performances)
+									.success(function(){
+										$mdToast.show(
+									      	$mdToast.simple()
+										        .content('Changes saved.')
+										        .position('bottom right')
+										        .hideDelay(3000)
+									    );
+										$scope.toolbar.back();
+										Preloader.stop();
+										busy = false;
+									})
+									.error(function(){
+										Preloader.error();
+									})
+							})
+							.error(function(){
+								Preloader.error();
+								busy = false;
+							})
+					}
+					else{
+						$mdDialog.show(
+							$mdDialog.alert()
+								.parent(angular.element(document.body))
+								.clickOutsideToClose(true)
+						        .title('Report not submitted.')
+						        .content('Empty reports are not submitted.')
+						        .ariaLabel('Empty Report')
+						        .ok('Got it!')
+						);
+					}
+				}
+			}
+		};
+
+	}]);
+teamLeaderModule
+	.controller('leftSidenavController', ['$scope', '$mdSidenav', 'User', function($scope, $mdSidenav, User){
+		$scope.menu = {};
+		User.index()
+			.success(function(data){
+				var user = data;
+				
+				if(user.role=='team-leader')
+				{
+					$scope.menu.section = [
+						{
+							'name':'Dashboard',
+							'state':'main',
+							'icon':'mdi-view-dashboard',
+							// 'tip': 'Dashboard: tracks your team\'s monthly performance.',
+						},
+						{
+							'name':'Weekly Report',
+							'state':'main.weekly-report',
+							'icon':'mdi-view-carousel',
+							// 'tip': 'Dashboard: tracks your team\'s weekly performance, targets, and top performers.',
+						},
+						{
+							'name':'Activities',
+							'state':'main.activity',
+							'icon':'mdi-file-document-box',
+							// 'tip': 'Approvals: shows pending request for report changes.',
+						},
+						{
+							'name':'Members',
+							'state': 'main.members',
+							'icon':'mdi-account-multiple',
+							// 'tip': 'Members: manage people in your team.',
+						},
+						{
+							'name':'Report',
+							'state': 'main.report',
+							'icon':'mdi-file-document',
+							// 'tip': 'Report: submit team\'s weekly reports',
+						},
+					];
+				}
+				else if(user.role=='manager')
+				{
+					$scope.menu.section = [
+						{
+							'name':'Dashboard',
+							'state':'main',
+							'icon':'mdi-view-dashboard',
+							// 'tip': 'Dashboard: tracks your team\'s monthly performance.',
+						},
+						{
+							'name':'Weekly Report',
+							'state':'main.weekly-report',
+							'icon':'mdi-view-carousel',
+							// 'tip': 'Dashboard: tracks your team\'s weekly performance, targets, and top performers.',
+						},
+						{
+							'name':'Members',
+							'state': 'main.members',
+							'icon':'mdi-account-multiple',
+							// 'tip': 'Members: manage people in your team.',
+						},
+					];
+				}
+				else{
+					$scope.menu.section = [
+						{
+							'name':'Dashboard',
+							'state':'main',
+							'icon':'mdi-view-dashboard',
+							// 'tip': 'Dashboard: tracks your team\'s weekly performance, targets, and top performers.',
+						},
+						{
+							'name':'Approvals',
+							'state':'main.approvals',
+							'icon':'mdi-file-document-box',
+							// 'tip': 'Approvals: shows pending request for report changes.',
+						},
+						{
+							'name':'Members',
+							'state': 'main.members',
+							'icon':'mdi-account-multiple',
+							// 'tip': 'Members: manage people in your team.',
+						},
+					];
+				}
+			});
+
+		// set section as active
+		$scope.setActive = function(index){
+		 	angular.element($('[aria-label="'+ 'section-' + index + '"]').closest('li').toggleClass('active'));
+		 	angular.element($('[aria-label="'+ 'section-' + index + '"]').closest('li').siblings().removeClass('active'));
+		};
+	}]);
+teamLeaderModule
+	.controller('mainContentContainerController', ['$scope', '$filter', '$state', '$mdToast', '$mdDialog', 'Approval', 'Preloader', 'Member', 'Position', 'Report', 'Performance', 'Target', 'User', 'WalkThrough', 'Project', function($scope, $filter, $state, $mdToast, $mdDialog, Approval, Preloader, Member, Position, Report, Performance, Target, User, WalkThrough, Project){
+		// var user = null;
+		// $scope.tour = {};
+		// $scope.tour.search = 'Need to find something? I\'ll help you find what you\'re looking for.';
+		// $scope.tour.notification = 'You don\'t have to wait for the confirmation of your request. I\'ll notify you when something needs your attention.';
+		// $scope.tour.refresh = 'Refreshes the current displayed data.'
+		// $scope.subheaderTour = function(){
+		// 	$scope.subheaderTour = 0;
+		// }
+		// $scope.stopTours = function(){
+		// 	WalkThrough.show(user.id)
+		// 		.success(function(data){
+		// 			if(!data){			
+		// 				WalkThrough.store(user)
+		// 					.error(function(){
+		// 						Preloader.error();
+		// 					});asd
+		// 			}
+		// 		})
+		// }
+		$scope.filterDate = {};
+		$scope.filterData = {};
+		$scope.filterDate.type = 'Weekly';
+
+		$scope.rightSidenav = {};
+		$scope.rightSidenav.show = true;
+		$scope.rightSidenav.items = [];
+		$scope.rightSidenav.queryMember = function(query){
+			var results = query ? $filter('filter')($scope.rightSidenav.items, query) : $scope.rightSidenav.items;
+			return results;
+		}	
+
+		$scope.months = [
+			{'value': '01', 'month': 'January'},
+			{'value': '02', 'month': 'February'},
+			{'value': '03', 'month': 'March'},
+			{'value': '04', 'month': 'April'},
+			{'value': '05', 'month': 'May'},
+			{'value': '06', 'month': 'June'},
+			{'value': '07', 'month': 'July'},
+			{'value': '08', 'month': 'August'},
+			{'value': '09', 'month': 'September'},
+			{'value': '10', 'month': 'October'},
+			{'value': '11', 'month': 'November'},
+			{'value': '12', 'month': 'December'},
+		];
+
+		$scope.months_array = [
+			'January',
+			'February',
+			'March',
+			'April',
+			'May',
+			'June',
+			'July',
+			'August',
+			'September',
+			'October',
+			'November',
+			'December',
+		];
+
+		$scope.years = [];
+		
+		var dateCreated = 2016;
+
+		// will generate the dates that will be used in drop down menu
+		for (var i = new Date().getFullYear(); i >= dateCreated; i--) {
+			$scope.years.push(i);
+		};
+
+		$scope.filterDate.date_start_month = $scope.months_array[new Date().getMonth()];
+		$scope.filterDate.date_start_year = $scope.years[0];
+		
+		$scope.getMondays = function(){
+			$scope.filterDate.date_end = null;
+			$scope.filterDate.date_start = null;
+			$scope.filterDate.weekend = [];
+			Performance.getMondays($scope.filterDate)
+				.success(function(data){
+					$scope.mondays = data;
+				})
+				.error(function(){
+					Preloader.error();
+				});
+		};
+
+		$scope.getWeekends = function(){	
+			$scope.filterDate.date_end = null;	
+			$scope.filterDate.weekend = [];
+			Performance.getWeekends($scope.filterDate)
+				.success(function(data){
+					$scope.weekends = data;
+				})
+				.error(function(){
+					Preloader.error();
+				});
+		};
+
+		$scope.getPositions = function(){
+			Position.project($scope.projects[$scope.filterData.project].id)
+				.success(function(data){
+					$scope.positions = data;
+				})
+		}
+
+		$scope.clearFilter = function(){
+			$scope.rightSidenav.searchText = '';
+			$scope.filterData.project = '';
+			$scope.filterDate.date_start = '';
+			$scope.filterDate.date_end = '';
+			$scope.filterData.position = '';
+			$scope.filterData.submitter = '';
+		}
+		
+		/**
+		 * Object for toolbar
+		 *
+		*/
+		$scope.toolbar = {};
+		$scope.toolbar.childState = 'Weekly Report';
+		$scope.toolbar.hideSearchIcon = true;
+		/**
+		 * Object for subheader
+		 *
+		*/
+		$scope.subheader = {};
+		$scope.subheader.show = true;
+		$scope.subheader.state = 'weekly';
+
+		/* Refreshes the list */
+		$scope.subheader.refresh = function(){
+			$scope.report.show = false;
+			// start preloader
+			Preloader.preload();
+			$scope.init(true);
+
+		};
+
+		$scope.subheader.download = function(){
+			$mdDialog.show({
+		    	controller: 'downloadReportDialogController',
+		      	templateUrl: '/app/components/team-leader/templates/dialogs/download-report-dialog.template.html',
+		      	parent: angular.element(document.body),
+		    });
+		}
+		
+		$scope.subheader.evaluate = function(){
+			$mdDialog.show({
+		    	controller: 'evaluateDialogController',
+		      	templateUrl: '/app/components/team-leader/templates/dialogs/evaluate-dialog.template.html',
+		      	parent: angular.element(document.body),
+		    })
+		    .then(function(data){
+		    	Preloader.set(data);
+		    	if(data.multiple)
+		    	{
+		    		var template = '/app/shared/templates/dialogs/performance-evaluation-multiple.dialog.template.html' 
+		    	}
+		    	else{
+		    		var template = '/app/shared/templates/dialogs/performance-evaluation.dialog.template.html' 
+		    	}
+				$mdDialog.show({
+			    	controller: 'performanceEvaluationDialogController',
+			      	templateUrl: template,
+			      	parent: angular.element(document.body),
+			    });
+		    });
+		}
+
+		$scope.searchUserInput = function(){
+			$scope.report.show = false;
+			Preloader.preload();
+			Report.search($scope.filterDate)
+				.success(function(data){
+					$scope.report.results = data;
+					angular.forEach(data, function(item){
+						pushItem(item);
+					});
+					
+					Preloader.stop();
+				})
+				.error(function(data){
+					Preloader.error();
+				});
+		};
+
+		$scope.show = function(data){
+			Preloader.set(data);
+			$mdDialog.show({
+		    	controller: 'otherPerformanceDialogController',
+		      	templateUrl: '/app/shared/templates/dialogs/other-performance.dialog.template.html',
+		      	parent: angular.element(document.body),
+		      	clickOutsideToClose:true,
+		    });
+		}
+		/**
+		 * Object for content view
+		 *
+		*/
+		$scope.fab = {};
+
+		// $scope.fab.icon = 'mdi-plus';
+		// $scope.fab.label = 'Add';
+		
+		$scope.fab.show = false;
+
+		// $scope.fab.action = function(){
+		// 	return;
+		// };
+
+		$scope.editReport = function(id){
+			$state.go('main.edit-report', {'reportID':id});
+		};
+
+		$scope.deleteReport = function(id){
+			var confirm = $mdDialog.confirm()
+		        .title('Delete report')
+		        .content('This report will be deleted permanently.')
+		        .ok('Delete')
+		        .cancel('Cancel');
+		    $mdDialog.show(confirm)
+		    	.then(function() {
+		    		Preloader.preload();
+			    	Approval.reportDelete(id)
+			    		.success(function(){
+			    			Report.delete(id)
+			    				.success(function(){
+					    			Preloader.stop();
+					    			$mdToast.show(
+								    	$mdToast.simple()
+									        .content('Report deleted.')
+									        .position('bottom right')
+									        .hideDelay(3000)
+								    );
+								    $scope.subheader.refresh();
+			    				})
+			    				.error(function(){
+			    					Preloader.error();
+			    				})
+			    		})
+			    }, function() {
+			    	return;
+			    });
+		}
+
+		var pushItem = function(report){
+			report.created_at = new Date(report.created_at);
+			report.date_start = new Date(report.date_start);
+			report.date_end = new Date(report.date_end);
+
+			var today = new Date();
+			var timeDiff = Math.abs(today.getTime() - report.created_at.getTime());
+			report.diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
+			
+			report.locked = report.diffDays > 7 ? true : false;
+
+			// angular.forEach(report.performances, function(performance){
+			// 	var filter = $filter('filter')(performance.member.experiences, {project_id:performance.project_id});
+			// 	performance.experience = filter[0].experience;
+			// 	performance.experience = performance.target.experience;
+			// 	performance.full_name = performance.member.full_name;
+			// 	performance.position = performance.position.name;
+			// });
+
+			// Targets
+			report.project.beginner = [];
+			report.project.moderately_experienced = [];
+			report.project.experienced = [];
+			report.project.quality = [];
+
+			angular.forEach(report.project.positions, function(position){
+				var targets = [];
+				var index = 0;
+				angular.forEach(position.targets, function(target){
+					var target_created_at = new Date(target.created_at).setHours(0,0,0,0);
+					if(!target.deleted_at && target_created_at <= new Date(report.date_start)){
+						targets.splice(index, 0, target);
+						index++;
+					}
+					else if(target.deleted_at && target_created_at < report.date_start){
+						targets.splice(index, 0, target);
+						index++;
+					}
+				});
+
+				// console.log(targets);
+
+				if(targets.length){
+					var beginner_productivity = $filter('filter')(targets, {experience:'Beginner'}, true);
+					var moderately_experienced_productivity = $filter('filter')(targets, {experience:'Moderately Experienced'}, true);
+					var experienced_productivity = $filter('filter')(targets, {experience:'Experienced'}, true);
+					var quality = $filter('filter')(targets, {experience:'Experienced'}, true);
+				}
+				else{
+					var beginner_productivity = $filter('filter')(position.targets, {experience:'Beginner', deleted_at:null}, true);
+					var moderately_experienced_productivity = $filter('filter')(position.targets, {experience:'Moderately Experienced', deleted_at:null}, true);
+					var experienced_productivity = $filter('filter')(position.targets, {experience:'Experienced', deleted_at:null}, true);
+					var quality = $filter('filter')(position.targets, {experience:'Experienced', deleted_at:null}, true);
+				}
+
+				report.project.beginner.push(beginner_productivity[0].productivity);
+				report.project.moderately_experienced.push(moderately_experienced_productivity[0].productivity);
+				report.project.experienced.push(experienced_productivity[0].productivity);
+				report.project.quality.push(quality[0].quality);
+			}) 
+
+			// Charts
+			// report.chartType = 'bar';
+			// report.charts = {};
+									
+			// report.charts.productivity = {};
+			// report.charts.productivity.data = [[]];
+			// report.charts.productivity.series = ['Productivity'];
+			// report.charts.productivity.labels = [];
+			
+			// report.charts.quality = {};
+			// report.charts.quality.data = [[]];
+			// report.charts.quality.series = ['Quality'];
+			// report.charts.quality.labels = [];
+
+			// angular.forEach(report.performances, function(performance, key){
+			// 	report.charts.productivity.data[0].push(performance.productivity);
+			// 	report.charts.quality.data[0].push(performance.quality);
+			// 	report.charts.productivity.labels.push(performance.member.full_name);
+			// 	report.charts.quality.labels.push(performance.member.full_name);
+			// });
+
+			return report;
+		}
+
+		$scope.init = function(refresh){
+			Member.index()
+				.success(function(data){
+					angular.forEach(data, function(item){
+						var member = {};
+						member.full_name = item.full_name;
+						$scope.rightSidenav.items.push(member);
+					});
+				})
+
+			User.department()
+				.success(function(data){
+					$scope.users = data;
+				})
+
+			Position.index()
+				.success(function(data){
+					$scope.positions = data;
+				});
+
+			Project.index()
+				.success(function(data){
+					$scope.projects = data;
+				});
+
+			$scope.getMondays();
+			/**
+			 * Object for report
+			 *
+			*/
+			$scope.report = {};
+			$scope.report.paginated = [];
+			// 2 is default so the next page to be loaded will be page 2 
+			$scope.report.page = 2;
+
+			Report.paginateDetails()
+				.success(function(data){
+					$scope.report.details = data;
+					$scope.report.paginated = data.data;
+					$scope.report.show = true;
+
+					if(data.data.length){
+						// iterate over each record and set the updated_at date and first letter
+						angular.forEach(data.data, function(data){
+							pushItem(data);
+						});
+					}
+
+					// 	$scope.fab.show = true;
+					// }
+
+					$scope.report.paginateLoad = function(){
+						// kills the function if ajax is busy or pagination reaches last page
+						if($scope.report.busy || ($scope.report.page > $scope.report.details.last_page)){
+							return;
+						}
+						/**
+						 * Executes pagination call
+						 *
+						*/
+						// sets to true to disable pagination call if still busy.
+						$scope.report.busy = true;
+
+						Report.paginateDetails($scope.report.page)
+							.success(function(data){
+								// increment to call the next page for the next call
+								$scope.report.page++;
+								// iterate over the paginated data and push it to the original array
+								angular.forEach(data.data, function(data){
+									pushItem(data);
+									$scope.report.paginated.push(data);
+								});
+								// enables next call
+								$scope.report.busy = false;
+							})
+							.error(function(){
+								Preloader.error();
+							});
+				}
+				if(refresh){
+					Preloader.stop();
+					Preloader.stop();
+				}
+			})
+			.error(function(){
+				Preloader.error();
+			})
+		}
+
+		$scope.init();
+	}]);
+teamLeaderModule
+	.controller('mainMonthlyContentContainerController', ['$scope', '$filter', '$mdDialog', 'Preloader', 'Report', 'Programme', 'Member', function($scope, $filter, $mdDialog, Preloader, Report, Programme, Member){
+		$scope.report = {};
+		$scope.form = {};
+
+		$scope.months_array = [
+			'January',
+			'February',
+			'March',
+			'April',
+			'May',
+			'June',
+			'July',
+			'August',
+			'September',
+			'October',
+			'November',
+			'December',
+		];
+
+		$scope.years = [];
+		
+		var dateCreated = 2016;
+
+		// will generate the dates that will be used in drop down menu
+		for (var i = new Date().getFullYear(); i >= dateCreated; i--) {
+			$scope.years.push(i);
+		};
+
+		/**
+		 * Object for right sidenav
+		 *
+		*/
+		$scope.rightSidenav = {};
+		$scope.rightSidenav.searchText = '';
+		$scope.rightSidenav.show = true;
+		$scope.rightSidenav.month = $scope.months_array[new Date().getMonth()];
+		$scope.rightSidenav.year = new Date().getFullYear();
+		$scope.rightSidenav.items = [];
+		$scope.rightSidenav.queryMember = function(query){
+			var results = query ? $filter('filter')($scope.rightSidenav.items, query) : $scope.rightSidenav.items;
+			return results;
+		}
+
+		Member.index()
+			.success(function(data){
+				angular.forEach(data, function(item){
+					var member = {};
+					member.full_name = item.full_name;
+					$scope.rightSidenav.items.push(member);
+				});
+			})
+
+		Programme.index()
+			.success(function(data){
+				$scope.hours = data;
+			})
+
+		$scope.clearFilter = function(){
+			$scope.rightSidenav.searchText = '';
+			$scope.rightSidenav.month = $scope.months_array[new Date().getMonth()];
+			$scope.rightSidenav.year = new Date().getFullYear();
+			$scope.rightSidenav.daily_work_hours = '';
+		}
+
+		/**
+		 * Object for toolbar
+		 *
+		*/
+		$scope.toolbar = {};
+		$scope.toolbar.childState = 'Dashboard';
+		$scope.toolbar.hideSearchIcon = true;
+		/**
+		 * Object for subheader
+		 *
+		*/
+		$scope.subheader = {};
+		$scope.subheader.show = true;
+		$scope.subheader.state = 'dashboard';
+		$scope.subheader.refresh = function(){
+			$scope.report = {};
+			Preloader.preload();
+			$scope.init(true, $scope.rightSidenav);
+		}
+
+		$scope.subheader.download = function(){
+			$mdDialog.show({
+		    	controller: 'downloadReportDialogController',
+		      	templateUrl: '/app/components/team-leader/templates/dialogs/download-report-dialog.template.html',
+		      	parent: angular.element(document.body),
+		    });
+		}
+
+		// $scope.subheader.evaluate = function(){
+		// 	$mdDialog.show({
+		//     	controller: 'evaluateDialogController',
+		//       	templateUrl: '/app/components/team-leader/templates/dialogs/evaluate-dialog.template.html',
+		//       	parent: angular.element(document.body),
+		//     })
+		//     .then(function(data){
+		//     	Preloader.set(data);
+		// 		$mdDialog.show({
+		// 	    	controller: 'performanceEvaluationDialogController',
+		// 	      	templateUrl: '/app/shared/templates/dialogs/performance-evaluation.dialog.template.html',
+		// 	      	parent: angular.element(document.body),
+		// 	    });
+		//     });
+		// }
+		
+		$scope.subheader.evaluate = function(){
+			$mdDialog.show({
+		    	controller: 'evaluateDialogController',
+		      	templateUrl: '/app/components/team-leader/templates/dialogs/evaluate-dialog.template.html',
+		      	parent: angular.element(document.body),
+		    })
+		    .then(function(data){
+		    	Preloader.set(data);
+		    	
+		    	if(!data.department)
+		    	{
+					$mdDialog.show({
+				    	controller: 'performanceEvaluationDialogController',
+				      	templateUrl: '/app/shared/templates/dialogs/performance-evaluation.dialog.template.html',
+				      	parent: angular.element(document.body),
+				    });
+		    	}
+		    	else{
+		    		$mdDialog.show({
+				    	controller: 'performanceEvaluationDialogController',
+				      	templateUrl: '/app/shared/templates/dialogs/performance-evaluation-multiple.dialog.template.html',
+				      	parent: angular.element(document.body),
+				    });	
+		    	}
+		    });
+		}
+
+		$scope.searchFilter = function(){
+			if($scope.form.filterSearchForm.$invalid){
+				angular.forEach($scope.form.filterSearchForm.$error, function(field){
+					angular.forEach(field, function(errorField){
+						errorField.$setTouched();
+					});
+				});
+			}
+			else{
+				Preloader.preload();
+				$scope.init(true, $scope.rightSidenav);
+			}
+		}
+
+		/**
+		 * Status of search bar.
+		 *
+		*/
+		$scope.searchBar = false;
+
+		/**
+		 * Reveals the search bar.
+		 *
+		*/
+		$scope.showSearchBar = function(){
+			$scope.searchBar = true;
+		};
+
+		/**
+		 * Hides the search bar.
+		 *
+		*/
+		$scope.hideSearchBar = function(){
+			$scope.toolbar.userInput = '';
+			$scope.searchBar = false;
+		};
+
+		$scope.init = function(refresh, query){
+			Report.searchMonthly(query)
+				.success(function(data){
+					angular.forEach(data, function(report){
+						report.count = 0;
+						
+						angular.forEach(report.positions, function(position){
+							if(position.head_count){
+								report.count += position.head_count;
+							}
+						});
+					});
+
+					$scope.reports = data;
+					// $scope.report.showCurrent = true;
+
+					// if(query){
+					// 	$scope.haveResults = data ? true: false;
+					// }
+					// else{
+					// 	$scope.haveCurrent = data ? true: false;
+					// }
+
+
+					if(refresh)
+					{
+						Preloader.stop();
+					}
+				})
+				.error(function(){
+					Preloader.error();
+				});
+		}
+
+		$scope.view = function(data, dateStart, dateEnd){
+			data.date_start = dateStart;
+			data.date_end = dateEnd;
+			Preloader.set(data);
+			$mdDialog.show({
+		    	controller: 'performanceMonthlyViewDialogController',
+		      	templateUrl: '/app/components/admin/templates/dialogs/performance-monthly-view.dialog.template.html',
+		      	parent: angular.element(document.body),
+		      	clickOutsideToClose:true,
+		    });
+
+		}
+
+		// $scope.init();
+
+
+	}]);
+teamLeaderModule
+	.controller('membersContentContainerController', ['$scope', '$filter', '$state', '$mdDialog', 'Preloader', 'Member', 'User', function($scope, $filter, $state, $mdDialog, Preloader, Member, User){
+		/**
+		 * Object for toolbar
+		 *
+		*/
+		$scope.toolbar = {};
+		$scope.toolbar.childState = 'Members';
+		$scope.toolbar.items = [];
+		$scope.toolbar.getItems = function(query){
+			var results = query ? $filter('filter')($scope.toolbar.items, query) : $scope.toolbar.items;
+			return results;
+		}
+		/**
+		 * Object for subheader
+		 *
+		*/
+		$scope.subheader = {};
+		$scope.subheader.state = 'members';
+
+		/* Refreshes the list */
+		$scope.subheader.refresh = function(){
+			// start preloader
+			Preloader.preload();
+			$scope.init(true);
+		};
+		/**
+		 * Object for content view
+		 *
+		*/
+		$scope.fab = {};
+
+		$scope.fab.icon = 'mdi-plus';
+		$scope.fab.label = 'Member';
+
+		$scope.fab.action = function(){
+			$state.go('main.create-member');
+		};
+
+		/**
+		 * Status of search bar.
+		 *
+		*/
+		$scope.searchBar = false;
+
+		/**
+		 * Reveals the search bar.
+		 *
+		*/
+		$scope.showSearchBar = function(){
+			$scope.searchBar = true;
+		};
+
+		/**
+		 * Hides the search bar.
+		 *
+		*/
+		$scope.hideSearchBar = function(){
+			$scope.toolbar.searchText = '';
+			$scope.searchBar = false;
+		};
+		
+		var pushItem = function(data){
+			angular.forEach(data, function(member){
+				member.first_letter = member.full_name.charAt(0).toUpperCase();
+				angular.forEach(member.experiences, function(experience){
+					experience.date_started = new Date(experience.date_started);
+				});
+
+				var item = {};
+				item.display = member.full_name;
+
+				$scope.toolbar.items.push(item);
+			});
+			
+			return data;
+		}
+
+		
+		$scope.searchUserInput = function(){
+			$scope.member.all.show = false;
+			Preloader.preload();
+			Member.search($scope.toolbar)
+				.success(function(data){
+					pushItem(data);
+					$scope.member.results = data;
+					Preloader.stop();
+				})
+				.error(function(data){
+					Preloader.error();
+				});
+		};
+
+		$scope.editMember = function(id){
+			$state.go('main.edit-member', {'memberID':id});
+		}
+
+		$scope.deleteMember = function(id){
+			var confirm = $mdDialog.confirm()
+		        .title('Delete Member')
+		        .content('This member will not be included to your report anymore.')
+		        .ariaLabel('Delete Member')
+		        .ok('Delete')
+		        .cancel('Cancel');
+		    $mdDialog.show(confirm).then(function() {
+		      Member.delete(id)
+				.success(function(){
+					$scope.subheader.refresh();
+				});
+		    }, function() {
+		      return;
+		    });			
+		};
+
+		$scope.init = function(refresh){
+			$scope.member = {};
+			User.index()
+				.then(function(data){
+					$scope.fab.show = data.data.role == 'team-leader' ? true : false;
+					Member.department()
+						.success(function(data){
+							pushItem(data);
+
+							$scope.member.all = data;
+							$scope.member.all.show = true;
+							$scope.option = true;
+
+							if(refresh){
+								Preloader.stop();
+								Preloader.stop();
+							}
+						})
+						.error(function(){
+							Preloader.error();
+						});
+				}, function(){
+					Preloader.error();
+				})
+		}
+
+		$scope.init();
+	}]);
+teamLeaderModule
+	.controller('notificationToastController', ['$scope', '$state', 'Preloader', function($scope, $state, Preloader){
+		$scope.notification = Preloader.getNotification();
+
+		$scope.viewNotification = function(){
+			$state.go($scope.notification.state);
+		};
+	}]);
+teamLeaderModule
+	.controller('reportContentContainerController', ['$scope', '$filter', '$state', '$mdDialog', '$mdToast', 'Preloader', 'Member', 'Project', 'Position', 'Performance', 'User', 'Programme', 'Experience', function($scope, $filter, $state, $mdDialog, $mdToast, Preloader, Member, Project, Position, Performance, User, Programme, Experience){		
+		var user = Preloader.getUser();
+		// var departmentID = null;
+		var busy = false;
+		$scope.form = {};
+
+		$scope.months = [
+			'January',
+			'February',
+			'March',
+			'April',
+			'May',
+			'June',
+			'July',
+			'August',
+			'September',
+			'October',
+			'November',
+			'December',
+		];
+		
+		$scope.years = [];
+		
+		var dateCreated = 2016;
+
+		// will generate the dates that will be used in drop down menu
+		for (var i = new Date().getFullYear(); i >= dateCreated; i--) {
+			$scope.years.push(i);
+		};
+
+		$scope.details = {};
+		$scope.details.date_start_month = $scope.months[new Date().getMonth()];
+		$scope.details.date_start_year = $scope.years[0];
+		
+		$scope.getMondays = function(){
+			$scope.details.date_end = null;
+			$scope.details.date_start = null;
+			$scope.details.weekend = [];
+			// $scope.details.project_id = null;
+			Performance.getMondays($scope.details)
+				.success(function(data){
+					$scope.mondays = data;
+					$scope.show = true;
+					return;
+				})
+				.error(function(){
+					Preloader.error();
+				});
+
+		};
+
+		$scope.getWeekends = function(){
+			// $scope.details.project_id = null;	
+			$scope.details.date_end = null;	
+			$scope.details.weekend = [];
+			Performance.getWeekends($scope.details)
+				.success(function(data){
+					$scope.weekends = data;
+				})
+				.error(function(){
+					Preloader.error();
+				});
+		};
+
+		$scope.setDefaultPosition = function(){
+			angular.forEach($scope.members, function(member){
+				if(!member.output && !member.hours_worked){
+					member.position_id = $scope.details.position_id;
+					$scope.getTarget(member);
+				}
+			});
+		}
+
+		$scope.showPositions = function(projectID){
+			$scope.toolbar.items = [];
+			Position.project(projectID)
+				.success(function(data){
+					$scope.positions = data;
+				});
+
+			Experience.members(projectID)
+				.success(function(data){
+					$scope.members = data;
+					$scope.resetMembers();
+				});
+
+			Project.show(projectID)
+				.success(function(data){
+					$scope.project = data;
+					angular.forEach(data.positions, function(position){
+						var targets = [];
+						var index = 0;
+						angular.forEach(position.targets, function(target){
+							var target_effective_date = new Date(target.effective_date).setHours(0,0,0,0);
+							if(!target.deleted_at && target_effective_date <= new Date($scope.details.date_start)){
+								targets.splice(index, 0, target);
+								index++;
+							}
+							else if(target.deleted_at && target_effective_date < new Date($scope.details.date_start)){
+								targets.splice(index, 0, target);
+								index++;
+							}
+						});
+
+						if(targets.length){
+							$scope.default = 'false';
+							var beginner_productivity = $filter('filter')(targets, {experience:'Beginner'}, true);
+							var moderately_experienced_productivity = $filter('filter')(targets, {experience:'Moderately Experienced'}, true);
+							var experienced_productivity = $filter('filter')(targets, {experience:'Experienced'}, true);
+							var quality = $filter('filter')(targets, {experience:'Experienced'}, true);
+						}
+						else{
+							$scope.default = 'true';
+							var beginner_productivity = $filter('filter')(position.targets, {experience:'Beginner', deleted_at:null}, true);
+							var moderately_experienced_productivity = $filter('filter')(position.targets, {experience:'Moderately Experienced', deleted_at:null}, true);
+							var experienced_productivity = $filter('filter')(position.targets, {experience:'Experienced', deleted_at:null}, true);
+							var quality = $filter('filter')(position.targets, {experience:'Experienced', deleted_at:null}, true);							
+						}
+
+						position.targets = [];
+						position.targets.push(beginner_productivity[0]);
+						position.targets.push(moderately_experienced_productivity[0]);
+						position.targets.push(experienced_productivity[0]);
+						
+					});
+				});
+		};
+
+		/**
+		 * Object for toolbar
+		 *
+		*/
+		$scope.toolbar = {};
+		$scope.toolbar.items = [];
+		$scope.toolbar.getItems = function(query){
+			var results = query ? $filter('filter')($scope.toolbar.items, query) : $scope.toolbar.items;
+			return results;
+		}
+		$scope.toolbar.childState = 'Report';
+		// $scope.toolbar.hideSearchIcon = true;
+		/**
+		 * Object for subheader
+		 *
+		*/
+		$scope.subheader = {};
+		$scope.subheader.state = 'report';
+
+		$scope.subheader.refresh = function(){
+			Preloader.preload();
+			$scope.init(true);
+		}
+
+		/**
+		 * Status of search bar.
+		 *
+		*/
+		$scope.searchBar = false;
+
+		/**
+		 * Reveals the search bar.
+		 *
+		*/
+		$scope.showSearchBar = function(){
+			$scope.searchBar = true;
+		};
+
+		/**
+		 * Hides the search bar.
+		 *
+		*/
+		$scope.hideSearchBar = function(){
+			$scope.toolbar.userInput = '';
+			$scope.searchBar = false;
+		};
+		/**
+		 * Object for content view
+		 *
+		*/
+		$scope.rightSidenav = {};
+		$scope.rightSidenav.show = true;
+
+		$scope.fab = {};
+
+		$scope.fab.icon = 'mdi-check';
+		$scope.fab.label = 'Submit';
+		
+		$scope.fab.show = true;
+
+		$scope.fab.action = function(){
+			$scope.showErrors = true;
+			if($scope.form.createReportForm.$invalid){
+				angular.forEach($scope.form.createReportForm.$error, function(field){
+					angular.forEach(field, function(errorField){
+						errorField.$setTouched();
+					});
+				});
+
+				$mdDialog.show(
+					$mdDialog.alert()
+						.parent(angular.element(document.body))
+						.clickOutsideToClose(true)
+				        .title('Error')
+				        .content('Please complete the forms or check the errors.')
+				        .ariaLabel('Error')
+				        .ok('Got it!')
+				);
+			}
+			else{
+				if(!busy){
+					busy = true;
+					var count = 0;
+					angular.forEach($scope.members, function(item){
+						// item.department_id = departmentID;
+						item.date_start = $scope.details.date_start;
+						item.date_end = $scope.details.date_end;
+						item.project_id = $scope.details.project_id;
+						item.daily_work_hours = $scope.details.daily_work_hours;
+						count = item.include ? count + 1 : count;
+					});
+
+					if(count){
+						Preloader.preload();
+						Performance.store($scope.members)
+							.success(function(){
+								$mdToast.show(
+							      	$mdToast.simple()
+								        .content('Report Submitted.')
+								        .position('bottom right')
+								        .hideDelay(3000)
+							    );
+								Preloader.stop();
+								$state.go('main');
+								busy = false;
+							})
+							.error(function(){
+								Preloader.error();
+								busy = false;
+							});
+					}
+					else{
+						$mdDialog.show(
+							$mdDialog.alert()
+								.parent(angular.element(document.body))
+								.clickOutsideToClose(true)
+						        .title('Report not submitted.')
+						        .content('Empty reports are not submitted.')
+						        .ariaLabel('Empty Report')
+						        .ok('Got it!')
+						);
+					}
+				}
+			}
+		};
+
+		$scope.checkLimit = function(data){
+			// console.log(data);
+			var idx = $scope.members.indexOf(data);
+			// console.log(idx);
+			// gets the number of days worked in a day then multiply it to the daily work hours to get weekly limit
+			// $scope.details.weekly_hours = ((new Date($scope.details.date_end) - new Date($scope.details.date_start)) / (1000*60*60*24) + 1) * $scope.details.daily_work_hours;
+			Performance.checkLimit($scope.members[idx].member.id, $scope.details)
+				.success(function(data){
+					$scope.members[idx].limit = data;
+					// if($scope.reset){
+					// 	$scope.count++;
+					// 	// console.log($scope.count, $scope.members.length);
+					// 	if($scope.count == $scope.members.length){
+					// 		$scope.showMembers = true;
+					// 		$scope.reset = false;
+					// 	}
+					// }
+				})
+				.error(function(){
+					$scope.members[idx].limit = $scope.details.weekly_hours;
+				});
+		};
+
+		$scope.resetMembers = function(){
+			$scope.details.weekly_hours = ((new Date($scope.details.date_end) - new Date($scope.details.date_start)) / (1000*60*60*24) + 1) * $scope.details.daily_work_hours;
+			// $scope.count = 0;
+			$scope.showMembers = false;
+			// $scope.reset = true;
+			// $scope.checkLimit();
+			angular.forEach($scope.members, function(item, key){
+				item.hours_worked = null;
+				item.date_start = $scope.details.date_start;
+				item.date_end = $scope.details.date_end;
+				item.daily_work_hours = $scope.details.daily_work_hours;
+				item.weekly_hours = $scope.details.weekly_hours;
+				// $scope.checkLimit(item);
+			});
+
+			Performance.checkLimitAll($scope.members)
+				.success(function(data){
+					$scope.members = data;
+					angular.forEach($scope.members, function(item){
+						item.date_started = new Date(item.date_started);
+						item.first_letter = item.member.full_name.charAt(0).toUpperCase();
+						item.output_error = 0;
+
+						var toolbarItem = {};
+						toolbarItem.display = item.member.full_name;
+						$scope.toolbar.items.push(toolbarItem);
+						$scope.getTarget(item);
+					});
+
+
+					$scope.showMembers = true;
+					// $scope.reset = false;
+				})
+		}
+
+		$scope.checkBalance = function(data){
+			var index = $scope.members.indexOf(data);
+			$scope.members[index].balance = $scope.members[index].limit - $scope.members[index].hours_worked;
+			$scope.members[index].balance = $scope.members[index].balance ? $scope.members[index].balance.toFixed(2) : 0;
+		}
+
+		// $scope.checkProgramme = function(idx){
+		// 	$scope.details.programme_id = $scope.work_hours[idx].id;
+		// }
+
+		var monthDiff = function(d1, d2) {
+		    var months;
+		    months = (d2.getFullYear() - d1.getFullYear()) * 12;
+		    months -= d1.getMonth() + 1;
+		    months += d2.getMonth();
+		    return months <= 0 ? 0 : months;
+		}
+
+		$scope.getTarget = function(member){
+			if(member.position_id)
+			{
+				var index = $scope.members.indexOf(member);
+				var position = $filter('filter')($scope.project.positions, {id:member.position_id});
+
+				var tenure = monthDiff(new Date(member.date_started), new Date($scope.details.date_start));
+
+				member.experience = tenure < 3 ? 'Beginner' : ((tenure >= 3 && tenure < 6) ? 'Moderately Experienced' : 'Experienced');
+
+				var target = $filter('filter')(position[0].targets, {experience:member.experience}, true);
+				member.target_id = target[0].id;
+			}
+		}
+
+		// $scope.markInclude = function(member){
+		// 	if(member.limit){
+		// 		member.include = member.include ? false : true;
+		// 	}
+		// }
+
+		$scope.init = function(refresh){
+			Member.updateTenure()
+				.then(function(){
+					return;					
+				})
+				.then(function(){
+					Project.index()
+						.success(function(data){
+							$scope.projects = data;
+							return;
+						})
+						.error(function(){
+							Preloader.error();
+						})
+				})
+				.then(function(){		
+					Programme.index()
+						.success(function(data){
+							$scope.work_hours = data;
+							return;
+						})
+				})
+				.then(function(){
+					$scope.getMondays();
+
+					if(refresh){
+						Preloader.stop();
+						Preloader.stop();
+					}
+				}, function(){
+					Preloader.error();
+				})
+		};
+
+		$scope.init();
+	}]);
+teamLeaderModule
+	.controller('addMemberDialogController', ['$scope', '$mdDialog', 'Preloader', 'User', 'Member', function($scope, $mdDialog, Preloader, User, Member){
+		var user = Preloader.getUser();
+		var busy = false;
+		if(!user){
+			User.index()
+				.success(function(data){
+					user = data;
+				});
+		};
+
+		$scope.cancel = function(){
+			$mdDialog.cancel();
+		};
+
+		$scope.member = {};
+		$scope.member.team_leader_id = user.id;
+
+		$scope.submit = function(){
+			$scope.showErrors = true;
+			if($scope.addMemberForm.$invalid){
+				angular.forEach($scope.addMemberForm.$error, function(field){
+					angular.forEach(field, function(errorField){
+						errorField.$setTouched();
+					});
+				});
+			}
+			else{
+				/* Starts Preloader */
+				Preloader.preload();
+				/**
+				 * Stores Single Record
+				*/
+				console.log(busy);
+				if(!busy){
+					busy = true;
+					Member.store($scope.member)
+						.then(function(){
+							// Stops Preloader 
+							Preloader.stop();
+							busy = false;
+						}, function(){
+							Preloader.error();
+							busy = false;
+						});
+				}
+			}
+		}
+	}]);
+teamLeaderModule
+	.controller('approvalsDialogController', ['$scope', '$mdDialog', 'Approval', 'PerformanceApproval', 'Preloader', function($scope, $mdDialog, Approval, PerformanceApproval, Preloader){
+		var approvalID = Preloader.get();
+		$scope.user = Preloader.getUser();
+
+		Approval.details(approvalID)
+			.success(function(data){
+				$scope.details = data;
+			});
+			
+		$scope.markAll = function(){
+			if($scope.checkAll)
+			{
+				$scope.checkAll = true;
+			}
+			else{
+				$scope.checkAll = false;
+			}
+			angular.forEach($scope.details.request, function(item, key){
+				item.include = !$scope.checkAll;
+			});
+		}
+		
+		$scope.cancel = function(){
+			$mdDialog.cancel();
+		}
+		$scope.cancelRequest = function(){
+			Preloader.preload();
+			Approval.delete(approvalID)
+				.success(function(){
+					// Stops Preloader 
+					Preloader.stop();
+				})
+				.error(function(){
+					Preloader.error();
+				});
+		}
+	}]);
+teamLeaderModule
+	.controller('approvedApprovalsDetailsDialogController', ['$scope', '$mdDialog', 'Approval', 'PerformanceApproval', 'Preloader', function($scope, $mdDialog, Approval, PerformanceApproval, Preloader){
+		var performanceApprovalID = Preloader.get();
+
+		PerformanceApproval.approvedDetails(performanceApprovalID)
+			.success(function(data){
+				$scope.details = data;
+			});
+		
+		$scope.cancel = function(){
+			$mdDialog.cancel();
+		}
+	}]);
+teamLeaderModule
+	.controller('declinedApprovalsDetailsDialogController', ['$scope', '$mdDialog', 'Approval', 'PerformanceApproval', 'Preloader', function($scope, $mdDialog, Approval, PerformanceApproval, Preloader){
+		var performanceApprovalID = Preloader.get();
+
+		PerformanceApproval.declinedDetails(performanceApprovalID)
+			.success(function(data){
+				$scope.details = data;
+			});
+		
+		$scope.cancel = function(){
+			$mdDialog.cancel();
+		}
+	}]);
+teamLeaderModule
+	.controller('downloadReportDialogController', ['$scope', '$mdDialog', '$filter', 'Preloader', 'Report', 'Performance', 'Programme', 'Project', 'Position', 'Member', 'Experience', function($scope, $mdDialog, $filter, Preloader, Report, Performance, Programme, Project, Position, Member, Experience){
+		$scope.details = {};
+		$scope.details.type = 'Weekly';
+		$scope.details.date_start = new Date();
+		$scope.details.date_end = new Date();
+		$scope.maxDate = new Date();
+
+		var user = Preloader.getUser();
+
+		if(!user)
+		{
+			User.index()
+				.success(function(data){
+					user = data;
+				})
+				.error(function(){
+					Preloader.error();
+				});
+		}
+
+		// $scope.hours = [7.5, 8.3, 9.1];
+
+		$scope.months = [
+			{'value': '01', 'month': 'January'},
+			{'value': '02', 'month': 'February'},
+			{'value': '03', 'month': 'March'},
+			{'value': '04', 'month': 'April'},
+			{'value': '05', 'month': 'May'},
+			{'value': '06', 'month': 'June'},
+			{'value': '07', 'month': 'July'},
+			{'value': '08', 'month': 'August'},
+			{'value': '09', 'month': 'September'},
+			{'value': '10', 'month': 'October'},
+			{'value': '11', 'month': 'November'},
+			{'value': '12', 'month': 'December'},
+		];
+
+		$scope.months_array = [
+			'January',
+			'February',
+			'March',
+			'April',
+			'May',
+			'June',
+			'July',
+			'August',
+			'September',
+			'October',
+			'November',
+			'December',
+		];
+
+		$scope.years = [];
+		
+		var dateCreated = 2016;
+
+		// will generate the dates that will be used in drop down menu
+		for (var i = new Date().getFullYear(); i >= dateCreated; i--) {
+			$scope.years.push(i);
+		};
+
+		$scope.details.date_start_month = $scope.months_array[new Date().getMonth()];
+		$scope.details.date_start_year = $scope.years[0];
+		
+		$scope.getMondays = function(){
+			$scope.details.date_end = null;
+			$scope.details.date_start = null;
+			$scope.details.weekend = [];
+			Performance.getMondays($scope.details)
+				.success(function(data){
+					$scope.mondays = data;
+				})
+				.error(function(){
+					Preloader.error();
+				});
+		};
+
+		$scope.getWeekends = function(){	
+			$scope.details.date_end = null;	
+			$scope.details.weekend = [];
+			Performance.getWeekends($scope.details)
+				.success(function(data){
+					$scope.weekends = data;
+				})
+				.error(function(){
+					Preloader.error();
+				});
+		};
+
+		$scope.fetchMembers = function(){
+			var projectID = $scope.details.project;
+			
+			if($scope.details.project == 'all'){
+				Position.unique()
+					.success(function(data){
+						$scope.positions = data;
+					})
+
+				// Member.department()
+				// 	.success(function(data){
+				// 		angular.forEach(data, function(member){
+				// 			member.member_id = member.id;
+				// 		});
+
+				// 		$scope.members = data;
+				// 	})
+			}
+			else{
+				Project.show(projectID)
+					.success(function(data){
+						$scope.positions = data.positions;					
+					})
+
+				// Experience.members(projectID)
+				// 	.success(function(data){
+				// 		angular.forEach(data, function(member){
+				// 			member.full_name = member.member.full_name;
+				// 		});
+
+				// 		$scope.members = data;
+				// 	})
+			}
+		}
+
+		$scope.cancel = function(){
+			$mdDialog.cancel();
+		};
+
+		$scope.submit = function(){
+			if($scope.downloadReportForm.$invalid){
+				$scope.showErrors = true;
+				angular.forEach($scope.downloadReportForm.$error, function(field){
+					angular.forEach(field, function(errorField){
+						errorField.$setTouched();
+					});
+				});
+			}
+			else{
+				if($scope.details.type=='Weekly')
+				{
+					var win = window.open('/report-download-weekly-department/' + user.department_id + '/date_start/' + $filter('date')($scope.details.date_start, 'yyyy-MM-dd') + '/to/' + $filter('date')($scope.details.date_end, 'yyyy-MM-dd') + '/daily-work-hours/' + $scope.details.daily_work_hours , '_blank');
+					win.focus();
+				}
+				else if($scope.details.type=='Monthly'){
+					var win = window.open('/report-download-monthly-department/' + user.department_id + '/month/' + $scope.details.month + '/year/' + $scope.details.year + '/daily-work-hours/' + $scope.details.daily_work_hours, '_blank');
+					win.focus();	
+				}
+				else if($scope.details.type=='Team Performance'){
+					var win = window.open('/report-team-performance/' + $scope.details.month + '/year/' + $scope.details.year + '/daily-work-hours/' + $scope.details.daily_work_hours + '/download/1', '_blank');
+					win.focus();	
+				}
+				else if($scope.details.type=='Performance Evaluation'){
+					$scope.details.date_start = $scope.details.date_start.toDateString();
+					$scope.details.date_end = $scope.details.date_end.toDateString();
+
+					if($scope.details.project == 'all'){
+						var win = window.open('/performance-evaluation-multiple/' + $scope.details.date_start + '/date_end/' + $scope.details.date_end + '/daily-work-hours/' + $scope.details.daily_work_hours + '/department/' + $scope.details.department + '/position/' + $scope.details.position + /member/ + $scope.details.member + '/download/1', '_blank');
+					}
+					else{						
+						var win = window.open('/performance-evaluation/' + $scope.details.date_start + '/date_end/' + $scope.details.date_end + '/daily-work-hours/' + $scope.details.daily_work_hours + '/department/' + $scope.details.department + '/project/' + $scope.details.project + '/position/' + $scope.details.position + /member/ + $scope.details.member + '/download/1', '_blank');
+					}
+
+					win.focus();	
+				}
+
+				$mdDialog.hide();
+			}
+		}
+
+		$scope.init = function(){
+			Project.index()
+				.success(function(data){
+					$scope.projects = data;
+				})
+
+			Programme.index()
+				.success(function(data){
+					$scope.work_hours = data;
+					$scope.getMondays();
+				})
+				.error(function(){
+					Preloader.error();
+				})
+
+			Member.index()
+				.success(function(data){
+					angular.forEach(data, function(member){
+						member.member_id = member.id;
+					});
+					$scope.members = data;
+				})
+		}();
+
+		$scope.getPositions = function(){
+			Project.show($scope.details.project)
+				.success(function(data){
+					$scope.positions = data.positions;
+				})
+		}
+
+	}]);
+teamLeaderModule
+	.controller('editMemberDialogController', ['$scope', '$mdDialog', 'Preloader', 'Member', function($scope, $mdDialog, Preloader, Member){
+		var member_id = Preloader.get();
+		var busy = false;
+
+		$scope.cancel = function(){
+			$mdDialog.cancel();
+		};
+
+		Member.show(member_id)
+			.success(function(data){
+				$scope.member = data;
+			});
+
+		$scope.submit = function(){
+			$scope.showErrors = true;
+			if($scope.editMemberForm.$invalid){
+				angular.forEach($scope.editMemberForm.$error, function(field){
+					angular.forEach(field, function(errorField){
+						errorField.$setTouched();
+					});
+				});
+			}
+			else{
+				/* Starts Preloader */
+				Preloader.preload();
+				/**
+				 * Stores Single Record
+				*/
+				if(!busy){
+					busy = true;
+					Member.update(member_id, $scope.member)
+						.then(function(){
+							// Stops Preloader 
+							Preloader.stop();
+							busy = false; 
+						}, function(){
+							Preloader.error();
+							busy = false; 
+						});
+				}
+			}
+		}
+	}]);
+teamLeaderModule
+	.controller('evaluateDialogController', ['$scope', '$mdDialog', '$filter', 'Preloader', 'Report', 'Performance', 'Project', 'Experience', 'Programme', 'Department', 'Member', 'Position', function($scope, $mdDialog, $filter, Preloader, Report, Performance, Project, Experience, Programme, Department, Member, Position){
+		$scope.details = {};
+		$scope.details.date_start = new Date();
+		$scope.details.date_end = new Date();
+		$scope.maxDate = new Date();
+
+		Project.index()
+			.success(function(data){
+				$scope.projects = data;
+			})
+
+		Programme.index()
+			.success(function(data){
+				$scope.work_hours = data;
+			})
+			.error(function(){
+				Preloader.error();
+			})
+
+		Member.index()
+			.success(function(data){
+				$scope.members = data;
+			})
+
+		$scope.getPositions = function(){
+			if($scope.details.project == 'all'){
+				Position.unique()
+					.success(function(data){
+						$scope.positions = data;
+					})
+			}
+			else{
+				Project.show($scope.details.project)
+					.success(function(data){
+						$scope.positions = data.positions;
+					})
+			}
+		}
+
+		// $scope.hours = [7.5, 8.3, 9.1];
+
+		$scope.months = [
+			{'value': '01', 'month': 'January'},
+			{'value': '02', 'month': 'February'},
+			{'value': '03', 'month': 'March'},
+			{'value': '04', 'month': 'April'},
+			{'value': '05', 'month': 'May'},
+			{'value': '06', 'month': 'June'},
+			{'value': '07', 'month': 'July'},
+			{'value': '08', 'month': 'August'},
+			{'value': '09', 'month': 'September'},
+			{'value': '10', 'month': 'October'},
+			{'value': '11', 'month': 'November'},
+			{'value': '12', 'month': 'December'},
+		];
+
+		$scope.months_array = [
+			'January',
+			'February',
+			'March',
+			'April',
+			'May',
+			'June',
+			'July',
+			'August',
+			'September',
+			'October',
+			'November',
+			'December',
+		];
+
+		$scope.years = [];
+		
+		var dateCreated = 2016;
+
+		// will generate the dates that will be used in drop down menu
+		for (var i = new Date().getFullYear(); i >= dateCreated; i--) {
+			$scope.years.push(i);
+		};
+
+		$scope.details.date_start_month = $scope.months_array[new Date().getMonth()];
+		$scope.details.date_start_year = $scope.years[0];
+
+		$scope.cancel = function(){
+			$mdDialog.cancel();
+		};
+
+		$scope.submit = function(){
+			if($scope.performanceEvaluationForm.$invalid){
+				$scope.showErrors = true;
+				angular.forEach($scope.performanceEvaluationForm.$error, function(field){
+					angular.forEach(field, function(errorField){
+						errorField.$setTouched();
+					});
+				});
+			}
+			else{
+				$scope.details.date_start = $scope.details.date_start.toDateString();
+				$scope.details.date_end = $scope.details.date_end.toDateString();
+
+				if($scope.details.project == 'all'){
+					Performance.evaluationMultiple($scope.details.date_start, $scope.details.date_end, $scope.details.daily_work_hours, $scope.details.department, $scope.details.position, $scope.details.member)
+						.success(function(data){
+							data.multiple = true;
+							Preloader.stop(data);
+						})
+						.error(function(){
+							Preloader.error();
+						})
+				}
+
+				else{
+					Performance.evaluation($scope.details.date_start, $scope.details.date_end, $scope.details.daily_work_hours, $scope.details.department, $scope.details.project, $scope.details.position, $scope.details.member)
+						.success(function(data){
+							Preloader.stop(data);
+						})
+						.error(function(){
+							Preloader.error();
+						})
+				}
+			}
+		}
+	}]);
+teamLeaderModule
+	.controller('performanceMonthlyViewDialogController', ['$scope', '$mdDialog', 'Performance', 'Preloader', function($scope, $mdDialog, Performance, Preloader){		
+		$scope.member = Preloader.get();
+
+		Performance.monthly($scope.member)
+			.success(function(data){
+				$scope.member = data;
+
+				angular.forEach(data.positions, function(position){
+					angular.forEach(position.performances, function(performance){
+						performance.date_start = new Date(performance.date_start);
+						performance.date_end = new Date(performance.date_end);
+					})
+				});
+
+				$scope.positions = data.positions;
+			})
+			.error(function(){
+				Preloader.error();
+			});
+
+		$scope.cancel = function(){
+			$mdDialog.cancel();
+		}
+	}]);
+//# sourceMappingURL=team-leader.js.map

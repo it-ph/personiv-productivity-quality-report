@@ -20,6 +20,14 @@
 					<div class="pattern" ng-if="duplicate">Position already exists.</div>
 				</md-input-container>
 			</div>
+			<div flex>
+				<h4>Effective Date</h4>
+				<md-datepicker name="EffectiveDate" ng-model="position.effective_date" md-placeholder="Enter date" required></md-datepicker>
+				<div class="validation-messages" ng-messages="addPositionForm.EffectiveDate.$error">
+					<div ng-message="valid">The entered value is not a date!</div>
+					<div ng-message="required">Effective date is required!</div>
+				</div>
+			</div>
 			
 			<div ng-repeat="experience in experiences" flex layout="column">
 				<md-subheader class="md-no-sticky md-accent" flex>

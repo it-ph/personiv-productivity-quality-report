@@ -29,64 +29,64 @@ class TargetController extends Controller
 
         foreach ($project->positions as $key => $value) {
             /* Productivity */
-            $beginner_productivity_query = Target::where('position_id', $value->id)->where('type', 'Productivity')->where('experience', 'Beginner')->where('created_at', '<=', $report->date_end)->orderBy('created_at', 'desc')->first();
+            $beginner_productivity_query = Target::where('position_id', $value->id)->where('type', 'Productivity')->where('experience', 'Beginner')->where('effective_date', '<=', $report->date_end)->orderBy('effective_date', 'desc')->first();
             
             if($beginner_productivity_query)
             {
                 $beginner_productivity = $beginner_productivity_query->value;
             }
             else{
-               $beginner_productivity = Target::where('position_id', $value->id)->where('type', 'Productivity')->where('experience', 'Beginner')->orderBy('created_at', 'desc')->first()->value;
+               $beginner_productivity = Target::where('position_id', $value->id)->where('type', 'Productivity')->where('experience', 'Beginner')->orderBy('effective_date', 'desc')->first()->value;
             }
 
-            $moderately_experienced_productivity_query = Target::where('position_id', $value->id)->where('type', 'Productivity')->where('experience', 'Moderately Experienced')->where('created_at', '<=', $report->date_end)->orderBy('created_at', 'desc')->first();
+            $moderately_experienced_productivity_query = Target::where('position_id', $value->id)->where('type', 'Productivity')->where('experience', 'Moderately Experienced')->where('effective_date', '<=', $report->date_end)->orderBy('effective_date', 'desc')->first();
             if($moderately_experienced_productivity_query)
             {
                 $moderately_experienced_productivity = $moderately_experienced_productivity_query->value;
             }
             else{
-                $moderately_experienced_productivity = Target::where('position_id', $value->id)->where('type', 'Productivity')->where('experience', 'Moderately Experienced')->orderBy('created_at', 'desc')->first()->value;
+                $moderately_experienced_productivity = Target::where('position_id', $value->id)->where('type', 'Productivity')->where('experience', 'Moderately Experienced')->orderBy('effective_date', 'desc')->first()->value;
             }
             
 
-            $experienced_productivity_query = Target::where('position_id', $value->id)->where('type', 'Productivity')->where('experience', 'Experienced')->where('created_at', '<=', $report->date_end)->orderBy('created_at', 'desc')->first();
+            $experienced_productivity_query = Target::where('position_id', $value->id)->where('type', 'Productivity')->where('experience', 'Experienced')->where('effective_date', '<=', $report->date_end)->orderBy('effective_date', 'desc')->first();
 
             if($experienced_productivity_query){
                 $experienced_productivity = $experienced_productivity_query->value;
             }
             else{
-                $experienced_productivity = Target::where('position_id', $value->id)->where('type', 'Productivity')->where('experience', 'Experienced')->orderBy('created_at', 'desc')->first()->value;                
+                $experienced_productivity = Target::where('position_id', $value->id)->where('type', 'Productivity')->where('experience', 'Experienced')->orderBy('effective_date', 'desc')->first()->value;                
             }
 
             /* Quality */
-            $beginner_quality_query = Target::where('position_id', $value->id)->where('type', 'Quality')->where('experience', 'Beginner')->where('created_at', '<=', $report->date_end)->orderBy('created_at', 'desc')->first();
+            $beginner_quality_query = Target::where('position_id', $value->id)->where('type', 'Quality')->where('experience', 'Beginner')->where('effective_date', '<=', $report->date_end)->orderBy('effective_date', 'desc')->first();
 
             if($beginner_quality_query)
             {
                 $beginner_quality = $beginner_quality_query->value;
             }
             else{
-                $beginner_quality = Target::where('position_id', $value->id)->where('type', 'Quality')->where('experience', 'Beginner')->orderBy('created_at', 'desc')->first()->value;
+                $beginner_quality = Target::where('position_id', $value->id)->where('type', 'Quality')->where('experience', 'Beginner')->orderBy('effective_date', 'desc')->first()->value;
             }
             
 
-            $moderately_experienced_quality_query = Target::where('position_id', $value->id)->where('type', 'Quality')->where('experience', 'Moderately Experienced')->where('created_at', '<=', $report->date_end)->orderBy('created_at', 'desc')->first();
+            $moderately_experienced_quality_query = Target::where('position_id', $value->id)->where('type', 'Quality')->where('experience', 'Moderately Experienced')->where('effective_date', '<=', $report->date_end)->orderBy('effective_date', 'desc')->first();
 
             if($moderately_experienced_quality_query){
                 $moderately_experienced_quality = $moderately_experienced_quality_query->value;
             }
             else{
-                $moderately_experienced_quality = Target::where('position_id', $value->id)->where('type', 'Quality')->where('experience', 'Moderately Experienced')->orderBy('created_at', 'desc')->first()->value;    
+                $moderately_experienced_quality = Target::where('position_id', $value->id)->where('type', 'Quality')->where('experience', 'Moderately Experienced')->orderBy('effective_date', 'desc')->first()->value;    
             }
             
             
-            $experienced_quality_query = Target::where('position_id', $value->id)->where('type', 'Quality')->where('experience', 'Experienced')->where('created_at', '<=', $report->date_end)->orderBy('created_at', 'desc')->first();
+            $experienced_quality_query = Target::where('position_id', $value->id)->where('type', 'Quality')->where('experience', 'Experienced')->where('effective_date', '<=', $report->date_end)->orderBy('effective_date', 'desc')->first();
 
             if($experienced_quality_query){
                 $experienced_quality = $experienced_quality_query->value;
             }
             else{
-                $experienced_quality = Target::where('position_id', $value->id)->where('type', 'Quality')->where('experience', 'Experienced')->orderBy('created_at', 'desc')->first()->value;
+                $experienced_quality = Target::where('position_id', $value->id)->where('type', 'Quality')->where('experience', 'Experienced')->orderBy('effective_date', 'desc')->first()->value;
             }
 
             array_push($project->beginner_productivity, $beginner_productivity);
@@ -176,6 +176,7 @@ class TargetController extends Controller
                 $i.'.position_id' => 'required|numeric',
                 $i.'.project_id' => 'required|numeric',
                 $i.'.department_id' => 'required|numeric',
+                $i.'.effective_date' => 'required',
             ]);
 
             $target = new Target;
@@ -187,6 +188,7 @@ class TargetController extends Controller
             $target->position_id = $request->input($i.'.position_id');
             $target->project_id = $request->input($i.'.project_id');
             $target->department_id = $request->input($i.'.department_id');
+            $target->effective_date = Carbon::parse($request->input($i.'.effective_date'));
             // $target->active = true;
 
             $target->save();
@@ -235,6 +237,7 @@ class TargetController extends Controller
                 $i.'.position_id' => 'required|numeric',
                 $i.'.project_id' => 'required|numeric',
                 $i.'.department_id' => 'required|numeric',
+                $i.'.effective_date' => 'required',
             ]);
 
             $target = Target::where('id', $request->input($i.'.id'))->delete();
@@ -251,6 +254,7 @@ class TargetController extends Controller
             $new_target->position_id = $request->input($i.'.position_id');
             $new_target->project_id = $request->input($i.'.project_id');
             $new_target->department_id = $request->input($i.'.department_id');
+            $new_target->effective_date = Carbon::parse($request->input($i.'.effective_date'));
             // $new_target->active = true;
 
             $new_target->save();

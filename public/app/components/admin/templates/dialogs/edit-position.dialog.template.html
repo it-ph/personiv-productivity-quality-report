@@ -18,6 +18,12 @@
 						<div ng-messages-include="/app/shared/templates/validation-message.html"></div>
 					</div>
 				</md-input-container>
+				<h4>Effective Date</h4>
+				<md-datepicker name="EffectiveDate" ng-model="position.effective_date" md-placeholder="Enter date" required></md-datepicker>
+				<div class="validation-messages" ng-messages="editPositionForm.EffectiveDate.$error">
+					<div ng-message="valid">The entered value is not a date!</div>
+					<div ng-message="required">Effective date is required!</div>
+				</div>
 			</div>
 			
 			<div ng-repeat="experience in experiences" flex layout="column">
