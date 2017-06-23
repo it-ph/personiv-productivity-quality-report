@@ -546,6 +546,7 @@ class PerformanceController extends Controller
             $performance->experience = $request->input($i.'.experience');
             $performance->include = true;
             $performance->weekly_hours = $request->input($i.'.weekly_hours');
+            $performance->target_id = $request->input($i.'.target_id');
 
             array_push($performances_array, $performance);
         }

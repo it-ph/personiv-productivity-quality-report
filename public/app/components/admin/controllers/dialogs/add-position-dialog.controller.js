@@ -5,6 +5,7 @@ adminModule
 		var busy = false;
 
 		$scope.position = {};
+		$scope.position.effective_date = new Date();
 		$scope.position.department_id = departmentID;
 		$scope.position.project_id = projectID;
 

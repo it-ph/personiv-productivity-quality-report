@@ -119,12 +119,12 @@ teamLeaderModule
 							var targets = [];
 							var index = 0;
 							angular.forEach(position.targets, function(target){
-								var target_created_at = new Date(target.created_at).setHours(0,0,0,0);
-								if(!target.deleted_at && target_created_at <= new Date($scope.details.date_start)){
+								var target_effective_date = new Date(target.effective_date).setHours(0,0,0,0);
+								if(!target.deleted_at && target_effective_date <= new Date($scope.details.date_start)){
 									targets.splice(index, 0, target);
 									index++;
 								}
-								else if(target.deleted_at && target_created_at < new Date($scope.details.date_start)){
+								else if(target.deleted_at && target_effective_date < new Date($scope.details.date_start)){
 									targets.splice(index, 0, target);
 									index++;
 								}
@@ -175,6 +175,7 @@ teamLeaderModule
 				if(performance.include){
 					performance.include = false;
 					$scope.checkLimitAll = false;
+					$scope.getTarget();
 				}
 				else{
 					performance.include = true;
