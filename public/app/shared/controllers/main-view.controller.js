@@ -32,7 +32,7 @@ sharedModule
 				 * Pusher
 				 *
 				*/
-				var pusher = new Pusher('95c0378bb7677e168674', {
+				var pusher = new Pusher('c57bb39ded6a7e20aa67', {
 			    	encrypted: true
 			    });
 				if($scope.user.role == 'admin'){
