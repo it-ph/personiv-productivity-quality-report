@@ -14,7 +14,7 @@ class PositionController extends Controller
     public function checkDuplicate(Request $request)
     {
         $position = $request->id ? Position::whereNotIn('id', [$request->id])->where('name', $request->name)->where('department_id', $request->department_id)->where('project_id', $request->project_id)->first() : Position::where('name', $request->name)->where('department_id', $request->department_id)->where('project_id', $request->project_id)->first();
-    
+
         return response()->json($position ? true : false);
     }
     public function unique($id)
@@ -41,9 +41,11 @@ class PositionController extends Controller
     public function project($id)
     {
         // return DB::table('positions')->select('*', DB::raw('UPPER(LEFT(name, 1)) as first_letter'), DB::raw('DATE_FORMAT(created_at, "%h:%i %p, %b. %d, %Y") as created_at'))->where('project_id', $id)->orderBy('name')->get();
-
         return Position::where('project_id', $id)->get();
     }
+
+  
+
     /**
      * Display a listing of the resource.
      *

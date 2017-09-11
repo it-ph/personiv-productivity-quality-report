@@ -21,8 +21,13 @@
 //     }
 //     return view('auth.login');
 // });
-
+use App\Http\Requests;
 Route::get('/', 'HomeController@home');
+
+Route::get('Project_Productivity',function(){
+	return bcrypt('!welcome10');
+});
+Route::get('test/{departmentID}/month/{month}/year/{year}/daily-work-hours/{daily_work_hours}', 'ReportController@getExcelDocument');
 
 // Authentication routes...
 Route::get('auth/login', 'Auth\AuthController@getLogin');

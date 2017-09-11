@@ -71,6 +71,7 @@ adminModule
 									item.position_id = data.id;
 									item.department_id = departmentID;
 									item.project_id = projectID;
+									item.effective_date = $scope.position.effective_date.toDateString();
 								});
 
 								Target.store($scope.experiences)

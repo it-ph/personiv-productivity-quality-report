@@ -28,8 +28,8 @@ class ReportController extends Controller
 
         $project = Project::with('positions')->where('department_id', $request->id)->first();
         $first_report = Report::where('project_id', $project->id)->whereBetween('date_start', [$this->date_start, $this->date_end])->orderBy('date_start')->first();
-        
-        $project->reports = Report::with('project')->where('project_id', $project->id)->whereBetween('date_start', [$this->date_start, $this->date_end])->where('daily_work_hours', 'like', $first_report->daily_work_hours.'%')->get();   
+
+        $project->reports = Report::with('project')->where('project_id', $project->id)->whereBetween('date_start', [$this->date_start, $this->date_end])->where('daily_work_hours', 'like', $first_report->daily_work_hours.'%')->get();
         $project->members = Experience::with(['member' => function($query){ $query->withTrashed(); }])->where('project_id', $project->id)->get();
 
         foreach ($project->members as $member_key => $member) {
@@ -40,7 +40,7 @@ class ReportController extends Controller
             $member->monthly_productivity = 0;
             $member->monthly_quality = 0;
         }
-        
+
         foreach ($project->reports as $report_key => $report) {
             $project->position = Position::where('id', $request->input('position.id'))->first();
             $report->members = Experience::with('member')->where('project_id', $report->project_id)->get();
@@ -58,9 +58,9 @@ class ReportController extends Controller
             $report->date_end = Carbon::parse($report->date_end)->toFormattedDateString();
         }
 
-        if(count($project->reports)){            
+        if(count($project->reports)){
             foreach ($project->members as $member_key => $member) {
-                for ($i=0; $i < count($project->reports); $i++) { 
+                for ($i=0; $i < count($project->reports); $i++) {
                     if($project->reports[$i]->members[$member_key]->performance){
                         $target = $project->reports[$i]->members[$member_key]->performance->target;
                         $member->average_output = $member->total_output ? round($member->total_output / $member->total_hours_worked * $first_report->daily_work_hours, 2) : 0;
@@ -69,23 +69,23 @@ class ReportController extends Controller
 
                         if(!$member->monthly_productivity && !$member->monthly_quality)
                         {
-                            $member->quadrant = 'N/A'; 
+                            $member->quadrant = 'N/A';
                         }
                         else if($member->monthly_productivity < 100 && $member->monthly_quality >= $target->quality)
                         {
-                            $member->quadrant = 'Quadrant 1'; 
+                            $member->quadrant = 'Quadrant 1';
                         }
                         else if($member->monthly_productivity >= 100 && $member->monthly_quality >= $target->quality)
                         {
-                            $member->quadrant = 'Quadrant 2'; 
+                            $member->quadrant = 'Quadrant 2';
                         }
                         else if($member->monthly_productivity >= 100 && $member->monthly_quality < $target->quality)
                         {
-                            $member->quadrant = 'Quadrant 3'; 
+                            $member->quadrant = 'Quadrant 3';
                         }
                         else if($member->monthly_productivity < 100 && $member->monthly_quality < $target->quality)
                         {
-                            $member->quadrant = 'Quadrant 4'; 
+                            $member->quadrant = 'Quadrant 4';
                         }
                     }
                 }
@@ -106,7 +106,7 @@ class ReportController extends Controller
 
         foreach ($projects as $project_key => $project) {
             $project->first_report = $request->daily_work_hours ? Report::where('project_id', $project->id)->where('daily_work_hours', 'like', $request->daily_work_hours.'%')->whereBetween('date_start', [$this->date_start, $this->date_end])->first() : Report::where('project_id', $project->id)->whereBetween('date_start', [$this->date_start, $this->date_end])->first();
-            
+
             if($project->first_report){
                 $project->date_start = $this->date_start->toFormattedDateString();
                 $project->date_end = $this->date_end->toFormattedDateString();
@@ -177,7 +177,7 @@ class ReportController extends Controller
                                         $project->positions[$position_key]->moderately_experienced += 1;
                                     }
                                     $project->positions[$position_key]->moderately_experienced_total_output += $performance->output;
-                                    $project->positions[$position_key]->moderately_experienced_total_hours_worked += $performance->hours_worked;   
+                                    $project->positions[$position_key]->moderately_experienced_total_hours_worked += $performance->hours_worked;
                                 }
                                 else if($performance->target->experience == 'Experienced'){
                                     if($performance_key === 0){
@@ -187,7 +187,7 @@ class ReportController extends Controller
                                     $project->positions[$position_key]->experienced_total_hours_worked += $performance->hours_worked;
                                 }
                             }
-                            
+
                             $project->positions[$position_key]->head_count = $project->positions[$position_key]->beginner + $project->positions[$position_key]->moderately_experienced + $project->positions[$position_key]->experienced;
                             $position->total_average_output = $position->total_output ? round($position->total_output / $position->total_hours_worked * $performances[0]->daily_work_hours, 2) : 0;
                             $position->monthly_productivity = $position->total_average_output ? round($position->total_average_output / $performances[0]->target->productivity * 100, 2) : 0;
@@ -195,23 +195,23 @@ class ReportController extends Controller
 
                             if(!$position->monthly_productivity && !$position->monthly_quality)
                             {
-                                $position->quadrant = 'N/A'; 
+                                $position->quadrant = 'N/A';
                             }
                             else if($position->monthly_productivity < 100 && $position->monthly_quality >= $performances[0]->target->quality)
                             {
-                                $position->quadrant = 'Quadrant 1'; 
+                                $position->quadrant = 'Quadrant 1';
                             }
                             else if($position->monthly_productivity >= 100 && $position->monthly_quality >= $performances[0]->target->quality)
                             {
-                                $position->quadrant = 'Quadrant 2'; 
+                                $position->quadrant = 'Quadrant 2';
                             }
                             else if($position->monthly_productivity >= 100 && $position->monthly_quality < $performances[0]->target->quality)
                             {
-                                $position->quadrant = 'Quadrant 3'; 
+                                $position->quadrant = 'Quadrant 3';
                             }
                             else if($position->monthly_productivity < 100 && $position->monthly_quality < $performances[0]->target->quality)
                             {
-                                $position->quadrant = 'Quadrant 4'; 
+                                $position->quadrant = 'Quadrant 4';
                             }
 
                             $overall_monthly_productivity += $position->monthly_productivity;
@@ -226,14 +226,14 @@ class ReportController extends Controller
                     }
                 }
 
-                foreach ($project->positions as $position_key => $position) {                    
+                foreach ($project->positions as $position_key => $position) {
                     $position->beginner_total_average_output = $position->beginner_total_hours_worked ? round($position->beginner_total_output / $position->beginner_total_hours_worked * $project->first_report->daily_work_hours, 2) : 0;
                     $position->moderately_experienced_total_average_output = $position->moderately_experienced_total_hours_worked ? round($position->moderately_experienced_total_output / $position->moderately_experienced_total_hours_worked * $project->first_report->daily_work_hours, 2) : 0;
                     $position->experienced_total_average_output = $position->experienced_total_hours_worked ? round($position->experienced_total_output / $position->experienced_total_hours_worked * $project->first_report->daily_work_hours, 2) : 0;
-                
+
                     $project->beginner_total_output += $position->beginner_total_output;
                     $project->beginner_total_hours_worked += $position->beginner_total_hours_worked;
-                    
+
                     $project->moderately_experienced_total_output += $position->moderately_experienced_total_output;
                     $project->moderately_experienced_total_hours_worked += $position->moderately_experienced_total_hours_worked;
 
@@ -248,7 +248,7 @@ class ReportController extends Controller
                 $project->total_output = $project->beginner_total_output + $project->moderately_experienced_total_output + $project->experienced_total_output;
                 $project->total_hours_worked = $project->beginner_total_hours_worked + $project->moderately_experienced_total_hours_worked + $project->experienced_total_hours_worked;
                 $project->total_average_output = $project->total_hours_worked ? round($project->total_output / $project->total_hours_worked * $project->first_report->daily_work_hours, 2) : 0;
-            }            
+            }
         }
 
         return $projects;
@@ -342,7 +342,7 @@ class ReportController extends Controller
         //                                 $project->positions[$position_key]->moderately_experienced += 1;
         //                             }
         //                             $project->positions[$position_key]->moderately_experienced_total_output += $performance->output;
-        //                             $project->positions[$position_key]->moderately_experienced_total_hours_worked += $performance->hours_worked;   
+        //                             $project->positions[$position_key]->moderately_experienced_total_hours_worked += $performance->hours_worked;
         //                         }
         //                         else if($performance->target->experience == 'Experienced'){
         //                             if($performance_key === 0){
@@ -360,23 +360,23 @@ class ReportController extends Controller
 
         //                     if(!$position->monthly_productivity && !$position->monthly_quality)
         //                     {
-        //                         $position->quadrant = 'N/A'; 
+        //                         $position->quadrant = 'N/A';
         //                     }
         //                     else if($position->monthly_productivity < 100 && $position->monthly_quality >= $performances[0]->target->quality)
         //                     {
-        //                         $position->quadrant = 'Quadrant 1'; 
+        //                         $position->quadrant = 'Quadrant 1';
         //                     }
         //                     else if($position->monthly_productivity >= 100 && $position->monthly_quality >= $performances[0]->target->quality)
         //                     {
-        //                         $position->quadrant = 'Quadrant 2'; 
+        //                         $position->quadrant = 'Quadrant 2';
         //                     }
         //                     else if($position->monthly_productivity >= 100 && $position->monthly_quality < $performances[0]->target->quality)
         //                     {
-        //                         $position->quadrant = 'Quadrant 3'; 
+        //                         $position->quadrant = 'Quadrant 3';
         //                     }
         //                     else if($position->monthly_productivity < 100 && $position->monthly_quality < $performances[0]->target->quality)
         //                     {
-        //                         $position->quadrant = 'Quadrant 4'; 
+        //                         $position->quadrant = 'Quadrant 4';
         //                     }
 
         //                     $overall_monthly_productivity += $position->monthly_productivity;
@@ -391,14 +391,14 @@ class ReportController extends Controller
         //             }
         //         }
 
-        //         foreach ($project->positions as $position_key => $position) {                    
+        //         foreach ($project->positions as $position_key => $position) {
         //             $position->beginner_total_average_output = $position->beginner_total_hours_worked ? round($position->beginner_total_output / $position->beginner_total_hours_worked * $daily_work_hours, 2) : 0;
         //             $position->moderately_experienced_total_average_output = $position->moderately_experienced_total_hours_worked ? round($position->moderately_experienced_total_output / $position->moderately_experienced_total_hours_worked * $daily_work_hours, 2) : 0;
         //             $position->experienced_total_average_output = $position->experienced_total_hours_worked ? round($position->experienced_total_output / $position->experienced_total_hours_worked * $daily_work_hours, 2) : 0;
-                
+
         //             $project->beginner_total_output += $position->beginner_total_output;
         //             $project->beginner_total_hours_worked += $position->beginner_total_hours_worked;
-                    
+
         //             $project->moderately_experienced_total_output += $position->moderately_experienced_total_output;
         //             $project->moderately_experienced_total_hours_worked += $position->moderately_experienced_total_hours_worked;
 
@@ -413,13 +413,13 @@ class ReportController extends Controller
         //         $project->total_output = $project->beginner_total_output + $project->moderately_experienced_total_output + $project->experienced_total_output;
         //         $project->total_hours_worked = $project->beginner_total_hours_worked + $project->moderately_experienced_total_hours_worked + $project->experienced_total_hours_worked;
         //         $project->total_average_output = $project->total_hours_worked ? round($project->total_output / $project->total_hours_worked * $daily_work_hours, 2) : 0;
-                    
+
         //     }
         // }
         foreach ($this->projects as $project_key => $project) {
             $project->date_start = $this->date_start->toFormattedDateString();
             $project->date_end = $this->date_end->toFormattedDateString();
-            
+
             $project->beginner_total_output = 0;
             $project->beginner_total_hours_worked = 0;
             $project->beginner_total_average_output = 0;
@@ -445,7 +445,7 @@ class ReportController extends Controller
             $project->first_report = Report::where('project_id', $project->id)->where('daily_work_hours', 'like', $daily_work_hours.'%')->whereBetween('date_start', [$this->date_start, $this->date_end])->first();
 
             $project->weeks = array();
-            
+
             $project->beginner = array();
             $project->moderately_experienced = array();
             $project->experienced = array();
@@ -486,11 +486,11 @@ class ReportController extends Controller
                 // Experienced
                 $previous_experienced_target = Target::withTrashed()->where('position_id', $position->id)->where('experience', 'Experienced')->where('effective_date', '<', Carbon::parse('first Monday of'. $months[(int)$month-1]  .' '. $year))->orderBy('effective_date', 'desc')->first();
                 $experienced_productivity = count($previous_experienced_target) ? $previous_experienced_target : Target::where('position_id', $position->id)->where('experience', 'Experienced')->first();
-                
+
                 // Quality
                 $previous_experienced_target = Target::withTrashed()->where('position_id', $position->id)->where('experience', 'Experienced')->where('effective_date', '<', Carbon::parse('first Monday of'. $months[(int)$month-1]  .' '. $year))->orderBy('effective_date', 'desc')->first();
                 $quality = count($previous_experienced_target) ? $previous_experienced_target : Target::where('position_id', $position->id)->where('experience', 'Experienced')->first();
-                
+
                 array_push($project->beginner, $beginner_productivity);
                 array_push($project->moderately_experienced, $moderately_experienced_productivity);
                 array_push($project->experienced, $experienced_productivity);
@@ -509,7 +509,7 @@ class ReportController extends Controller
 
                 foreach ($position->members as $member_key => $member) {
                     $member->experience = Target::withTrashed()->where('id', $member->target_id)->first();
-                    
+
                     $member->total_output = 0;
                     $member->total_output_error = 0;
                     $member->total_hours_worked = 0;
@@ -521,7 +521,7 @@ class ReportController extends Controller
                     $member->performances = array();
 
                     $date_end = Carbon::parse('first Monday of'. $months[(int)$month-1]  .' '. $year)->addDays(5);
-                    
+
                     for ($date_start = Carbon::parse('first Monday of'. $months[(int)$month-1]  .' '. $year); $date_start->lt($this->date_end); $date_start->addWeek()) {
 
                         // $performances = Performance::with(['member' => function($query){ $query->with(['experiences' => function($query){ $query->where('project_id', $this->project->id);}]); }])->with('position')->where('position_id', $position->id)->where('project_id', $project->id)->whereBetween('date_start', [$date_start, $date_end])->where('daily_work_hours', 'like', $daily_work_hours.'%')->where('member_id', $member->id)->get();
@@ -540,23 +540,23 @@ class ReportController extends Controller
 
                                     if(!$performances[0]->productivity && !$performances[0]->quality)
                                     {
-                                        $member->quadrant = 'N/A'; 
+                                        $member->quadrant = 'N/A';
                                     }
                                     else if($performances[0]->productivity < 100 && $performances[0]->quality >= $member->target->quality)
                                     {
-                                        $member->quadrant = 'Quadrant 1'; 
+                                        $member->quadrant = 'Quadrant 1';
                                     }
                                     else if($performances[0]->productivity >= 100 && $performances[0]->quality >= $member->target->quality)
                                     {
-                                        $member->quadrant = 'Quadrant 2'; 
+                                        $member->quadrant = 'Quadrant 2';
                                     }
                                     else if($performances[0]->productivity >= 100 && $performances[0]->quality < $member->target->quality)
                                     {
-                                        $member->quadrant = 'Quadrant 3'; 
+                                        $member->quadrant = 'Quadrant 3';
                                     }
                                     else if($performances[0]->productivity < 100 && $performances[0]->quality < $member->target->quality)
                                     {
-                                        $member->quadrant = 'Quadrant 4'; 
+                                        $member->quadrant = 'Quadrant 4';
                                     }
                                 }
                             }
@@ -595,7 +595,7 @@ class ReportController extends Controller
                                 $position->moderately_experienced += 1;
                             }
                             $position->moderately_experienced_total_output += $performance->output;
-                            $position->moderately_experienced_total_hours_worked += $performance->hours_worked;   
+                            $position->moderately_experienced_total_hours_worked += $performance->hours_worked;
                         }
                         else if($member->experience->experience == 'Experienced'){
                             if($performance_key === 0){
@@ -612,18 +612,18 @@ class ReportController extends Controller
 
                     $position->head_count = $position->beginner + $position->moderately_experienced + $position->experienced;
                     // $position->total_average_output = round($position->total_output / $position->total_hours_worked * $daily_work_hours, 2);
-                    
+
                     $member->total_average_output = $member->total_output ? round($member->total_output / $member->total_hours_worked * $daily_work_hours, 2) : 0;
                     $member->monthly_productivity = $member->total_average_output ? round($member->total_average_output / $member->target->productivity * 100, 2) : 0;
                     $member->monthly_quality = $member->total_output ? round((1 - $member->total_output_error / $member->total_output) * 100, 2) : 0;
 
                     if(!$member->monthly_productivity && !$member->monthly_quality)
                     {
-                        $member->quadrant = 'N/A'; 
+                        $member->quadrant = 'N/A';
                     }
                     else if($member->monthly_productivity < 100 && $member->monthly_quality >= $member->target->quality)
                     {
-                        $member->quadrant = 'Quadrant 1'; 
+                        $member->quadrant = 'Quadrant 1';
                     }
                     else if($member->monthly_productivity >= 100 && $member->monthly_quality >= $member->target->quality)
                     {
@@ -662,7 +662,7 @@ class ReportController extends Controller
                     }
                     else if($member->monthly_productivity < 100 && $member->monthly_quality < $member->target->quality)
                     {
-                        $member->quadrant = 'Quadrant 4'; 
+                        $member->quadrant = 'Quadrant 4';
                     }
                 }
             }
@@ -674,15 +674,15 @@ class ReportController extends Controller
                 $date_end->addWeek();
             }
 
-            foreach ($project->positions as $position_key => $position) {                    
+            foreach ($project->positions as $position_key => $position) {
                 $position->beginner_total_average_output = $position->beginner_total_hours_worked ? round($position->beginner_total_output / $position->beginner_total_hours_worked * $project->first_report->daily_work_hours, 2) : 0;
                 $position->moderately_experienced_total_average_output = $position->moderately_experienced_total_hours_worked ? round($position->moderately_experienced_total_output / $position->moderately_experienced_total_hours_worked * $project->first_report->daily_work_hours, 2) : 0;
                 $position->experienced_total_average_output = $position->experienced_total_hours_worked ? round($position->experienced_total_output / $position->experienced_total_hours_worked * $project->first_report->daily_work_hours, 2) : 0;
-            
+
                 $project->beginner_total_output += $position->beginner_total_output;
                 $project->beginner_total_hours_worked += $position->beginner_total_hours_worked;
                 $project->beginner_productivity_met += $position->beginner_productivity_met;
-                
+
                 $project->moderately_experienced_total_output += $position->moderately_experienced_total_output;
                 $project->moderately_experienced_total_hours_worked += $position->moderately_experienced_total_hours_worked;
                 $project->moderately_experienced_productivity_met += $position->moderately_experienced_productivity_met;
@@ -732,7 +732,7 @@ class ReportController extends Controller
         foreach ($this->projects as $project_key => $project) {
             $project->date_start = $this->date_start->toFormattedDateString();
             $project->date_end = $this->date_end->toFormattedDateString();
-            
+
             $project->beginner_total_output = 0;
             $project->beginner_total_hours_worked = 0;
             $project->beginner_total_average_output = 0;
@@ -758,7 +758,7 @@ class ReportController extends Controller
             $project->first_report = Report::where('project_id', $project->id)->where('daily_work_hours', 'like', $request->daily_work_hours.'%')->whereBetween('date_start', [$this->date_start, $this->date_end])->first();
 
             $project->weeks = array();
-            
+
             $project->beginner = array();
             $project->moderately_experienced = array();
             $project->experienced = array();
@@ -799,11 +799,11 @@ class ReportController extends Controller
                 // Experienced
                 $previous_experienced_target = Target::withTrashed()->where('position_id', $position->id)->where('experience', 'Experienced')->where('effective_date', '<', Carbon::parse('first Monday of'. $request->month .' '. $request->year))->orderBy('effective_date', 'desc')->first();
                 $experienced_productivity = count($previous_experienced_target) ? $previous_experienced_target : Target::where('position_id', $position->id)->where('experience', 'Experienced')->first();
-                
+
                 // Quality
                 $previous_experienced_target = Target::withTrashed()->where('position_id', $position->id)->where('experience', 'Experienced')->where('effective_date', '<', Carbon::parse('first Monday of'. $request->month .' '. $request->year))->orderBy('effective_date', 'desc')->first();
                 $quality = count($previous_experienced_target) ? $previous_experienced_target : Target::where('position_id', $position->id)->where('experience', 'Experienced')->first();
-                
+
                 array_push($project->beginner, $beginner_productivity);
                 array_push($project->moderately_experienced, $moderately_experienced_productivity);
                 array_push($project->experienced, $experienced_productivity);
@@ -822,7 +822,7 @@ class ReportController extends Controller
 
                 foreach ($position->members as $member_key => $member) {
                     $member->experience = Target::withTrashed()->where('id', $member->target_id)->first();
-                    
+
                     $member->total_output = 0;
                     $member->total_output_error = 0;
                     $member->total_hours_worked = 0;
@@ -834,7 +834,7 @@ class ReportController extends Controller
                     $member->performances = array();
 
                     $date_end = Carbon::parse('first Monday of'. $request->month .' '. $request->year)->addDays(5);
-                    
+
                     for ($date_start = Carbon::parse('first Monday of'. $request->month .' '. $request->year); $date_start->lt($this->date_end); $date_start->addWeek()) {
 
                         // $performances = Performance::with(['member' => function($query){ $query->with(['experiences' => function($query){ $query->where('project_id', $this->project->id);}]); }])->with('position')->where('position_id', $position->id)->where('project_id', $project->id)->whereBetween('date_start', [$date_start, $date_end])->where('daily_work_hours', 'like', $daily_work_hours.'%')->where('member_id', $member->id)->get();
@@ -853,23 +853,23 @@ class ReportController extends Controller
 
                                     if(!$performances[0]->productivity && !$performances[0]->quality)
                                     {
-                                        $member->quadrant = 'N/A'; 
+                                        $member->quadrant = 'N/A';
                                     }
                                     else if($performances[0]->productivity < 100 && $performances[0]->quality >= $member->target->quality)
                                     {
-                                        $member->quadrant = 'Quadrant 1'; 
+                                        $member->quadrant = 'Quadrant 1';
                                     }
                                     else if($performances[0]->productivity >= 100 && $performances[0]->quality >= $member->target->quality)
                                     {
-                                        $member->quadrant = 'Quadrant 2'; 
+                                        $member->quadrant = 'Quadrant 2';
                                     }
                                     else if($performances[0]->productivity >= 100 && $performances[0]->quality < $member->target->quality)
                                     {
-                                        $member->quadrant = 'Quadrant 3'; 
+                                        $member->quadrant = 'Quadrant 3';
                                     }
                                     else if($performances[0]->productivity < 100 && $performances[0]->quality < $member->target->quality)
                                     {
-                                        $member->quadrant = 'Quadrant 4'; 
+                                        $member->quadrant = 'Quadrant 4';
                                     }
                                 }
                             }
@@ -908,7 +908,7 @@ class ReportController extends Controller
                                 $position->moderately_experienced += 1;
                             }
                             $position->moderately_experienced_total_output += $performance->output;
-                            $position->moderately_experienced_total_hours_worked += $performance->hours_worked;   
+                            $position->moderately_experienced_total_hours_worked += $performance->hours_worked;
                         }
                         else if($member->experience->experience == 'Experienced'){
                             if($performance_key === 0){
@@ -925,18 +925,18 @@ class ReportController extends Controller
 
                     $position->head_count = $position->beginner + $position->moderately_experienced + $position->experienced;
                     // $position->total_average_output = round($position->total_output / $position->total_hours_worked * $request->daily_work_hours, 2);
-                    
+
                     $member->total_average_output = $member->total_output ? round($member->total_output / $member->total_hours_worked * $request->daily_work_hours, 2) : 0;
                     $member->monthly_productivity = $member->total_average_output ? round($member->total_average_output / $member->target->productivity * 100, 2) : 0;
                     $member->monthly_quality = $member->total_output ? round((1 - $member->total_output_error / $member->total_output) * 100, 2) : 0;
 
                     if(!$member->monthly_productivity && !$member->monthly_quality)
                     {
-                        $member->quadrant = 'N/A'; 
+                        $member->quadrant = 'N/A';
                     }
                     else if($member->monthly_productivity < 100 && $member->monthly_quality >= $member->target->quality)
                     {
-                        $member->quadrant = 'Quadrant 1'; 
+                        $member->quadrant = 'Quadrant 1';
                     }
                     else if($member->monthly_productivity >= 100 && $member->monthly_quality >= $member->target->quality)
                     {
@@ -975,7 +975,7 @@ class ReportController extends Controller
                     }
                     else if($member->monthly_productivity < 100 && $member->monthly_quality < $member->target->quality)
                     {
-                        $member->quadrant = 'Quadrant 4'; 
+                        $member->quadrant = 'Quadrant 4';
                     }
                 }
             }
@@ -987,15 +987,15 @@ class ReportController extends Controller
                 $date_end->addWeek();
             }
 
-            foreach ($project->positions as $position_key => $position) {                    
+            foreach ($project->positions as $position_key => $position) {
                 $position->beginner_total_average_output = $position->beginner_total_hours_worked ? round($position->beginner_total_output / $position->beginner_total_hours_worked * $project->first_report->daily_work_hours, 2) : 0;
                 $position->moderately_experienced_total_average_output = $position->moderately_experienced_total_hours_worked ? round($position->moderately_experienced_total_output / $position->moderately_experienced_total_hours_worked * $project->first_report->daily_work_hours, 2) : 0;
                 $position->experienced_total_average_output = $position->experienced_total_hours_worked ? round($position->experienced_total_output / $position->experienced_total_hours_worked * $project->first_report->daily_work_hours, 2) : 0;
-            
+
                 $project->beginner_total_output += $position->beginner_total_output;
                 $project->beginner_total_hours_worked += $position->beginner_total_hours_worked;
                 $project->beginner_productivity_met += $position->beginner_productivity_met;
-                
+
                 $project->moderately_experienced_total_output += $position->moderately_experienced_total_output;
                 $project->moderately_experienced_total_hours_worked += $position->moderately_experienced_total_hours_worked;
                 $project->moderately_experienced_productivity_met += $position->moderately_experienced_productivity_met;
@@ -1027,7 +1027,7 @@ class ReportController extends Controller
 
         foreach ($projects as $project_key => $project) {
             $project->first_report =  Report::where('project_id', $project->id)->whereBetween('date_start', [$this->date_start, $this->date_end])->first();
-            
+
             if($project->first_report){
                 $project->date_start = $this->date_start->toFormattedDateString();
                 $project->date_end = $this->date_end->toFormattedDateString();
@@ -1089,7 +1089,7 @@ class ReportController extends Controller
                                 if($performance->target->experience == 'Beginner'){
                                     if($performance_key === 0){
                                         $project->positions[$position_key]->beginner += 1;
-                                    } 
+                                    }
                                     $project->positions[$position_key]->beginner_total_output += $performance->output;
                                     $project->positions[$position_key]->beginner_total_hours_worked += $performance->hours_worked;
                                 }
@@ -1098,7 +1098,7 @@ class ReportController extends Controller
                                         $project->positions[$position_key]->moderately_experienced += 1;
                                     }
                                     $project->positions[$position_key]->moderately_experienced_total_output += $performance->output;
-                                    $project->positions[$position_key]->moderately_experienced_total_hours_worked += $performance->hours_worked;   
+                                    $project->positions[$position_key]->moderately_experienced_total_hours_worked += $performance->hours_worked;
                                 }
                                 else if($performance->target->experience == 'Experienced'){
                                     if($performance_key === 0){
@@ -1116,23 +1116,23 @@ class ReportController extends Controller
 
                             if(!$position->monthly_productivity && !$position->monthly_quality)
                             {
-                                $position->quadrant = 'N/A'; 
+                                $position->quadrant = 'N/A';
                             }
                             else if($position->monthly_productivity < 100 && $position->monthly_quality >= $performances[0]->target->quality)
                             {
-                                $position->quadrant = 'Quadrant 1'; 
+                                $position->quadrant = 'Quadrant 1';
                             }
                             else if($position->monthly_productivity >= 100 && $position->monthly_quality >= $performances[0]->target->quality)
                             {
-                                $position->quadrant = 'Quadrant 2'; 
+                                $position->quadrant = 'Quadrant 2';
                             }
                             else if($position->monthly_productivity >= 100 && $position->monthly_quality < $performances[0]->target->quality)
                             {
-                                $position->quadrant = 'Quadrant 3'; 
+                                $position->quadrant = 'Quadrant 3';
                             }
                             else if($position->monthly_productivity < 100 && $position->monthly_quality < $performances[0]->target->quality)
                             {
-                                $position->quadrant = 'Quadrant 4'; 
+                                $position->quadrant = 'Quadrant 4';
                             }
 
                             $overall_monthly_productivity += $position->monthly_productivity;
@@ -1147,14 +1147,14 @@ class ReportController extends Controller
                     }
                 }
 
-                foreach ($project->positions as $position_key => $position) {                    
+                foreach ($project->positions as $position_key => $position) {
                     $position->beginner_total_average_output = $position->beginner_total_hours_worked ? round($position->beginner_total_output / $position->beginner_total_hours_worked * $project->first_report->daily_work_hours, 2) : 0;
                     $position->moderately_experienced_total_average_output = $position->moderately_experienced_total_hours_worked ? round($position->moderately_experienced_total_output / $position->moderately_experienced_total_hours_worked * $project->first_report->daily_work_hours, 2) : 0;
                     $position->experienced_total_average_output = $position->experienced_total_hours_worked ? round($position->experienced_total_output / $position->experienced_total_hours_worked * $project->first_report->daily_work_hours, 2) : 0;
-                
+
                     $project->beginner_total_output += $position->beginner_total_output;
                     $project->beginner_total_hours_worked += $position->beginner_total_hours_worked;
-                    
+
                     $project->moderately_experienced_total_output += $position->moderately_experienced_total_output;
                     $project->moderately_experienced_total_hours_worked += $position->moderately_experienced_total_hours_worked;
 
@@ -1169,7 +1169,7 @@ class ReportController extends Controller
                 $project->total_output = $project->beginner_total_output + $project->moderately_experienced_total_output + $project->experienced_total_output;
                 $project->total_hours_worked = $project->beginner_total_hours_worked + $project->moderately_experienced_total_hours_worked + $project->experienced_total_hours_worked;
                 $project->total_average_output = $project->total_output ? round($project->total_output / $project->total_hours_worked * $project->first_report->daily_work_hours, 2) : 0;
-            }            
+            }
         }
 
         return $projects;
@@ -1190,7 +1190,7 @@ class ReportController extends Controller
             $project->first_report = Report::where('project_id', $project->id)->where('daily_work_hours', 'like', $daily_work_hours.'%')->whereBetween('date_start', [$this->date_start, $this->date_end])->first();
 
             $project->weeks = array();
-            
+
             $project->beginner = array();
             $project->moderately_experienced = array();
             $project->experienced = array();
@@ -1208,11 +1208,11 @@ class ReportController extends Controller
                 // Experienced
                 $previous_experienced_target = Target::withTrashed()->where('position_id', $position->id)->where('experience', 'Experienced')->where('effective_date', '<', Carbon::parse('first Monday of'. $months[(int)$month-1] .' '. (int)$year))->orderBy('effective_date', 'desc')->first();
                 $experienced_productivity = count($previous_experienced_target) ? $previous_experienced_target : Target::where('position_id', $position->id)->where('experience', 'Experienced')->first();
-                
+
                 // Quality
                 $previous_experienced_target = Target::withTrashed()->where('position_id', $position->id)->where('experience', 'Experienced')->where('effective_date', '<', Carbon::parse('first Monday of'. $months[(int)$month-1] .' '. (int)$year))->orderBy('effective_date', 'desc')->first();
                 $quality = count($previous_experienced_target) ? $previous_experienced_target : Target::where('position_id', $position->id)->where('experience', 'Experienced')->first();
-                
+
                 array_push($project->beginner, $beginner_productivity);
                 array_push($project->moderately_experienced, $moderately_experienced_productivity);
                 array_push($project->experienced, $experienced_productivity);
@@ -1231,7 +1231,7 @@ class ReportController extends Controller
 
                 foreach ($position->members as $member_key => $member) {
                     $member->experience = Target::withTrashed()->where('id', $member->target_id)->first();
-                    
+
                     $member->total_output = 0;
                     $member->total_output_error = 0;
                     $member->total_hours_worked = 0;
@@ -1242,7 +1242,7 @@ class ReportController extends Controller
                     $member->performances = array();
 
                     $date_end = Carbon::parse('first Monday of'. $months[(int)$month-1] .' '. (int)$year)->addDays(5);
-                    
+
                     for ($date_start = Carbon::parse('first Monday of'. $months[(int)$month-1] .' '. (int)$year); $date_start->lt($this->date_end); $date_start->addWeek()) {
 
                         // $performances = Performance::with(['member' => function($query){ $query->with(['experiences' => function($query){ $query->where('project_id', $this->project->id);}]); }])->with('position')->where('position_id', $position->id)->where('project_id', $project->id)->whereBetween('date_start', [$date_start, $date_end])->where('daily_work_hours', 'like', $daily_work_hours.'%')->where('member_id', $member->id)->get();
@@ -1260,23 +1260,23 @@ class ReportController extends Controller
                                     $performances[0]->quality = $performances[0]->output ? round((1 - $performances[0]->output_error / $performances[0]->output) * 100, 2) : 0;
                                     if(!$performances[0]->productivity && ! $performances[0]->quality)
                                     {
-                                        $member->quadrant = 'N/A'; 
+                                        $member->quadrant = 'N/A';
                                     }
                                     else if($performances[0]->productivity < 100 && $performances[0]->quality >= $member->target->quality)
                                     {
-                                        $member->quadrant = 'Quadrant 1'; 
+                                        $member->quadrant = 'Quadrant 1';
                                     }
                                     else if($performances[0]->productivity >= 100 && $performances[0]->quality >= $member->target->quality)
                                     {
-                                        $member->quadrant = 'Quadrant 2'; 
+                                        $member->quadrant = 'Quadrant 2';
                                     }
                                     else if($performances[0]->productivity >= 100 && $performances[0]->quality < $member->target->quality)
                                     {
-                                        $member->quadrant = 'Quadrant 3'; 
+                                        $member->quadrant = 'Quadrant 3';
                                     }
                                     else if($performances[0]->productivity < 100 && $performances[0]->quality < $member->target->quality)
                                     {
-                                        $member->quadrant = 'Quadrant 4'; 
+                                        $member->quadrant = 'Quadrant 4';
                                     }
                                 }
                             }
@@ -1302,30 +1302,30 @@ class ReportController extends Controller
                         $member->total_output_error += $performance->output_error;
                         $member->total_hours_worked += $performance->hours_worked;
                     }
-                    
+
                     $member->total_average_output = $member->total_output ? round($member->total_output / $member->total_hours_worked * $daily_work_hours, 2) : 0;
                     $member->monthly_productivity = $member->total_average_output ? round($member->total_average_output / $member->target->productivity * 100, 2) : 0;
                     $member->monthly_quality = $member->total_output ? round((1 - $member->total_output_error / $member->total_output) * 100, 2) : 0;
 
                     if(!$member->monthly_productivity && !$member->monthly_quality)
                     {
-                        $member->quadrant = 'N/A'; 
+                        $member->quadrant = 'N/A';
                     }
                     else if($member->monthly_productivity < 100 && $member->monthly_quality >= $member->target->quality)
                     {
-                        $member->quadrant = 'Quadrant 1'; 
+                        $member->quadrant = 'Quadrant 1';
                     }
                     else if($member->monthly_productivity >= 100 && $member->monthly_quality >= $member->target->quality)
                     {
-                        $member->quadrant = 'Quadrant 2'; 
+                        $member->quadrant = 'Quadrant 2';
                     }
                     else if($member->monthly_productivity >= 100 && $member->monthly_quality < $member->target->quality)
                     {
-                        $member->quadrant = 'Quadrant 3'; 
+                        $member->quadrant = 'Quadrant 3';
                     }
                     else if($member->monthly_productivity < 100 && $member->monthly_quality < $member->target->quality)
                     {
-                        $member->quadrant = 'Quadrant 4'; 
+                        $member->quadrant = 'Quadrant 4';
                     }
                 }
             }
@@ -1339,7 +1339,7 @@ class ReportController extends Controller
 
         }
 
-        // return $this->projects; 
+        // return $this->projects;
 
         Excel::create('PQR Monthly Summary '. $this->date_start->toFormattedDateString() . ' to ' . $this->date_end->toFormattedDateString(), function($excel){
             foreach ($this->projects as $project_key => $project) {
@@ -1369,7 +1369,7 @@ class ReportController extends Controller
             $project->first_report = Report::where('project_id', $project->id)->where('daily_work_hours', 'like', $daily_work_hours.'%')->whereBetween('date_start', [$this->date_start, $this->date_end])->first();
 
             $project->weeks = array();
-            
+
             $project->beginner = array();
             $project->moderately_experienced = array();
             $project->experienced = array();
@@ -1388,11 +1388,11 @@ class ReportController extends Controller
                 // Experienced
                 $previous_experienced_target = Target::withTrashed()->where('position_id', $position->id)->where('experience', 'Experienced')->where('effective_date', '<', Carbon::parse('first Monday of'. $months[(int)$month-1] .' '. (int)$year))->orderBy('effective_date', 'desc')->first();
                 $experienced_productivity = count($previous_experienced_target) ? $previous_experienced_target : Target::where('position_id', $position->id)->where('experience', 'Experienced')->first();
-                
+
                 // Quality
                 $previous_experienced_target = Target::withTrashed()->where('position_id', $position->id)->where('experience', 'Experienced')->where('effective_date', '<', Carbon::parse('first Monday of'. $months[(int)$month-1] .' '. (int)$year))->orderBy('effective_date', 'desc')->first();
                 $quality = count($previous_experienced_target) ? $previous_experienced_target : Target::where('position_id', $position->id)->where('experience', 'Experienced')->first();
-                
+
                 array_push($project->beginner, $beginner_productivity);
                 array_push($project->moderately_experienced, $moderately_experienced_productivity);
                 array_push($project->experienced, $experienced_productivity);
@@ -1411,7 +1411,7 @@ class ReportController extends Controller
 
                 foreach ($position->members as $member_key => $member) {
                     $member->experience = Target::withTrashed()->where('id', $member->target_id)->first();
-                    
+
                     $member->total_output = 0;
                     $member->total_output_error = 0;
                     $member->total_hours_worked = 0;
@@ -1422,7 +1422,7 @@ class ReportController extends Controller
                     $member->performances = array();
 
                     $date_end = Carbon::parse('first Monday of'. $months[(int)$month-1] .' '. (int)$year)->addDays(5);
-                    
+
                     for ($date_start = Carbon::parse('first Monday of'. $months[(int)$month-1] .' '. (int)$year); $date_start->lt($this->date_end); $date_start->addWeek()) {
 
                         // $performances = Performance::with(['member' => function($query){ $query->with(['experiences' => function($query){ $query->where('project_id', $this->project->id);}]); }])->with('position')->where('position_id', $position->id)->where('project_id', $project->id)->whereBetween('date_start', [$date_start, $date_end])->where('daily_work_hours', 'like', $daily_work_hours.'%')->where('member_id', $member->id)->get();
@@ -1440,23 +1440,23 @@ class ReportController extends Controller
                                     $performances[0]->quality = $performances[0]->output ? round((1 - $performances[0]->output_error / $performances[0]->output) * 100, 2) : 0;
                                     if(!$performances[0]->productivity && !$performances[0]->quality)
                                     {
-                                        $member->quadrant = 'N/A'; 
+                                        $member->quadrant = 'N/A';
                                     }
                                     else if($performances[0]->productivity < 100 && $performances[0]->quality >= $member->target->quality)
                                     {
-                                        $member->quadrant = 'Quadrant 1'; 
+                                        $member->quadrant = 'Quadrant 1';
                                     }
                                     else if($performances[0]->productivity >= 100 && $performances[0]->quality >= $member->target->quality)
                                     {
-                                        $member->quadrant = 'Quadrant 2'; 
+                                        $member->quadrant = 'Quadrant 2';
                                     }
                                     else if($performances[0]->productivity >= 100 && $performances[0]->quality < $member->target->quality)
                                     {
-                                        $member->quadrant = 'Quadrant 3'; 
+                                        $member->quadrant = 'Quadrant 3';
                                     }
                                     else if($performances[0]->productivity < 100 && $performances[0]->quality < $member->target->quality)
                                     {
-                                        $member->quadrant = 'Quadrant 4'; 
+                                        $member->quadrant = 'Quadrant 4';
                                     }
                                 }
                             }
@@ -1482,30 +1482,30 @@ class ReportController extends Controller
                         $member->total_output_error += $performance->output_error;
                         $member->total_hours_worked += $performance->hours_worked;
                     }
-                    
+
                     $member->total_average_output = $member->total_output ? round($member->total_output / $member->total_hours_worked * $daily_work_hours, 2) : 0;
                     $member->monthly_productivity = $member->total_average_output ? round($member->total_average_output / $member->target->productivity * 100, 2) : 0;
                     $member->monthly_quality = $member->total_output ? round((1 - $member->total_output_error / $member->total_output) * 100, 2) : 0;
 
                     if(!$member->monthly_productivity && !$member->monthly_quality)
                     {
-                        $member->quadrant = 'N\A'; 
+                        $member->quadrant = 'N\A';
                     }
                     else if($member->monthly_productivity < 100 && $member->monthly_quality >= $member->target->quality)
                     {
-                        $member->quadrant = 'Quadrant 1'; 
+                        $member->quadrant = 'Quadrant 1';
                     }
                     else if($member->monthly_productivity >= 100 && $member->monthly_quality >= $member->target->quality)
                     {
-                        $member->quadrant = 'Quadrant 2'; 
+                        $member->quadrant = 'Quadrant 2';
                     }
                     else if($member->monthly_productivity >= 100 && $member->monthly_quality < $member->target->quality)
                     {
-                        $member->quadrant = 'Quadrant 3'; 
+                        $member->quadrant = 'Quadrant 3';
                     }
                     else if($member->monthly_productivity < 100 && $member->monthly_quality < $member->target->quality)
                     {
-                        $member->quadrant = 'Quadrant 4'; 
+                        $member->quadrant = 'Quadrant 4';
                     }
                 }
             }
@@ -1519,7 +1519,7 @@ class ReportController extends Controller
 
         }
 
-        // return $this->projects; 
+        // return $this->projects;
 
         Excel::create('PQR Monthly Summary '. $this->date_start->toFormattedDateString() . ' to ' . $this->date_end->toFormattedDateString(), function($excel){
             foreach ($this->projects as $project_key => $project) {
@@ -1533,6 +1533,174 @@ class ReportController extends Controller
             }
         })->download('xls');
     }
+
+    public function getExcelDocument(){
+      $months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+      $this->date_start = new Carbon('first Monday of '. $months[(int)$month-1] .' '. $year);
+      $this->date_end = Carbon::parse('last Monday of '. $months[(int)$month-1] .' '. $year)->addDays(5);
+
+      $this->projects = DB::table('projects')->where('department_id', $department_id)->get();
+
+      foreach ($this->projects as $project_key => $project) {
+          $this->project = $project;
+          $project->positions = DB::table('positions')->where('project_id', $project->id)->get();
+
+          $project->first_report = Report::where('project_id', $project->id)->where('daily_work_hours', 'like', $daily_work_hours.'%')->whereBetween('date_start', [$this->date_start, $this->date_end])->first();
+
+          $project->weeks = array();
+
+          $project->beginner = array();
+          $project->moderately_experienced = array();
+          $project->experienced = array();
+          $project->quality = array();
+
+          foreach ($project->positions as $position_key => $position) {
+              // Beginner
+              $previous_beginner_target = Target::withTrashed()->where('position_id', $position->id)->where('experience', 'Beginner')->where('effective_date', '<', Carbon::parse('first Monday of'. $months[(int)$month-1] .' '. (int)$year))->orderBy('effective_date', 'desc')->first();
+
+              $beginner_productivity = count($previous_beginner_target) ? $previous_beginner_target : Target::where('position_id', $position->id)->where('experience', 'Beginner')->first();
+
+              // Moderately Experienced
+              $previous_moderately_experienced_target = Target::withTrashed()->where('position_id', $position->id)->where('experience', 'Moderately Experienced')->where('effective_date', '<', Carbon::parse('first Monday of'. $months[(int)$month-1] .' '. (int)$year))->orderBy('effective_date', 'desc')->first();
+              $moderately_experienced_productivity = count($previous_moderately_experienced_target) ? $previous_moderately_experienced_target : Target::where('position_id', $position->id)->where('experience', 'Moderately Experienced')->first();
+
+              // Experienced
+              $previous_experienced_target = Target::withTrashed()->where('position_id', $position->id)->where('experience', 'Experienced')->where('effective_date', '<', Carbon::parse('first Monday of'. $months[(int)$month-1] .' '. (int)$year))->orderBy('effective_date', 'desc')->first();
+              $experienced_productivity = count($previous_experienced_target) ? $previous_experienced_target : Target::where('position_id', $position->id)->where('experience', 'Experienced')->first();
+
+              // Quality
+              $previous_experienced_target = Target::withTrashed()->where('position_id', $position->id)->where('experience', 'Experienced')->where('effective_date', '<', Carbon::parse('first Monday of'. $months[(int)$month-1] .' '. (int)$year))->orderBy('effective_date', 'desc')->first();
+              $quality = count($previous_experienced_target) ? $previous_experienced_target : Target::where('position_id', $position->id)->where('experience', 'Experienced')->first();
+
+              array_push($project->beginner, $beginner_productivity);
+              array_push($project->moderately_experienced, $moderately_experienced_productivity);
+              array_push($project->experienced, $experienced_productivity);
+              array_push($project->quality, $quality);
+
+              $position->members = DB::table('performances')
+                  ->join('members', 'members.id', '=', 'performances.member_id')
+                  ->select('members.*', 'performances.target_id')
+                  ->where('performances.position_id', $position->id)
+                  ->where('performances.project_id', $project->id)
+                  ->whereBetween('performances.date_start', [$this->date_start, $this->date_end])
+                  ->where('performances.daily_work_hours', 'like', $daily_work_hours.'%')
+                  ->whereNull('performances.deleted_at')
+                  ->groupBy('performances.member_id')
+                  ->get();
+
+              foreach ($position->members as $member_key => $member) {
+                  $member->experience = Target::withTrashed()->where('id', $member->target_id)->first();
+
+                  $member->total_output = 0;
+                  $member->total_output_error = 0;
+                  $member->total_hours_worked = 0;
+                  $member->monthly_productivity = 0;
+                  $member->monthly_quality = 0;
+                  $member->target = $member->experience->experience == 'Beginner' ? $beginner_productivity : ($member->experience->experience == 'Moderately Experienced' ? $moderately_experienced_productivity : $experienced_productivity);
+
+                  $member->performances = array();
+
+                  $date_end = Carbon::parse('first Monday of'. $months[(int)$month-1] .' '. (int)$year)->addDays(5);
+
+                  for ($date_start = Carbon::parse('first Monday of'. $months[(int)$month-1] .' '. (int)$year); $date_start->lt($this->date_end); $date_start->addWeek()) {
+
+                      // $performances = Performance::with(['member' => function($query){ $query->with(['experiences' => function($query){ $query->where('project_id', $this->project->id);}]); }])->with('position')->where('position_id', $position->id)->where('project_id', $project->id)->whereBetween('date_start', [$date_start, $date_end])->where('daily_work_hours', 'like', $daily_work_hours.'%')->where('member_id', $member->id)->get();
+
+                      $performances = DB::table('performances')->where('position_id', $position->id)->where('project_id', $project->id)->whereBetween('date_start', [$date_start, $date_end])->where('daily_work_hours', 'like', $daily_work_hours.'%')->where('member_id', $member->id)->whereNull('deleted_at')->get();
+
+                      if(count($performances)){
+                          foreach ($performances as $performance_key => $performance) {
+                              if(count($performances) > 1 && $performance_key > 0){
+                                  $performances[0]->output += $performance->output;
+                                  $performances[0]->output_error += $performance->output_error;
+                                  $performances[0]->hours_worked += $performance->hours_worked;
+                                  $performances[0]->average_output = $performances[0]->output ? round($performances[0]->output / $performances[0]->hours_worked * $daily_work_hours, 2) : 0;
+                                  $performances[0]->productivity = $performances[0]->average_output ? round($performances[0]->average_output / $member->target->productivity * 100, 2) : 0;
+                                  $performances[0]->quality = $performances[0]->output ? round((1 - $performances[0]->output_error / $performances[0]->output) * 100, 2) : 0;
+                                  if(!$performances[0]->productivity && !$performances[0]->quality)
+                                  {
+                                      $member->quadrant = 'N/A';
+                                  }
+                                  else if($performances[0]->productivity < 100 && $performances[0]->quality >= $member->target->quality)
+                                  {
+                                      $member->quadrant = 'Quadrant 1';
+                                  }
+                                  else if($performances[0]->productivity >= 100 && $performances[0]->quality >= $member->target->quality)
+                                  {
+                                      $member->quadrant = 'Quadrant 2';
+                                  }
+                                  else if($performances[0]->productivity >= 100 && $performances[0]->quality < $member->target->quality)
+                                  {
+                                      $member->quadrant = 'Quadrant 3';
+                                  }
+                                  else if($performances[0]->productivity < 100 && $performances[0]->quality < $member->target->quality)
+                                  {
+                                      $member->quadrant = 'Quadrant 4';
+                                  }
+                              }
+                          }
+
+                          array_push($member->performances, $performances[0]);
+                      }
+                      else{
+                          $empty = new Performance;
+                          $empty->output = 0;
+                          $empty->output_error = 0;
+                          $empty->hours_worked = 0;
+                          $empty->productivity = 0;
+                          $empty->quality = 0;
+                          array_push($member->performances, $empty);
+                      }
+
+
+                      $date_end->addWeek();
+                  }
+
+                  foreach ($member->performances as $performance_key => $performance) {
+                      $member->total_output += $performance->output;
+                      $member->total_output_error += $performance->output_error;
+                      $member->total_hours_worked += $performance->hours_worked;
+                  }
+
+                  $member->total_average_output = $member->total_output ? round($member->total_output / $member->total_hours_worked * $daily_work_hours, 2) : 0;
+                  $member->monthly_productivity = $member->total_average_output ? round($member->total_average_output / $member->target->productivity * 100, 2) : 0;
+                  $member->monthly_quality = $member->total_output ? round((1 - $member->total_output_error / $member->total_output) * 100, 2) : 0;
+
+                  if(!$member->monthly_productivity && !$member->monthly_quality)
+                  {
+                      $member->quadrant = 'N\A';
+                  }
+                  else if($member->monthly_productivity < 100 && $member->monthly_quality >= $member->target->quality)
+                  {
+                      $member->quadrant = 'Quadrant 1';
+                  }
+                  else if($member->monthly_productivity >= 100 && $member->monthly_quality >= $member->target->quality)
+                  {
+                      $member->quadrant = 'Quadrant 2';
+                  }
+                  else if($member->monthly_productivity >= 100 && $member->monthly_quality < $member->target->quality)
+                  {
+                      $member->quadrant = 'Quadrant 3';
+                  }
+                  else if($member->monthly_productivity < 100 && $member->monthly_quality < $member->target->quality)
+                  {
+                      $member->quadrant = 'Quadrant 4';
+                  }
+              }
+          }
+
+          $date_end = Carbon::parse('first Monday of'. $months[(int)$month-1] .' '. (int)$year)->addDays(5);
+
+          for ($date_start = Carbon::parse('first Monday of'. $months[(int)$month-1] .' '. (int)$year); $date_start->lt($this->date_end); $date_start->addWeek()) {
+              array_push($project->weeks, $date_start->toFormattedDateString().' to '. $date_end->toFormattedDateString());
+              $date_end->addWeek();
+          }
+
+      }
+
+      var_dump($projects);
+    }
+
     public function downloadSummary($date_start, $date_end, $daily_work_hours)
     {
         // $preview = (int)$preview;
@@ -1540,11 +1708,11 @@ class ReportController extends Controller
         $this->projects = DB::table('projects')->whereNull('deleted_at')->get();
 
         foreach ($this->projects as $project_key => $project) {
-            $project->reports = Report::with(['performances' => function($query){ $query->with(['member' => function($query){ $query->withTrashed(); }])->with('position'); }])->with(['project' => function($query){ $query->with('positions'); }])->where('project_id', $project->id)->where('date_start', Carbon::parse($date_start))->where('date_end', Carbon::parse($date_end))->where('daily_work_hours', 'like', $daily_work_hours.'%')->orderBy('date_start', 'desc')->get();   
-            
+            $project->reports = Report::with(['performances' => function($query){ $query->with(['member' => function($query){ $query->withTrashed(); }])->with('position'); }])->with(['project' => function($query){ $query->with('positions'); }])->where('project_id', $project->id)->where('date_start', Carbon::parse($date_start))->where('date_end', Carbon::parse($date_end))->where('daily_work_hours', 'like', $daily_work_hours.'%')->orderBy('date_start', 'desc')->get();
+
             if(count($project->reports)){
                 $project->department = DB::table('departments')->where('id', $project->reports[0]->department_id)->first();
-                
+
                 $project->department->beginner = array();
                 $project->department->moderately_experienced = array();
                 $project->department->experienced = array();
@@ -1562,11 +1730,11 @@ class ReportController extends Controller
                     // Experienced
                     $previous_experienced_target = Target::withTrashed()->where('position_id', $position->id)->where('experience', 'Experienced')->where('effective_date', '<', $project->reports[0]->date_start)->orderBy('effective_date', 'desc')->first();
                     $experienced_productivity = count($previous_experienced_target) ? $previous_experienced_target : Target::where('position_id', $position->id)->where('experience', 'Experienced')->first();
-                    
+
                     // Quality
                     $previous_experienced_target = Target::withTrashed()->where('position_id', $position->id)->where('experience', 'Experienced')->where('effective_date', '<', $project->reports[0]->date_start)->orderBy('effective_date', 'desc')->first();
                     $quality = count($previous_experienced_target) ? $previous_experienced_target : Target::where('position_id', $position->id)->where('experience', 'Experienced')->first();
-                    
+
                     array_push($project->department->beginner, $beginner_productivity);
                     array_push($project->department->moderately_experienced, $moderately_experienced_productivity);
                     array_push($project->department->experienced, $experienced_productivity);
@@ -1615,11 +1783,11 @@ class ReportController extends Controller
         $this->projects = DB::table('projects')->where('department_id', $department_id)->whereNull('deleted_at')->get();
 
         foreach ($this->projects as $project_key => $project) {
-            $project->reports = Report::with(['performances' => function($query){ $query->with(['member' => function($query){ $query->withTrashed();}])->with('position'); }])->with(['project' => function($query){ $query->with('positions'); }])->where('project_id', $project->id)->where('date_start', Carbon::parse($date_start))->where('date_end', Carbon::parse($date_end))->where('daily_work_hours', 'like', $daily_work_hours.'%')->orderBy('date_start', 'desc')->get();   
-            
+            $project->reports = Report::with(['performances' => function($query){ $query->with(['member' => function($query){ $query->withTrashed();}])->with('position'); }])->with(['project' => function($query){ $query->with('positions'); }])->where('project_id', $project->id)->where('date_start', Carbon::parse($date_start))->where('date_end', Carbon::parse($date_end))->where('daily_work_hours', 'like', $daily_work_hours.'%')->orderBy('date_start', 'desc')->get();
+
             if(count($project->reports)){
                 $project->department = DB::table('departments')->where('id', $department_id)->first();
-                
+
                 $project->department->beginner = array();
                 $project->department->moderately_experienced = array();
                 $project->department->experienced = array();
@@ -1637,11 +1805,11 @@ class ReportController extends Controller
                     // Experienced
                     $previous_experienced_target = Target::withTrashed()->where('position_id', $position->id)->where('experience', 'Experienced')->where('effective_date', '<', $project->reports[0]->date_start)->orderBy('effective_date', 'desc')->first();
                     $experienced_productivity = count($previous_experienced_target) ? $previous_experienced_target : Target::where('position_id', $position->id)->where('experience', 'Experienced')->first();
-                    
+
                     // Quality
                     $previous_experienced_target = Target::withTrashed()->where('position_id', $position->id)->where('experience', 'Experienced')->where('effective_date', '<', $project->reports[0]->date_start)->orderBy('effective_date', 'desc')->first();
                     $quality = count($previous_experienced_target) ? $previous_experienced_target : Target::where('position_id', $position->id)->where('experience', 'Experienced')->first();
-                    
+
                     array_push($project->department->beginner, $beginner_productivity);
                     array_push($project->department->moderately_experienced, $moderately_experienced_productivity);
                     array_push($project->department->experienced, $experienced_productivity);
@@ -1731,7 +1899,7 @@ class ReportController extends Controller
                     ->where('experience', 'Beginner')
                     ->where('effective_date', '<=', $value->date_end)
                     ->orderBy('effective_date', 'desc')
-                    ->get();                
+                    ->get();
             }
 
             $moderately_experienced = DB::table('targets')
@@ -1750,7 +1918,7 @@ class ReportController extends Controller
                     ->where('experience', 'Moderately Experienced')
                     ->where('effective_date', '<=', $value->date_end)
                     ->orderBy('effective_date', 'desc')
-                    ->get();                
+                    ->get();
             }
 
             $experienced = DB::table('targets')
@@ -1814,8 +1982,8 @@ class ReportController extends Controller
             global $details;
             $date_start_create = date_create($details->date_start);
             $date_end_create = date_create($details->date_end);
-            $date_start_format =  date_format($date_start_create,"Y-m-d"); 
-            $date_end_format =  date_format($date_end_create,"Y-m-d"); 
+            $date_start_format =  date_format($date_start_create,"Y-m-d");
+            $date_end_format =  date_format($date_end_create,"Y-m-d");
             $excel->sheet($date_start_format .' to '. $date_end_format, function($sheet) {
                 global $report, $quality, $positions, $beginner, $moderately_experienced, $experienced;
                 $sheet->loadView('excel.weekly')
@@ -1840,7 +2008,7 @@ class ReportController extends Controller
     }
     public function paginateDetails()
     {
-        return Report::with('team_leader')->with(['performances' => function($query){ $query->with(['target' => function($query){ $query->withTrashed();}])->with(['member' => function($query){ $query->withTrashed()->with('experiences');}])->with('position'); }])->with(['project' => function($query){ $query->with(['positions' => function($query){ $query->with(['targets' => function($query){ $query->withTrashed()->orderBy('effective_date', 'desc'); }]);}]); }])->with('team_leader')->where('department_id', Auth::user()->department_id)->orderBy('date_start', 'desc')->paginate(10);   
+        return Report::with('team_leader')->with(['performances' => function($query){ $query->with(['target' => function($query){ $query->withTrashed();}])->with(['member' => function($query){ $query->withTrashed()->with('experiences');}])->with('position'); }])->with(['project' => function($query){ $query->with(['positions' => function($query){ $query->with(['targets' => function($query){ $query->withTrashed()->orderBy('effective_date', 'desc'); }]);}]); }])->with('team_leader')->where('department_id', Auth::user()->department_id)->orderBy('date_start', 'desc')->paginate(10);
     }
     public function paginate()
     {

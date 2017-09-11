@@ -82,7 +82,7 @@ adminModule
 				if(!busy && !$scope.duplicate){
 					angular.forEach($scope.experiences, function(experience){
 						experience.effective_date = $scope.position.effective_date.toDateString();
-					});					
+					});
 
 					busy = true;
 					Position.update(positionID, $scope.position)
