@@ -5,25 +5,25 @@ teamLeaderModule
 				url:'/',
 				views: {
 					'': {
-						templateUrl: '/app/shared/views/main.view.html',
+						templateUrl: '/public-pqr/public/public-pqr/public/app/shared/views/main.view.html',
 						controller: 'mainViewController',
 					},
 					'toolbar@main': {
-						templateUrl: '/app/components/team-leader/templates/toolbar.template.html',
+						templateUrl: '/public-pqr/public/public-pqr/public/app/components/team-leader/templates/toolbar.template.html',
 					},
 					'left-sidenav@main': {
-						templateUrl: '/app/components/team-leader/templates/sidenavs/main-left.sidenav.html',
+						templateUrl: '/public-pqr/public/public-pqr/public/app/components/team-leader/templates/sidenavs/main-left.sidenav.html',
 						controller: 'leftSidenavController',
 					},
 					'content-container@main': {
-						templateUrl: '/app/components/team-leader/views/content-container.view.html',
+						templateUrl: '/public-pqr/public/public-pqr/public/app/components/team-leader/views/content-container.view.html',
 						controller: 'mainMonthlyContentContainerController',
 					},
 					'content@main': {
-						templateUrl: '/app/components/team-leader/templates/content/main-monthly.content.template.html',
+						templateUrl: '/public-pqr/public/public-pqr/public/app/components/team-leader/templates/content/main-monthly.content.template.html',
 					},
 					'right-sidenav@main': {
-						templateUrl: '/app/components/team-leader/templates/sidenavs/main-monthly-right.sidenav.html',
+						templateUrl: '/public-pqr/public/public-pqr/public/app/components/team-leader/templates/sidenavs/main-monthly-right.sidenav.html',
 					}
 				}
 			})
@@ -31,17 +31,17 @@ teamLeaderModule
 				url:'weekly-report',
 				views: {
 					'content-container': {
-						templateUrl: '/app/components/team-leader/views/content-container.view.html',
+						templateUrl: '/public-pqr/public/public-pqr/public/app/components/team-leader/views/content-container.view.html',
 						controller: 'mainContentContainerController',
 					},
 					'toolbar@main.weekly-report': {
-						templateUrl: '/app/components/team-leader/templates/toolbar.template.html',
+						templateUrl: '/public-pqr/public/public-pqr/public/app/components/team-leader/templates/toolbar.template.html',
 					},
 					'content@main.weekly-report': {
-						templateUrl: '/app/shared/templates/main.content.template.html',
+						templateUrl: '/public-pqr/public/public-pqr/public/app/shared/templates/main.content.template.html',
 					},
 					'right-sidenav@main.weekly-report': {
-						templateUrl: '/app/components/team-leader/templates/sidenavs/main-right.sidenav.html',
+						templateUrl: '/public-pqr/public/public-pqr/public/app/components/team-leader/templates/sidenavs/main-right.sidenav.html',
 					}
 				},
 			})
@@ -49,14 +49,14 @@ teamLeaderModule
 				url:'activities',
 				views: {
 					'content-container': {
-						templateUrl: '/app/components/team-leader/views/content-container.view.html',
+						templateUrl: '/public-pqr/public/app/components/team-leader/views/content-container.view.html',
 						controller: 'activityContentContainerController',
 					},
 					'toolbar@main.activity': {
-						templateUrl: '/app/components/team-leader/templates/toolbar.template.html',
+						templateUrl: '/public-pqr/public/app/components/team-leader/templates/toolbar.template.html',
 					},
 					'content@main.activity': {
-						templateUrl: '/app/shared/templates/content/activity.content.template.html',
+						templateUrl: '/public-pqr/public/app/shared/templates/content/activity.content.template.html',
 					},
 				},
 			})
@@ -64,14 +64,14 @@ teamLeaderModule
 				url:'members',
 				views: {
 					'content-container': {
-						templateUrl: '/app/components/team-leader/views/content-container.view.html',
+						templateUrl: '/public-pqr/public/app/components/team-leader/views/content-container.view.html',
 						controller: 'membersContentContainerController',
 					},
 					'toolbar@main.members': {
-						templateUrl: '/app/components/team-leader/templates/toolbar.template.html',
+						templateUrl: '/public-pqr/public/app/components/team-leader/templates/toolbar.template.html',
 					},
 					'content@main.members':{
-						templateUrl: '/app/components/team-leader/templates/content/members.content.template.html',
+						templateUrl: '/public-pqr/public/app/components/team-leader/templates/content/members.content.template.html',
 					},
 				}
 			})
@@ -79,14 +79,14 @@ teamLeaderModule
 				url:'member/create',
 				views: {
 					'content-container': {
-						templateUrl: '/app/components/team-leader/views/content-container.view.html',
+						templateUrl: '/public-pqr/public/app/components/team-leader/views/content-container.view.html',
 						controller: 'createMemberContentContainerController',
 					},
 					'toolbar@main.create-member': {
-						templateUrl: '/app/components/team-leader/templates/toolbar.template.html',
+						templateUrl: '/public-pqr/public/app/components/team-leader/templates/toolbar.template.html',
 					},
 					'content@main.create-member':{
-						templateUrl: '/app/components/team-leader/templates/content/create-member-content.template.html',
+						templateUrl: '/public-pqr/public/app/components/team-leader/templates/content/create-member-content.template.html',
 					},
 				}
 			})
@@ -95,14 +95,14 @@ teamLeaderModule
 				params: {memberID:null},
 				views: {
 					'content-container': {
-						templateUrl: '/app/components/team-leader/views/content-container.view.html',
+						templateUrl: '/public-pqr/public/app/components/team-leader/views/content-container.view.html',
 						controller: 'editMemberContentContainerController',
 					},
 					'toolbar@main.edit-member': {
-						templateUrl: '/app/components/team-leader/templates/toolbar.template.html',
+						templateUrl: '/public-pqr/public/app/components/team-leader/templates/toolbar.template.html',
 					},
 					'content@main.edit-member':{
-						templateUrl: '/app/components/team-leader/templates/content/edit-member-content.template.html',
+						templateUrl: '/public-pqr/public/app/components/team-leader/templates/content/edit-member-content.template.html',
 					},
 				}
 			})
@@ -110,17 +110,17 @@ teamLeaderModule
 				url:'report',
 				views: {
 					'content-container': {
-						templateUrl: '/app/components/team-leader/views/content-container.view.html',
+						templateUrl: '/public-pqr/public/app/components/team-leader/views/content-container.view.html',
 						controller: 'reportContentContainerController',
 					},
 					'toolbar@main.report': {
-						templateUrl: '/app/components/team-leader/templates/toolbar.template.html',
+						templateUrl: '/public-pqr/public/app/components/team-leader/templates/toolbar.template.html',
 					},
 					'content@main.report':{
-						templateUrl: '/app/components/team-leader/templates/content/report.content.template.html',
+						templateUrl: '/public-pqr/public/app/components/team-leader/templates/content/report.content.template.html',
 					},
 					'right-sidenav@main.report':{
-						templateUrl: '/app/components/team-leader/templates/sidenavs/report-right.sidenav.html',
+						templateUrl: '/public-pqr/public/app/components/team-leader/templates/sidenavs/report-right.sidenav.html',
 					}
 				},
 				onEnter: ['$state', 'User', function($state, User){
@@ -137,14 +137,14 @@ teamLeaderModule
 				params: {'reportID':null},
 				views: {
 					'content-container': {
-						templateUrl: '/app/components/team-leader/views/content-container.view.html',
+						templateUrl: '/public-pqr/public/app/components/team-leader/views/content-container.view.html',
 						controller: 'editReportContentContainerController',
 					},
 					'toolbar@main.edit-report': {
-						templateUrl: '/app/components/team-leader/templates/toolbar.template.html',
+						templateUrl: '/public-pqr/public/app/components/team-leader/templates/toolbar.template.html',
 					},
 					'content@main.edit-report':{
-						templateUrl: '/app/shared/templates/content/edit-report.content.template.html',
+						templateUrl: '/public-pqr/public/app/shared/templates/content/edit-report.content.template.html',
 					},
 				},
 				onEnter: ['$state', 'User', function($state, User){
@@ -160,14 +160,14 @@ teamLeaderModule
 				url:'approvals',
 				views: {
 					'content-container': {
-						templateUrl: '/app/components/team-leader/views/content-container.view.html',
+						templateUrl: '/public-pqr/public/app/components/team-leader/views/content-container.view.html',
 						controller: 'approvalsContentContainerController',
 					},
 					'toolbar@main.approvals': {
-						templateUrl: '/app/components/team-leader/templates/toolbar.template.html',
+						templateUrl: '/public-pqr/public/app/components/team-leader/templates/toolbar.template.html',
 					},
 					'content@main.approvals':{
-						templateUrl: '/app/shared/templates/content/approval.content.template.html',
+						templateUrl: '/public-pqr/public/app/shared/templates/content/approval.content.template.html',
 					},
 				},
 				onEnter: ['$state', 'User', function($state, User){

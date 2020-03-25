@@ -5,25 +5,25 @@ adminModule
 				url:'/',
 				views: {
 					'': {
-						templateUrl: '/app/shared/views/main.view.html',
+						templateUrl: '/public-pqr/public/app/shared/views/main.view.html',
 						controller: 'mainViewController',
 					},
 					'toolbar@main': {
-						templateUrl: '/app/components/admin/templates/toolbar.template.html',
+						templateUrl: '/public-pqr/public/app/components/admin/templates/toolbar.template.html',
 					},
 					'left-sidenav@main': {
-						templateUrl: '/app/components/admin/templates/sidenavs/main-left.sidenav.html',
+						templateUrl: '/public-pqr/public/app/components/admin/templates/sidenavs/main-left.sidenav.html',
 						controller: 'leftSidenavController',
 					},
 					'content-container@main': {
-						templateUrl: '/app/components/admin/views/content-container.view.html',
+						templateUrl: '/public-pqr/public/app/components/admin/views/content-container.view.html',
 						controller: 'mainContentContainerController',
 					},
 					'content@main': {
-						templateUrl: '/app/components/admin/templates/content/main.content.template.html'
+						templateUrl: '/public-pqr/public/app/components/admin/templates/content/main.content.template.html'
 					},
 					'right-sidenav@main': {
-						templateUrl: '/app/components/admin/templates/sidenavs/main-right.sidenav.html',
+						templateUrl: '/public-pqr/public/app/components/admin/templates/sidenavs/main-right.sidenav.html',
 					},
 				}
 			})
@@ -31,14 +31,14 @@ adminModule
 				url:'activities',
 				views: {
 					'content-container': {
-						templateUrl: '/app/components/team-leader/views/content-container.view.html',
+						templateUrl: '/public-pqr/public/app/components/team-leader/views/content-container.view.html',
 						controller: 'activityContentContainerController',
 					},
 					'toolbar@main.activity': {
-						templateUrl: '/app/components/team-leader/templates/toolbar.template.html',
+						templateUrl: '/public-pqr/public/app/components/team-leader/templates/toolbar.template.html',
 					},
 					'content@main.activity': {
-						templateUrl: '/app/shared/templates/content/activity.content.template.html',
+						templateUrl: '/public-pqr/public/app/shared/templates/content/activity.content.template.html',
 					},
 				},
 			})
@@ -47,17 +47,17 @@ adminModule
 				params: {'departmentID':null},
 				views: {
 					'content-container': {
-						templateUrl: '/app/components/admin/views/content-container.view.html',
+						templateUrl: '/public-pqr/public/app/components/admin/views/content-container.view.html',
 						controller: 'departmentContentContainerController',
 					},
 					'toolbar@main.weekly-report': {
-						templateUrl: '/app/components/admin/templates/toolbar.template.html',
+						templateUrl: '/public-pqr/public/app/components/admin/templates/toolbar.template.html',
 					},
 					'content@main.weekly-report': {
-						templateUrl: '/app/shared/templates/main.content.template.html',
+						templateUrl: '/public-pqr/public/app/shared/templates/main.content.template.html',
 					},
 					'right-sidenav@main.weekly-report': {
-						templateUrl: '/app/components/team-leader/templates/sidenavs/main-right.sidenav.html',
+						templateUrl: '/public-pqr/public/app/components/team-leader/templates/sidenavs/main-right.sidenav.html',
 					}
 				}
 			})
@@ -65,14 +65,14 @@ adminModule
 				url:'work-hours',
 				views: {
 					'content-container': {
-						templateUrl: '/app/components/admin/views/content-container.view.html',
+						templateUrl: '/public-pqr/public/app/components/admin/views/content-container.view.html',
 						controller: 'workHoursContentContainerController',
 					},
 					'toolbar@main.work-hours': {
-						templateUrl: '/app/components/admin/templates/toolbar.template.html',
+						templateUrl: '/public-pqr/public/app/components/admin/templates/toolbar.template.html',
 					},
 					'content@main.work-hours':{
-						templateUrl: '/app/components/admin/templates/content/work-hours.content.template.html',
+						templateUrl: '/public-pqr/public/app/components/admin/templates/content/work-hours.content.template.html',
 					},
 				},
 			})
@@ -80,14 +80,14 @@ adminModule
 				url:'team-leaders',
 				views: {
 					'content-container': {
-						templateUrl: '/app/components/admin/views/content-container.view.html',
+						templateUrl: '/public-pqr/public/app/components/admin/views/content-container.view.html',
 						controller: 'teamLeaderContentContainerController',
 					},
 					'toolbar@main.team-leaders': {
-						templateUrl: '/app/components/admin/templates/toolbar.template.html',
+						templateUrl: '/public-pqr/public/app/components/admin/templates/toolbar.template.html',
 					},
 					'content@main.team-leaders':{
-						templateUrl: '/app/components/admin/templates/content/team-leaders.content.template.html',
+						templateUrl: '/public-pqr/public/app/components/admin/templates/content/team-leaders.content.template.html',
 					},
 				},
 			})
@@ -95,14 +95,14 @@ adminModule
 				url:'department-settings',
 				views: {
 					'content-container': {
-						templateUrl: '/app/components/admin/views/content-container.view.html',
+						templateUrl: '/public-pqr/public/app/components/admin/views/content-container.view.html',
 						controller: 'departmentSettingsContentContainerController',
 					},
 					'toolbar@main.department-settings': {
-						templateUrl: '/app/components/admin/templates/toolbar.template.html',
+						templateUrl: '/public-pqr/public/app/components/admin/templates/toolbar.template.html',
 					},
 					'content@main.department-settings':{
-						templateUrl: '/app/components/admin/templates/content/settings.content.template.html',
+						templateUrl: '/public-pqr/public/app/components/admin/templates/content/settings.content.template.html',
 					},
 				},
 			})
@@ -111,14 +111,14 @@ adminModule
 				params: {'departmentID':null},
 				views: {
 					'content-container': {
-						templateUrl: '/app/components/admin/views/content-container.view.html',
+						templateUrl: '/public-pqr/public/app/components/admin/views/content-container.view.html',
 						controller: 'projectsContentContainerController',
 					},
 					'toolbar@main.projects': {
-						templateUrl: '/app/components/admin/templates/toolbar.template.html',
+						templateUrl: '/public-pqr/public/app/components/admin/templates/toolbar.template.html',
 					},
 					'content@main.projects':{
-						templateUrl: '/app/components/admin/templates/content/projects.content.template.html',
+						templateUrl: '/public-pqr/public/app/components/admin/templates/content/projects.content.template.html',
 					},
 				}
 			})
@@ -127,14 +127,14 @@ adminModule
 				params: {'departmentID':null, 'projectID':null},
 				views: {
 					'content-container': {
-						templateUrl: '/app/components/admin/views/content-container.view.html',
+						templateUrl: '/public-pqr/public/app/components/admin/views/content-container.view.html',
 						controller: 'positionsContentContainerController',
 					},
 					'toolbar@main.positions': {
-						templateUrl: '/app/components/admin/templates/toolbar.template.html',
+						templateUrl: '/public-pqr/public/app/components/admin/templates/toolbar.template.html',
 					},
 					'content@main.positions':{
-						templateUrl: '/app/components/admin/templates/content/positions.content.template.html',
+						templateUrl: '/public-pqr/public/app/components/admin/templates/content/positions.content.template.html',
 					},
 				}
 			})
@@ -143,14 +143,14 @@ adminModule
 				params: {'reportID':null},
 				views: {
 					'content-container': {
-						templateUrl: '/app/components/admin/views/content-container.view.html',
+						templateUrl: '/public-pqr/public/app/components/admin/views/content-container.view.html',
 						controller: 'editReportContentContainerController',
 					},
 					'toolbar@main.edit-report': {
-						templateUrl: '/app/components/admin/templates/toolbar.template.html',
+						templateUrl: '/public-pqr/public/app/components/admin/templates/toolbar.template.html',
 					},
 					'content@main.edit-report':{
-						templateUrl: '/app/shared/templates/content/edit-report.content.template.html',
+						templateUrl: '/public-pqr/public/app/shared/templates/content/edit-report.content.template.html',
 					},
 				}
 			})
@@ -158,14 +158,14 @@ adminModule
 				url:'approvals',
 				views: {
 					'content-container': {
-						templateUrl: '/app/components/admin/views/content-container.view.html',
+						templateUrl: '/public-pqr/public/app/components/admin/views/content-container.view.html',
 						controller: 'approvalsContentContainerController',
 					},
 					'toolbar@main.approvals': {
-						templateUrl: '/app/components/admin/templates/toolbar.template.html',
+						templateUrl: '/public-pqr/public/app/components/admin/templates/toolbar.template.html',
 					},
 					'content@main.approvals':{
-						templateUrl: '/app/shared/templates/content/approval.content.template.html',
+						templateUrl: '/public-pqr/public/app/shared/templates/content/approval.content.template.html',
 					},
 				}
 			})

@@ -18,6 +18,6 @@ sharedModule
 		$stateProvider
 			.state('page-not-found',{
 				url: '/page-not-found',
-				templateUrl: '/app/shared/views/page-not-found.view.html',
+				templateUrl: '/public-pqr/public/app/shared/views/page-not-found.view.html',
 			})
 	}]);
