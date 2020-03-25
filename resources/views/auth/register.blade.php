@@ -3,7 +3,7 @@
 @section('content')
 	<md-card flex>
 		<md-card-content>
-			<form method="POST" action="/auth/register" class="wide-form">
+			<form method="POST" action="{{url('/auth/register')}}" class="wide-form">
 				{!! csrf_field() !!}
 				<div layout="row">
 					<!-- First Name -->

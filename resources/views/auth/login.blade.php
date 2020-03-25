@@ -3,7 +3,7 @@
 @section('content')
 	<md-card>
 		<md-card-content>
-			<form method="POST" action="/auth/login" class="form" layout="column">
+			<form method="POST" action="{{url('/auth/login')}}" class="form" layout="column">
 				{!! csrf_field() !!}
 				<!-- Email -->
 				<md-input-container flex>
